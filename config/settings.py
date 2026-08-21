@@ -138,6 +138,11 @@ REST_FRAMEWORK = {
 
 from datetime import timedelta
 
+# ACCESS token = short-lived (15 min), sent on every request, proves "I'm logged in".
+# REFRESH token = long-lived (7 days), stored in an httpOnly cookie (invisible to JS),
+# ONLY used to silently get a new access token when the old one expires.
+# ROTATE + BLACKLIST together mean: every time refresh is used, the old refresh
+# token dies permanently and a new one is issued — so a stolen old token is useless.
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),

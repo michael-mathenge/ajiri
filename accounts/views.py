@@ -37,6 +37,12 @@ class LoginView(APIView):
         )
         return response
 
+
+# BUG WE HIT (and fixed): just re-stringifying a token object with str(refresh)
+# does NOT create a new token — it's the same token, same signature, every time.
+# Real rotation requires: blacklist the old one, then mutate its identity
+# (set_jti/set_exp/set_iat) BEFORE converting it to a string. Verified this by
+# comparing token strings across two /refresh/ calls in curl — they must differ.
 class RefreshView(APIView):
     permission_classes = (permissions.AllowAny,)
 

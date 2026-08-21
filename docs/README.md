@@ -83,14 +83,14 @@ python manage.py migrate
 ## Key architectural decisions
 
 - **Custom User model (`accounts.User`)**: Login is by email (required), with an optional phone number field (for future M-Pesa integration). This was set up before any real data existed, since changing the User model after the fact is very difficult. Do not attempt to revert to Django's default User model.
-- **`AUTH_USER_MODEL = 'accounts.User'`** is set in `config/settings.py` — this line is load-bearing. Removing or changing it will break the entire auth system.
+- **`AUTH_USER_MODEL = 'accounts.User'`** is set in `../config/settings.py` — this line is load-bearing. Removing or changing it will break the entire auth system.
 
 ---
 
 ## Known gotchas
 
 - **Python 3.14 breaks Django 5.1+ admin** (`AttributeError: 'super' object has no attribute 'dicts'`). Always use Python 3.12 for this project.
-- If you ever see `InconsistentMigrationHistory` on `migrate`, it usually means the database was built before a model change (like the custom User model) was introduced. In early dev with no real data, the fix is: delete `db.sqlite3`, then re-run `python manage.py migrate` fresh. **Do not do this once real user data exists.**
+- If you ever see `InconsistentMigrationHistory` on `migrate`, it usually means the database was built before a model change (like the custom User model) was introduced. In early dev with no real data, the fix is: delete `../db.sqlite3`, then re-run `python manage.py migrate` fresh. **Do not do this once real user data exists.**
 
 ---
 

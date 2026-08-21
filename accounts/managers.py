@@ -1,6 +1,12 @@
 from django.contrib.auth.base_user import BaseUserManager
 
-
+# WHY THIS FILE EXISTS:
+# Django's default User model creation logic expects a `username` field.
+# Since our User uses email instead (no username at all), we can't rely on
+# Django's built-in manager — we have to tell it manually how to build a User:
+# normalize the email, hash the password, and save it. This is the "recipe"
+# Django follows every time a user is created, whether through the API,
+# the admin panel, or `createsuperuser` in the terminal.
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
         if not email:

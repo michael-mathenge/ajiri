@@ -1,11 +1,11 @@
 """In Django, a serializer converts complex data like querysets or model instances
-#into native Python datatypes that can easily be rendered into JSON, XML, or other content types"""
+into native Python datatypes that can easily be rendered into JSON, XML, or other content types"""
 
 from rest_framework import serializers
 from .models import Profile, Skill
 
-
 class SkillSerializer(serializers.ModelSerializer):
+    """  Converts a Skill model instance into simple JSON like {"id": 1, "name": "Python"}."""
     class Meta:
         model = Skill
         fields = ('id', 'name')
@@ -28,6 +28,13 @@ class ProfileSerializer(serializers.ModelSerializer):
         )
         read_only_fields = ('updated_at',)
 
+    # WHY WE OVERRIDE update(): DRF's default ModelSerializer.update() only knows
+    # how to set plain model fields directly. `skill_names` isn't a real field on
+    # Profile (skills is a many-to-many, handled differently) — so we manually
+    # pop it out, save the normal fields first, then use get_or_create() to either
+    # find existing skills or create new ones, and .set() to replace the full list.
+    # This lets the API accept simple strings ["Python", "Django"] as input, while
+    # still returning rich {id, name} objects in the response.
     def update(self, instance, validated_data):
         skill_names = validated_data.pop('skill_names', None)
 
