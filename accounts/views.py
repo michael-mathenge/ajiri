@@ -4,6 +4,7 @@ from django.conf import settings
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
 from django.contrib.auth import authenticate
 
 class RegisterView(generics.CreateAPIView):
@@ -34,4 +35,60 @@ class LoginView(APIView):
             samesite='Lax',
             max_age=7 * 24 * 60 * 60,
         )
+        return response
+
+class RefreshView(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request):
+        raw_refresh = request.COOKIES.get('refresh_token')
+
+        if raw_refresh is None:
+            return Response({'detail': 'No refresh token found.'}, status=401)
+
+        try:
+            refresh = RefreshToken(raw_refresh)
+        except TokenError:
+            return Response({'detail': 'Invalid or expired refresh token.'}, status=401)
+
+        access_token = str(refresh.access_token)
+        response = Response({'access': access_token})
+
+        if settings.SIMPLE_JWT.get('ROTATE_REFRESH_TOKENS'):
+            if settings.SIMPLE_JWT.get('BLACKLIST_AFTER_ROTATION'):
+                try:
+                    refresh.blacklist()
+                except AttributeError:
+                    pass
+
+            refresh.set_jti()
+            refresh.set_exp()
+            refresh.set_iat()
+
+            response.set_cookie(
+                key='refresh_token',
+                value=str(refresh),
+                httponly=True,
+                secure=False,
+                samesite='Lax',
+                max_age=7 * 24 * 60 * 60,
+            )
+
+        return response
+
+class LogoutView(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def post(self, request):
+        raw_refresh = request.COOKIES.get('refresh_token')
+
+        if raw_refresh:
+            try:
+                token = RefreshToken(raw_refresh)
+                token.blacklist()
+            except TokenError:
+                pass
+
+        response = Response({'detail': 'Logged out successfully.'})
+        response.delete_cookie('refresh_token')
         return response
