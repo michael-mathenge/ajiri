@@ -1,13 +1,13 @@
 # Ajiri Backend — Concepts Glossary
 
 Running notes on Django/DRF concepts I had to look up while building this.
-Referenced from inline comments in the code as `# see docs/CONCEPTS.md#slug`.
+Referenced from inline comments in the code as `# see docs/CONCEPTS.md# slug`.
 
 ---
 
 ## virtual-environment
 A sealed, private copy of Python + installed packages for one project only.
-Prevents `pip install` for one project from breaking another. Created with
+Prevents`pip install` for one project from breaking another. Created with
 `py -3.12 -m venv .venv`, activated with `.venv\Scripts\activate`.
 
 ## migrations
@@ -66,7 +66,7 @@ to actually mutate the token's identity before re-stringifying it.
 Code that runs automatically when something happens elsewhere in the app,
 without that other code needing to know this file exists. Example:
 `post_save` fires every time ANY model instance is saved — our
-`../profiles/signals.py` listens for User saves specifically and auto-creates
+`profiles/signals.py` listens for User saves specifically and auto-creates
 a blank Profile. Must be manually "activated" via `apps.py`'s `ready()`
 method importing the signals file — otherwise the decorator never connects.
 
@@ -114,3 +114,18 @@ A GitHub feature (not a git concept) for reviewing changes before merging.
 Lets a collaborator see a diff, comment on specific lines, and approve
 before code touches `main`. More valuable with 2+ people than solo, but
 good practice to know for when Ajiri gets contributors.
+
+## git-push-verbose-output
+The wall of text `git push` prints on a brand-new branch, decoded:
+- `Enumerating/Counting objects` — git scanning local files for changes to upload.
+- `Delta compression using N threads` — git calculates only the DIFFERENCE between
+  old and new file versions, so it uploads the minimum data needed, not whole files.
+- `Compressing/Writing objects` — the diff gets compressed and sent to GitHub.
+- `remote: Resolving deltas` — GitHub unpacking and verifying what it received.
+- `remote: Create a pull request for '...' on GitHub by visiting: <link>` — GitHub
+  auto-generating a shortcut link straight to the PR-creation page, ONLY shown
+  because this branch has never been pushed before.
+- `* [new branch] name -> name` — confirms the branch now exists on GitHub too.
+- `branch 'name' set up to track 'origin/name'` — only happens with `--set-upstream`
+  (or `-u`); after this, plain `git push`/`git pull` work with no extra arguments
+  on this branch, since git now knows where it belongs by default.
