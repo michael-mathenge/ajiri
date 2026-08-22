@@ -36,3 +36,4 @@ dist/
 *.egg-info/
 
 cookies.txt
+celerybeat-schedule*

@@ -11,3 +11,5 @@ class JobAdmin(admin.ModelAdmin):
     list_filter = ('job_type', 'is_active', 'is_flagged_scam', 'source_name')
     search_fields = ('title', 'company_name', 'location')
     filter_horizontal = ('skills_required',)
+    readonly_fields = ('scam_flags',)
+

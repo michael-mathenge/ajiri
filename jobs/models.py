@@ -46,6 +46,7 @@ class Job(models.Model):
 
     is_active = models.BooleanField(default=True)
     is_flagged_scam = models.BooleanField(default=False)
+    scam_flags = models.TextField(blank=True, default='')
 
     def __str__(self):
         return f"{self.title} at {self.company_name}"
