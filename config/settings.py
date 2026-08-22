@@ -109,7 +109,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Africa/Nairobi '
 
 USE_I18N = True
 
@@ -150,4 +150,19 @@ SIMPLE_JWT = {
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
     'AUTH_HEADER_TYPES': ('Bearer',),
+}
+
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Africa/Nairobi'
+
+from celery.schedules import crontab
+
+CELERY_BEAT_SCHEDULE = {
+    'ingest-myjobmag-kenya-hourly': {
+        'task': 'jobs.tasks.ingest_myjobmag_kenya_task',
+        'schedule': crontab(minute=0),
+    },
 }
