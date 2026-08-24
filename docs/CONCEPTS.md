@@ -129,3 +129,5 @@ The wall of text `git push` prints on a brand-new branch, decoded:
 - `branch 'name' set up to track 'origin/name'` — only happens with `--set-upstream`
   (or `-u`); after this, plain `git push`/`git pull` work with no extra arguments
   on this branch, since git now knows where it belongs by default.
+
+![img.png](img.png)
