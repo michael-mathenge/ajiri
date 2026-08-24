@@ -3,6 +3,8 @@ into native Python datatypes that can easily be rendered into JSON, XML, or othe
 
 from rest_framework import serializers
 from .models import Profile, Skill
+import os
+
 
 class SkillSerializer(serializers.ModelSerializer):
     """  Converts a Skill model instance into simple JSON like {"id": 1, "name": "Python"}."""
@@ -27,6 +29,22 @@ class ProfileSerializer(serializers.ModelSerializer):
             'skills', 'skill_names', 'cv_file', 'updated_at', 'email',
         )
         read_only_fields = ('updated_at',)
+
+    def validate_cv_file(self, value):
+        if value:
+            allowed_extensions = ['.pdf', '.doc', '.docx']
+            ext = os.path.splitext(value.name)[1].lower()
+            if ext not in allowed_extensions:
+                raise serializers.ValidationError(
+                    f"Unsupported file type '{ext}'. Allowed: {', '.join(allowed_extensions)}"
+                )
+
+            max_size_mb = 5
+            if value.size > max_size_mb * 1024 * 1024:
+                raise serializers.ValidationError(
+                    f"File too large ({value.size / 1024 / 1024:.1f}MB). Max size: {max_size_mb}MB"
+                )
+        return value
 
     # WHY WE OVERRIDE update(): DRF's default ModelSerializer.update() only knows
     # how to set plain model fields directly. `skill_names` isn't a real field on
