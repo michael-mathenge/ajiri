@@ -130,4 +130,5 @@ The wall of text `git push` prints on a brand-new branch, decoded:
   (or `-u`); after this, plain `git push`/`git pull` work with no extra arguments
   on this branch, since git now knows where it belongs by default.
 
-![img.png](img.png)
+![discovery flow diagram](img.png)
+![Sprint flow diagram](img_1.png)
