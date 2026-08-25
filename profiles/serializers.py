@@ -21,14 +21,29 @@ class ProfileSerializer(serializers.ModelSerializer):
         required=False
     )
     email = serializers.EmailField(source='user.email', read_only=True)
+    full_name = serializers.CharField(required=False, allow_blank=True)
+    phone_number = serializers.CharField(required=False, allow_blank=True, allow_null=True)
 
     class Meta:
         model = Profile
         fields = (
             'headline', 'bio', 'location', 'years_of_experience',
             'skills', 'skill_names', 'cv_file', 'updated_at', 'email',
+            'full_name', 'phone_number',
         )
         read_only_fields = ('updated_at',)
+
+    def to_representation(self, instance):
+        """
+        full_name/phone_number actually live on the related User model, not
+        Profile. Declaring them as plain CharFields above (no `source=`) lets
+        write-side validation work simply, but means we have to manually pull
+        their DISPLAY values from instance.user here for read/GET responses.
+        """
+        data = super().to_representation(instance)
+        data['full_name'] = instance.user.full_name
+        data['phone_number'] = instance.user.phone_number
+        return data
 
     def validate_cv_file(self, value):
         if value:
@@ -46,19 +61,21 @@ class ProfileSerializer(serializers.ModelSerializer):
                 )
         return value
 
-    # WHY WE OVERRIDE update(): DRF's default ModelSerializer.update() only knows
-    # how to set plain model fields directly. `skill_names` isn't a real field on
-    # Profile (skills is a many-to-many, handled differently) — so we manually
-    # pop it out, save the normal fields first, then use get_or_create() to either
-    # find existing skills or create new ones, and .set() to replace the full list.
-    # This lets the API accept simple strings ["Python", "Django"] as input, while
-    # still returning rich {id, name} objects in the response.
     def update(self, instance, validated_data):
         skill_names = validated_data.pop('skill_names', None)
+        full_name = validated_data.pop('full_name', None)
+        phone_number = validated_data.pop('phone_number', None)
 
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         instance.save()
+
+        if full_name is not None or phone_number is not None:
+            if full_name is not None:
+                instance.user.full_name = full_name
+            if phone_number is not None:
+                instance.user.phone_number = phone_number
+            instance.user.save()
 
         if skill_names is not None:
             skills = []
