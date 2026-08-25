@@ -13,7 +13,14 @@ def generate_cv_docx(profile):
     """
     doc = Document()
 
-    name = profile.user.email.split('@')[0].replace('.', ' ').title()
+    if profile.user.full_name:
+        name = profile.user.full_name
+    else:
+        # Last-resort fallback only, for accounts that somehow still have
+        # no full_name set — should be rare now that Profile editing
+        # lets users fill it in directly.
+        name = profile.user.email.split('@')[0].replace('.', ' ').title()
+
     title = doc.add_heading(name, level=0)
     title.alignment = WD_ALIGN_PARAGRAPH.CENTER
 
@@ -22,8 +29,8 @@ def generate_cv_docx(profile):
         subtitle.alignment = WD_ALIGN_PARAGRAPH.CENTER
         subtitle.runs[0].italic = True
 
-    contact_line = f"{profile.location or ''}  |  {profile.user.email}"
-    contact = doc.add_paragraph(contact_line)
+    contact_parts = [part for part in [profile.location, profile.user.email, profile.user.phone_number] if part]
+    contact = doc.add_paragraph('  |  '.join(contact_parts))
     contact.alignment = WD_ALIGN_PARAGRAPH.CENTER
 
     doc.add_paragraph()
