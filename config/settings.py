@@ -125,12 +125,17 @@ STATIC_URL = 'static/'
 
 # Email
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
+#
+# GOTCHA: this used to be a 'MAILERS' dict, which is NOT a real Django
+# setting — Django only ever reads EMAIL_BACKEND. That meant send_mail()
+# was silently falling back to the SMTP backend with no server configured,
+# which would raise a connection error the first time it actually ran.
+# Console backend prints emails to the terminal instead of sending them —
+# free, zero setup, perfect for local dev. Swap to a real SMTP/API backend
+# (e.g. Django Anymail + a provider) before going to production.
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = 'Ajiri <noreply@ajiri.co.ke>'
 
-MAILERS = {
-    'default': {
-        'BACKEND': 'django.core.mail.backends.console.EmailBackend',
-    },
-}
 AUTH_USER_MODEL = 'accounts.User'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -170,6 +175,15 @@ CELERY_BEAT_SCHEDULE = {
     'ingest-myjobmag-kenya-hourly': {
         'task': 'jobs.tasks.ingest_myjobmag_kenya_task',
         'schedule': crontab(minute=0),
+    },
+    # Catches matches missed by the immediate ingest-time check — e.g. a
+    # profile created or its skills edited AFTER a job was already ingested.
+    # Runs every 6 hours (not more often) since this loops over every
+    # active job x every profile — deliberately not resource-hungry, per
+    # the same cost-conscious approach as Auto-Apply.
+    'sweep-job-matches-every-6-hours': {
+        'task': 'jobs.tasks.sweep_job_matches_task',
+        'schedule': crontab(minute=0, hour='*/6'),
     },
 }
 

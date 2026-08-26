@@ -23,5 +23,11 @@ class Profile(models.Model):
     cv_file = models.FileField(upload_to='cvs/', blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    # Job Alerts preferences — let a user opt out of a channel without
+    # touching code. Both default True so alerts work out of the box.
+    # See docs/CONCEPTS.md#job-alerts
+    notify_email = models.BooleanField(default=True)
+    notify_in_app = models.BooleanField(default=True)
+
     def __str__(self):
         return f"{self.user.email}'s profile"

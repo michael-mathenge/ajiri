@@ -1,13 +1,13 @@
 # Ajiri Backend — Concepts Glossary
 
 Running notes on Django/DRF concepts I had to look up while building this.
-Referenced from inline comments in the code as `# see docs/CONCEPTS.md# slug`.
+Referenced from inline comments in the code as `# see docs/CONCEPTS.md#slug`.
 
 ---
 
 ## virtual-environment
 A sealed, private copy of Python + installed packages for one project only.
-Prevents`pip install` for one project from breaking another. Created with
+Prevents `pip install` for one project from breaking another. Created with
 `py -3.12 -m venv .venv`, activated with `.venv\Scripts\activate`.
 
 ## migrations
@@ -115,20 +115,81 @@ Lets a collaborator see a diff, comment on specific lines, and approve
 before code touches `main`. More valuable with 2+ people than solo, but
 good practice to know for when Ajiri gets contributors.
 
-## git-push-verbose-output
-The wall of text `git push` prints on a brand-new branch, decoded:
-- `Enumerating/Counting objects` — git scanning local files for changes to upload.
-- `Delta compression using N threads` — git calculates only the DIFFERENCE between
-  old and new file versions, so it uploads the minimum data needed, not whole files.
-- `Compressing/Writing objects` — the diff gets compressed and sent to GitHub.
-- `remote: Resolving deltas` — GitHub unpacking and verifying what it received.
-- `remote: Create a pull request for '...' on GitHub by visiting: <link>` — GitHub
-  auto-generating a shortcut link straight to the PR-creation page, ONLY shown
-  because this branch has never been pushed before.
-- `* [new branch] name -> name` — confirms the branch now exists on GitHub too.
-- `branch 'name' set up to track 'origin/name'` — only happens with `--set-upstream`
-  (or `-u`); after this, plain `git push`/`git pull` work with no extra arguments
-  on this branch, since git now knows where it belongs by default.
+## application-method-detection
+When ingesting a job, we scan its description for an email address using
+regex (`jobs/utils.py::detect_application_method`). If found, the job is
+flagged `application_method='email'` and `application_email` is stored —
+this job supports true auto-apply (we can programmatically send an
+application email on the user's behalf). If no email is found, the job
+is flagged `application_method='external_link'` — the user must click
+through to `source_url` and apply manually.
 
-![discovery flow diagram](img.png)
-![Sprint flow diagram](img_1.png)
+This distinction exists because true auto-apply is only safe and reliable
+when we're just sending an email; auto-filling arbitrary third-party web
+forms (Workday, Greenhouse, company career portals, etc.) is fragile,
+breaks constantly as those sites change, and risks violating their terms
+of service. Even for email-method jobs, the actual design decision was to
+never send silently — every application is drafted automatically, then a
+human reviews/edits and hits send. See `application-lifecycle` below for
+how that draft → review → sent flow is tracked.
+
+## application-lifecycle
+The `Application` model (`jobs/models.py`) tracks one user applying to one
+job, moving through four states:
+- `draft` — auto-created by the system, CV + cover letter generated, nothing
+  sent to anyone yet.
+- `ready_for_review` — user has been notified (email/in-app/WhatsApp) that
+  a match is ready; they haven't acted yet.
+- `sent` — user reviewed (optionally edited) the draft and hit send.
+- `dismissed` — user declined to apply to this match.
+
+Two things make this different from the earlier CV/cover-letter generators
+(`profiles/cv_generator.py`, `jobs/cover_letter_generator.py`), which build
+a `.docx` fresh in memory (`BytesIO`) on every single request:
+1. `Application.generated_cv`/`generated_cover_letter` are saved as real
+   files on disk (`media/applications/`), generated ONCE at draft-creation
+   time — so the document the user reviews is guaranteed to be the exact
+   same one that eventually gets sent, not a freshly-regenerated variant.
+2. `application_method`/`application_email` are copied ("snapshotted") from
+   the `Job` at draft-creation time rather than read live — so an in-progress
+   application can't silently change behavior if the underlying job listing
+   is edited later.
+
+`unique_together = ('user', 'job')` on the model is the guard against
+duplicate drafts, since two different triggers (immediate ingest-check and
+the periodic Celery Beat sweep) will both attempt to create Applications
+for matching jobs — `get_or_create()` makes this safe.
+
+IMPORTANT: this was later revised — draft creation is now user-triggered
+on demand (via an API endpoint), NOT automatic. See `job-alerts` below for
+why, and for what's still automatic vs. what's now manual.
+
+## job-alerts
+Notifying a user that a new job matches their profile is kept SEPARATE
+from Application draft creation, and deliberately runs automatically —
+unlike Applications, alerts cost effectively nothing:
+- Email: free (just your existing EMAIL_BACKEND).
+- In-app: free (just a `Notification` row read by the frontend).
+- SMS/WhatsApp (Africa's Talking): NOT free once live — real per-message
+  cost, a $35 Sender ID setup fee, and a multi-day approval process. The
+  sandbox is free for testing, but nothing is wired to real phone numbers
+  yet. Deferred until there's a monetization path to cover it.
+
+Because alerts are cheap, `notify_matching_profiles(job)` (jobs/matching.py)
+runs automatically from two triggers:
+1. Immediately at the end of each job's ingestion (`ingestion.py`) — so a
+   strong match (score >= MATCH_ALERT_THRESHOLD, currently 70%) reaches the
+   user right away.
+2. A Celery Beat sweep every 6 hours (`sweep_all_active_jobs_for_matches`)
+   — catches matches the immediate check would miss, e.g. a profile
+   created or edited AFTER a job was already ingested.
+
+`Notification` has `unique_together = ('user', 'job')` for the same reason
+`Application` does — both triggers can independently discover the same
+match, and this guarantees only one alert ever fires per pair.
+
+Contrast with Application drafts: generating a CV + cover letter and
+saving files is real compute/storage cost, so THAT step only happens when
+the user explicitly requests it (clicks "Apply"), not automatically just
+because a Notification exists. An alert says "here's a match" — it does
+not imply a draft has been (or will be) created.

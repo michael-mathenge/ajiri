@@ -3,6 +3,8 @@ from datetime import datetime, timezone
 from django.utils.timezone import make_aware
 from .models import Job
 from .scam_filter import analyze_job_for_scam
+from .utils import detect_application_method
+from .matching import notify_matching_profiles
 
 MYJOBMAG_KENYA_FEED = "https://www.myjobmag.co.ke/jobsxml_by_categories.xml"
 
@@ -24,6 +26,7 @@ def ingest_myjobmag_kenya():
     created_count = 0
     skipped_count = 0
     flagged_count = 0
+    notified_count = 0
 
     for entry in feed.entries:
         source_url = entry.get('link')
@@ -47,14 +50,24 @@ def ingest_myjobmag_kenya():
             skipped_count += 1
             continue
 
+        description = entry.get('description', '')
+
+        # Scan the description for an email address to decide whether
+        # this job supports true auto-apply (email) or needs the user
+        # to click through and apply manually (external_link).
+        # See docs/CONCEPTS.md#application-method-detection
+        application_method, application_email = detect_application_method(description)
+
         job = Job.objects.create(
             title=title,
             company_name=company_name,
-            description=entry.get('description', ''),
+            description=description,
             location=entry.get('location', ''),
             source_url=source_url,
             source_name='MyJobMag Kenya',
             posted_at=parse_pubdate(entry),
+            application_method=application_method,
+            application_email=application_email,
         )
 
         # Run the job through the rule-based scam filter AFTER creation,
@@ -70,8 +83,15 @@ def ingest_myjobmag_kenya():
 
         created_count += 1
 
+        # Alert any profile that's a strong match (>=70%) for this job,
+        # right away rather than waiting for the periodic sweep. Skipped
+        # automatically inside notify_matching_profiles() if the job just
+        # got flagged as a scam above. See docs/CONCEPTS.md#job-alerts
+        notified_count += notify_matching_profiles(job)
+
     return {
         'created': created_count,
         'skipped': skipped_count,
         'flagged': flagged_count,
+        'notified': notified_count,
     }
