@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'django_filters',
     'rest_framework',
+    'corsheaders',
     'accounts',
     'profiles',
     'jobs',
@@ -47,6 +48,11 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    # CorsMiddleware must sit ABOVE CommonMiddleware (and as high as
+    # practical overall) — it needs to attach CORS headers before
+    # Django's other middleware has a chance to process/reject the
+    # request. See docs/CONCEPTS.md#cors
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -189,3 +195,19 @@ CELERY_BEAT_SCHEDULE = {
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# CORS (Cross-Origin Resource Sharing) — the React dev server
+# (localhost:5173) and Django (127.0.0.1:8000) are different origins as
+# far as the browser is concerned, even though both run on your own
+# machine. Without this, the browser blocks every API call the frontend
+# makes, no matter how correct the request itself is. See docs/CONCEPTS.md#cors
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+]
+
+# Required for the browser to actually store/send the httpOnly
+# refresh_token cookie cross-origin (5173 -> 8000 counts as cross-origin
+# even on the same machine). Without this, Set-Cookie headers from
+# LoginView get silently dropped by the browser. See docs/CONCEPTS.md#cors-credentials
+CORS_ALLOW_CREDENTIALS = True

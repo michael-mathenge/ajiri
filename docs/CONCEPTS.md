@@ -103,93 +103,65 @@ the alias and get standard curl behavior (needed for `-X`, `-H`, `-d`, etc.)
 
 ## git-branching
 `main` = always a safe, working checkpoint. `feature/xyz` branches let you
-work on something new without risking `main` until it's tested and ready.
-`git checkout -b name` creates + switches in one step. Merging brings a
-feature branch's commits into `main` — if `main` never changed while you
-were working, it's a "fast-forward" (no real merge needed, just moves
-the pointer).
+work on something new without risking
 
-## pull-request (PR)
-A GitHub feature (not a git concept) for reviewing changes before merging.
-Lets a collaborator see a diff, comment on specific lines, and approve
-before code touches `main`. More valuable with 2+ people than solo, but
-good practice to know for when Ajiri gets contributors.
+## cors
+CORS (Cross-Origin Resource Sharing) is a BROWSER security rule — different
+ports count as different "origins" even on the same machine, so JS running
+on localhost:5173 (React) is blocked by default from calling
+127.0.0.1:8000 (Django), even though nothing is actually wrong with the
+request itself. Postman never hits this because Postman isn't a browser
+and doesn't enforce it — this is why something can work perfectly in
+Postman and fail silently (well, loudly, in the Console) from the actual
+frontend.
 
-## application-method-detection
-When ingesting a job, we scan its description for an email address using
-regex (`jobs/utils.py::detect_application_method`). If found, the job is
-flagged `application_method='email'` and `application_email` is stored —
-this job supports true auto-apply (we can programmatically send an
-application email on the user's behalf). If no email is found, the job
-is flagged `application_method='external_link'` — the user must click
-through to `source_url` and apply manually.
+The browser first sends an invisible "preflight" OPTIONS request asking
+"do you allow requests from my origin?" before sending the real
+POST/GET/etc. If the server's response doesn't include an
+Access-Control-Allow-Origin header matching the requesting origin, the
+browser refuses to send the real request at all — you'll see the OPTIONS
+request succeed (200) in the Django terminal, but the actual POST never
+even shows up there, because the browser blocked it client-side before
+it went out.
 
-This distinction exists because true auto-apply is only safe and reliable
-when we're just sending an email; auto-filling arbitrary third-party web
-forms (Workday, Greenhouse, company career portals, etc.) is fragile,
-breaks constantly as those sites change, and risks violating their terms
-of service. Even for email-method jobs, the actual design decision was to
-never send silently — every application is drafted automatically, then a
-human reviews/edits and hits send. See `application-lifecycle` below for
-how that draft → review → sent flow is tracked.
+Fixed via django-cors-headers: add 'corsheaders' to INSTALLED_APPS,
+'corsheaders.middleware.CorsMiddleware' near the TOP of MIDDLEWARE (must
+run before most other middleware), and a CORS_ALLOWED_ORIGINS list naming
+exactly which frontend origins are trusted. Settings.py changes need a
+runserver restart — unlike regular code changes, which auto-reload.
 
-## application-lifecycle
-The `Application` model (`jobs/models.py`) tracks one user applying to one
-job, moving through four states:
-- `draft` — auto-created by the system, CV + cover letter generated, nothing
-  sent to anyone yet.
-- `ready_for_review` — user has been notified (email/in-app/WhatsApp) that
-  a match is ready; they haven't acted yet.
-- `sent` — user reviewed (optionally edited) the draft and hit send.
-- `dismissed` — user declined to apply to this match.
+## stale-token-on-public-endpoints
+Attaching a JWT to EVERY request (even AllowAny ones like login/register)
+can break those endpoints if the stored token is expired or invalid.
+Permission (`AllowAny`) and authentication are separate DRF steps —
+`AllowAny` means "no permission required," but if `JWTAuthentication` is
+in `DEFAULT_AUTHENTICATION_CLASSES` project-wide, DRF still tries to
+validate any Authorization header present and raises an error if it's
+bad, BEFORE the view runs at all — regardless of that view's permission
+class. Symptom: login fails with a misleading "invalid credentials"-style
+error even though the email/password are correct, because the real
+rejection never reaches the actual credential check. Fixed in
+`src/api/client.js` by excluding known public/auth endpoints from the
+request interceptor's Authorization header entirely.
 
-Two things make this different from the earlier CV/cover-letter generators
-(`profiles/cv_generator.py`, `jobs/cover_letter_generator.py`), which build
-a `.docx` fresh in memory (`BytesIO`) on every single request:
-1. `Application.generated_cv`/`generated_cover_letter` are saved as real
-   files on disk (`media/applications/`), generated ONCE at draft-creation
-   time — so the document the user reviews is guaranteed to be the exact
-   same one that eventually gets sent, not a freshly-regenerated variant.
-2. `application_method`/`application_email` are copied ("snapshotted") from
-   the `Job` at draft-creation time rather than read live — so an in-progress
-   application can't silently change behavior if the underlying job listing
-   is edited later.
+## cors-credentials
+Cross-origin cookies (here: the httpOnly refresh_token cookie, set by
+Django, needed by the browser at localhost:5173) are NOT sent/accepted
+by default, even with CORS otherwise working. Both sides must opt in
+explicitly: the frontend sets `withCredentials: true` on every request
+(axios config), and the backend sets `CORS_ALLOW_CREDENTIALS = True`
+(django-cors-headers). Without both, Set-Cookie headers from the server
+are silently dropped by the browser — no error is shown anywhere, the
+cookie just never appears in DevTools, which makes this easy to miss.
 
-`unique_together = ('user', 'job')` on the model is the guard against
-duplicate drafts, since two different triggers (immediate ingest-check and
-the periodic Celery Beat sweep) will both attempt to create Applications
-for matching jobs — `get_or_create()` makes this safe.
-
-IMPORTANT: this was later revised — draft creation is now user-triggered
-on demand (via an API endpoint), NOT automatic. See `job-alerts` below for
-why, and for what's still automatic vs. what's now manual.
-
-## job-alerts
-Notifying a user that a new job matches their profile is kept SEPARATE
-from Application draft creation, and deliberately runs automatically —
-unlike Applications, alerts cost effectively nothing:
-- Email: free (just your existing EMAIL_BACKEND).
-- In-app: free (just a `Notification` row read by the frontend).
-- SMS/WhatsApp (Africa's Talking): NOT free once live — real per-message
-  cost, a $35 Sender ID setup fee, and a multi-day approval process. The
-  sandbox is free for testing, but nothing is wired to real phone numbers
-  yet. Deferred until there's a monetization path to cover it.
-
-Because alerts are cheap, `notify_matching_profiles(job)` (jobs/matching.py)
-runs automatically from two triggers:
-1. Immediately at the end of each job's ingestion (`ingestion.py`) — so a
-   strong match (score >= MATCH_ALERT_THRESHOLD, currently 70%) reaches the
-   user right away.
-2. A Celery Beat sweep every 6 hours (`sweep_all_active_jobs_for_matches`)
-   — catches matches the immediate check would miss, e.g. a profile
-   created or edited AFTER a job was already ingested.
-
-`Notification` has `unique_together = ('user', 'job')` for the same reason
-`Application` does — both triggers can independently discover the same
-match, and this guarantees only one alert ever fires per pair.
-
-Contrast with Application drafts: generating a CV + cover letter and
-saving files is real compute/storage cost, so THAT step only happens when
-the user explicitly requests it (clicks "Apply"), not automatically just
-because a Notification exists. An alert says "here's a match" — it does
-not imply a draft has been (or will be) created.
+## refresh-on-401
+An axios response interceptor (src/api/client.js) catches any 401 from a
+PROTECTED endpoint, assumes it means "access token expired" (normal after
+15 min, not a real error), and silently: calls /accounts/refresh/ using
+the httpOnly cookie, stores the new access token, retries the original
+failed request once, and returns that retried response to the original
+caller — who never sees the failure at all. If the refresh itself fails
+(refresh token also expired, 7-day window passed), the user is logged out
+and redirected to /login. An `_retry` flag on the request config prevents
+infinite refresh loops. The refresh call itself uses plain axios, not
+apiClient, to avoid recursively triggering these same interceptors.
