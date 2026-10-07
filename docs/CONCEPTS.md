@@ -103,7 +103,78 @@ the alias and get standard curl behavior (needed for `-X`, `-H`, `-d`, etc.)
 
 ## git-branching
 `main` = always a safe, working checkpoint. `feature/xyz` branches let you
-work on something new without risking
+work on something new without risking `main` until it's tested and ready.
+`git checkout -b name` creates + switches in one step. Merging brings a
+feature branch's commits into `main` — if `main` never changed while you
+were working, it's a "fast-forward" (no real merge needed, just moves
+the pointer).
+
+## pull-request (PR)
+A GitHub feature (not a git concept) for reviewing changes before merging.
+Lets a collaborator see a diff, comment on specific lines, and approve
+before code touches `main`. More valuable with 2+ people than solo, but
+good practice to know for when Ajiri gets contributors.
+
+## application-method-detection
+When ingesting a job, we scan its description for an email address using
+regex (`jobs/utils.py::detect_application_method`). If found, the job is
+flagged `application_method='email'` and `application_email` is stored —
+this job supports true auto-apply (we can programmatically send an
+application email on the user's behalf). If no email is found, the job
+is flagged `application_method='external_link'` — the user must click
+through to `source_url` and apply manually.
+
+This distinction exists because true auto-apply is only safe and reliable
+when we're just sending an email; auto-filling arbitrary third-party web
+forms (Workday, Greenhouse, company career portals, etc.) is fragile,
+breaks constantly as those sites change, and risks violating their terms
+of service. Even for email-method jobs, the design decision was to never
+send silently — every application is drafted, then a human reviews/edits
+and hits send. See `application-lifecycle` below.
+
+## application-lifecycle
+The `Application` model (`jobs/models.py`) tracks one user applying to one
+job, moving through four states:
+- `draft` — reserved for a future "save for later" step.
+- `ready_for_review` — CV + cover letter generated, nothing sent yet.
+- `sent` — user reviewed (optionally edited) the draft and hit send.
+- `dismissed` — user declined to apply to this match.
+
+Two things make this different from the CV/cover-letter generators
+(`profiles/cv_generator.py`, `jobs/cover_letter_generator.py`), which build
+a `.docx` fresh in memory (`BytesIO`) on every request:
+1. `Application.generated_cv`/`generated_cover_letter` are saved as real
+   files (`media/applications/`), generated ONCE when the user clicks
+   Apply — so the document reviewed is exactly the one that gets sent.
+2. `application_method`/`application_email` are copied ("snapshotted") from
+   the `Job` at that moment, so an in-progress application can't silently
+   change if the job listing is edited later.
+
+`unique_together = ('user', 'job')` guards against duplicate drafts, and
+`ApplyToJobView` is idempotent: applying twice returns the existing one.
+Drafts are created ON DEMAND (the user clicks Apply), not automatically:
+generating files costs compute and storage, so it only happens when asked.
+
+## job-alerts
+Notifying a user that a new job matches their profile is kept SEPARATE
+from Application drafts, and deliberately runs automatically — unlike
+drafts, alerts cost effectively nothing:
+- Email: free (just your EMAIL_BACKEND).
+- In-app: free (just a `Notification` row read by the frontend).
+- SMS/WhatsApp (Africa's Talking): NOT free once live — real per-message
+  cost, a one-time Sender ID fee and a multi-day approval process.
+  Deferred until there is a monetization path to cover it.
+
+`notify_matching_profiles(job)` (jobs/matching.py) runs from two triggers:
+1. Immediately at the end of each job's ingestion — a strong match
+   (score >= MATCH_ALERT_THRESHOLD, currently 70%) reaches the user at once.
+2. A periodic sweep (`sweep_all_active_jobs_for_matches`) — catches matches
+   the immediate check misses, e.g. a profile created or edited AFTER the
+   job was ingested. Celery Beat runs it locally; in production a scheduled
+   GitHub Actions workflow calls POST /api/jobs/sweep/ instead.
+
+`Notification` has `unique_together = ('user', 'job')`, so both triggers can
+discover the same match and still only one alert ever fires per pair.
 
 ## cors
 CORS (Cross-Origin Resource Sharing) is a BROWSER security rule — different
@@ -165,3 +236,237 @@ caller — who never sees the failure at all. If the refresh itself fails
 and redirected to /login. An `_retry` flag on the request config prevents
 infinite refresh loops. The refresh call itself uses plain axios, not
 apiClient, to avoid recursively triggering these same interceptors.
+## mojibake
+Garbled text like 'â€"' appearing where an en-dash (or curly quote, etc.)
+should be. Cause: the original text was correctly encoded as UTF-8, but
+something decoded those bytes using the WRONG character set — here,
+Windows-1252 — before the string was ever saved. feedparser.parse(url)
+with no explicit charset override trusts the source server's declared
+encoding (or a default guess per RFC 3023 when that's ambiguous); for
+the MyJobMag feed specifically, it guessed cp1252 instead of UTF-8.
+
+The fix is reversible with ZERO data loss, because nothing was actually
+destroyed — only mis-decoded. Re-encoding the WRONG string back to
+cp1252 bytes recovers the ORIGINAL correct UTF-8 bytes, which then
+decode properly:
+    text.encode('cp1252').decode('utf-8')
+This only works, and will usually raise an error, on text that WAS
+actually corrupted this specific way — which is why fix_mojibake()
+(jobs/utils.py) wraps it in try/except and returns the original text
+unchanged on failure, making it safe to call on any string.
+
+Two-part fix: (1) ingestion.py now calls fix_mojibake() on every text
+field pulled from the feed, so this can't happen to NEW jobs going
+forward; (2) a one-off management command,
+`python manage.py fix_mojibake` (add --dry-run to preview first),
+repairs jobs already sitting in the database with the bug baked in.
+
+## django-management-commands
+A way to add custom `python manage.py <name>` commands beyond Django's
+built-ins (migrate, runserver, etc.). Structure: a `management/commands/`
+folder inside an app (here, jobs/), with an empty `__init__.py` in both
+`management/` and `management/commands/` (marks them as Python packages —
+without these, Django won't discover the command at all), and one file
+per command named after the command itself (fix_mojibake.py defines
+`python manage.py fix_mojibake`). Each file defines a `Command` class
+inheriting from `BaseCommand`, with a `handle()` method holding the
+actual logic. `add_arguments()` lets a command accept flags like
+--dry-run, read back via the `options` dict passed into `handle()`.
+Good for one-off data repairs, scheduled maintenance, or anything that
+needs to run as a standalone script but still wants full access to
+Django's models/settings — same environment as a view, just triggered
+from the terminal instead of an HTTP request.
+
+## remote-ingestion
+Some hosts block outbound requests (PythonAnywhere's free tier only lets a
+server reach whitelisted sites), so the server can't fetch the job feed
+itself. Remote ingestion flips the direction: something WITH open
+internet (a scheduled GitHub Actions workflow) downloads the feed XML and
+POSTs it to `POST /api/jobs/ingest/`, where `IngestFeedView` runs it
+through `ingest_feed()` — the same dedupe / mojibake-repair / scam-check /
+match-alert pipeline the Celery task uses. `ingestion.py` was split in
+two for this: `ingest_feed(feed)` processes an already-parsed feed, and
+`ingest_myjobmag_kenya()` is now just "fetch, then call ingest_feed()".
+
+The endpoint is called by a machine, not a user, so it skips JWT entirely
+(`authentication_classes = []`) and checks a shared secret in an
+`X-Ingest-Key` header instead. Three details matter:
+- An UNSET server key must disable the endpoint, never open it — otherwise
+  forgetting the environment variable leaves it unprotected.
+- `hmac.compare_digest` compares in constant time, so response timing
+  can't be used to guess the key a character at a time.
+- The body is parsed as raw BYTES, so feedparser reads the encoding from
+  the XML itself rather than guessing from HTTP headers (the guess that
+  caused the mojibake bug).
+Also raised `DATA_UPLOAD_MAX_MEMORY_SIZE` to 10 MB, since Django rejects
+request bodies over 2.5 MB by default and a full feed could exceed that.
+
+## environment-variables
+Configuration that differs per machine, or must stay secret, is read from the
+process environment instead of being written into code:
+`os.environ.get('INGEST_API_KEY', '')`. The same code then runs unchanged on
+your laptop and on a server; only the values differ.
+
+Setting them by hand (`$env:NAME = "value"` in PowerShell) only lasts for that
+one terminal tab, which is easy to forget. So `config/settings.py` also loads a
+git-ignored `.env` file next to `manage.py` using python-dotenv
+(`load_dotenv(BASE_DIR / '.env')`). Real environment variables win over `.env`.
+`.env.example` is the committed template (never put a real secret in it);
+copy it to `.env` and fill it in. The same mechanism works on PythonAnywhere.
+
+Fail-safe defaults: `DEBUG` defaults to OFF, and with DEBUG off a missing
+`SECRET_KEY` raises `ImproperlyConfigured` instead of starting insecurely —
+forgetting to configure a server fails loudly, not silently. Locally, put
+`DEBUG=True` in `.env`. The old hard-coded key is in git history, so treat it
+as public and never use it for anything real.
+
+## secure-cookies
+A cookie flagged `Secure` is only sent over HTTPS. Local development runs on
+plain HTTP, so the refresh cookie used `secure=False`; on a real HTTPS site
+that would let the cookie travel unencrypted. `settings.REFRESH_COOKIE_SECURE`
+(and SESSION/CSRF_COOKIE_SECURE) are `not DEBUG`: off locally, on in
+production. `HttpOnly` (invisible to JavaScript) is a separate flag that stays
+on in both.
+
+## whitenoise
+Django's dev server serves static files (admin CSS, etc.) for you, but with
+`DEBUG=False` it stops — in production something else must. WhiteNoise is
+middleware that serves them straight from Django, so no separate web-server
+configuration is needed. `collectstatic` copies every app's static files into
+`STATIC_ROOT` (`staticfiles/`), and WhiteNoise serves that folder. It also
+serves the built React app: `WHITENOISE_ROOT` points at `frontend_build/`, so
+`/assets/...` files come from there. It does NOT serve user uploads
+(`media/`) — on PythonAnywhere that folder gets its own static-files mapping
+on the Web tab.
+
+## spa-fallback-route
+React Router changes the URL in the browser without asking the server, so a
+page like `/jobs/5` exists only client-side. If you refresh on it, the
+browser asks Django for `/jobs/5`, which Django has never heard of. The fix
+is a catch-all route, last in `config/urls.py`, that returns the same
+`index.html` for any path that isn't `api/`, `admin/`, `media/` or `static/`;
+React then boots and its router renders the right page. `never_cache` on that
+view matters: `index.html` names hashed asset files, so the browser must
+re-fetch it after every deploy to pick up new ones.
+
+## vite-env-variables
+Vite replaces `import.meta.env.VITE_*` values in your code with fixed text AT
+BUILD TIME — they are not read when the page runs in the browser, and anything
+you put in them ships to every visitor, so never put a secret there. Which file
+supplies them depends on the command: `.env.development` for `npm run dev`
+(API at `http://127.0.0.1:8000/api`, another port) and `.env.production` for
+`npm run build` (API at the relative path `/api`, because Django serves the
+app itself, so there is no cross-origin request and no CORS to configure).
+Changing a value means rebuilding.
+
+## unguessable-filenames
+Generated CVs and cover letters are plain files under `media/`, served by URL
+with no login check. A predictable name like `CV_Acme.docx` would let anyone
+who guesses it download someone's CV, so each file gets a random 32-character
+prefix (`uuid.uuid4().hex`). That protects new files by obscurity only — the
+URL is a secret link, not real access control. The proper fix is to serve CVs
+through a Django view that checks the logged-in owner; until then, treat the
+URLs as sensitive. Files created before this change keep their old names.
+
+## github-actions
+GitHub's built-in automation: YAML files in `.github/workflows/` that run on
+GitHub's servers when something happens. Three are used here:
+- `ci.yml` — Continuous Integration: on every push and pull request it installs
+  dependencies and runs `manage.py check`, a missing-migrations check and the
+  tests (on Python 3.12 and 3.13), so a broken change is caught before merging.
+- `ingest.yml` and `sweep.yml` — scheduled jobs (`on: schedule: cron`) that call
+  the production API on a timer; see `remote-ingestion`. Scheduled workflows run
+  only from the default branch (`main`); `workflow_dispatch` adds a manual Run
+  button. GitHub may delay runs queued at minute :00, so the schedules use odd
+  minutes. Credentials come from repository Secrets (`${{ secrets.NAME }}`),
+  which are masked in logs and never stored in the repo.
+Cron syntax: `17 */3 * * *` = minute 17, every 3rd hour, every day.
+
+---
+
+# Frontend (React) Concepts
+
+## node-and-npm
+Node.js is a JavaScript runtime — it lets JS run outside a browser. `npm`
+(Node Package Manager) ships with it and is JS's equivalent of `pip`. Every JS
+project gets its own `node_modules/` folder (created by `npm install`) holding
+that project's dependencies — no `.venv`-style "activate" step; you're always
+just "in" whichever project folder you're standing in.
+
+## vite
+The tool that runs a React app locally (dev server with live reload) and
+bundles it into static files for production (`npm run build`). Roughly Django's
+`runserver` + `collectstatic` combined, but for a JS frontend.
+
+## spa-single-page-application
+Unlike Django, which sends a fresh HTML page per URL, a React app ships ONE
+`index.html`, ever. It is nearly empty — a single `<div id="root">` — and React
+injects/swaps content into it as the user navigates, with no full page reload.
+Routing between "pages" happens entirely in the browser (see `react-router`).
+
+## react-component
+The core building block: an ordinary JavaScript function that returns JSX and
+is exported so other files can use it. Component names are Capitalized (`App`,
+not `app`) — that is how JSX tells a custom component from a plain tag like
+`<div>`. Every Ajiri screen is its own component.
+
+## jsx
+The HTML-looking syntax inside a component's `return (...)`. Not valid
+JavaScript on its own — Vite compiles it into plain JS function calls before
+the browser runs it. Inside JSX, single curly braces `{ }` evaluate a real
+JavaScript expression — the equivalent of Django's `{{ variable }}`, except it
+is actual JavaScript, not a separate template language.
+
+## useState-and-state
+`useState` is a React "Hook" that gives a component memory between renders.
+`const [count, setCount] = useState(0)` creates a state variable and returns
+the current value plus a function to change it. Calling `setCount(...)` tells
+React to re-render the component with the new value. You never touch the page
+yourself (no `document.getElementById(...)`); you describe what the UI should
+look like for the current state and React updates the screen.
+
+## jsx-attribute-quirks
+Some HTML attributes are renamed in JSX because they collide with JavaScript:
+`class` becomes `className`, and `onclick="..."` (a string) becomes
+`onClick={...}` (a real function).
+
+## react-fragment
+A component can return only ONE root element. `<> ... </>` is a Fragment: an
+invisible wrapper that lets you return several siblings without adding an
+extra real `<div>` to the page.
+
+## react-router
+A library that lets an SPA fake having multiple pages. `<BrowserRouter>` wraps
+the app once (in `main.jsx`) and watches the URL; each `<Route path="..."
+element={<Component />} />` maps a URL to a component — like one line of
+Django's `urlpatterns`, but matched in the browser with no reload.
+`path="/jobs/:id"` is a URL parameter (like `<int:pk>`), read with the
+`useParams` hook. `<Link to="...">` replaces `<a href>`: a real `<a>` would do
+a full page reload, defeating the point of an SPA.
+
+## controlled-forms
+React ties every input's value to state: `value={x}` shows it,
+`onChange={(e) => setX(e.target.value)}` updates it on every keystroke, and
+`onSubmit` on the form calls `event.preventDefault()` first to stop the
+browser's default full-page submit.
+
+## async-await
+Plain JavaScript for work that takes time, like a network request, without
+freezing the page. `await apiClient.post(...)` pauses that function until the
+response arrives (inside a function marked `async`). Pair it with
+`try`/`catch` to handle failures — similar to Python's `try`/`except`.
+
+## axios-and-interceptors
+axios is a library over the browser's `fetch()`. Interceptors are functions
+that run before every request (or after every response). Ajiri's
+`src/api/client.js` builds one shared client with `axios.create({ baseURL })`,
+a request interceptor that attaches the JWT as an `Authorization` header, and a
+response interceptor that handles expired tokens (see `refresh-on-401`).
+
+## localstorage-token-tradeoff
+`localStorage` is the browser's simple persistent key-value store. The JWT
+access token lives there — simple to build with, but anything in
+`localStorage` is readable by any JavaScript on the page, including a
+malicious injected script (XSS). An acceptable tradeoff early on, and worth
+revisiting (e.g. an httpOnly cookie, as the refresh token already uses) before
+real users' credentials are at stake.

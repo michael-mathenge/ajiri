@@ -1,3 +1,6 @@
+import hmac
+import uuid
+import feedparser
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from django.http import HttpResponse
@@ -6,9 +9,16 @@ from django.core.files.base import ContentFile
 from django.core.mail import EmailMessage
 from django.conf import settings
 from django.utils import timezone
-from .models import Job, Application
-from .serializers import JobListSerializer, JobDetailSerializer, ApplicationSerializer
+from .models import Job, Application, Notification
+from .serializers import (
+    JobListSerializer,
+    JobDetailSerializer,
+    ApplicationSerializer,
+    NotificationSerializer,
+)
 from .filters import JobFilter
+from .ingestion import ingest_feed
+from .matching import sweep_all_active_jobs_for_matches
 from .cover_letter_generator import generate_cover_letter_docx
 from profiles.cv_generator import generate_cv_docx
 
@@ -71,6 +81,10 @@ class ApplyToJobView(generics.GenericAPIView):
         cv_buffer = generate_cv_docx(profile)
         cover_letter_buffer = generate_cover_letter_docx(profile, job)
         safe_company = job.company_name.replace(' ', '_')
+        # Generated files are served as plain static files, so a guessable name
+        # like CV_Acme.docx would let anyone download someone's CV. A random
+        # prefix makes each URL unguessable. See docs/CONCEPTS.md#unguessable-filenames
+        file_token = uuid.uuid4().hex
 
         application = Application(
             user=request.user,
@@ -86,10 +100,10 @@ class ApplyToJobView(generics.GenericAPIView):
         # doesn't hit the DB yet — we want one single application.save()
         # call below, not three separate writes.
         application.generated_cv.save(
-            f"CV_{safe_company}.docx", ContentFile(cv_buffer.read()), save=False
+            f"{file_token}_CV_{safe_company}.docx", ContentFile(cv_buffer.read()), save=False
         )
         application.generated_cover_letter.save(
-            f"Cover_Letter_{safe_company}.docx", ContentFile(cover_letter_buffer.read()), save=False
+            f"{file_token}_Cover_Letter_{safe_company}.docx", ContentFile(cover_letter_buffer.read()), save=False
         )
 
         if application.application_method == Job.ApplicationMethod.EMAIL:
@@ -106,6 +120,20 @@ class ApplyToJobView(generics.GenericAPIView):
 
         serializer = ApplicationSerializer(application, context={'request': request})
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class ApplicationListView(generics.ListAPIView):
+    """
+    GET /jobs/applications/ — every Application belonging to the logged-in
+    user, most recent first. Powers the frontend's My Applications page.
+    Scoped to request.user so nobody can list another user's applications
+    just by knowing this endpoint exists.
+    """
+    serializer_class = ApplicationSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        return Application.objects.filter(user=self.request.user).order_by('-created_at')
 
 
 class SendApplicationView(generics.GenericAPIView):
@@ -163,3 +191,112 @@ class SendApplicationView(generics.GenericAPIView):
 
         serializer = ApplicationSerializer(application, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class NotificationListView(generics.ListAPIView):
+    """
+    GET /jobs/notifications/ — every job-match alert belonging to the
+    logged-in user, most recent first. Powers the frontend's Notifications
+    page. Scoped to request.user, same reasoning as ApplicationListView.
+    """
+    serializer_class = NotificationSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        return Notification.objects.filter(user=self.request.user).order_by('-created_at')
+
+
+class MarkNotificationReadView(generics.GenericAPIView):
+    """
+    POST /jobs/notifications/<pk>/mark-read/ — flips is_read to True.
+    Deliberately a separate endpoint rather than a general PATCH, since
+    is_read is the only field a user should ever be able to change on a
+    Notification (match_score, sent_email etc. are system-set facts).
+    """
+    permission_classes = (permissions.IsAuthenticated,)
+    queryset = Notification.objects.all()
+
+    def post(self, request, pk):
+        notification = get_object_or_404(Notification, pk=pk, user=request.user)
+        notification.is_read = True
+        notification.save(update_fields=['is_read'])
+
+        serializer = NotificationSerializer(notification, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+def has_valid_ingest_key(request):
+    """
+    True only if the request carries the correct X-Ingest-Key header.
+
+    An UNSET server key must DISABLE the endpoints, never open them —
+    otherwise forgetting the environment variable would leave them
+    unprotected. hmac.compare_digest compares in constant time so response
+    timing can't be used to guess the key one character at a time.
+    Shared by IngestFeedView and SweepMatchesView.
+    """
+    expected_key = settings.INGEST_API_KEY
+    provided_key = request.headers.get('X-Ingest-Key', '')
+    return bool(expected_key) and hmac.compare_digest(
+        provided_key.encode('utf-8'), expected_key.encode('utf-8')
+    )
+
+
+class IngestFeedView(generics.GenericAPIView):
+    """
+    POST /api/jobs/ingest/ — receives a raw job-feed XML body and runs it
+    through the same ingest_feed() pipeline the Celery task uses.
+
+    Exists because some hosts (PythonAnywhere's free tier) block outbound
+    requests to sites not on a whitelist, so the server can't fetch the
+    feed itself. Instead, something with open internet (a scheduled GitHub
+    Actions job) fetches it and POSTs it here. See docs/CONCEPTS.md#remote-ingestion
+
+    Deliberately NOT JWT-authenticated: callers are a machine, not a user.
+    A shared secret in the X-Ingest-Key header (settings.INGEST_API_KEY,
+    set from an environment variable) is the credential instead.
+    authentication_classes = [] also means a stale user token can never
+    break this endpoint — see docs/CONCEPTS.md#stale-token-on-public-endpoints
+    """
+    authentication_classes = []
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request):
+        if not has_valid_ingest_key(request):
+            return Response(
+                {'detail': 'Invalid or missing ingest key.'},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        # Parse the raw BYTES, not a decoded string: feedparser then reads
+        # the encoding from the XML itself instead of guessing from HTTP
+        # headers (the guess that caused the mojibake bug).
+        feed = feedparser.parse(request.body)
+        if not feed.entries:
+            return Response(
+                {'detail': 'No feed entries found in request body.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        return Response(ingest_feed(feed), status=status.HTTP_200_OK)
+
+
+class SweepMatchesView(generics.GenericAPIView):
+    """
+    POST /api/jobs/sweep/ — runs the match sweep (re-checks every active job
+    against every profile and sends alerts not yet sent). The scheduled
+    GitHub Actions workflow calls this where Celery Beat isn't available.
+    Same machine-to-machine protection as IngestFeedView.
+    See docs/CONCEPTS.md#remote-ingestion
+    """
+    authentication_classes = []
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request):
+        if not has_valid_ingest_key(request):
+            return Response(
+                {'detail': 'Invalid or missing ingest key.'},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        notified = sweep_all_active_jobs_for_matches()
+        return Response({'notified': notified}, status=status.HTTP_200_OK)

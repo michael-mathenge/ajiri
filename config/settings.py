@@ -10,22 +10,59 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
+import os
 from pathlib import Path
+
+from django.core.exceptions import ImproperlyConfigured
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Configuration that differs per machine (or must stay secret) comes from
+# ENVIRONMENT VARIABLES. For convenience, a git-ignored `.env` file next to
+# manage.py is loaded into the environment here — the same mechanism works on
+# your laptop and on the server. Real environment variables win over `.env`.
+# See docs/CONCEPTS.md#environment-variables
+load_dotenv(BASE_DIR / '.env')
+
+
+def env_bool(name, default=False):
+    return os.environ.get(name, str(default)).strip().lower() in ('1', 'true', 'yes', 'on')
+
+
+def env_list(name, default=''):
+    return [item.strip() for item in os.environ.get(name, default).split(',') if item.strip()]
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-8v3d0auyuj1r5yo(%di5^3ixo5@=og=)o(6i)&)sx_wctvk+oz'
-
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# Defaults to OFF so that forgetting to configure a server fails safe; for local
+# development put DEBUG=True in your `.env` file (see .env.example).
+DEBUG = env_bool('DEBUG', False)
 
-ALLOWED_HOSTS = []
+# SECURITY WARNING: keep the secret key used in production secret!
+# The old key that used to live here is in git history, so treat it as public
+# and never use it anywhere real.
+SECRET_KEY = os.environ.get('SECRET_KEY', '')
+if not SECRET_KEY:
+    if DEBUG:
+        SECRET_KEY = 'django-insecure-local-development-only-key'
+    else:
+        raise ImproperlyConfigured(
+            'SECRET_KEY is not set. Copy .env.example to .env and fill it in '
+            '(or set it in the server environment).'
+        )
+
+# Comma-separated hostnames, e.g. "yourname.pythonanywhere.com". Empty is fine
+# in development: Django allows localhost automatically when DEBUG is True.
+ALLOWED_HOSTS = env_list('ALLOWED_HOSTS')
+
+# Needed for form POSTs (the Django admin login) over HTTPS, e.g.
+# "https://yourname.pythonanywhere.com". Must include the scheme.
+CSRF_TRUSTED_ORIGINS = env_list('CSRF_TRUSTED_ORIGINS')
 
 
 # Application definition
@@ -53,6 +90,10 @@ MIDDLEWARE = [
     # Django's other middleware has a chance to process/reject the
     # request. See docs/CONCEPTS.md#cors
     'corsheaders.middleware.CorsMiddleware',
+    # WhiteNoise serves static files (admin CSS) and the built React app
+    # straight from Django, so no separate web-server config is needed.
+    # See docs/CONCEPTS.md#whitenoise
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -88,6 +129,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+        # SQLite allows one writer at a time. The scheduled ingest can overlap
+        # with web requests, so wait up to 20s for the lock instead of failing
+        # instantly with "database is locked".
+        'OPTIONS': {'timeout': 20},
     }
 }
 
@@ -127,6 +172,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.1/howto/static-files/
 
 STATIC_URL = 'static/'
+# `python manage.py collectstatic` gathers admin/DRF static files here; WhiteNoise serves them.
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+if DEBUG:
+    # Avoids WhiteNoise's "No directory at staticfiles/" warning on every dev
+    # start. Deliberately NOT done in production, where that warning is a useful
+    # reminder that `collectstatic` hasn't been run.
+    STATIC_ROOT.mkdir(exist_ok=True)
 
 
 # Email
@@ -139,8 +191,15 @@ STATIC_URL = 'static/'
 # Console backend prints emails to the terminal instead of sending them —
 # free, zero setup, perfect for local dev. Swap to a real SMTP/API backend
 # (e.g. Django Anymail + a provider) before going to production.
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-DEFAULT_FROM_EMAIL = 'Ajiri <noreply@ajiri.co.ke>'
+# Defaults to the console backend. To send real mail set EMAIL_BACKEND to
+# 'django.core.mail.backends.smtp.EmailBackend' plus the EMAIL_HOST* variables.
+EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')
+EMAIL_HOST = os.environ.get('EMAIL_HOST', '')
+EMAIL_PORT = int(os.environ.get('EMAIL_PORT', '587'))
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
+EMAIL_USE_TLS = env_bool('EMAIL_USE_TLS', True)
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'Ajiri <noreply@ajiri.co.ke>')
 
 AUTH_USER_MODEL = 'accounts.User'
 REST_FRAMEWORK = {
@@ -169,8 +228,8 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
-CELERY_BROKER_URL = 'redis://localhost:6379/0'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL', 'redis://localhost:6379/0')
+CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND', 'redis://localhost:6379/0')
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'Africa/Nairobi'
@@ -201,13 +260,49 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # far as the browser is concerned, even though both run on your own
 # machine. Without this, the browser blocks every API call the frontend
 # makes, no matter how correct the request itself is. See docs/CONCEPTS.md#cors
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:5173',
-    'http://127.0.0.1:5173',
-]
+# In production the React app is served by Django itself (same origin), so no
+# cross-origin access is needed and the default is empty. In development the
+# Vite dev server runs on a different port, so those origins are allowed.
+CORS_ALLOWED_ORIGINS = env_list(
+    'CORS_ALLOWED_ORIGINS',
+    'http://localhost:5173,http://127.0.0.1:5173' if DEBUG else '',
+)
 
 # Required for the browser to actually store/send the httpOnly
 # refresh_token cookie cross-origin (5173 -> 8000 counts as cross-origin
 # even on the same machine). Without this, Set-Cookie headers from
 # LoginView get silently dropped by the browser. See docs/CONCEPTS.md#cors-credentials
 CORS_ALLOW_CREDENTIALS = True
+
+# Shared secret for the remote ingest endpoint (POST /api/jobs/ingest/).
+# Read from an ENVIRONMENT VARIABLE so the real value never lives in git.
+# Empty (unset) means the endpoint refuses every request. See
+# docs/CONCEPTS.md#remote-ingestion
+INGEST_API_KEY = os.environ.get('INGEST_API_KEY', '')
+
+# Django rejects request bodies over 2.5 MB by default (RequestDataTooBig).
+# A full job-feed XML can exceed that, so raise the ceiling to 10 MB.
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024
+
+# ---- Production hardening (see docs/DEPLOY_PYTHONANYWHERE.md) ----
+
+# Cookies must be HTTPS-only everywhere except local development, where the dev
+# server speaks plain HTTP. REFRESH_COOKIE_SECURE is read by accounts/views.py.
+REFRESH_COOKIE_SECURE = not DEBUG
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
+
+# Opt-in only: tells Django to believe the proxy's X-Forwarded-Proto header, so
+# request.is_secure() and absolute URLs (the CV/cover-letter links in API
+# responses) use https://. Enable it ONLY if the host's proxy sets/overwrites
+# that header — otherwise a client could spoof it.
+if env_bool('TRUST_PROXY_SSL_HEADER', False):
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# The built React app (see scripts/build_frontend.ps1) lives here. When the
+# folder exists, WhiteNoise serves its files at the site root and the catch-all
+# route in config/urls.py serves index.html for client-side routes.
+# See docs/CONCEPTS.md#spa-fallback-route
+FRONTEND_BUILD_DIR = BASE_DIR / 'frontend_build'
+if FRONTEND_BUILD_DIR.is_dir():
+    WHITENOISE_ROOT = FRONTEND_BUILD_DIR

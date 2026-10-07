@@ -1,0 +1,32 @@
+# Continuous Integration: every push and pull request gets the same checks you run
+# by hand (`manage.py check`, missing-migration check, tests), on the Python
+# you develop with (3.12), the one PythonAnywhere runs (3.13), and the newest (3.14).
+# See docs/CONCEPTS.md#github-actions
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.12', '3.13', '3.14']
+    env:
+      # settings.py refuses to start without these (see .env.example).
+      DEBUG: 'True'
+      SECRET_KEY: ci-only-not-a-real-secret
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: requirements*.txt
+      - run: pip install -r requirements.txt
+      - run: python manage.py check
+      - run: python manage.py makemigrations --check --dry-run
+      - run: python manage.py test

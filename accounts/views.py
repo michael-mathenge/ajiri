@@ -31,7 +31,7 @@ class LoginView(APIView):
             key='refresh_token',
             value=str(refresh),
             httponly=True,
-            secure=False,
+            secure=settings.REFRESH_COOKIE_SECURE,
             samesite='Lax',
             max_age=7 * 24 * 60 * 60,
         )
@@ -75,7 +75,7 @@ class RefreshView(APIView):
                 key='refresh_token',
                 value=str(refresh),
                 httponly=True,
-                secure=False,
+                secure=settings.REFRESH_COOKIE_SECURE,
                 samesite='Lax',
                 max_age=7 * 24 * 60 * 60,
             )

@@ -19,6 +19,8 @@ staticfiles/
 # Environment variables / secrets
 .env
 .env.*
+# ...but the example file is documentation and must be committed:
+!.env.example
 
 # PyCharm
 .idea/

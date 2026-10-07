@@ -19,3 +19,26 @@ def detect_application_method(description: str) -> tuple[str, str]:
     if match:
         return 'email', match.group(0)
     return 'external_link', ''
+
+
+def fix_mojibake(text: str) -> str:
+    """
+    Repairs a specific, common encoding bug: text that was originally
+    valid UTF-8 (e.g. containing an en-dash, curly quote, etc.) but got
+    wrongly decoded as Windows-1252 somewhere upstream — producing
+    garbled sequences like 'â€"' in place of '–'. See docs/CONCEPTS.md#mojibake
+
+    The fix works because no information was actually lost: re-encoding
+    the WRONG string back to cp1252 bytes recovers the ORIGINAL correct
+    UTF-8 bytes, which can then be decoded properly. Wrapped in a
+    try/except because running this on text that was NEVER corrupted
+    will usually raise (there's nothing wrong to reverse) — in that
+    case we just return the original text unchanged, so this is always
+    safe to call on any string, corrupted or not.
+    """
+    if not text:
+        return text
+    try:
+        return text.encode('cp1252').decode('utf-8')
+    except (UnicodeDecodeError, UnicodeEncodeError):
+        return text

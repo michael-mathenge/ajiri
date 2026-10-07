@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Job, Application
+from .models import Job, Application, Notification
 from .matching import calculate_match_score
 from profiles.serializers import SkillSerializer
 
@@ -68,4 +68,26 @@ class ApplicationSerializer(serializers.ModelSerializer):
             'application_method', 'application_email',
             'generated_cv', 'generated_cover_letter',
             'created_at', 'updated_at', 'sent_at',
+        )
+
+
+class NotificationSerializer(serializers.ModelSerializer):
+    """
+    Represents one job-match alert for the frontend's Notifications page.
+    job_id is exposed separately from the nested job fields so the
+    frontend can link straight to /jobs/<job_id>/ without a second lookup.
+    """
+    job_title = serializers.CharField(source='job.title', read_only=True)
+    company_name = serializers.CharField(source='job.company_name', read_only=True)
+    job_id = serializers.IntegerField(source='job.id', read_only=True)
+
+    class Meta:
+        model = Notification
+        fields = (
+            'id', 'job_id', 'job_title', 'company_name',
+            'match_score', 'is_read', 'sent_email', 'created_at',
+        )
+        read_only_fields = (
+            'id', 'job_id', 'job_title', 'company_name',
+            'match_score', 'sent_email', 'created_at',
         )

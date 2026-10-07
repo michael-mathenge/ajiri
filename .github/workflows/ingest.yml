@@ -1,0 +1,56 @@
+# Fetches the MyJobMag feed from GitHub's servers (which have open internet) and
+# POSTs it to Ajiri. Needed because PythonAnywhere's free tier can only reach
+# whitelisted sites, so the server can't fetch the feed itself.
+# See docs/CONCEPTS.md#remote-ingestion
+#
+# Scheduled workflows only run from the DEFAULT branch (main), so this file does
+# nothing until it is merged there. Run it by hand any time from the Actions tab.
+#
+# Required repository secrets (Settings > Secrets and variables > Actions):
+#   AJIRI_BASE_URL   e.g. https://yourname.pythonanywhere.com   (no trailing slash)
+#   INGEST_API_KEY   must equal INGEST_API_KEY in the server's .env
+name: Ingest jobs
+
+on:
+  schedule:
+    # Every 3 hours, at minute 17. Not on the hour: GitHub queues heavily at :00
+    # and may delay or drop runs. Every 3 hours (not hourly) also saves
+    # PythonAnywhere's small daily CPU allowance.
+    - cron: '17 */3 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: ingest
+  cancel-in-progress: false
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      FEED_URL: https://www.myjobmag.co.ke/jobsxml_by_categories.xml
+    steps:
+      - name: Download the feed
+        run: |
+          curl --fail --silent --show-error --location \
+            --retry 3 --retry-delay 5 --max-time 60 \
+            --user-agent "Mozilla/5.0 (compatible; AjiriIngest/1.0)" \
+            --output feed.xml "$FEED_URL"
+          # An empty file would be a silent success otherwise.
+          test -s feed.xml
+          echo "Downloaded $(wc -c < feed.xml) bytes"
+
+      - name: Send the feed to Ajiri
+        env:
+          AJIRI_BASE_URL: ${{ secrets.AJIRI_BASE_URL }}
+          INGEST_API_KEY: ${{ secrets.INGEST_API_KEY }}
+        run: |
+          # Safe to retry: ingest skips jobs it already has, so repeats create nothing.
+          curl --fail-with-body --silent --show-error \
+            --retry 3 --retry-delay 10 --max-time 120 \
+            --request POST \
+            --header "X-Ingest-Key: $INGEST_API_KEY" \
+            --header "Content-Type: application/xml" \
+            --data-binary @feed.xml \
+            "${AJIRI_BASE_URL%/}/api/jobs/ingest/"
+          echo

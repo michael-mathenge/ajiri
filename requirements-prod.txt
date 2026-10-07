@@ -1,0 +1,36 @@
+# Runtime dependencies only: what the SERVER needs. Used by the PythonAnywhere
+# deploy, where disk is tight (512 MB free tier). Development extras (type
+# stubs for the IDE) live in requirements.txt, which includes this file.
+amqp==5.3.1
+asgiref==3.12.1
+billiard==4.2.4
+celery==5.6.3
+click==8.4.2
+click-didyoumean==0.3.1
+click-plugins==1.1.1.2
+click-repl==0.3.0
+colorama==0.4.6
+Django==6.1
+djangorestframework==3.18.0
+djangorestframework-simplejwt==5.5.1
+django-cors-headers==4.9.0
+django-filter==26.1
+feedparser==6.0.14
+feedparser-sgmllib==2.1.0
+kombu==5.6.2
+lxml==6.1.2
+packaging==26.3
+prompt_toolkit==3.0.53
+PyJWT==2.13.0
+python-dateutil==2.9.0.post0
+python-docx==1.2.0
+python-dotenv==1.2.4
+redis==8.1.0
+six==1.17.0
+sqlparse==0.6.0
+typing_extensions==4.16.0
+tzdata==2026.3
+tzlocal==5.4.4
+vine==5.1.0
+wcwidth==0.8.2
+whitenoise==6.12.0

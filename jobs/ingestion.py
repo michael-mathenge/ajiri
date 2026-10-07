@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 from django.utils.timezone import make_aware
 from .models import Job
 from .scam_filter import analyze_job_for_scam
-from .utils import detect_application_method
+from .utils import detect_application_method, fix_mojibake
 from .matching import notify_matching_profiles
 
 MYJOBMAG_KENYA_FEED = "https://www.myjobmag.co.ke/jobsxml_by_categories.xml"
@@ -20,9 +20,15 @@ def parse_pubdate(entry):
     return None
 
 
-def ingest_myjobmag_kenya():
-    feed = feedparser.parse(MYJOBMAG_KENYA_FEED)
-
+def ingest_feed(feed):
+    """
+    Processes an already-parsed feedparser result: dedupe, repair encoding,
+    create Job rows, scam-check, and fire match alerts. Split out from
+    ingest_myjobmag_kenya() so TWO different callers can share it:
+    the Celery task (which fetches the feed itself) and the remote ingest
+    endpoint (where something else fetches the feed and POSTs it to us).
+    See docs/CONCEPTS.md#remote-ingestion
+    """
     created_count = 0
     skipped_count = 0
     flagged_count = 0
@@ -42,15 +48,20 @@ def ingest_myjobmag_kenya():
             skipped_count += 1
             continue
 
-        title = entry.get('position') or entry.get('title', '')
-        company_name = entry.get('company', '')
+        # fix_mojibake() repairs a known encoding bug from this specific
+        # feed — see docs/CONCEPTS.md#mojibake. Applied to every text
+        # field pulled from the feed, since any of them can contain the
+        # affected characters (en-dashes, curly quotes, etc.).
+        title = fix_mojibake(entry.get('position') or entry.get('title', ''))
+        company_name = fix_mojibake(entry.get('company', ''))
 
         if not title or not company_name:
             # Malformed entry — log and skip rather than saving garbage.
             skipped_count += 1
             continue
 
-        description = entry.get('description', '')
+        description = fix_mojibake(entry.get('description', ''))
+        location = fix_mojibake(entry.get('location', ''))
 
         # Scan the description for an email address to decide whether
         # this job supports true auto-apply (email) or needs the user
@@ -62,7 +73,7 @@ def ingest_myjobmag_kenya():
             title=title,
             company_name=company_name,
             description=description,
-            location=entry.get('location', ''),
+            location=location,
             source_url=source_url,
             source_name='MyJobMag Kenya',
             posted_at=parse_pubdate(entry),
@@ -95,3 +106,9 @@ def ingest_myjobmag_kenya():
         'flagged': flagged_count,
         'notified': notified_count,
     }
+
+
+def ingest_myjobmag_kenya():
+    """Fetches the live feed directly (works wherever outbound internet is open)."""
+    feed = feedparser.parse(MYJOBMAG_KENYA_FEED)
+    return ingest_feed(feed)

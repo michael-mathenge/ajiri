@@ -1,0 +1,33 @@
+# Re-checks every active job against every profile and sends match alerts that
+# haven't gone out yet (catches profiles created or edited after a job arrived).
+# Replaces the Celery Beat schedule, which can't run on PythonAnywhere's free tier.
+# See docs/CONCEPTS.md#remote-ingestion
+#
+# Same secrets as ingest.yml. Runs only from the default branch (main).
+name: Sweep matches
+
+on:
+  schedule:
+    - cron: '47 */6 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: sweep
+  cancel-in-progress: false
+
+jobs:
+  sweep:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Trigger the sweep
+        env:
+          AJIRI_BASE_URL: ${{ secrets.AJIRI_BASE_URL }}
+          INGEST_API_KEY: ${{ secrets.INGEST_API_KEY }}
+        run: |
+          curl --fail-with-body --silent --show-error \
+            --retry 3 --retry-delay 10 --max-time 120 \
+            --request POST \
+            --header "X-Ingest-Key: $INGEST_API_KEY" \
+            "${AJIRI_BASE_URL%/}/api/jobs/sweep/"
+          echo
