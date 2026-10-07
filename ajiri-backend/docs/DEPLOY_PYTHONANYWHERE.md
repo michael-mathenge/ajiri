@@ -43,8 +43,10 @@ Bash console, **[Web]** a browser.
 2. Open **Consoles -> Bash** and run:
    ```bash
    git clone https://github.com/michael-mathenge/ajiri.git
-   cd ajiri
+   cd ajiri/ajiri-backend
    ```
+   The repository holds both apps; the Django project is the `ajiri-backend` folder, and every
+   later command in this runbook runs from there.
    If the repo is private, use a GitHub fine-grained token with read-only "Contents"
    access: `git clone https://TOKEN@github.com/michael-mathenge/ajiri.git`.
    If the clone fails with a network error, upload a zip through the **Files** tab
@@ -87,7 +89,7 @@ Bash console, **[Web]** a browser.
 4. **Static files** section, add one mapping:
    | URL | Directory |
    |---|---|
-   | `/media/` | `/home/YOURNAME/ajiri/media` |
+   | `/media/` | `/home/YOURNAME/ajiri/ajiri-backend/media` |
 
    WhiteNoise already serves `/static/` and the React app; only uploaded CVs and
    cover letters need this mapping.
@@ -134,13 +136,14 @@ Part 2 is missing or wrong. Links should open over `https://`.
 **Deploy an update** **[PA]**:
 ```bash
 cd ~/ajiri && git pull
+cd ajiri-backend
 pip install -r requirements-prod.txt   # only needed if requirements changed
 python manage.py migrate
 python manage.py collectstatic --noinput
 ```
 Then **Reload** on the Web tab.
 
-**Backups:** the whole database is one file, `~/ajiri/db.sqlite3`. Download it from the
+**Backups:** the whole database is one file, `~/ajiri/ajiri-backend/db.sqlite3`. Download it from the
 **Files** tab regularly. Never copy a database over a live one by accident: a stale copy
 silently deletes every user created since.
 

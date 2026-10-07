@@ -369,7 +369,8 @@ through a Django view that checks the logged-in owner; until then, treat the
 URLs as sensitive. Files created before this change keep their old names.
 
 ## github-actions
-GitHub's built-in automation: YAML files in `.github/workflows/` that run on
+GitHub's built-in automation: YAML files in `.github/workflows/` (GitHub only looks
+for them at the repository ROOT) that run on
 GitHub's servers when something happens. Three are used here:
 - `ci.yml` — Continuous Integration: on every push and pull request it installs
   dependencies and runs `manage.py check`, a missing-migrations check and the
@@ -470,3 +471,19 @@ access token lives there — simple to build with, but anything in
 malicious injected script (XSS). An acceptable tradeoff early on, and worth
 revisiting (e.g. an httpOnly cookie, as the refresh token already uses) before
 real users' credentials are at stake.
+
+## monorepo
+One git repository holding several related apps — here the Django backend and the
+React frontend, side by side under a single root (`ajiri-backend/`, `ajiri-frontend/`).
+Benefits: one clone, one branch and pull request can change API and UI together, CI
+can check both (and check that the committed `frontend_build/` matches the frontend
+source), and root-level files like CLAUDE.md and SETUP.md are versioned too. Cost:
+tools must be told which folder to work in — in workflows that is
+`defaults.run.working-directory`, on a server it is `cd ~/ajiri/ajiri-backend`.
+
+How the existing history survived the move: the old repository's `.git` folder was
+moved up one level, so every backend file now sits one folder deeper
+(`manage.py` became `ajiri-backend/manage.py`). Git detects a moved file with
+unchanged content as a RENAME, so `git log --follow <file>` still shows its full
+history. A nested `.git` inside `ajiri-frontend/` had to be removed first: a repo
+inside a repo is recorded as an opaque pointer, not as files.

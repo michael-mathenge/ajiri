@@ -38,7 +38,7 @@ Django REST API backend for Ajiri (ajiri.co.ke) — a Kenyan job-finding platfor
 
 ## First-time setup
 
-Clone the repo, then from the project root (the folder with `manage.py`):
+Clone the repo (it holds both apps, `ajiri-backend/` and `ajiri-frontend/`; see the repository layout under "Project structure"), then from `ajiri-backend/` (the folder with `manage.py`):
 
 ```powershell
 py -3.12 -m venv .venv
@@ -107,6 +107,16 @@ If you pulled new code that changed `models.py` anywhere, also run `python manag
 
 ## Project structure
 
+One git repository holds the whole project. The repository root is the folder *above* this one:
+
+```
+ajiri.co.ke/               # repository root (clone the repo into a folder with this name)
+├── .github/workflows/     # ci.yml (backend + frontend checks), ingest.yml + sweep.yml (scheduled calls to the production API)
+├── CLAUDE.md, SETUP.md    # rules for AI assistants; first-time setup
+├── ajiri-frontend/        # React + Vite app
+└── ajiri-backend/         # this Django project, described below
+```
+
 ```
 ajiri-backend/
 ├── config/            # Project settings, URL routing, Celery app config
@@ -128,7 +138,6 @@ ajiri-backend/
 │   ├── utils.py                # Application-method detection, fix_mojibake()
 │   ├── management/commands/    # fix_mojibake: one-off repair of mis-decoded text
 │   └── tasks.py                # Celery task wrappers (local development)
-├── .github/workflows/  # ci.yml (tests), ingest.yml + sweep.yml (scheduled calls to the production API)
 ├── deploy/             # WSGI file template for PythonAnywhere
 ├── scripts/            # build_frontend.ps1: builds the React app into frontend_build/
 ├── frontend_build/     # Committed production build of ajiri-frontend, served by Django
@@ -204,7 +213,7 @@ ajiri-backend/
 
 **Deferred to V2** (logged in Monday.com, Product discovery status): CV parsing/auto-extraction from uploaded files; AI-generated (vs. template-based) cover letter text; Salary Negotiation Coaching upsell with admin notification; SMS/WhatsApp alerts.
 
-**CI/CD**: CI exists — `.github/workflows/ci.yml` runs `manage.py check`, a missing-migrations check and the full test suite on every push to `main` and every pull request, on Python 3.12, 3.13 and 3.14. Deployment is manual for now: `git pull`, `migrate`, `collectstatic`, then Reload on PythonAnywhere (see the runbook).
+**CI/CD**: CI exists — `.github/workflows/ci.yml` (at the repository root) runs on every push to `main` and every pull request. The backend job runs `manage.py check`, a missing-migrations check and the full test suite on Python 3.12, 3.13 and 3.14; the frontend job runs lint and a production build, and fails if the committed `ajiri-backend/frontend_build/` doesn't match what that build produces. Deployment is manual for now: `git pull`, `migrate`, `collectstatic`, then Reload on PythonAnywhere (see the runbook).
 
 ---
 
