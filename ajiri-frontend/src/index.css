@@ -1,0 +1,291 @@
+:root {
+  --ink: #171b22;
+  --ink-raised: #1e232c;
+  --paper: #ece7da;
+  --paper-dim: #a8a396;
+  --rule: #3a4150;
+  --stamp: #c4622d;
+  --stamp-dim: #8f4a22;
+  --marigold: #d9a441;
+  --sage: #7a9471;
+  --danger: #b85c5c;
+
+  --sans: 'IBM Plex Sans', system-ui, sans-serif;
+  --slab: 'Roboto Slab', Georgia, serif;
+
+  color-scheme: dark;
+  font: 16px/1.55 var(--sans);
+  color: var(--paper);
+  background: var(--ink);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+#root {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+}
+
+a {
+  color: var(--marigold);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+:focus-visible {
+  outline: 2px solid var(--marigold);
+  outline-offset: 2px;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--slab);
+  font-weight: 600;
+  color: var(--paper);
+  margin: 0 0 0.4em;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 1.75rem;
+}
+
+h2 {
+  font-size: 1.3rem;
+}
+
+h3 {
+  font-size: 1.05rem;
+  margin-bottom: 0.2em;
+}
+
+p {
+  margin: 0 0 0.6em;
+}
+
+/* ---- Layout ---- */
+
+.topbar {
+  border-bottom: 1px solid var(--rule);
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.brand {
+  font-family: var(--slab);
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: var(--paper);
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  text-decoration: none;
+}
+
+.brand:hover {
+  text-decoration: none;
+}
+
+.brand-mark {
+  color: var(--stamp);
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.nav-links {
+  display: flex;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.nav-links a {
+  color: var(--paper-dim);
+  font-size: 0.9rem;
+}
+
+.nav-links a:hover {
+  color: var(--marigold);
+}
+
+.container {
+  max-width: 720px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+  flex: 1;
+}
+
+/* ---- Ledger rows (jobs, applications, notifications) ---- */
+
+.ledger {
+  border-top: 1px solid var(--rule);
+}
+
+.row {
+  padding: 1.1rem 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.row-unread {
+  background: linear-gradient(90deg, rgba(217, 164, 65, 0.08), transparent 40%);
+}
+
+.row-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+}
+
+.row-title {
+  font-family: var(--slab);
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.row-meta {
+  color: var(--paper-dim);
+  font-size: 0.88rem;
+  margin: 0.15em 0 0;
+}
+
+.match {
+  color: var(--marigold);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* ---- Stamp: the one bold moment ---- */
+
+.stamp {
+  display: inline-block;
+  font-family: var(--slab);
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--stamp);
+  border: 2px solid var(--stamp);
+  border-radius: 2px;
+  padding: 0.15rem 0.5rem;
+  transform: rotate(-3deg);
+}
+
+.status-text {
+  color: var(--paper-dim);
+  font-size: 0.85rem;
+}
+
+/* ---- Buttons ---- */
+
+.btn {
+  font-family: var(--sans);
+  font-size: 0.92rem;
+  font-weight: 500;
+  padding: 0.55rem 1.1rem;
+  border-radius: 3px;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: var(--stamp);
+  color: var(--paper);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--stamp-dim);
+}
+
+.btn-primary:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.btn-plain {
+  background: transparent;
+  border: 1px solid var(--rule);
+  color: var(--paper);
+}
+
+.btn-plain:hover {
+  border-color: var(--marigold);
+  color: var(--marigold);
+}
+
+/* ---- Forms ---- */
+
+.form-card {
+  max-width: 380px;
+  margin: 2rem 0;
+}
+
+.field {
+  margin-bottom: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.field label {
+  font-size: 0.85rem;
+  color: var(--paper-dim);
+}
+
+.field input {
+  font: inherit;
+  background: var(--ink-raised);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  padding: 0.55rem 0.7rem;
+  color: var(--paper);
+}
+
+.field input:focus {
+  border-color: var(--marigold);
+}
+
+/* ---- States ---- */
+
+.error-text {
+  color: var(--danger);
+  font-size: 0.9rem;
+}
+
+.empty-state {
+  color: var(--paper-dim);
+  padding: 2rem 0;
+}
+
+.detail-block {
+  margin: 1.5rem 0;
+}
+
+.detail-block p {
+  color: var(--paper-dim);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}

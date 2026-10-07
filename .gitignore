@@ -1,39 +1,18 @@
-# Virtual environment
-.venv/
-venv/
-env/
-
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-
-# Django
-db.sqlite3
-db.sqlite3-journal
-*.log
-media/
-staticfiles/
-
-# Environment variables / secrets
-.env
-.env.*
-
-# PyCharm
+# Editor and OS files
 .idea/
-
-# VS Code
 .vscode/
-
-# OS files
 .DS_Store
 Thumbs.db
 
-# Distribution / packaging
-build/
-dist/
-*.egg-info/
+# Virtual environments and archives at the project root
+.venv/
+venv/
+*.zip
+*.bak
 
-cookies.txt
-celerybeat-schedule*
+# Local scratch files
+feed.xml
+MANIFEST.sha256
+
+# Everything else (venvs, node_modules, databases, .env, build output) is ignored by
+# the .gitignore inside ajiri-backend/ and ajiri-frontend/.

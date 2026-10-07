@@ -1,0 +1,62 @@
+# Continuous Integration: every push to main and every pull request gets the same checks
+# you run by hand. The repository holds both apps, so there are two jobs:
+#   backend  - manage.py check, missing-migration check and the tests, on the Python you
+#              develop with (3.12), the one PythonAnywhere runs (3.13), and the newest (3.14).
+#   frontend - lint, a production build, and a check that the committed
+#              ajiri-backend/frontend_build/ really is what that build produces.
+# See docs/CONCEPTS.md#github-actions
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.12', '3.13', '3.14']
+    defaults:
+      run:
+        working-directory: ajiri-backend
+    env:
+      # settings.py refuses to start without these (see .env.example).
+      DEBUG: 'True'
+      SECRET_KEY: ci-only-not-a-real-secret
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: ajiri-backend/requirements*.txt
+      - run: pip install -r requirements.txt
+      - run: python manage.py check
+      - run: python manage.py makemigrations --check --dry-run
+      - run: python manage.py test
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ajiri-frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: ajiri-frontend/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
+      - name: frontend_build matches the source
+        run: |
+          if diff -r dist ../ajiri-backend/frontend_build; then
+            echo "frontend_build is in sync with the frontend source"
+          else
+            echo "::error::frontend_build is out of date. Run ajiri-backend/scripts/build_frontend.ps1 and commit the result."
+            exit 1
+          fi
