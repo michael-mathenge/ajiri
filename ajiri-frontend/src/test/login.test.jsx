@@ -76,3 +76,18 @@ it('shows a useful connection error', async () => {
     'Check your connection'
   )
 })
+
+it('announces successful registration on arrival at login', () => {
+  render(
+    <AuthContext.Provider value={{ signedIn: false, setSignedIn: vi.fn() }}>
+      <MemoryRouter
+        initialEntries={[{ pathname: '/login', state: { registered: true } }]}
+      >
+        <Login />
+      </MemoryRouter>
+    </AuthContext.Provider>
+  )
+  expect(screen.getByRole('status')).toHaveTextContent(
+    'Account created. Log in to continue.'
+  )
+})

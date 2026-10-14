@@ -699,7 +699,7 @@ textarea.input {
     display: inline-flex;
   }
 }
-@media (min-width: 900px) {
+@media (min-width: 1100px) {
   .nav-container {
     flex-wrap: nowrap;
   }
@@ -827,7 +827,7 @@ input[type='file']::file-selector-button {
   font-weight: 750;
   color: var(--primary);
 }
-@media (min-width: 900px) {
+@media (min-width: 1100px) {
   .plans-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }

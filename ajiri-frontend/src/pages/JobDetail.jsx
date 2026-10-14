@@ -105,26 +105,6 @@ export default function JobDetail() {
         </div>
         <aside className="stack apply-sidebar" aria-label="Application">
           <Card>
-            <h2>Generate documents</h2>
-            <p className="muted">
-              Use your current profile to create a DOCX for this role.
-            </p>
-            <div className="stack">
-              <DownloadButton
-                path="/profiles/me/generate-cv/"
-                filename="Ajiri_CV.docx"
-              >
-                Generate CV
-              </DownloadButton>
-              <DownloadButton
-                path={`/jobs/${job.id}/generate-cover-letter/`}
-                filename="Cover_Letter.docx"
-              >
-                Generate cover letter
-              </DownloadButton>
-            </div>
-          </Card>
-          <Card>
             <span className="eyebrow">YOUR NEXT STEP</span>
             <h2>Interested in this role?</h2>
             <p className="muted mb-6">
@@ -148,6 +128,26 @@ export default function JobDetail() {
               <ShieldCheck size={20} aria-hidden="true" />
               <span>Nothing is sent until you confirm.</span>
             </p>
+          </Card>
+          <Card>
+            <h2>Generate documents</h2>
+            <p className="muted">
+              Use your current profile to create a DOCX for this role.
+            </p>
+            <div className="stack">
+              <DownloadButton
+                path="/profiles/me/generate-cv/"
+                filename="Ajiri_CV.docx"
+              >
+                Generate CV
+              </DownloadButton>
+              <DownloadButton
+                path={`/jobs/${job.id}/generate-cover-letter/`}
+                filename="Cover_Letter.docx"
+              >
+                Generate cover letter
+              </DownloadButton>
+            </div>
           </Card>
           <Card>
             <p className="icon-text font-semibold">

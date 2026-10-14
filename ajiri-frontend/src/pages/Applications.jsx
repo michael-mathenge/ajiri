@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import apiClient from '../api/client'
 import DownloadButton from '../components/DownloadButton'
@@ -15,6 +15,7 @@ import {
 } from '../components/ui'
 
 export function ApplicationRow({ application: app, onUpdate }) {
+  const heading = useRef(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [reviewed, setReviewed] = useState(false)
@@ -38,6 +39,9 @@ export function ApplicationRow({ application: app, onUpdate }) {
       )
       onUpdate(data)
       setDismissOpen(false)
+      // Sending or dismissing removes the focused action; return to its application.
+      // see docs/CONCEPTS.md#focus-after-mutations
+      requestAnimationFrame(() => heading.current?.focus())
     } catch (error) {
       setError(
         error.response?.data?.detail ||
@@ -50,7 +54,7 @@ export function ApplicationRow({ application: app, onUpdate }) {
   return (
     <Card className="application-card">
       <div className="row-head">
-        <h2>
+        <h2 tabIndex={-1} ref={heading}>
           {app.job_title}, {app.company_name}
         </h2>
         <ApplicationStatus status={app.status} />

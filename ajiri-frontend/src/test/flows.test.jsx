@@ -98,6 +98,11 @@ describe('Applications', () => {
       ).not.toBeInTheDocument()
     )
     expect(apiClient.post).toHaveBeenCalledWith('/jobs/applications/1/send/')
+    await waitFor(() =>
+      expect(
+        screen.getByRole('heading', { name: 'Developer, Example' })
+      ).toHaveFocus()
+    )
   })
   it('requires opening the employer link and confirming submission', async () => {
     const onUpdate = vi.fn()
@@ -167,6 +172,11 @@ describe('Notifications', () => {
     expect(await screen.findByText('Unread')).toBeVisible()
     fireEvent.click(screen.getByRole('button', { name: 'Mark as read' }))
     expect(await screen.findByText('Read')).toBeVisible()
+    await waitFor(() =>
+      expect(
+        screen.getByText('Developer, Example').closest('.row')
+      ).toHaveFocus()
+    )
     expect(
       screen.queryByRole('button', { name: 'Mark as read' })
     ).not.toBeInTheDocument()
