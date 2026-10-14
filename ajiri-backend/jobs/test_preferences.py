@@ -76,3 +76,14 @@ class DismissApplicationTests(TestCase):
         self.assertEqual(self.client.post(self.url).status_code, 400)
         self.application.refresh_from_db()
         self.assertEqual(self.application.status, 'sent')
+
+class ApplicationEmployerLinkTests(TestCase):
+    def test_application_exposes_read_only_employer_url(self):
+        from .serializers import ApplicationSerializer
+        user = get_user_model().objects.create_user(email='link@example.com', password='test-password')
+        job = Job.objects.create(title='Developer', company_name='Example', description='Build', source_url='https://example.com/employer', source_name='test')
+        app = Application.objects.create(user=user, job=job, application_method='external_link')
+        self.assertEqual(ApplicationSerializer(app).data['employer_url'], job.source_url)
+        serializer = ApplicationSerializer(app, data={'employer_url': 'https://wrong.example'}, partial=True)
+        self.assertTrue(serializer.is_valid())
+        self.assertNotIn('employer_url', serializer.validated_data)

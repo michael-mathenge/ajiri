@@ -53,11 +53,12 @@ class ApplicationSerializer(serializers.ModelSerializer):
     """
     job_title = serializers.CharField(source='job.title', read_only=True)
     company_name = serializers.CharField(source='job.company_name', read_only=True)
+    employer_url = serializers.URLField(source='job.source_url', read_only=True)
 
     class Meta:
         model = Application
         fields = (
-            'id', 'job', 'job_title', 'company_name', 'status',
+            'id', 'job', 'job_title', 'company_name', 'status', 'employer_url',
             'application_method', 'application_email',
             'generated_cv', 'generated_cover_letter',
             'email_subject', 'email_body',

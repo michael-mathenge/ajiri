@@ -5,55 +5,217 @@ import { useApiResource } from '../hooks/useApiResource'
 import {
   ApplicationStatus,
   Button,
+  Card,
+  Dialog,
   EmptyState,
   ErrorState,
   LoadingState,
   Pagination,
 } from '../components/ui'
 
-function Applications() {
-  const [page, setPage] = useState(1)
-  const {
-    data,
-    loading,
-    error: loadError,
-    retry,
-  } = useApiResource(`/jobs/applications/?page=${page}`)
-  const [updates, setUpdates] = useState({})
-  const applications = data?.results.map((app) => updates[app.id] || app) || []
+export function ApplicationRow({ application: app, onUpdate }) {
+  const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
-  const [sendingId, setSendingId] = useState(null)
-
-  const handleSend = async (applicationId) => {
-    setSendingId(applicationId)
+  const [reviewed, setReviewed] = useState(false)
+  const [opened, setOpened] = useState(false)
+  const [dismissOpen, setDismissOpen] = useState(false)
+  const email = app.application_method === 'email'
+  const ready = app.status === 'ready_for_review'
+  const dismissible = ['draft', 'ready_for_review'].includes(app.status)
+  const employerUrl = /^https?:\/\//i.test(app.employer_url || '')
+    ? app.employer_url
+    : null
+  // The server enforces state transitions too; approval here makes intent explicit.
+  // see docs/CONCEPTS.md#explicit-application-confirmation
+  const act = async (action) => {
+    if (busy) return
+    setBusy(true)
     setError('')
     try {
-      const response = await apiClient.post(
-        `/jobs/applications/${applicationId}/send/`
+      const { data } = await apiClient.post(
+        `/jobs/applications/${app.id}/${action}/`
       )
-      setUpdates((current) => ({ ...current, [applicationId]: response.data }))
+      onUpdate(data)
+      setDismissOpen(false)
     } catch (error) {
       setError(
         error.response?.data?.detail ||
-          'Failed to send application. Please try again.'
+          'Could not update this application. Please try again.'
       )
     } finally {
-      setSendingId(null)
+      setBusy(false)
     }
   }
+  return (
+    <Card className="application-card">
+      <div className="row-head">
+        <h2>
+          {app.job_title}, {app.company_name}
+        </h2>
+        <ApplicationStatus status={app.status} />
+      </div>
+      <p className="muted">
+        {email ? 'Apply by email' : 'Apply on the employer’s website'}
+      </p>
+      <details className="review-details">
+        <summary>Review application</summary>
+        <div className="stack mt-4">
+          <p>Review the generated documents before your next step.</p>
+          <div className="action-group">
+            {app.generated_cv && (
+              <a
+                className="inline-link"
+                href={mediaUrl(app.generated_cv)}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Review CV<span className="sr-only"> (opens in a new tab)</span>
+              </a>
+            )}
+            {app.generated_cover_letter && (
+              <a
+                className="inline-link"
+                href={mediaUrl(app.generated_cover_letter)}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Review cover letter
+                <span className="sr-only"> (opens in a new tab)</span>
+              </a>
+            )}
+          </div>
+          {email && (
+            <div className="detail-block">
+              <p>
+                <strong>To:</strong> {app.application_email}
+              </p>
+              <p>
+                <strong>Subject:</strong> {app.email_subject}
+              </p>
+              <p className="job-copy">
+                {app.email_body || 'No email draft is available.'}
+              </p>
+            </div>
+          )}
+          {ready && (
+            <>
+              {!email && (
+                <>
+                  <p>
+                    Ajiri does not submit this application for you. Open the
+                    employer’s listing, follow its instructions and submit your
+                    application there.
+                  </p>
+                  {employerUrl ? (
+                    <a
+                      className="btn btn-outline"
+                      href={employerUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setOpened(true)}
+                    >
+                      Open employer listing
+                      <span className="sr-only"> (opens in a new tab)</span>
+                    </a>
+                  ) : (
+                    <p role="alert" className="error-text">
+                      The employer link is unavailable. Open the job listing for
+                      source details.
+                    </p>
+                  )}
+                </>
+              )}
+              <label className="check-field">
+                <input
+                  type="checkbox"
+                  checked={reviewed}
+                  disabled={busy || (!email && !opened)}
+                  onChange={(event) => setReviewed(event.target.checked)}
+                />
+                {email
+                  ? 'I reviewed the documents and email, and approve sending.'
+                  : 'I submitted my application on the employer’s website.'}
+              </label>
+              <Button
+                disabled={busy || !reviewed || (!email && !employerUrl)}
+                onClick={() => act('send')}
+              >
+                {busy
+                  ? 'Updating…'
+                  : email
+                    ? 'Send application'
+                    : 'Confirm external submission'}
+              </Button>
+            </>
+          )}
+        </div>
+      </details>
+      {app.status === 'sent' && (
+        <p className="status-text">
+          {email ? 'Sent' : 'External submission recorded'}
+          {app.sent_at
+            ? ` ${new Date(app.sent_at).toLocaleString('en-KE')}`
+            : ''}
+        </p>
+      )}
+      {app.status === 'dismissed' && (
+        <p className="status-text">
+          Dismissed. No further actions will be sent from this application.
+        </p>
+      )}
+      {dismissible && (
+        <Dialog
+          open={dismissOpen}
+          onOpenChange={setDismissOpen}
+          trigger={<Button variant="ghost">Dismiss application</Button>}
+          title="Dismiss this application?"
+          description="This keeps it in your history and prevents sending. It does not delete your documents."
+        >
+          <div className="action-group">
+            <Button
+              variant="outline"
+              disabled={busy}
+              onClick={() => setDismissOpen(false)}
+            >
+              Keep application
+            </Button>
+            <Button disabled={busy} onClick={() => act('dismiss')}>
+              {busy ? 'Dismissing…' : 'Confirm dismissal'}
+            </Button>
+          </div>
+          {error && (
+            <p role="alert" className="error-text">
+              {error}
+            </p>
+          )}
+        </Dialog>
+      )}
+      {error && !dismissOpen && (
+        <p role="alert" className="error-text">
+          {error}
+        </p>
+      )}
+    </Card>
+  )
+}
 
-  if (loading) {
-    return <LoadingState label="Loading applications" />
-  }
-
-  if (loadError) {
-    return <ErrorState onRetry={retry}>{loadError}</ErrorState>
-  }
-
-  if (applications.length === 0) {
-    return (
+export default function Applications() {
+  const [page, setPage] = useState(1)
+  const { data, loading, error, retry } = useApiResource(
+    `/jobs/applications/?page=${page}`
+  )
+  const [updates, setUpdates] = useState({})
+  if (loading) return <LoadingState label="Loading applications" />
+  if (error) return <ErrorState onRetry={retry}>{error}</ErrorState>
+  return (
+    <div className="stack">
       <div>
         <h1>My applications</h1>
+        <p className="lead">
+          Review each draft before you send or confirm a submission.
+        </p>
+      </div>
+      {!data.results.length ? (
         <EmptyState
           title="Your next step starts with a job"
           action={
@@ -62,93 +224,27 @@ function Applications() {
             </Button>
           }
         >
-          Your applications will appear here after you prepare one.
+          Prepared applications will appear here.
         </EmptyState>
-      </div>
-    )
-  }
-
-  return (
-    <div>
-      <h1>My applications</h1>
-      <p className="lead">Review your documents and choose your next step.</p>
-      {error && (
-        <p role="alert" className="error-text">
-          {error}
-        </p>
+      ) : (
+        <>
+          {data.results.map((item) => (
+            <ApplicationRow
+              key={item.id}
+              application={updates[item.id] || item}
+              onUpdate={(item) =>
+                setUpdates((current) => ({ ...current, [item.id]: item }))
+              }
+            />
+          ))}
+          <Pagination
+            page={page}
+            hasNext={Boolean(data.next)}
+            hasPrevious={Boolean(data.previous)}
+            onChange={setPage}
+          />
+        </>
       )}
-      <div className="ledger">
-        {applications.map((app) => (
-          <div className="row" key={app.id}>
-            <div className="row-head">
-              <span className="row-title">
-                {app.job_title}, {app.company_name}
-              </span>
-              <ApplicationStatus status={app.status} />
-            </div>
-            <p className="row-meta">
-              {app.application_method === 'email'
-                ? 'Applies by email'
-                : 'Applies via employer link'}
-            </p>
-
-            {app.application_method === 'email' &&
-              app.status === 'ready_for_review' && (
-                <div className="detail-block">
-                  <p className="row-meta">To: {app.application_email}</p>
-                  <p className="row-meta">Subject: {app.email_subject}</p>
-                  <p>{app.email_body}</p>
-                </div>
-              )}
-
-            <p className="status-text">
-              {app.generated_cv && (
-                <a
-                  href={mediaUrl(app.generated_cv)}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  CV
-                </a>
-              )}
-              {'  ·  '}
-              {app.generated_cover_letter && (
-                <a
-                  href={mediaUrl(app.generated_cover_letter)}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Cover letter
-                </a>
-              )}
-            </p>
-
-            {app.status === 'ready_for_review' && (
-              <button
-                onClick={() => handleSend(app.id)}
-                disabled={sendingId === app.id}
-                className="btn btn-primary"
-              >
-                {sendingId === app.id ? 'Sending…' : 'Send application'}
-              </button>
-            )}
-
-            {app.status === 'sent' && (
-              <p className="status-text">
-                Sent {new Date(app.sent_at).toLocaleString()}
-              </p>
-            )}
-          </div>
-        ))}
-      </div>
-      <Pagination
-        page={page}
-        hasNext={Boolean(data.next)}
-        hasPrevious={Boolean(data.previous)}
-        onChange={setPage}
-      />
     </div>
   )
 }
-
-export default Applications
