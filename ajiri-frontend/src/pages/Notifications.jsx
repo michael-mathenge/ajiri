@@ -4,6 +4,7 @@ import apiClient from '../api/client'
 import { useApiResource } from '../hooks/useApiResource'
 import {
   Button,
+  Badge,
   EmptyState,
   ErrorState,
   LoadingState,
@@ -23,8 +24,11 @@ function Notifications() {
   const notifications =
     data?.results.map((item) => updates[item.id] || item) || []
   const [error, setError] = useState('')
+  const [pendingId, setPendingId] = useState(null)
 
   const handleMarkRead = async (notificationId) => {
+    if (pendingId !== null) return
+    setPendingId(notificationId)
     setError('')
     try {
       const response = await apiClient.post(
@@ -33,6 +37,8 @@ function Notifications() {
       setUpdates((current) => ({ ...current, [notificationId]: response.data }))
     } catch {
       setError('Failed to mark notification as read.')
+    } finally {
+      setPendingId(null)
     }
   }
 
@@ -81,6 +87,7 @@ function Notifications() {
                 {n.job_title}, {n.company_name}
               </Link>
               <MatchScore score={n.match_score} />
+              <Badge>{n.is_read ? 'Read' : 'Unread'}</Badge>
             </div>
             <p className="row-meta">
               {new Date(n.created_at).toLocaleString()}
@@ -88,9 +95,10 @@ function Notifications() {
             {!n.is_read && (
               <button
                 onClick={() => handleMarkRead(n.id)}
+                disabled={pendingId !== null}
                 className="btn btn-plain"
               >
-                Mark as read
+                {pendingId === n.id ? 'Marking read…' : 'Mark as read'}
               </button>
             )}
           </div>

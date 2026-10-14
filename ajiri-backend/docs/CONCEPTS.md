@@ -511,3 +511,12 @@ Email and in-app alerts are independent preferences. A Notification also acts as
 
 ## application-dismissal
 Dismissal keeps a draft as history rather than deleting it. The owner can dismiss draft or ready_for_review applications; repeating the request succeeds without changing anything further. Sent applications cannot be dismissed because Ajiri cannot undo an email or an employer-site submission. The API scopes the lookup to the current user, returning 404 for another user's application.
+
+## drf-field-errors
+DRF validation responses contain field names with one or more messages. Ajiri normalizes arrays, nested errors and detail strings, then renders every message. Inputs refer to the matching error entry with aria-describedby and aria-invalid so keyboard and screen-reader users can find the problem.
+
+## explicit-application-confirmation
+Preparing an application never sends it. Email applications require review approval before the send action. External applications link to the employer and require a separate confirmation that submission happened there; Ajiri records that confirmation rather than sending an email. Sent and dismissed states remove sending controls, while the backend independently enforces allowed states.
+
+## component-flow-tests
+Vitest runs component tests in jsdom, a browser-like environment in Node. Testing Library finds controls by visible names and labels, so tests exercise user actions rather than internal React state. HTTP calls are mocked in component tests; separate Django tests and isolated browser checks verify the real API.
