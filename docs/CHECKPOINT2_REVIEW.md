@@ -289,3 +289,18 @@ No production rehearsal or deployment occurred. The checklist was aligned with
 Michael's requested backup, migrate, relocate, mapping-change, reload, post-check
 sequence and gained explicit recovery gates plus a post-deploy ingestion-run
 check. All traffic/writers must remain paused through the sequence.
+
+## PR #4 frontend CI correction
+
+GitHub Actions confirmed all 72 backend tests pass without skips on Python 3.12,
+3.13 and 3.14. The frontend tests/build passed, but the exact packaged-build check
+failed: committed index.html had mixed CRLF/LF (including a lone CR), while Linux
+Vite emitted LF. Earlier local newline-normalized comparisons could not establish
+bytewise CI consistency and missed this failure.
+
+The correction adds repository LF attributes for Vite HTML/public inputs and
+packaged text, normalizes packaged index.html to UTF-8 without BOM/LF in the
+existing build script, and regenerates frontend_build once at the end of this
+frontend CI branch. No Git config or workflow comparison is changed. Local clean
+install, lint, 24 tests and build pass. Exact Git-blob/build comparison and a fresh
+Linux Actions run are required before merging PR #4.
