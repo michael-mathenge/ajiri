@@ -538,3 +538,6 @@ Private documents live outside public static mappings. FileField names remain re
 
 ## application-send-claim
 A conditional database update claims a reviewable application as sent before SMTP begins. Only one request can change ready_for_review to sent; competing requests receive 400 even if they read stale data. The winner releases its own timestamped claim on delivery failure (502), allowing a retry. A stale dismiss cannot undo the claim. No transaction is held across SMTP, and no schema/status value is added. Sent is visible during delivery; a process crash or ambiguous SMTP acknowledgement needs manual reconciliation, not automatic retry. This prevents simultaneous-request duplication, not exactly-once delivery across an external email provider.
+
+## reproducible-frontend-build
+CI compares generated files byte for byte against frontend_build. Vite preserves HTML and public asset line endings, so a Windows CRLF checkout can differ from Linux despite identical rendered content. Repository attributes keep Vite HTML/public inputs and packaged text at LF without changing anyone's Git config. The packaging script also normalizes index.html to UTF-8 without BOM and LF for older Windows checkouts. Keep the exact CI comparison enabled; regenerate and commit the build after input or packaging changes.

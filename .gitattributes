@@ -1,0 +1,6 @@
+# Vite retains HTML/public-file line endings. Keep Windows packaging identical
+# to Linux CI without changing any developer's Git configuration.
+/ajiri-frontend/index.html text eol=lf
+/ajiri-frontend/public/** text=auto eol=lf
+/ajiri-backend/frontend_build/** text=auto eol=lf
+/ajiri-backend/frontend_build/*.html text eol=lf
