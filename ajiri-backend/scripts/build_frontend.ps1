@@ -27,4 +27,11 @@ try {
 $target = Join-Path $backend 'frontend_build'
 if (Test-Path $target) { Remove-Item -Recurse -Force $target }
 Copy-Item -Recurse (Join-Path $frontend 'dist') $target
+# Vite can retain CRLF from an existing Windows checkout in index.html. Mixed
+# endings can make Git store it as binary, defeating automatic normalization.
+# see docs/CONCEPTS.md#reproducible-frontend-build
+$htmlPath = Join-Path $target 'index.html'
+$html = [System.IO.File]::ReadAllText($htmlPath)
+$html = $html.Replace("`r`n", "`n").Replace("`r", "`n")
+[System.IO.File]::WriteAllText($htmlPath, $html, [System.Text.UTF8Encoding]::new($false))
 Write-Host "Frontend copied to $target"
