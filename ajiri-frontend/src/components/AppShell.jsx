@@ -112,6 +112,7 @@ export default function AppShell() {
               <BriefcaseBusiness size={17} aria-hidden="true" />
               Find jobs
             </NavLink>
+            <NavLink to="/plans">Plans</NavLink>
             {signedIn ? (
               <>
                 <NavLink to="/applications">My applications</NavLink>

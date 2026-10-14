@@ -812,3 +812,23 @@ input[type='file']::file-selector-button {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+.plans-grid {
+  display: grid;
+  gap: 1.25rem;
+}
+.plan-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.plan-price {
+  font-size: 2rem;
+  font-weight: 750;
+  color: var(--primary);
+}
+@media (min-width: 900px) {
+  .plans-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
