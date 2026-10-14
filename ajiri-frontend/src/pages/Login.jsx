@@ -81,6 +81,9 @@ export default function Login() {
       <Card className="auth-card">
         <span className="eyebrow">WELCOME BACK</span>
         <h2>Log in to Ajiri</h2>
+        {location.state?.registered && (
+          <p role="status">Account created. Log in to continue.</p>
+        )}
         <p className="muted">Your next opportunity could be waiting.</p>
         <form
           onSubmit={handleSubmit}

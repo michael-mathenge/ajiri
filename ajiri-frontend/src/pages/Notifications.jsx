@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import apiClient from '../api/client'
 import { useApiResource } from '../hooks/useApiResource'
@@ -13,6 +13,7 @@ import {
 } from '../components/ui'
 
 function Notifications() {
+  const rows = useRef({})
   const [page, setPage] = useState(1)
   const {
     data,
@@ -35,6 +36,9 @@ function Notifications() {
         `/jobs/notifications/${notificationId}/mark-read/`
       )
       setUpdates((current) => ({ ...current, [notificationId]: response.data }))
+      // Mark-read removes its button, so retain a useful keyboard position.
+      // see docs/CONCEPTS.md#focus-after-mutations
+      requestAnimationFrame(() => rows.current[notificationId]?.focus())
     } catch {
       setError('Failed to mark notification as read.')
     } finally {
@@ -81,7 +85,14 @@ function Notifications() {
       )}
       <div className="ledger">
         {notifications.map((n) => (
-          <div className={`row${n.is_read ? '' : ' row-unread'}`} key={n.id}>
+          <div
+            className={`row${n.is_read ? '' : ' row-unread'}`}
+            key={n.id}
+            tabIndex={-1}
+            ref={(element) => {
+              rows.current[n.id] = element
+            }}
+          >
             <div className="row-head">
               <Link to={`/jobs/${n.job_id}`} className="row-title">
                 {n.job_title}, {n.company_name}

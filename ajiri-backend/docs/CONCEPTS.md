@@ -535,3 +535,6 @@ An application moves to sent only after its saved attachments are opened and the
 
 ## isolated-auth-tests
 Auth tests use synthetic users, a test database and a fast password hasher selected only by a test-class override. Production settings are unchanged. Tests verify the observable contract: passwords are hashed, access is returned in JSON, refresh stays in an httpOnly cookie, rotation invalidates previous cookies, and logout blacklists the refresh token.
+
+## focus-after-mutations
+A successful action can remove its own button, leaving keyboard focus on the document body. Ajiri moves focus to the affected application heading or notification row after the UI updates. A requestAnimationFrame waits for React to render the result; tabIndex=-1 permits programmatic focus without adding extra stops to normal Tab navigation. Dialogs still use Radix for focus trapping and Escape.
