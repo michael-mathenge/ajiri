@@ -360,13 +360,7 @@ app itself, so there is no cross-origin request and no CORS to configure).
 Changing a value means rebuilding.
 
 ## unguessable-filenames
-Generated CVs and cover letters are plain files under `media/`, served by URL
-with no login check. A predictable name like `CV_Acme.docx` would let anyone
-who guesses it download someone's CV, so each file gets a random 32-character
-prefix (`uuid.uuid4().hex`). That protects new files by obscurity only — the
-URL is a secret link, not real access control. The proper fix is to serve CVs
-through a Django view that checks the logged-in owner; until then, treat the
-URLs as sensitive. Files created before this change keep their old names.
+Generated CVs and letters retain random 32-character prefixes (`uuid.uuid4().hex`) as defence in depth. Random names alone do not enforce ownership: a leaked URL remains usable wherever files are publicly mapped. Checkpoint 2 stores files privately and removes direct media serving; existing relative names need no rewriting. See private-media-storage. Production protection still requires Michael to remove historical host mappings.
 
 ## github-actions
 GitHub's built-in automation: YAML files in `.github/workflows/` (GitHub only looks

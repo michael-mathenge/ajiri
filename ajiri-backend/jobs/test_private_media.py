@@ -151,3 +151,12 @@ class PrivateMediaTests(TestCase):
             self.skipTest('Creating symlinks requires Windows developer mode or privileges.')
         with self.assertRaises(CommandError):
             self.command(apply=True)
+
+    def test_unreadable_directory_aborts_instead_of_silently_skipping(self):
+        def fail_walk(*args, **kwargs):
+            kwargs['onerror'](PermissionError('unreadable directory'))
+            return iter(())
+        with patch('jobs.management.commands.relocate_private_media.os.walk', side_effect=fail_walk):
+            with self.assertRaises(CommandError):
+                self.command(apply=True)
+        self.assertFalse(self.destination.exists())
