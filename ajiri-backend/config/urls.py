@@ -1,6 +1,4 @@
 from django.contrib import admin
-from django.conf import settings
-from django.conf.urls.static import static
 from django.urls import path, re_path, include
 
 from .views import frontend
@@ -12,8 +10,8 @@ urlpatterns = [
     path('api/jobs/', include('jobs.urls')),
 ]
 
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# Private documents are served only through authenticated owner endpoints.
+# see docs/CONCEPTS.md#private-media-storage
 
 # Catch-all for the React app: anything that isn't API/admin/media/static
 # gets index.html, and React Router takes over in the browser. Must stay LAST.

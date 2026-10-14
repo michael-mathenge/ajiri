@@ -253,7 +253,13 @@ CELERY_BEAT_SCHEDULE = {
 }
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+# see docs/CONCEPTS.md#private-media-storage
+# A URL prefix is retained for serializer compatibility, but is never served.
+MEDIA_ROOT = Path(os.environ.get('PRIVATE_MEDIA_ROOT', BASE_DIR.parent.parent / 'ajiri-private-media'))
+if not MEDIA_ROOT.is_absolute():
+    raise ImproperlyConfigured('PRIVATE_MEDIA_ROOT must be an absolute path.')
+FILE_UPLOAD_PERMISSIONS = 0o600
+FILE_UPLOAD_DIRECTORY_PERMISSIONS = 0o700
 
 # CORS (Cross-Origin Resource Sharing) — the React dev server
 # (localhost:5173) and Django (127.0.0.1:8000) are different origins as
