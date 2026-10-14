@@ -4,9 +4,9 @@
 
 ## 1. Mission
 
-Take Ajiri from "Phase 1 design system done" to **Checkpoint 1**: a fully working, tested, documented V1 candidate that Michael can review end-to-end. Work through the work packages in section 6 **without stopping between them**, unless a stop condition in section 8 applies. Stop at the checkpoint and report.
+Prepare **Checkpoint 2: private media protection** from reviewed Checkpoint 1 on up-to-date main. The current authorization is documentation only: update sections 1, 4, 6 and 12 of this guide and write `docs/PRIVATE_MEDIA_DESIGN.md`. Stop for Michael's approval before implementation.
 
-*(Sections 1, 4, 6 and 12 are time-bound. Michael will update them after the checkpoint review. Sections 2, 3, 5, 7-11 are standing rules.)*
+Sections 1, 4, 6 and 12 are time-bound. Sections 2, 3, 5 and 7-11 remain unchanged. Michael's current instruction to use `integration/checkpoint-2` supersedes the Checkpoint 1 branch name in standing section 9 for this preparation only. No Prompt 2 exceptions have been received or applied.
 
 ## 2. Product
 
@@ -25,15 +25,13 @@ Users are mostly on phones with limited data. **Mobile-first, lightweight, acces
 - Production: PythonAnywhere free tier, a committed `frontend_build`, and a GitHub Actions workflow that posts jobs to `POST /api/jobs/ingest/` and `/api/jobs/sweep/` (header `X-Ingest-Key`)
 - CI exists (`.github/workflows/ci.yml`: backend checks, migrations, tests, frontend lint/build, committed-build consistency; Python matrix 3.12-3.14). Local dev and PythonAnywhere use Python 3.12.
 
-## 4. Current state (as of Phase 1)
+## 4. Current state (Checkpoint 2 preparation, 15 October 2026)
 
-Done: design system, app shell, protected routes, themes, redesigned Login/JobList/JobDetail, `docs/DESIGN_SYSTEM.md`, `docs/PHASE1_REVIEW.md`.
-Existing but unpolished: Register (shows only the first error), Applications, Notifications.
-Missing: Profile page, CV UI, Subscriptions UI.
-API gaps: `notify_email` / `notify_in_app` not in the profile serializer; matching ignores `notify_in_app`; no application dismiss endpoint; external-link sending only records confirmation; document downloads need authenticated blob handling.
-Tests: 19 methods (ingestion, sweep, filename, admin, frontend fallback). None for accounts, profiles, auth, or most of the application lifecycle. No frontend tests.
+Checkpoint 1 (WP1-WP6) is reviewed and merged into main at `e5e0038`; its integration tip `b8c1881` is an ancestor. It includes profile preferences, independent alerts, application review/send/dismissal, registration errors, notifications, Profile/CV tools, authenticated downloads, plans preview, tests and polish. Recorded Checkpoint 1 results: 57 Django tests and 24 frontend tests; see `docs/CHECKPOINT1_REVIEW.md` for evidence and limits, not a claim of a new run.
 
-**Precondition:** Phase 1 (`feature/design-system`) must be present in the base branch. If it is not, stop and ask.
+Remaining privacy gap: files beneath the existing media root can bypass owner-checked download endpoints via public media URLs. Django exposes media in DEBUG mode; the PythonAnywhere runbook specifies a public media mapping. Live hosting configuration has not been inspected.
+
+Precondition: verify complete Checkpoint 1 ancestry in fetched origin/main before starting. Preparation changes only this guide and the private-media design; existing auth, CORS and download endpoint behaviour remain unchanged. No file relocation, migration, hosting operation or implementation is authorized yet.
 
 ## 5. Known gotchas
 
@@ -45,20 +43,17 @@ Tests: 19 methods (ingestion, sweep, filename, admin, frontend fallback). None f
 - Windows/PowerShell: use `curl.exe`, not `curl`. `-replace` is case-insensitive; use `-creplace` with `[regex]::Escape()`.
 - Integrate new code alongside existing imports. Never overwrite file tops.
 
-## 6. Work packages (in order)
+## 6. Checkpoint 2 preparation (in order)
 
-Each package gets its own branch off `integration/checkpoint-1` and must pass the quality gates (section 7) before it is merged into the integration branch.
+| Step | Scope | Done when |
+|---|---|---|
+| 1 | Verify fetched main contains Checkpoint 1 WP1-WP6 | Stop if it does not; record verified base |
+| 2 | Create `integration/checkpoint-2` from up-to-date main | No commit on main; check branch before every commit |
+| 3 | First commit: documentation only | Update only time-bound AGENTS sections and add private-media design |
+| 4 | Design review | Document current storage/serving, 2-3 options, recommendation, migration impact, dry-run relocation contract, manual PythonAnywhere steps, tests and rollback |
+| 5 | Stop | Hand back the design and wait for Michael's approval |
 
-| # | Branch | Scope | Done when |
-|---|---|---|---|
-| WP1 | `feature/profile-api-gaps` | Backend: expose `notify_email` / `notify_in_app` in the profile serializer; matching respects `notify_in_app`; add application dismiss endpoint (status to `dismissed`, owner only, guards for already-sent) | Tests cover each change, including permission and invalid-state cases |
-| WP2 | `feature/register-applications-notifications` | Register shows all field errors. Applications: status badges, review draft, send, explicit employer-link step for external applications, dismiss. Notifications: unread state, mark read, empty/error states | Every flow works against the real API; each page has loading, error and empty states |
-| WP3 | `feature/profile-cv` | Profile page (contact details, skills via `skill_names`, notification preferences, CV upload: PDF/DOC/DOCX, max 5 MB, validated client and server side). Authenticated blob download for generated CV and cover letter | Upload, edit and download work; file-type and size errors are clear |
-| WP4 | `feature/subscriptions-ui` | Free / Starter / Pro (KES 0 / 499 / 999) plans page. **UI only, no payments.** Clearly labelled as not yet purchasable | Responsive, accessible, no dead buttons that imply payment works |
-| WP5 | `feature/tests-and-ci` | Django tests for auth (register, login, refresh rotation, logout), profiles, matching edge cases, full application lifecycle. Frontend component/flow tests (set up Vitest + Testing Library) for Login, Register, Applications and Profile. Propose (do not silently rewrite) any CI changes | All tests pass locally; test commands documented |
-| WP6 | `feature/checkpoint-polish` | Accessibility pass (keyboard, focus, contrast, labels), mobile pass at 375px, bundle-size check, README/docs update, final `frontend_build` | Checkpoint report complete |
-
-Out of scope (V2): CV text extraction from uploads, AI-generated cover letter content, real payments (M-Pesa/Daraja), Postgres migration.
+Later implementation packages and any Prompt 2 exceptions are pending explicit instructions. Do not invent or start them. No source, dependencies, auth, CORS, CI, deployment or generated build changes during preparation. Hosting steps are instructions for Michael only.
 
 ## 7. Quality gates (every package, no exceptions)
 
@@ -101,17 +96,10 @@ When blocked on one package, record it in the report and continue to the next in
 - Give exact PowerShell commands for anything he needs to run, plus the expected result.
 - Michael tracks work in Monday.com himself. Give completed items and honest story-point suggestions per package; do not assume any Monday.com access.
 
-## 12. Checkpoint 1: what you hand back
+## 12. Checkpoint 2 preparation: what you hand back
 
-Stop after WP6 and produce `docs/CHECKPOINT1_REVIEW.md`:
+Deliver `docs/PRIVATE_MEDIA_DESIGN.md` and the time-bound AGENTS update in a documentation-only first commit on `integration/checkpoint-2`.
 
-1. **Summary table:** each WP with status (done / partial / blocked / unverified), branch, and commit range
-2. **What changed**, grouped by package
-3. **Verification evidence:** actual commands run and their results (tests passed/failed counts, lint, build, bundle size)
-4. **Michael's review script:** a step-by-step manual test path covering register, login, browse and filter jobs, apply, review and send an application, dismiss one, notifications, profile edit with CV upload, document downloads, dark mode, and mobile (375px), with what he should see at each step
-5. **Decisions made and why**
-6. **Open risks, assumptions and follow-ups**, including anything marked unverified
-7. **Suggested story points** per package
-8. **Recommended next sprint** (for example payments scoping, deployment verification, CI updates)
+Report the verified main/base commit, branch and documentation commit; recommended approach and migration/data impact; checks actually run and any unverified checks; unchanged standing rules and runtime/hosting scope; and confirmation that the commit author/committer use Michael's configured noreply address without changing Git config.
 
-Then stop. Do not start new work until Michael reviews.
+Stop after these documents. Wait for Michael's approval before implementation or hosting changes.
