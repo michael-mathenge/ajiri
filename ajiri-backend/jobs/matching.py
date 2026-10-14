@@ -78,6 +78,8 @@ def notify_matching_profiles(job):
     notified_count = 0
 
     for profile in Profile.objects.select_related('user'):
+        if not profile.notify_in_app and not profile.notify_email:
+            continue
         score = calculate_match_score(profile, job)
         if score < MATCH_ALERT_THRESHOLD:
             continue
@@ -85,7 +87,7 @@ def notify_matching_profiles(job):
         notification, created = Notification.objects.get_or_create(
             user=profile.user,
             job=job,
-            defaults={'match_score': score},
+            defaults={'match_score': score, 'in_app': profile.notify_in_app},
         )
         if not created:
             # Already notified this user about this job — the unique_together
