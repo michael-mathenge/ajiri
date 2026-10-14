@@ -541,3 +541,6 @@ A successful action can remove its own button, leaving keyboard focus on the doc
 
 ## private-media-storage
 Private documents live outside public static mappings. FileField names remain relative, so changing the storage root needs no row rewrites. Only authenticated owner endpoints stream bytes; a random URL is not access control. The relocation command defaults to read-only inventory, copies with checksum verification on --apply, never overwrites conflicting files, and never deletes originals or changes database rows. See ../../docs/PRIVATE_MEDIA_DESIGN.md for the approved design and manual cutover.
+
+## application-send-claim
+A conditional database update claims a reviewable application as sent before SMTP begins. Only one request can change ready_for_review to sent; competing requests receive 400 even if they read stale data. The winner releases its own timestamped claim on delivery failure (502), allowing a retry. A stale dismiss cannot undo the claim. No transaction is held across SMTP, and no schema/status value is added. Sent is visible during delivery; a process crash or ambiguous SMTP acknowledgement needs manual reconciliation, not automatic retry. This prevents simultaneous-request duplication, not exactly-once delivery across an external email provider.

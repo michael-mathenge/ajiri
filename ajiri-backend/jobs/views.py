@@ -166,6 +166,18 @@ class SendApplicationView(generics.GenericAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # One autocommitted conditional write wins even when both callers read READY.
+        # Do not hold a database transaction open across SMTP.
+        # see docs/CONCEPTS.md#application-send-claim
+        claimed_at = timezone.now()
+        claimed = Application.objects.filter(
+            pk=application.pk, user=request.user, status=Application.Status.READY_FOR_REVIEW,
+        ).update(status=Application.Status.SENT, sent_at=claimed_at)
+        if not claimed:
+            return Response({'detail': 'This application has already been claimed or is no longer reviewable.'}, status=400)
+        application.status = Application.Status.SENT
+        application.sent_at = claimed_at
+
         if application.application_method == Job.ApplicationMethod.EMAIL:
             email = EmailMessage(
                 subject=application.email_subject,
@@ -180,17 +192,14 @@ class SendApplicationView(generics.GenericAPIView):
                 email.attach_file(application.generated_cover_letter.path)
                 email.send(fail_silently=False)
             except Exception:
-                # Deliberately don't touch status/sent_at on failure — the
-                # application stays in ready_for_review so the user can
-                # just retry the same request once the issue is fixed.
+                # Only the winning claim may release itself for retry.
+                Application.objects.filter(
+                    pk=application.pk, status=Application.Status.SENT, sent_at=claimed_at,
+                ).update(status=Application.Status.READY_FOR_REVIEW, sent_at=None)
                 return Response(
                     {"detail": "Could not send this application. Its documents or email service may be unavailable. Please try again later."},
                     status=status.HTTP_502_BAD_GATEWAY,
                 )
-
-        application.status = Application.Status.SENT
-        application.sent_at = timezone.now()
-        application.save(update_fields=['status', 'sent_at'])
 
         serializer = ApplicationSerializer(application, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -224,8 +233,13 @@ class DismissApplicationView(generics.GenericAPIView):
         if application.status == Application.Status.SENT:
             return Response({'detail': 'Sent applications cannot be dismissed.'}, status=400)
         if application.status != Application.Status.DISMISSED:
-            application.status = Application.Status.DISMISSED
-            application.save(update_fields=['status', 'updated_at'])
+            # A stale dismiss request must not undo a concurrently claimed send.
+            Application.objects.filter(pk=pk, user=request.user).exclude(
+                status=Application.Status.SENT,
+            ).update(status=Application.Status.DISMISSED, updated_at=timezone.now())
+            application.refresh_from_db()
+            if application.status == Application.Status.SENT:
+                return Response({'detail': 'Sent applications cannot be dismissed.'}, status=400)
         return Response(ApplicationSerializer(application, context={'request': request}).data)
 
 
