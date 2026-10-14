@@ -538,3 +538,6 @@ Auth tests use synthetic users, a test database and a fast password hasher selec
 
 ## focus-after-mutations
 A successful action can remove its own button, leaving keyboard focus on the document body. Ajiri moves focus to the affected application heading or notification row after the UI updates. A requestAnimationFrame waits for React to render the result; tabIndex=-1 permits programmatic focus without adding extra stops to normal Tab navigation. Dialogs still use Radix for focus trapping and Escape.
+
+## private-media-storage
+Private documents live outside public static mappings. FileField names remain relative, so changing the storage root needs no row rewrites. Only authenticated owner endpoints stream bytes; a random URL is not access control. The relocation command defaults to read-only inventory, copies with checksum verification on --apply, never overwrites conflicting files, and never deletes originals or changes database rows. See ../../docs/PRIVATE_MEDIA_DESIGN.md for the approved design and manual cutover.

@@ -89,10 +89,11 @@ Bash console, **[Web]** a browser.
 4. **Static files** section, add one mapping:
    | URL | Directory |
    |---|---|
-   | `/media/` | `/home/YOURNAME/ajiri/ajiri-backend/media` |
+   | `/media/` | **No mapping: private documents must never be served statically** |
 
-   WhiteNoise already serves `/static/` and the React app; only uploaded CVs and
-   cover letters need this mapping.
+   WhiteNoise serves public assets. Uploaded CVs and cover letters use owner-checked
+   API downloads. Remove old media mappings and aliases before cutover. Follow
+   [the private media runbook](../../docs/PRIVATE_MEDIA_DESIGN.md#pythonanywhere-manual-cutover--michael-only-after-implementation-approval).
 5. Turn on **Force HTTPS** if the Web tab offers it.
 6. Click the green **Reload** button.
 
@@ -128,8 +129,9 @@ Failure guide:
 
 ## Part 5 - Check the application flow **[Web]**
 
-Apply to a job and open the **CV** link. A 404 there means the `/media/` mapping from
-Part 2 is missing or wrong. Links should open over `https://`.
+Historical direct media links must now return 404. Use the authenticated API
+download over HTTPS. A failed download needs an owner/token/storage check;
+never fix it by restoring a public media mapping.
 
 ## Everyday operations
 
@@ -151,7 +153,11 @@ silently deletes every user created since.
 
 ## Known limits
 
-- CVs and cover letters are served by obscure URL, not login (`unguessable-filenames`).
+- CVs and cover letters must use authenticated owner downloads. Never add a public media mapping.
 - SQLite allows one writer at a time; fine at demo scale.
 - Alerts are not emailed until SMTP is configured (and free-tier outbound access is limited).
 - The refresh/sweep jobs depend on GitHub Actions staying enabled.
+
+## Checkpoint 2 private media cutover
+
+The relocation command is now available: `python manage.py relocate_private_media --help`. Follow the exact backup, folder, permissions, dry-run/apply/verify, environment and reload sequence in [PRIVATE_MEDIA_DESIGN.md](../../docs/PRIVATE_MEDIA_DESIGN.md). Treat its proposed command interface as implemented for WP7; no production operation has been performed. Keep all writers paused until validation completes. No schema migration is introduced by WP7.

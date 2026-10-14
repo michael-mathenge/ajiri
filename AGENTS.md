@@ -4,9 +4,9 @@
 
 ## 1. Mission
 
-Prepare **Checkpoint 2: private media protection** from reviewed Checkpoint 1 on up-to-date main. The current authorization is documentation only: update sections 1, 4, 6 and 12 of this guide and write `docs/PRIVATE_MEDIA_DESIGN.md`. Stop for Michael's approval before implementation.
+Deliver Checkpoint 2 WP7-WP10 on `integration/checkpoint-2`, one feature branch per package, merging passing packages with --no-ff. Continue without stopping between packages unless a section 8 stop condition applies. Stop after the Checkpoint 2 report for Michael's review. No push or deployment.
 
-Sections 1, 4, 6 and 12 are time-bound. Sections 2, 3, 5 and 7-11 remain unchanged. Michael's current instruction to use `integration/checkpoint-2` supersedes the Checkpoint 1 branch name in standing section 9 for this preparation only. No Prompt 2 exceptions have been received or applied.
+Sections 1, 4, 6 and 12 are time-bound. Standing sections remain unchanged. Michael's checkpoint-specific instructions supersede section 9's old integration branch name. Authorized exceptions: a design-required additive/non-destructive migration (stop for deletion or alteration of existing data), and editing CI only to apply docs/CI_PROPOSAL.md. File relocation must use a dry-run-capable management command. These exceptions do not authorize production operations or other protected changes.
 
 ## 2. Product
 
@@ -31,7 +31,7 @@ Checkpoint 1 (WP1-WP6) is reviewed and merged into main at `e5e0038`; its integr
 
 Remaining privacy gap: files beneath the existing media root can bypass owner-checked download endpoints via public media URLs. Django exposes media in DEBUG mode; the PythonAnywhere runbook specifies a public media mapping. Live hosting configuration has not been inspected.
 
-Precondition: verify complete Checkpoint 1 ancestry in fetched origin/main before starting. Preparation changes only this guide and the private-media design; existing auth, CORS and download endpoint behaviour remain unchanged. No file relocation, migration, hosting operation or implementation is authorized yet.
+Precondition: verify complete Checkpoint 1 ancestry in fetched origin/main before starting. The option A design in `docs/PRIVATE_MEDIA_DESIGN.md` is approved for implementation. Auth, CORS and download endpoint behaviour stay unchanged. No live relocation or hosting operation is authorized.
 
 ## 5. Known gotchas
 
@@ -43,17 +43,16 @@ Precondition: verify complete Checkpoint 1 ancestry in fetched origin/main befor
 - Windows/PowerShell: use `curl.exe`, not `curl`. `-replace` is case-insensitive; use `-creplace` with `[regex]::Escape()`.
 - Integrate new code alongside existing imports. Never overwrite file tops.
 
-## 6. Checkpoint 2 preparation (in order)
+## 6. Checkpoint 2 work packages (in order)
 
-| Step | Scope | Done when |
+| WP | Branch | Scope / acceptance |
 |---|---|---|
-| 1 | Verify fetched main contains Checkpoint 1 WP1-WP6 | Stop if it does not; record verified base |
-| 2 | Create `integration/checkpoint-2` from up-to-date main | No commit on main; check branch before every commit |
-| 3 | First commit: documentation only | Update only time-bound AGENTS sections and add private-media design |
-| 4 | Design review | Document current storage/serving, 2-3 options, recommendation, migration impact, dry-run relocation contract, manual PythonAnywhere steps, tests and rollback |
-| 5 | Stop | Hand back the design and wait for Michael's approval |
+| WP7 | feature/private-media | Approved private root and removal of direct media serving; dry-run relocation command; manual PythonAnywhere docs; owner downloads succeed, non-owner 404, anonymous 401 |
+| WP8 | feature/send-idempotency | Atomic concurrent-send claim, one email, delivery failure retains 502/retry; no new status/migration without asking |
+| WP9 | feature/ci-frontend-tests | Apply CI_PROPOSAL as written; validate config and local equivalent commands |
+| WP10 | feature/deployment-checklist | Docs-only manual backup, jobs/0007 migration order, media relocation, deployment verification and rollback checklist |
 
-Later implementation packages and any Prompt 2 exceptions are pending explicit instructions. Do not invent or start them. No source, dependencies, auth, CORS, CI, deployment or generated build changes during preparation. Hosting steps are instructions for Michael only.
+Branch each package from integration/checkpoint-2, run section 7 gates, and merge back with --no-ff. No frontend source work or frontend_build regeneration is planned. Hosting instructions are for Michael, never performed by Codex.
 
 ## 7. Quality gates (every package, no exceptions)
 
@@ -96,10 +95,8 @@ When blocked on one package, record it in the report and continue to the next in
 - Give exact PowerShell commands for anything he needs to run, plus the expected result.
 - Michael tracks work in Monday.com himself. Give completed items and honest story-point suggestions per package; do not assume any Monday.com access.
 
-## 12. Checkpoint 2 preparation: what you hand back
+## 12. Checkpoint 2 handback
 
-Deliver `docs/PRIVATE_MEDIA_DESIGN.md` and the time-bound AGENTS update in a documentation-only first commit on `integration/checkpoint-2`.
+Write docs/CHECKPOINT2_REVIEW.md using the Checkpoint 1 report format: package status/branches/ranges and suggested points; changes; actual checks and limitations; manual media and double-send review script; decisions; risks/follow-ups; recommended next sprint. Include the deployment checklist and manual-only hosting boundary.
 
-Report the verified main/base commit, branch and documentation commit; recommended approach and migration/data impact; checks actually run and any unverified checks; unchanged standing rules and runtime/hosting scope; and confirmation that the commit author/committer use Michael's configured noreply address without changing Git config.
-
-Stop after these documents. Wait for Michael's approval before implementation or hosting changes.
+Before final handback run `git log --format="%h %ae | %ce" origin/main..integration/checkpoint-2` and confirm every author/committer uses Michael's configured noreply address. Do not change Git config. Stop after WP10 and wait for review.
