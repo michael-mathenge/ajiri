@@ -21,14 +21,8 @@ This checklist supersedes older instructions to expose `/media/` publicly.
   your own test account privately; these are sensitive. Prepare a second test user
   and a synthetic job/employer target. Never send a test to a real employer.
 
-## 2. Close public access and back up before migrations
+## 2. Back up before migrations or mapping changes
 
-- [ ] In PythonAnywhere **Web → Static files**, remove `/media/` and every alias
-  or parent mapping that can expose old media, private media, backups or manifests.
-  Retain public assets only. Do not map the whole repository or home folder.
-- [ ] Reload and GET/HEAD a known old media URL anonymously. Require 404/denial,
-  no document bytes, no file redirect and no SPA success response. If it is still
-  public, stop and inspect all mappings; Django permissions cannot override them.
 - [ ] In the PythonAnywhere **Bash** console, replace account/timestamp below.
   These variables must point at your verified deployment, not a guessed folder:
 
@@ -66,6 +60,10 @@ if test -f .env; then cp -p .env "$AUDIT/environment.backup"; chmod 600 "$AUDIT/
   and inspect the restored database's integrity before changing live data. Record
   totals and checksums privately. No backups/manifests/environment files enter Git.
 
+- [ ] Recovery gate: if backup integrity or restore rehearsal fails, stop before
+  staging code, migration, relocation or mapping changes. Keep the original DB
+  and files in place and correct the backup problem first.
+
 ## 3. Stage approved code, then migrate before activating it
 
 ```bash
@@ -97,6 +95,10 @@ python manage.py showmigrations jobs
 - [ ] Confirm `[X] 0007_notification_in_app` and all expected migrations applied.
   Do not edit migration history or reverse 0007 as a routine rollback. Auth/CORS,
   cookie settings, ingestion keys and the auth client remain unchanged.
+
+- [ ] Migration recovery gate: on failure, keep maintenance in place and inspect
+  the migration state and verified backup. Do not reload new code or automatically
+  reverse migrations/restore the DB; use the reviewed recovery decision in section 7.
 
 ## 4. Relocate media while writers remain paused
 
@@ -136,6 +138,21 @@ python manage.py relocate_private_media --source "$OLD" --destination "$NEW" --v
   The command sets copy permissions; Windows testing does not establish Linux
   permission enforcement. Never add a public mapping to fix a permissions error.
 
+- [ ] Relocation recovery gate: if copy/verification fails, leave OLD intact and
+  keep writers paused. Do not switch the root or reload. Correct the cause and
+  rerun the safe copy, or stop cutover and retain the previous revision/root.
+
+## 4a. Remove public media mappings before reload
+
+- [ ] In PythonAnywhere **Web → Static files**, remove `/media/` and every alias
+  or parent mapping that can expose old media, private media, backups or manifests.
+  Retain public assets only. Do not map the whole repository or home folder.
+- [ ] Keep all writers and public traffic paused. Mapping changes become effective
+  on the platform reload below. Do not resume traffic while old public URLs work.
+  If any alias cannot be removed, stop cutover and keep maintenance in place;
+  application permissions cannot override platform mappings. Never restore a
+  public mapping as rollback (see section 7).
+
 ## 5. Activate and verify before restoring traffic
 
 ```bash
@@ -164,6 +181,16 @@ python manage.py collectstatic --noinput
 - [ ] Recheck every static mapping, then resume traffic and paused callers.
   Keep OLD, the backup, and audit manifests private until an agreed retention
   review. No automated deletion/cleanup is introduced by this checkpoint.
+
+- [ ] Activation recovery gate: any failed privacy/download/health check blocks
+  resuming traffic. Keep mappings removed; restore the recorded revision/root only
+  as described in section 7, preserving any new writes. Never fix a failed owner
+  download by restoring a public mapping.
+- [ ] After activation and privacy/health checks pass, resume exactly one scheduled
+  ingestion run from the existing GitHub Actions workflow. Check its Actions result,
+  HTTP success and expected job/no-duplicate outcome; then resume the normal
+  schedule. No ingestion code/key changes are needed. A failed run blocks declaring
+  deployment verified; inspect private logs without exposing X-Ingest-Key.
 
 ## 6. Local double-send verification (PowerShell)
 
