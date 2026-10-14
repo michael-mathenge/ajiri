@@ -487,3 +487,21 @@ moved up one level, so every backend file now sits one folder deeper
 unchanged content as a RENAME, so `git log --follow <file>` still shows its full
 history. A nested `.git` inside `ajiri-frontend/` had to be removed first: a repo
 inside a repo is recorded as an opaque pointer, not as files.
+
+## design-tokens
+A design token is a named visual choice, such as the page background or main action colour. Ajiri keeps these choices in CSS variables so every component changes together. The data-theme attribute replaces their values for dark mode; the small script in index.html chooses a theme before the first paint. System fonts avoid extra downloads.
+
+## composable-ui
+Ajiri owns its small UI components in JSX, following shadcn's composition approach. Radix supplies difficult accessibility behaviour such as modal focus trapping. Slot lets Button pass its appearance to a Link without creating a button inside an anchor. The cn helper combines conditional classes and resolves conflicting Tailwind utilities.
+
+## protected-routes
+A protected route redirects a visitor to login when no access token is stored. React context keeps the navigation informed after login or logout; it is not a security boundary. Django validates every request, and the existing axios interceptor refreshes expired access tokens using the httpOnly cookie. The router remembers the internal destination so login can return the user there.
+
+## effect-cleanup
+React runs effect cleanup when a dependency changes or a component leaves the screen. An AbortController cancels an old API request during cleanup, so a slow response for an old search cannot overwrite new results. Loading is derived from the requested URL and retry number, rather than resetting state inside an effect.
+
+## url-search-state
+Search filters and the current page live in URL query parameters. This makes filtered views bookmarkable and allows browser Back to restore a previous search. Submitting a new search removes the old page parameter because page two of the old results may not exist in the new results.
+
+## route-code-splitting
+React lazy loads a screen's JavaScript only when that screen is visited. Suspense shows a loading state while the download finishes. This reduces the first download on a phone, while keeping frequently used components shared between pages. All chunks are included in the committed frontend build.

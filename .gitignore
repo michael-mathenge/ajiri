@@ -13,6 +13,7 @@ venv/
 # Local scratch files
 feed.xml
 MANIFEST.sha256
+.npm-cache/
 
 # Everything else (venvs, node_modules, databases, .env, build output) is ignored by
 # the .gitignore inside ajiri-backend/ and ajiri-frontend/.

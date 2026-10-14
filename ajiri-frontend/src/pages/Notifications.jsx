@@ -1,51 +1,63 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import apiClient from '../api/client'
+import { useApiResource } from '../hooks/useApiResource'
+import {
+  Button,
+  EmptyState,
+  ErrorState,
+  LoadingState,
+  MatchScore,
+  Pagination,
+} from '../components/ui'
 
 function Notifications() {
-  const [notifications, setNotifications] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [page, setPage] = useState(1)
+  const {
+    data,
+    loading,
+    error: loadError,
+    retry,
+  } = useApiResource(`/jobs/notifications/?page=${page}`)
+  const [updates, setUpdates] = useState({})
+  const notifications =
+    data?.results.map((item) => updates[item.id] || item) || []
   const [error, setError] = useState('')
 
-  useEffect(() => {
-    const fetchNotifications = async () => {
-      try {
-        const response = await apiClient.get('/jobs/notifications/')
-        setNotifications(response.data.results)
-      } catch {
-        setError('Failed to load notifications.')
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchNotifications()
-  }, [])
-
   const handleMarkRead = async (notificationId) => {
+    setError('')
     try {
-      const response = await apiClient.post(`/jobs/notifications/${notificationId}/mark-read/`)
-      setNotifications((current) =>
-        current.map((n) => (n.id === notificationId ? response.data : n))
+      const response = await apiClient.post(
+        `/jobs/notifications/${notificationId}/mark-read/`
       )
+      setUpdates((current) => ({ ...current, [notificationId]: response.data }))
     } catch {
       setError('Failed to mark notification as read.')
     }
   }
 
   if (loading) {
-    return <p className="status-text">Loading notifications…</p>
+    return <LoadingState label="Loading notifications" />
   }
 
-  if (error) {
-    return <p className="error-text">{error}</p>
+  if (loadError) {
+    return <ErrorState onRetry={retry}>{loadError}</ErrorState>
   }
 
   if (notifications.length === 0) {
     return (
       <div>
         <h1>Notifications</h1>
-        <p className="empty-state">No notifications yet.</p>
+        <EmptyState
+          title="You’re all caught up"
+          action={
+            <Button asChild>
+              <Link to="/">Browse jobs</Link>
+            </Button>
+          }
+        >
+          New job-match alerts will appear here.
+        </EmptyState>
       </div>
     )
   }
@@ -53,6 +65,14 @@ function Notifications() {
   return (
     <div>
       <h1>Notifications</h1>
+      <p className="lead">
+        Stay close to opportunities that match your skills.
+      </p>
+      {error && (
+        <p role="alert" className="error-text">
+          {error}
+        </p>
+      )}
       <div className="ledger">
         {notifications.map((n) => (
           <div className={`row${n.is_read ? '' : ' row-unread'}`} key={n.id}>
@@ -60,17 +80,28 @@ function Notifications() {
               <Link to={`/jobs/${n.job_id}`} className="row-title">
                 {n.job_title}, {n.company_name}
               </Link>
-              <span className="match">{n.match_score}% match</span>
+              <MatchScore score={n.match_score} />
             </div>
-            <p className="row-meta">{new Date(n.created_at).toLocaleString()}</p>
+            <p className="row-meta">
+              {new Date(n.created_at).toLocaleString()}
+            </p>
             {!n.is_read && (
-              <button onClick={() => handleMarkRead(n.id)} className="btn btn-plain">
+              <button
+                onClick={() => handleMarkRead(n.id)}
+                className="btn btn-plain"
+              >
                 Mark as read
               </button>
             )}
           </div>
         ))}
       </div>
+      <Pagination
+        page={page}
+        hasNext={Boolean(data.next)}
+        hasPrevious={Boolean(data.previous)}
+        onChange={setPage}
+      />
     </div>
   )
 }
