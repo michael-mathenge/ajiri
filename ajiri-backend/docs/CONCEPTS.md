@@ -529,3 +529,9 @@ Profile fields save as JSON, including skill_names as an array. An empty array e
 
 ## subscription-preview
 The plans page is a static product preview with the proposed KES prices. It does not store a plan selection, grant entitlements, collect payment data or call a payment service. Availability is stated in text rather than implied by disabled purchase buttons. Billing periods and usage limits remain undecided until payments are scoped.
+
+## application-delivery-failure
+An application moves to sent only after its saved attachments are opened and the email backend accepts the send operation. Missing files and email errors return a retryable 502 while keeping the application ready_for_review and sent_at empty. Public error messages avoid exposing local file paths or mail-server details. Backend acceptance is not proof of delivery to the recipient's inbox.
+
+## isolated-auth-tests
+Auth tests use synthetic users, a test database and a fast password hasher selected only by a test-class override. Production settings are unchanged. Tests verify the observable contract: passwords are hashed, access is returned in JSON, refresh stays in an httpOnly cookie, rotation invalidates previous cookies, and logout blacklists the refresh token.

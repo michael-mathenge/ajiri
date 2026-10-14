@@ -173,17 +173,18 @@ class SendApplicationView(generics.GenericAPIView):
                 from_email=settings.DEFAULT_FROM_EMAIL,
                 to=[application.application_email],
             )
-            email.attach_file(application.generated_cv.path)
-            email.attach_file(application.generated_cover_letter.path)
-
             try:
+                # Missing attachments are delivery failures too; keep the draft reviewable.
+                # see docs/CONCEPTS.md#application-delivery-failure
+                email.attach_file(application.generated_cv.path)
+                email.attach_file(application.generated_cover_letter.path)
                 email.send(fail_silently=False)
-            except Exception as e:
+            except Exception:
                 # Deliberately don't touch status/sent_at on failure — the
                 # application stays in ready_for_review so the user can
                 # just retry the same request once the issue is fixed.
                 return Response(
-                    {"detail": f"Failed to send email: {str(e)}"},
+                    {"detail": "Could not send this application. Its documents or email service may be unavailable. Please try again later."},
                     status=status.HTTP_502_BAD_GATEWAY,
                 )
 
