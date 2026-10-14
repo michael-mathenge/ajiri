@@ -83,9 +83,8 @@ class ApplyToJobView(generics.GenericAPIView):
         cv_buffer = generate_cv_docx(profile)
         cover_letter_buffer = generate_cover_letter_docx(profile, job)
         safe_company = job.company_name.replace(' ', '_')
-        # Generated files are served as plain static files, so a guessable name
-        # like CV_Acme.docx would let anyone download someone's CV. A random
-        # prefix makes each URL unguessable. See docs/CONCEPTS.md#unguessable-filenames
+        # Random prefixes remain defence in depth; storage is private and
+        # owner endpoints enforce access. See docs/CONCEPTS.md#private-media-storage
         file_token = uuid.uuid4().hex
 
         application = Application(

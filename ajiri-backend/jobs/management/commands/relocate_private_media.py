@@ -78,7 +78,11 @@ class Command(BaseCommand):
                 raise CommandError('A referenced file is missing or unsafe; relocation aborted.')
 
         records = []
-        for directory, folders, files in os.walk(source, followlinks=False):
+        def walk_error(error):
+            # os.walk normally skips unreadable directories, hiding orphan files.
+            raise error
+
+        for directory, folders, files in os.walk(source, followlinks=False, onerror=walk_error):
             for name in folders + files:
                 reject_links(Path(directory) / name)
             for name in files:

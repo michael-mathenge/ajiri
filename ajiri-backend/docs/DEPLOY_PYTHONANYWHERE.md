@@ -86,7 +86,7 @@ Bash console, **[Web]** a browser.
 2. **Virtualenv** section: enter `/home/YOURNAME/.virtualenvs/ajiri`.
 3. Click the **WSGI configuration file** link. Delete its contents and paste
    `deploy/pythonanywhere_wsgi.py`, replacing `YOURNAME`. Save.
-4. **Static files** section, add one mapping:
+4. **Static files** section, ensure there is no media mapping:
    | URL | Directory |
    |---|---|
    | `/media/` | **No mapping: private documents must never be served statically** |
