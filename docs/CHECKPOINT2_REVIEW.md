@@ -269,3 +269,23 @@ Michael owns estimation and tracker updates. Preparation/design is separate.
 
 Checkpoint 2 stops for Michael's review. No deployment, push or further feature
 implementation is authorized by this report itself.
+
+## Follow-up review rehearsal - 15 October 2026
+
+The local SQLite backup passed integrity_check and is stored only in an ignored
+private audit directory. Migration plan/apply found nothing pending; jobs/0007 is
+already applied. The actual local database has zero CV references and zero
+applications; the legacy media directory and configured private root are absent.
+The required legacy-root dry-run failed safely because the source does not exist,
+so no real user media copy was attempted. A disposable synthetic CV rehearsal
+then ran dry-run before apply/verify, preserving names/bytes and proving direct
+URL 404, owner 200, other user 404 and anonymous 401. This is API-level evidence,
+not a logged-in browser rehearsal against a real uploaded CV.
+
+The frontend review rerun passed clean install, lint, 24 tests (20.99s) and build.
+The backend review rerun ran 72 tests: 71 passed, one Windows symlink test skipped,
+in 45.649 seconds, including privacy and delivery failure/retry/concurrency tests.
+No production rehearsal or deployment occurred. The checklist was aligned with
+Michael's requested backup, migrate, relocate, mapping-change, reload, post-check
+sequence and gained explicit recovery gates plus a post-deploy ingestion-run
+check. All traffic/writers must remain paused through the sequence.
