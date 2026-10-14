@@ -4,15 +4,28 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Roboto+Slab:wght@600;700&display=swap"
-      rel="stylesheet"
+    <meta
+      name="description"
+      content="Find jobs in Kenya that match your skills. Review your applications and take the next step with Ajiri."
     />
-    <title>Ajiri</title>
-    <script type="module" crossorigin src="/assets/index--XBAAxZY.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-CcrTpkte.css">
+    <script>
+      // Apply before paint to avoid flashing the wrong theme. See docs/CONCEPTS.md#design-tokens
+      try {
+        const saved = localStorage.getItem('ajiri-theme')
+        document.documentElement.dataset.theme =
+          saved === 'dark' || saved === 'light'
+            ? saved
+            : matchMedia('(prefers-color-scheme: dark)').matches
+              ? 'dark'
+              : 'light'
+      } catch {
+        document.documentElement.dataset.theme = 'light'
+      }
+    </script>
+    <title>Ajiri — Your next chapter</title>
+    <script type="module" crossorigin src="/assets/index-DF9zMfIT.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/jsx-runtime-BZs5EfAy.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-CV7wVvmu.css">
   </head>
   <body>
     <div id="root"></div>

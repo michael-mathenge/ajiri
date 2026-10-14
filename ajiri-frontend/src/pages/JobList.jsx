@@ -1,58 +1,228 @@
-import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
-import apiClient from '../api/client'
+import { useState } from 'react'
+import { Link, useSearchParams } from 'react-router-dom'
+import {
+  ArrowRight,
+  BriefcaseBusiness,
+  MapPin,
+  Search,
+  SlidersHorizontal,
+} from 'lucide-react'
+import { useApiResource } from '../hooks/useApiResource'
+import {
+  Badge,
+  Button,
+  Card,
+  Dialog,
+  EmptyState,
+  ErrorState,
+  Input,
+  LoadingState,
+  MatchScore,
+  Pagination,
+  Select,
+} from '../components/ui'
+import { dateLabel, jobType, salaryLabel } from '../lib/utils'
 
-function JobList() {
-  const [jobs, setJobs] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
-
-  useEffect(() => {
-    const fetchJobs = async () => {
-      try {
-        const response = await apiClient.get('/jobs/')
-        setJobs(response.data.results)
-      } catch {
-        setError('Failed to load jobs.')
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchJobs()
-  }, [])
-
-  if (loading) {
-    return <p className="status-text">Loading jobs…</p>
-  }
-
-  if (error) {
-    return <p className="error-text">{error}</p>
-  }
-
+function Filters({ title, location, type }) {
   return (
-    <div>
-      <h1>Job listings</h1>
-      {jobs.length === 0 && <p className="empty-state">No jobs found.</p>}
-      <div className="ledger">
-        {jobs.map((job) => (
-          <div className="row" key={job.id}>
-            <div className="row-head">
-              <Link to={`/jobs/${job.id}`} className="row-title">
-                {job.title}
-              </Link>
-              {job.match_score !== null && (
-                <span className="match">{job.match_score}% match</span>
-              )}
-            </div>
-            <p className="row-meta">
-              {job.company_name}, {job.location}
-            </p>
-          </div>
-        ))}
+    <>
+      <div className="field">
+        <label htmlFor="search-title">Job title</label>
+        <Input
+          id="search-title"
+          name="title"
+          placeholder="e.g. Software developer"
+          defaultValue={title}
+        />
       </div>
+      <div className="field">
+        <label htmlFor="search-location">Location</label>
+        <Input
+          id="search-location"
+          name="location"
+          placeholder="e.g. Nairobi"
+          defaultValue={location}
+        />
+      </div>
+      <div className="field">
+        <label htmlFor="search-type">Job type</label>
+        <Select id="search-type" name="job_type" defaultValue={type}>
+          <option value="">All job types</option>
+          <option value="full_time">Full time</option>
+          <option value="part_time">Part time</option>
+          <option value="contract">Contract</option>
+          <option value="internship">Internship</option>
+        </Select>
+      </div>
+    </>
+  )
+}
+export default function JobList() {
+  // URL state makes filters shareable and preserves them with browser Back.
+  // see docs/CONCEPTS.md#url-search-state
+  const [params, setParams] = useSearchParams()
+  const title = params.get('title') || ''
+  const location = params.get('location') || ''
+  const type = params.get('job_type') || ''
+  const requestedPage = Number(params.get('page'))
+  const page = Number.isSafeInteger(requestedPage) && requestedPage > 0 ? requestedPage : 1
+  const query = new URLSearchParams({ page: String(page) })
+  if (title) query.set('title', title)
+  if (location) query.set('location', location)
+  if (type) query.set('job_type', type)
+  const { data, loading, error, retry } = useApiResource(`/jobs/?${query}`)
+  const [showFilters, setShowFilters] = useState(false)
+  const filtered = Boolean(title || location || type)
+  const submit = (event) => {
+    event.preventDefault()
+    const form = new FormData(event.currentTarget)
+    const next = new URLSearchParams()
+    for (const [key, value] of form)
+      if (value.trim()) next.set(key, value.trim())
+    setParams(next)
+  }
+  const changePage = (next) => {
+    const updated = new URLSearchParams(params)
+    updated.set('page', String(next))
+    setParams(updated)
+    window.scrollTo({ top: 0, behavior: 'instant' })
+  }
+  return (
+    <div className="stack page-stack">
+      <section className="page-heading">
+        <div>
+          <span className="eyebrow">OPPORTUNITIES, WITH YOU IN MIND</span>
+          <h1>Find your next chapter.</h1>
+          <p className="lead">
+            Explore jobs across Kenya. Start with the skills that make you, you.
+          </p>
+        </div>
+        <span className="heading-icon">
+          <BriefcaseBusiness size={36} aria-hidden="true" />
+        </span>
+      </section>
+      <Card className="search-card">
+        <form onSubmit={submit} key={`${title}|${location}|${type}`}>
+          <div className={`search-fields ${showFilters ? 'filters-open' : ''}`}>
+            <Filters title={title} location={location} type={type} />
+            <Button type="submit">
+              <Search size={18} aria-hidden="true" />
+              Search jobs
+            </Button>
+          </div>
+          <div className="filter-tools">
+            <Button
+              variant="ghost"
+              className="filter-toggle"
+              aria-expanded={showFilters}
+              onClick={() => setShowFilters(!showFilters)}
+            >
+              <SlidersHorizontal size={16} aria-hidden="true" />
+              {showFilters ? 'Fewer filters' : 'Location & job type'}
+            </Button>
+            {filtered && (
+              <Button variant="ghost" onClick={() => setParams({})}>
+                Clear filters
+              </Button>
+            )}
+          </div>
+        </form>
+      </Card>
+      <div className="results-heading">
+        <h2>
+          {loading
+            ? 'Finding opportunities…'
+            : error
+              ? 'Job opportunities'
+              : `${data?.count ?? 0} ${(data?.count ?? 0) === 1 ? 'opportunity' : 'opportunities'}`}
+        </h2>
+        <Dialog
+          trigger={<Button variant="ghost">How matching works</Button>}
+          title="Your skills, matched to the role"
+          description="The match score compares your profile’s skills with the skills listed for a job."
+        >
+          <p>
+            A score of 70% or more is a strong skill match and can trigger a job
+            alert. A lower score does not stop you applying.
+          </p>
+          <p className="muted mt-4">
+            A 0% score can also mean that no skills are listed for a job. Scores
+            describe skill overlap, not your chances of being hired.
+          </p>
+        </Dialog>
+      </div>
+      {loading ? (
+        <LoadingState label="Loading jobs" />
+      ) : error ? (
+        <ErrorState onRetry={retry}>{error}</ErrorState>
+      ) : !data.results.length ? (
+        <EmptyState
+          title={
+            filtered ? 'No jobs match those filters' : 'No opportunities yet'
+          }
+          action={
+            filtered && (
+              <Button variant="outline" onClick={() => setParams({})}>
+                Clear filters
+              </Button>
+            )
+          }
+        >
+          {filtered
+            ? 'Try a broader title or another location.'
+            : 'Check back soon for new job listings.'}
+        </EmptyState>
+      ) : (
+        <>
+          <div className="job-grid">
+            {data.results.map((job) => (
+              <Card className="job-card" key={job.id}>
+                <div className="job-card-top">
+                  <span className="company-avatar" aria-hidden="true">
+                    {job.company_name.slice(0, 2).toUpperCase()}
+                  </span>
+                  <MatchScore score={job.match_score} />
+                </div>
+                <p className="company-name">{job.company_name}</p>
+                <h3>
+                  <Link to={`/jobs/${job.id}`}>{job.title}</Link>
+                </h3>
+                <p className="icon-text muted">
+                  <MapPin size={16} aria-hidden="true" />
+                  {job.location || 'Location not listed'}
+                </p>
+                <div className="job-tags">
+                  <Badge className="capitalize">{jobType(job.job_type)}</Badge>
+                </div>
+                <p className="salary">{salaryLabel(job)}</p>
+                <div className="job-card-bottom">
+                  <span className="muted text-sm">
+                    Posted {dateLabel(job.posted_at)}
+                  </span>
+                  <Link
+                    to={`/jobs/${job.id}`}
+                    className="inline-link"
+                    aria-label={`View ${job.title} at ${job.company_name}`}
+                  >
+                    View job
+                    <ArrowRight size={16} aria-hidden="true" />
+                  </Link>
+                </div>
+              </Card>
+            ))}
+          </div>
+          <Pagination
+            page={page}
+            hasNext={Boolean(data.next)}
+            hasPrevious={Boolean(data.previous)}
+            onChange={changePage}
+          />
+        </>
+      )}
+      <p className="safety-note">
+        A good opportunity should never ask you to pay to apply. Check employer
+        details before sharing personal information.
+      </p>
     </div>
   )
 }
-
-export default JobList
