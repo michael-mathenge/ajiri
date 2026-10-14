@@ -12,6 +12,7 @@ const JobList = lazy(() => import('./pages/JobList'))
 const JobDetail = lazy(() => import('./pages/JobDetail'))
 const Applications = lazy(() => import('./pages/Applications'))
 const Notifications = lazy(() => import('./pages/Notifications'))
+const Profile = lazy(() => import('./pages/Profile'))
 
 export default function App() {
   return (
@@ -24,16 +25,26 @@ export default function App() {
               <Route path="/jobs/:id" element={<JobDetail />} />
               <Route path="/applications" element={<Applications />} />
               <Route path="/notifications" element={<Notifications />} />
+              <Route path="/profile" element={<Profile />} />
             </Route>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="*" element={
-              <EmptyState title="Page not found" action={
-                <Button asChild><Link to="/">Browse jobs</Link></Button>
-              }>
-                This page may have moved. Find your next opportunity from the jobs page.
-              </EmptyState>
-            } />
+            <Route
+              path="*"
+              element={
+                <EmptyState
+                  title="Page not found"
+                  action={
+                    <Button asChild>
+                      <Link to="/">Browse jobs</Link>
+                    </Button>
+                  }
+                >
+                  This page may have moved. Find your next opportunity from the
+                  jobs page.
+                </EmptyState>
+              }
+            />
           </Route>
         </Routes>
       </ToastProvider>

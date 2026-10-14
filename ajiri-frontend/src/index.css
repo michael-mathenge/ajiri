@@ -789,3 +789,26 @@ textarea.input {
 .application-card h2 {
   font-size: 1.2rem;
 }
+
+.profile-grid {
+  display: grid;
+  gap: 1rem;
+}
+input[type='file'] {
+  padding: 0.6rem;
+  overflow: hidden;
+}
+input[type='file']::file-selector-button {
+  margin-right: 0.75rem;
+  padding: 0.35rem 0.6rem;
+  border: 1px solid var(--input-border);
+  border-radius: 0.35rem;
+  background: var(--soft);
+  color: var(--foreground);
+  cursor: pointer;
+}
+@media (min-width: 640px) {
+  .profile-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

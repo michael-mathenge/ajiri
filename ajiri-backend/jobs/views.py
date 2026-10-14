@@ -3,7 +3,8 @@ import uuid
 import feedparser
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
-from django.http import HttpResponse
+from django.http import HttpResponse, FileResponse
+from pathlib import Path
 from django.shortcuts import get_object_or_404
 from django.core.files.base import ContentFile
 from django.core.mail import EmailMessage
@@ -51,6 +52,7 @@ class GenerateCoverLetterView(generics.GenericAPIView):
         )
         safe_company = job.company_name.replace(' ', '_')
         response['Content-Disposition'] = f'attachment; filename="Cover_Letter_{safe_company}.docx"'
+        response['Cache-Control'] = 'private, no-store'
         return response
 
 
@@ -191,6 +193,24 @@ class SendApplicationView(generics.GenericAPIView):
 
         serializer = ApplicationSerializer(application, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ApplicationDocumentView(generics.GenericAPIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request, pk, kind):
+        application = get_object_or_404(Application, pk=pk, user=request.user)
+        document = {'cv': application.generated_cv, 'cover-letter': application.generated_cover_letter}.get(kind)
+        if not document:
+            return Response({'detail': 'Document not found.'}, status=404)
+        # Stream the saved snapshot belonging to this user, not a freshly generated file.
+        # see docs/CONCEPTS.md#authenticated-document-downloads
+        try:
+            response = FileResponse(document.open('rb'), as_attachment=True, filename=Path(document.name).name)
+        except FileNotFoundError:
+            return Response({'detail': 'The document file is unavailable.'}, status=404)
+        response['Cache-Control'] = 'private, no-store'
+        return response
 
 
 class DismissApplicationView(generics.GenericAPIView):

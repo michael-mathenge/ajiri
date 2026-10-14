@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import apiClient, { mediaUrl } from '../api/client'
+import apiClient from '../api/client'
+import DownloadButton from '../components/DownloadButton'
 import { useApiResource } from '../hooks/useApiResource'
 import {
   ApplicationStatus,
@@ -63,25 +64,20 @@ export function ApplicationRow({ application: app, onUpdate }) {
           <p>Review the generated documents before your next step.</p>
           <div className="action-group">
             {app.generated_cv && (
-              <a
-                className="inline-link"
-                href={mediaUrl(app.generated_cv)}
-                target="_blank"
-                rel="noreferrer"
+              <DownloadButton
+                path={`/jobs/applications/${app.id}/documents/cv/`}
+                filename="Application_CV.docx"
               >
-                Review CV<span className="sr-only"> (opens in a new tab)</span>
-              </a>
+                Download CV
+              </DownloadButton>
             )}
             {app.generated_cover_letter && (
-              <a
-                className="inline-link"
-                href={mediaUrl(app.generated_cover_letter)}
-                target="_blank"
-                rel="noreferrer"
+              <DownloadButton
+                path={`/jobs/applications/${app.id}/documents/cover-letter/`}
+                filename="Application_Cover_Letter.docx"
               >
-                Review cover letter
-                <span className="sr-only"> (opens in a new tab)</span>
-              </a>
+                Download cover letter
+              </DownloadButton>
             )}
           </div>
           {email && (
