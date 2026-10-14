@@ -505,3 +505,9 @@ Search filters and the current page live in URL query parameters. This makes fil
 
 ## route-code-splitting
 React lazy loads a screen's JavaScript only when that screen is visited. Suspense shows a loading state while the download finishes. This reduces the first download on a phone, while keeping frequently used components shared between pages. All chunks are included in the committed frontend build.
+
+## notification-delivery-channels
+Email and in-app alerts are independent preferences. A Notification also acts as a delivery receipt to prevent repeat sweeps from sending the same alert twice. The in_app flag snapshots whether that receipt belongs in the inbox. Email-only receipts are excluded from listing and mark-read endpoints; existing records keep in_app=True. When both channels are off, no receipt is created, so enabling alerts later allows the next sweep to find matches.
+
+## application-dismissal
+Dismissal keeps a draft as history rather than deleting it. The owner can dismiss draft or ready_for_review applications; repeating the request succeeds without changing anything further. Sent applications cannot be dismissed because Ajiri cannot undo an email or an employer-site submission. The API scopes the lookup to the current user, returning 404 for another user's application.

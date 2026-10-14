@@ -30,6 +30,7 @@ class ProfileSerializer(serializers.ModelSerializer):
             'headline', 'bio', 'location', 'years_of_experience',
             'skills', 'skill_names', 'cv_file', 'updated_at', 'email',
             'full_name', 'phone_number',
+            'notify_email', 'notify_in_app',
         )
         read_only_fields = ('updated_at',)
 

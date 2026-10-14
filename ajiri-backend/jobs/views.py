@@ -193,6 +193,21 @@ class SendApplicationView(generics.GenericAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+class DismissApplicationView(generics.GenericAPIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def post(self, request, pk):
+        application = get_object_or_404(Application, pk=pk, user=request.user)
+        # A dismissed draft stays available as history; sending cannot be undone.
+        # see docs/CONCEPTS.md#application-dismissal
+        if application.status == Application.Status.SENT:
+            return Response({'detail': 'Sent applications cannot be dismissed.'}, status=400)
+        if application.status != Application.Status.DISMISSED:
+            application.status = Application.Status.DISMISSED
+            application.save(update_fields=['status', 'updated_at'])
+        return Response(ApplicationSerializer(application, context={'request': request}).data)
+
+
 class NotificationListView(generics.ListAPIView):
     """
     GET /jobs/notifications/ — every job-match alert belonging to the
@@ -203,7 +218,7 @@ class NotificationListView(generics.ListAPIView):
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
-        return Notification.objects.filter(user=self.request.user).order_by('-created_at')
+        return Notification.objects.filter(user=self.request.user, in_app=True).order_by('-created_at')
 
 
 class MarkNotificationReadView(generics.GenericAPIView):
@@ -217,7 +232,7 @@ class MarkNotificationReadView(generics.GenericAPIView):
     queryset = Notification.objects.all()
 
     def post(self, request, pk):
-        notification = get_object_or_404(Notification, pk=pk, user=request.user)
+        notification = get_object_or_404(Notification, pk=pk, user=request.user, in_app=True)
         notification.is_read = True
         notification.save(update_fields=['is_read'])
 
