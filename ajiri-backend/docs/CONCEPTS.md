@@ -520,3 +520,9 @@ Preparing an application never sends it. Email applications require review appro
 
 ## component-flow-tests
 Vitest runs component tests in jsdom, a browser-like environment in Node. Testing Library finds controls by visible names and labels, so tests exercise user actions rather than internal React state. HTTP calls are mocked in component tests; separate Django tests and isolated browser checks verify the real API.
+
+## authenticated-document-downloads
+A normal browser link cannot attach an access token from localStorage. Ajiri requests a blob through the existing axios client, preserving its refresh flow, then downloads a temporary object URL and releases it. Saved application documents have owner-scoped streaming endpoints and no-store headers, so review downloads use the exact saved snapshot. This does not remove the existing media URLs; restricting all static media is a separate deployment/privacy task.
+
+## profile-edit-and-upload
+Profile fields save as JSON, including skill_names as an array. An empty array explicitly clears skills. CV files upload separately using FormData, letting the browser choose its multipart boundary. Client validation gives immediate PDF/DOC/DOCX and 5 MB feedback; Django repeats validation because browser checks can be bypassed. React 19 lets an Input pass its ref through to the native input so a successful upload can clear the file picker.

@@ -91,7 +91,12 @@ export default function AppShell() {
       </a>
       <header className="topbar">
         <div className="nav-container">
-          <Link to="/" className="brand" aria-label="Ajiri home" onClick={() => setMenuPath(null)}>
+          <Link
+            to="/"
+            className="brand"
+            aria-label="Ajiri home"
+            onClick={() => setMenuPath(null)}
+          >
             <span className="brand-mark">
               <BriefcaseBusiness size={21} aria-hidden="true" />
             </span>
@@ -110,6 +115,7 @@ export default function AppShell() {
             {signedIn ? (
               <>
                 <NavLink to="/applications">My applications</NavLink>
+                <NavLink to="/profile">Profile</NavLink>
                 <NavLink to="/notifications">
                   <Bell size={17} aria-hidden="true" />
                   Notifications
@@ -150,7 +156,9 @@ export default function AppShell() {
         </div>
       </header>
       <main id="main-content" tabIndex={-1} className="container">
-        <Suspense fallback={<LoadingState label="Loading page" />}><Outlet /></Suspense>
+        <Suspense fallback={<LoadingState label="Loading page" />}>
+          <Outlet />
+        </Suspense>
       </main>
       <footer className="footer">
         <span className="font-semibold">ajiri</span>
