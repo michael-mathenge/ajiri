@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import apiClient from '../api/client'
 import { useApiResource } from '../hooks/useApiResource'
 import {
   Button,
+  Badge,
   EmptyState,
   ErrorState,
   LoadingState,
@@ -12,6 +13,7 @@ import {
 } from '../components/ui'
 
 function Notifications() {
+  const rows = useRef({})
   const [page, setPage] = useState(1)
   const {
     data,
@@ -23,16 +25,24 @@ function Notifications() {
   const notifications =
     data?.results.map((item) => updates[item.id] || item) || []
   const [error, setError] = useState('')
+  const [pendingId, setPendingId] = useState(null)
 
   const handleMarkRead = async (notificationId) => {
+    if (pendingId !== null) return
+    setPendingId(notificationId)
     setError('')
     try {
       const response = await apiClient.post(
         `/jobs/notifications/${notificationId}/mark-read/`
       )
       setUpdates((current) => ({ ...current, [notificationId]: response.data }))
+      // Mark-read removes its button, so retain a useful keyboard position.
+      // see docs/CONCEPTS.md#focus-after-mutations
+      requestAnimationFrame(() => rows.current[notificationId]?.focus())
     } catch {
       setError('Failed to mark notification as read.')
+    } finally {
+      setPendingId(null)
     }
   }
 
@@ -75,12 +85,20 @@ function Notifications() {
       )}
       <div className="ledger">
         {notifications.map((n) => (
-          <div className={`row${n.is_read ? '' : ' row-unread'}`} key={n.id}>
+          <div
+            className={`row${n.is_read ? '' : ' row-unread'}`}
+            key={n.id}
+            tabIndex={-1}
+            ref={(element) => {
+              rows.current[n.id] = element
+            }}
+          >
             <div className="row-head">
               <Link to={`/jobs/${n.job_id}`} className="row-title">
                 {n.job_title}, {n.company_name}
               </Link>
               <MatchScore score={n.match_score} />
+              <Badge>{n.is_read ? 'Read' : 'Unread'}</Badge>
             </div>
             <p className="row-meta">
               {new Date(n.created_at).toLocaleString()}
@@ -88,9 +106,10 @@ function Notifications() {
             {!n.is_read && (
               <button
                 onClick={() => handleMarkRead(n.id)}
+                disabled={pendingId !== null}
                 className="btn btn-plain"
               >
-                Mark as read
+                {pendingId === n.id ? 'Marking read…' : 'Mark as read'}
               </button>
             )}
           </div>

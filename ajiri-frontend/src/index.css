@@ -699,7 +699,7 @@ textarea.input {
     display: inline-flex;
   }
 }
-@media (min-width: 900px) {
+@media (min-width: 1100px) {
   .nav-container {
     flex-wrap: nowrap;
   }
@@ -751,5 +751,84 @@ textarea.input {
     animation: none !important;
     transition: none !important;
     scroll-behavior: auto !important;
+  }
+}
+
+.action-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+.check-field {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  padding: 0.5rem 0;
+}
+.check-field input {
+  width: 20px;
+  height: 20px;
+  margin-top: 0.2rem;
+  flex-shrink: 0;
+  accent-color: var(--primary);
+}
+.review-details {
+  margin: 1rem 0;
+}
+.review-details summary {
+  cursor: pointer;
+  min-height: 44px;
+  padding: 0.6rem 0;
+  color: var(--primary);
+  font-weight: 650;
+}
+.application-card {
+  overflow-wrap: anywhere;
+}
+.application-card h2 {
+  font-size: 1.2rem;
+}
+
+.profile-grid {
+  display: grid;
+  gap: 1rem;
+}
+input[type='file'] {
+  padding: 0.6rem;
+  overflow: hidden;
+}
+input[type='file']::file-selector-button {
+  margin-right: 0.75rem;
+  padding: 0.35rem 0.6rem;
+  border: 1px solid var(--input-border);
+  border-radius: 0.35rem;
+  background: var(--soft);
+  color: var(--foreground);
+  cursor: pointer;
+}
+@media (min-width: 640px) {
+  .profile-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.plans-grid {
+  display: grid;
+  gap: 1.25rem;
+}
+.plan-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.plan-price {
+  font-size: 2rem;
+  font-weight: 750;
+  color: var(--primary);
+}
+@media (min-width: 1100px) {
+  .plans-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }

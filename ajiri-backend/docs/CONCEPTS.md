@@ -505,3 +505,36 @@ Search filters and the current page live in URL query parameters. This makes fil
 
 ## route-code-splitting
 React lazy loads a screen's JavaScript only when that screen is visited. Suspense shows a loading state while the download finishes. This reduces the first download on a phone, while keeping frequently used components shared between pages. All chunks are included in the committed frontend build.
+
+## notification-delivery-channels
+Email and in-app alerts are independent preferences. A Notification also acts as a delivery receipt to prevent repeat sweeps from sending the same alert twice. The in_app flag snapshots whether that receipt belongs in the inbox. Email-only receipts are excluded from listing and mark-read endpoints; existing records keep in_app=True. When both channels are off, no receipt is created, so enabling alerts later allows the next sweep to find matches.
+
+## application-dismissal
+Dismissal keeps a draft as history rather than deleting it. The owner can dismiss draft or ready_for_review applications; repeating the request succeeds without changing anything further. Sent applications cannot be dismissed because Ajiri cannot undo an email or an employer-site submission. The API scopes the lookup to the current user, returning 404 for another user's application.
+
+## drf-field-errors
+DRF validation responses contain field names with one or more messages. Ajiri normalizes arrays, nested errors and detail strings, then renders every message. Inputs refer to the matching error entry with aria-describedby and aria-invalid so keyboard and screen-reader users can find the problem.
+
+## explicit-application-confirmation
+Preparing an application never sends it. Email applications require review approval before the send action. External applications link to the employer and require a separate confirmation that submission happened there; Ajiri records that confirmation rather than sending an email. Sent and dismissed states remove sending controls, while the backend independently enforces allowed states.
+
+## component-flow-tests
+Vitest runs component tests in jsdom, a browser-like environment in Node. Testing Library finds controls by visible names and labels, so tests exercise user actions rather than internal React state. HTTP calls are mocked in component tests; separate Django tests and isolated browser checks verify the real API.
+
+## authenticated-document-downloads
+A normal browser link cannot attach an access token from localStorage. Ajiri requests a blob through the existing axios client, preserving its refresh flow, then downloads a temporary object URL and releases it. Saved application documents have owner-scoped streaming endpoints and no-store headers, so review downloads use the exact saved snapshot. This does not remove the existing media URLs; restricting all static media is a separate deployment/privacy task.
+
+## profile-edit-and-upload
+Profile fields save as JSON, including skill_names as an array. An empty array explicitly clears skills. CV files upload separately using FormData, letting the browser choose its multipart boundary. Client validation gives immediate PDF/DOC/DOCX and 5 MB feedback; Django repeats validation because browser checks can be bypassed. React 19 lets an Input pass its ref through to the native input so a successful upload can clear the file picker.
+
+## subscription-preview
+The plans page is a static product preview with the proposed KES prices. It does not store a plan selection, grant entitlements, collect payment data or call a payment service. Availability is stated in text rather than implied by disabled purchase buttons. Billing periods and usage limits remain undecided until payments are scoped.
+
+## application-delivery-failure
+An application moves to sent only after its saved attachments are opened and the email backend accepts the send operation. Missing files and email errors return a retryable 502 while keeping the application ready_for_review and sent_at empty. Public error messages avoid exposing local file paths or mail-server details. Backend acceptance is not proof of delivery to the recipient's inbox.
+
+## isolated-auth-tests
+Auth tests use synthetic users, a test database and a fast password hasher selected only by a test-class override. Production settings are unchanged. Tests verify the observable contract: passwords are hashed, access is returned in JSON, refresh stays in an httpOnly cookie, rotation invalidates previous cookies, and logout blacklists the refresh token.
+
+## focus-after-mutations
+A successful action can remove its own button, leaving keyboard focus on the document body. Ajiri moves focus to the affected application heading or notification row after the UI updates. A requestAnimationFrame waits for React to render the result; tabIndex=-1 permits programmatic focus without adding extra stops to normal Tab navigation. Dialogs still use Radix for focus trapping and Escape.

@@ -3,7 +3,8 @@ import uuid
 import feedparser
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
-from django.http import HttpResponse
+from django.http import HttpResponse, FileResponse
+from pathlib import Path
 from django.shortcuts import get_object_or_404
 from django.core.files.base import ContentFile
 from django.core.mail import EmailMessage
@@ -51,6 +52,7 @@ class GenerateCoverLetterView(generics.GenericAPIView):
         )
         safe_company = job.company_name.replace(' ', '_')
         response['Content-Disposition'] = f'attachment; filename="Cover_Letter_{safe_company}.docx"'
+        response['Cache-Control'] = 'private, no-store'
         return response
 
 
@@ -171,17 +173,18 @@ class SendApplicationView(generics.GenericAPIView):
                 from_email=settings.DEFAULT_FROM_EMAIL,
                 to=[application.application_email],
             )
-            email.attach_file(application.generated_cv.path)
-            email.attach_file(application.generated_cover_letter.path)
-
             try:
+                # Missing attachments are delivery failures too; keep the draft reviewable.
+                # see docs/CONCEPTS.md#application-delivery-failure
+                email.attach_file(application.generated_cv.path)
+                email.attach_file(application.generated_cover_letter.path)
                 email.send(fail_silently=False)
-            except Exception as e:
+            except Exception:
                 # Deliberately don't touch status/sent_at on failure — the
                 # application stays in ready_for_review so the user can
                 # just retry the same request once the issue is fixed.
                 return Response(
-                    {"detail": f"Failed to send email: {str(e)}"},
+                    {"detail": "Could not send this application. Its documents or email service may be unavailable. Please try again later."},
                     status=status.HTTP_502_BAD_GATEWAY,
                 )
 
@@ -191,6 +194,39 @@ class SendApplicationView(generics.GenericAPIView):
 
         serializer = ApplicationSerializer(application, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ApplicationDocumentView(generics.GenericAPIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request, pk, kind):
+        application = get_object_or_404(Application, pk=pk, user=request.user)
+        document = {'cv': application.generated_cv, 'cover-letter': application.generated_cover_letter}.get(kind)
+        if not document:
+            return Response({'detail': 'Document not found.'}, status=404)
+        # Stream the saved snapshot belonging to this user, not a freshly generated file.
+        # see docs/CONCEPTS.md#authenticated-document-downloads
+        try:
+            response = FileResponse(document.open('rb'), as_attachment=True, filename=Path(document.name).name)
+        except FileNotFoundError:
+            return Response({'detail': 'The document file is unavailable.'}, status=404)
+        response['Cache-Control'] = 'private, no-store'
+        return response
+
+
+class DismissApplicationView(generics.GenericAPIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def post(self, request, pk):
+        application = get_object_or_404(Application, pk=pk, user=request.user)
+        # A dismissed draft stays available as history; sending cannot be undone.
+        # see docs/CONCEPTS.md#application-dismissal
+        if application.status == Application.Status.SENT:
+            return Response({'detail': 'Sent applications cannot be dismissed.'}, status=400)
+        if application.status != Application.Status.DISMISSED:
+            application.status = Application.Status.DISMISSED
+            application.save(update_fields=['status', 'updated_at'])
+        return Response(ApplicationSerializer(application, context={'request': request}).data)
 
 
 class NotificationListView(generics.ListAPIView):
@@ -203,7 +239,7 @@ class NotificationListView(generics.ListAPIView):
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
-        return Notification.objects.filter(user=self.request.user).order_by('-created_at')
+        return Notification.objects.filter(user=self.request.user, in_app=True).order_by('-created_at')
 
 
 class MarkNotificationReadView(generics.GenericAPIView):
@@ -217,7 +253,7 @@ class MarkNotificationReadView(generics.GenericAPIView):
     queryset = Notification.objects.all()
 
     def post(self, request, pk):
-        notification = get_object_or_404(Notification, pk=pk, user=request.user)
+        notification = get_object_or_404(Notification, pk=pk, user=request.user, in_app=True)
         notification.is_read = True
         notification.save(update_fields=['is_read'])
 

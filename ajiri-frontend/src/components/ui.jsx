@@ -137,9 +137,16 @@ export function Pagination({ page, hasNext, hasPrevious, onChange }) {
     </nav>
   )
 }
-export function Dialog({ trigger, title, description, children }) {
+export function Dialog({
+  trigger,
+  title,
+  description,
+  children,
+  open,
+  onOpenChange,
+}) {
   return (
-    <DialogPrimitive.Root>
+    <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
       <DialogPrimitive.Trigger asChild>{trigger}</DialogPrimitive.Trigger>
       <DialogPrimitive.Portal>
         <DialogPrimitive.Overlay className="dialog-overlay" />

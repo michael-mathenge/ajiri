@@ -162,6 +162,9 @@ class Notification(models.Model):
     # Whether an email was actually sent for this notification — separate
     # from is_read, since email delivery and in-app "seen" are independent.
     sent_email = models.BooleanField(default=False)
+    # Keep email-only delivery receipts out of the in-app inbox.
+    # see docs/CONCEPTS.md#notification-delivery-channels
+    in_app = models.BooleanField(default=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
 
