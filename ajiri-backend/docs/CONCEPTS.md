@@ -526,3 +526,6 @@ A normal browser link cannot attach an access token from localStorage. Ajiri req
 
 ## profile-edit-and-upload
 Profile fields save as JSON, including skill_names as an array. An empty array explicitly clears skills. CV files upload separately using FormData, letting the browser choose its multipart boundary. Client validation gives immediate PDF/DOC/DOCX and 5 MB feedback; Django repeats validation because browser checks can be bypassed. React 19 lets an Input pass its ref through to the native input so a successful upload can clear the file picker.
+
+## subscription-preview
+The plans page is a static product preview with the proposed KES prices. It does not store a plan selection, grant entitlements, collect payment data or call a payment service. Availability is stated in text rather than implied by disabled purchase buttons. Billing periods and usage limits remain undecided until payments are scoped.
