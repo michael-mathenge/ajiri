@@ -360,13 +360,7 @@ app itself, so there is no cross-origin request and no CORS to configure).
 Changing a value means rebuilding.
 
 ## unguessable-filenames
-Generated CVs and cover letters are plain files under `media/`, served by URL
-with no login check. A predictable name like `CV_Acme.docx` would let anyone
-who guesses it download someone's CV, so each file gets a random 32-character
-prefix (`uuid.uuid4().hex`). That protects new files by obscurity only — the
-URL is a secret link, not real access control. The proper fix is to serve CVs
-through a Django view that checks the logged-in owner; until then, treat the
-URLs as sensitive. Files created before this change keep their old names.
+Generated CVs and letters retain random 32-character prefixes (`uuid.uuid4().hex`) as defence in depth. Random names alone do not enforce ownership: a leaked URL remains usable wherever files are publicly mapped. Checkpoint 2 stores files privately and removes direct media serving; existing relative names need no rewriting. See private-media-storage. Production protection still requires Michael to remove historical host mappings.
 
 ## github-actions
 GitHub's built-in automation: YAML files in `.github/workflows/` (GitHub only looks
@@ -538,3 +532,9 @@ Auth tests use synthetic users, a test database and a fast password hasher selec
 
 ## focus-after-mutations
 A successful action can remove its own button, leaving keyboard focus on the document body. Ajiri moves focus to the affected application heading or notification row after the UI updates. A requestAnimationFrame waits for React to render the result; tabIndex=-1 permits programmatic focus without adding extra stops to normal Tab navigation. Dialogs still use Radix for focus trapping and Escape.
+
+## private-media-storage
+Private documents live outside public static mappings. FileField names remain relative, so changing the storage root needs no row rewrites. Only authenticated owner endpoints stream bytes; a random URL is not access control. The relocation command defaults to read-only inventory, copies with checksum verification on --apply, never overwrites conflicting files, and never deletes originals or changes database rows. See ../../docs/PRIVATE_MEDIA_DESIGN.md for the approved design and manual cutover.
+
+## application-send-claim
+A conditional database update claims a reviewable application as sent before SMTP begins. Only one request can change ready_for_review to sent; competing requests receive 400 even if they read stale data. The winner releases its own timestamped claim on delivery failure (502), allowing a retry. A stale dismiss cannot undo the claim. No transaction is held across SMTP, and no schema/status value is added. Sent is visible during delivery; a process crash or ambiguous SMTP acknowledgement needs manual reconciliation, not automatic retry. This prevents simultaneous-request duplication, not exactly-once delivery across an external email provider.

@@ -51,6 +51,7 @@ jobs:
           cache-dependency-path: ajiri-frontend/package-lock.json
       - run: npm ci
       - run: npm run lint
+      - run: npm run test -- --run
       - run: npm run build
       - name: frontend_build matches the source
         run: |
