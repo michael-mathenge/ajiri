@@ -1,4 +1,4 @@
-# Checkpoint 3A deployment security verification — Michael only
+# Checkpoint 3A deployment security verification â€” Michael only
 
 No deployment performed by Codex. Apply only a reviewed revision after your normal
 backup -> migrate -> activate-code checklist. Checkpoint 3A introduces no migrations.
