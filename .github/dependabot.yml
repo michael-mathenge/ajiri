@@ -1,0 +1,38 @@
+# Version updates are proposals only; no automatic merge.
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/ajiri-frontend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Africa/Nairobi"
+    open-pull-requests-limit: 3
+    groups:
+      npm-minor-patch:
+        update-types: ["minor", "patch"]
+
+  - package-ecosystem: "pip"
+    directory: "/ajiri-backend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Africa/Nairobi"
+    open-pull-requests-limit: 3
+    groups:
+      python-minor-patch:
+        update-types: ["minor", "patch"]
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Africa/Nairobi"
+    open-pull-requests-limit: 3
+    groups:
+      actions-minor-patch:
+        update-types: ["minor", "patch"]
