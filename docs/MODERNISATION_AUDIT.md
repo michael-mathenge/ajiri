@@ -221,3 +221,7 @@ Production fixture cleanup remains a separately authorized housekeeping task.
 - WP11 password bypass: fixed in registration field validation and manager creation;
   custom-user admin forms use Django policy. Existing passwords/login unchanged.
   Other historical findings remain open until listed here with executed checks.
+
+- WP12 absent throttling: scoped request limits implemented for five endpoints;
+  proxy parsing tested. Shared-worker counters remain OPEN (LocMemCache), as do
+  durable email quotas. Live proxy/cache topology remains UNVERIFIED; see THROTTLING.md.

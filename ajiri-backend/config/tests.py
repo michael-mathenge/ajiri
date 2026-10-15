@@ -1,3 +1,4 @@
+from django.core.cache import cache
 import tempfile
 from pathlib import Path
 
@@ -8,6 +9,7 @@ class FrontendFallbackTests(SimpleTestCase):
     """The catch-all route must serve the React shell for client-side URLs only."""
 
     def setUp(self):
+        cache.clear()
         self._tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self._tmp.cleanup)
         build_dir = Path(self._tmp.name)

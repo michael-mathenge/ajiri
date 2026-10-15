@@ -1,3 +1,4 @@
+from django.core.cache import cache
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import SetPasswordForm
 from django.core.exceptions import ValidationError
@@ -8,6 +9,9 @@ from .forms import AccountCreationForm
 
 @override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
 class PasswordPolicyTests(TestCase):
+    def setUp(self):
+        cache.clear()
+
     def test_weak_categories(self):
         for password in ['password', '1234567890', 'short', 'applicant@example.invalid', 'applicant']:
             with self.subTest(password=password):

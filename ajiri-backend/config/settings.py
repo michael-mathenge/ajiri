@@ -211,7 +211,20 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20,
+    # Zero trusts REMOTE_ADDR only; set verified proxy count manually at deployment.
+    # see docs/CONCEPTS.md#endpoint-throttling
+    'NUM_PROXIES': int(os.environ.get('DRF_NUM_PROXIES', '0')),
+    'DEFAULT_THROTTLE_RATES': {
+        'login': os.environ.get('THROTTLE_LOGIN_RATE', '10/min'),
+        'register': os.environ.get('THROTTLE_REGISTER_RATE', '5/hour'),
+        'refresh': os.environ.get('THROTTLE_REFRESH_RATE', '60/min'),
+        'apply': os.environ.get('THROTTLE_APPLY_RATE', '20/hour'),
+        'send': os.environ.get('THROTTLE_SEND_RATE', '10/hour'),
+    },
 }
+
+if REST_FRAMEWORK['NUM_PROXIES'] < 0:
+    raise ImproperlyConfigured('DRF_NUM_PROXIES must be non-negative.')
 
 from datetime import timedelta
 

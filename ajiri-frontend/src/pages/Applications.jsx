@@ -1,3 +1,4 @@
+import { rateLimitMessage } from '../lib/errors'
 import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import apiClient from '../api/client'
@@ -44,7 +45,7 @@ export function ApplicationRow({ application: app, onUpdate }) {
       requestAnimationFrame(() => heading.current?.focus())
     } catch (error) {
       setError(
-        error.response?.data?.detail ||
+        (error.response?.status === 429 ? rateLimitMessage(error) : error.response?.data?.detail) ||
           'Could not update this application. Please try again.'
       )
     } finally {
