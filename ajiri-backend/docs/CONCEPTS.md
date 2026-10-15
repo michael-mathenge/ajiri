@@ -560,3 +560,16 @@ DRF defaults to per-process LocMemCache: counters are not shared across workers 
 read/modify/write is approximate. Treat this as abuse friction, not a strict quota.
 Proxy count defaults to zero (ignore X-Forwarded-For); Michael must verify the trusted
 proxy chain before setting DRF_NUM_PROXIES. Do not trust arbitrary leftmost headers.
+
+## cv-content-validation
+
+CV uploads keep the 5 MB ceiling, but extensions/MIME are not trusted as content.
+PDF needs its version signature and trailing EOF marker; this is not full PDF parsing.
+DOC uses bounded compound-file header/FAT/directory checks and a WordDocument stream
+entry. DOCX requires a readable ZIP with content types, root relationships and Word
+XML; all members are CRC-read without extraction. Limits: 200 members, 10 MB/member,
+20 MB expanded total, 100:1 compression, UTF-8-compatible XML without entities/DTD.
+Encrypted/unsupported compressed packages and macro DOCX packages are rejected.
+Uploads use random UUID filenames; original names never select a private storage path.
+These structural checks do not prove safety: active content and malware require a
+separate reviewed scanning/isolation strategy. Existing stored files are not rewritten.

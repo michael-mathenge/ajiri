@@ -1,3 +1,4 @@
+from .upload_fixtures import pdf_bytes, docx_bytes, doc_bytes
 from django.core.cache import cache
 import tempfile
 from pathlib import Path
@@ -40,17 +41,18 @@ class ProfileCVTests(TestCase):
 
     def test_allowed_uploads_and_private_download(self):
         for extension in ['pdf', 'doc', 'docx', 'PDF']:
+            content = {'pdf': pdf_bytes, 'doc': doc_bytes, 'docx': docx_bytes}[extension.lower()]()
             with self.subTest(extension=extension):
-                response = self.client.patch('/api/profiles/me/', {'cv_file': SimpleUploadedFile(f'cv.{extension}', b'test-document')}, format='multipart')
+                response = self.client.patch('/api/profiles/me/', {'cv_file': SimpleUploadedFile(f'cv.{extension}', content)}, format='multipart')
                 self.assertEqual(response.status_code, 200)
                 download = self.client.get('/api/profiles/me/cv/')
                 self.assertEqual(download.status_code, 200)
-                self.assertEqual(b''.join(download.streaming_content), b'test-document')
+                self.assertEqual(b''.join(download.streaming_content), content)
                 self.assertIn('no-store', download['Cache-Control'])
                 download.close()
 
     def test_invalid_type_and_size_preserve_existing_cv(self):
-        self.client.patch('/api/profiles/me/', {'cv_file': SimpleUploadedFile('good.pdf', b'good')}, format='multipart')
+        self.client.patch('/api/profiles/me/', {'cv_file': SimpleUploadedFile('good.pdf', pdf_bytes())}, format='multipart')
         self.user.profile.refresh_from_db()
         original = self.user.profile.cv_file.name
         for name, content in [('bad.txt', b'bad'), ('large.pdf', b'x' * (5 * 1024 * 1024 + 1)), ('empty.pdf', b'')]:
@@ -61,7 +63,7 @@ class ProfileCVTests(TestCase):
         self.assertEqual(self.user.profile.cv_file.name, original)
 
     def test_five_mb_boundary_is_accepted(self):
-        file = SimpleUploadedFile('boundary.pdf', b'x' * (5 * 1024 * 1024))
+        file = SimpleUploadedFile('boundary.pdf', pdf_bytes(5 * 1024 * 1024))
         self.assertEqual(self.client.patch('/api/profiles/me/', {'cv_file': file}, format='multipart').status_code, 200)
 
     def test_validation_of_contact_and_experience(self):

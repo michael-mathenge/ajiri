@@ -1,3 +1,4 @@
+from profiles.upload_fixtures import pdf_bytes
 from django.core.cache import cache
 import importlib
 from io import StringIO
@@ -32,7 +33,7 @@ class PrivateMediaTests(TestCase):
         self.user = get_user_model().objects.create_user(email='private@example.com', password='test-password')
         self.client = APIClient()
         self.client.force_authenticate(self.user)
-        self.client.patch('/api/profiles/me/', {'cv_file': SimpleUploadedFile('cv.pdf', b'private-upload')}, format='multipart')
+        self.client.patch('/api/profiles/me/', {'cv_file': SimpleUploadedFile('cv.pdf', pdf_bytes())}, format='multipart')
         self.user.profile.refresh_from_db()
         self.job = Job.objects.create(title='Test', company_name='Test', description='Test', source_name='test', source_url='https://example.com/private')
         response = self.client.post(f'/api/jobs/{self.job.pk}/apply/')
