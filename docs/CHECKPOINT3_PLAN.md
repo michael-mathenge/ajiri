@@ -170,6 +170,31 @@ updates. Regenerate frontend_build only at the end of each future frontend packa
 Deployment compatibility is backup -> migrate -> activate code, with additive schema
 remaining compatible with the preceding code. No deployment is authorized here.
 
+## Audit impact
+
+See [read-only modernisation audit](MODERNISATION_AUDIT.md) and the consolidated
+[decision form](DECISIONS_NEEDED.md). No findings authorize application changes.
+
+- Add a proposed WP16 `feature/security-baseline` (8 SP, split after approval):
+  configured password validation, content-aware uploads, abuse controls and explicit
+  cookie-auth CSRF/inactive-account review. Auth/CORS changes require separate approval.
+- Add proposed WP17 `feature/account-recovery-verification` (8 SP): anti-enumerating
+  password reset, mailbox verification and unverified-account restrictions. Real
+  employer mail depends on verified identity, not merely working SMTP.
+- Put P0 security/legal/backup/advisory verification ahead of public onboarding.
+  Revise sequence to WP16 and WP13 planning first; WP15 next; WP11 owner-inbox-only
+  delivery enables WP17; only then permit general real sending. WP12 is independent;
+  WP14 follows approved rights/retention policy. Resolve provider/send dependency with
+  a controlled recipient pilot, not by sending to unverified employers/users.
+- Expand WP11 acceptance to bounce/complaint suppression, attachment budget, receipt
+  copies, metadata retention, accurate notification flags and an operator disable gate.
+  WP15 must cover console log sensitivity, manual backup/restore verification and renewal.
+- Propose later query-count/scaling and reproducible-packaging maintenance; no index,
+  dependency, CI or ingestion change is authorized now. Python vulnerability scan and
+  coverage remain UNVERIFIED/unmeasured; npm audit returned zero advisories today.
+- The earlier 30-point total excludes WP16/WP17 and expanded SMTP requirements; revised
+  minimum is 46 SP before splitting/re-estimation, not a commitment to fit one sprint.
+
 ## Decisions Michael must answer before building
 
 1. Gmail SMTP for a pilot or Brevo HTTPS delivery? Recommend Brevo, subject to
