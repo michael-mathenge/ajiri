@@ -225,3 +225,7 @@ Production fixture cleanup remains a separately authorized housekeeping task.
 - WP12 absent throttling: scoped request limits implemented for five endpoints;
   proxy parsing tested. Shared-worker counters remain OPEN (LocMemCache), as do
   durable email quotas. Live proxy/cache topology remains UNVERIFIED; see THROTTLING.md.
+
+- WP13 extension-only uploads: fixed with bounded PDF/DOC/DOCX structural checks,
+  5 MB ceiling and UUID stored names. Full parsing and malware scanning remain OPEN;
+  signature checks cannot certify files safe. Existing stored files are unchanged.
