@@ -1,3 +1,4 @@
+from django.core.cache import cache
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from rest_framework.test import APIClient
@@ -5,6 +6,7 @@ from rest_framework.test import APIClient
 
 class ProfilePreferencesTests(TestCase):
     def setUp(self):
+        cache.clear()
         self.user = get_user_model().objects.create_user(email='profile@example.com', password='test-password')
         self.client = APIClient()
 

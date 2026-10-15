@@ -549,3 +549,14 @@ similarity checks see email/name. All Django validator messages remain password-
 arrays. Manager creation also validates non-None passwords; admin/CLI password forms
 use Django's configured validators. Existing hashes are not revalidated at login.
 Direct low-level set_password is a hashing primitive, not a public password endpoint.
+
+## endpoint-throttling
+
+Only login/register/refresh/apply/send use scoped DRF throttles; ingestion and sweep
+have no throttle class changes. Public credential endpoints key by client IP,
+authenticated application actions by user. Rates are request limits, NOT durable
+email daily quotas. 429 includes Retry-After; the UI never retries sending automatically.
+DRF defaults to per-process LocMemCache: counters are not shared across workers and
+read/modify/write is approximate. Treat this as abuse friction, not a strict quota.
+Proxy count defaults to zero (ignore X-Forwarded-For); Michael must verify the trusted
+proxy chain before setting DRF_NUM_PROXIES. Do not trust arbitrary leftmost headers.

@@ -1,3 +1,4 @@
+from django.core.cache import cache
 import importlib
 from io import StringIO
 from pathlib import Path
@@ -18,6 +19,7 @@ from .models import Application, Job
 @override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
 class PrivateMediaTests(TestCase):
     def setUp(self):
+        cache.clear()
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
         self.root = Path(self.tmp.name)

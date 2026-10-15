@@ -1,3 +1,4 @@
+from django.core.cache import cache
 from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
@@ -12,6 +13,7 @@ from .models import Application, Job, Notification
 
 class NotificationChannelTests(TestCase):
     def setUp(self):
+        cache.clear()
         self.user = get_user_model().objects.create_user(email='channels@example.com', password='test-password')
         self.job = Job.objects.create(title='Developer', company_name='Example', description='Build', source_url='https://example.com/channels', source_name='test')
         skill = Skill.objects.create(name='Python')
@@ -46,6 +48,7 @@ class NotificationChannelTests(TestCase):
 
 class DismissApplicationTests(TestCase):
     def setUp(self):
+        cache.clear()
         self.user = get_user_model().objects.create_user(email='dismiss@example.com', password='test-password')
         other = get_user_model().objects.create_user(email='other@example.com', password='test-password')
         job = Job.objects.create(title='Developer', company_name='Example', description='Build', source_url='https://example.com/dismiss', source_name='test')

@@ -66,6 +66,14 @@ describe('Register', () => {
       'true'
     )
   })
+  it('explains rate limits without retrying registration', async () => {
+    apiClient.post.mockRejectedValue({ response: { status: 429, headers: { 'retry-after': '60' }, data: {} } })
+    renderPage(<Register />)
+    fillRegister()
+    fireEvent.click(screen.getByRole('button', { name: 'Register' }))
+    expect(await screen.findByRole('alert')).toHaveTextContent('wait 60 seconds')
+    expect(apiClient.post).toHaveBeenCalledTimes(1)
+  })
   it('navigates to login after successful registration', async () => {
     apiClient.post.mockResolvedValue({ data: {} })
     render(

@@ -1,3 +1,4 @@
+import { rateLimitMessage } from '../lib/errors'
 import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import {
@@ -44,7 +45,7 @@ export default function JobDetail() {
       navigate('/applications')
     } catch (error) {
       setApplyError(
-        error.response?.data?.detail ||
+        (error.response?.status === 429 ? rateLimitMessage(error) : error.response?.data?.detail) ||
           'Could not prepare your application. Please try again.'
       )
     } finally {

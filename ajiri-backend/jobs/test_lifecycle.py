@@ -1,3 +1,4 @@
+from django.core.cache import cache
 import tempfile
 from unittest.mock import patch
 from django.contrib.auth import get_user_model
@@ -12,6 +13,7 @@ from .matching import calculate_match_score, notify_matching_profiles
 @override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'], EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
 class MatchingEdgeTests(TestCase):
     def setUp(self):
+        cache.clear()
         self.user = get_user_model().objects.create_user(email='match@example.com', password='test-password')
         self.job = Job.objects.create(title='Developer', company_name='Example', description='Build', source_url='https://example.com/match', source_name='test')
 
@@ -61,6 +63,7 @@ class MatchingEdgeTests(TestCase):
 @override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'], EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
 class ApplicationLifecycleTests(TestCase):
     def setUp(self):
+        cache.clear()
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
         override = override_settings(MEDIA_ROOT=self.tmp.name)

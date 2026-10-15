@@ -1,3 +1,4 @@
+from django.core.cache import cache
 import tempfile
 from pathlib import Path
 from django.contrib.auth import get_user_model
@@ -9,6 +10,7 @@ from jobs.models import Application, Job
 
 class ProfileCVTests(TestCase):
     def setUp(self):
+        cache.clear()
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
         override = override_settings(MEDIA_ROOT=self.tmp.name)
