@@ -2,7 +2,7 @@
 # The server installs requirements-prod.txt instead.
 -r requirements-prod.txt
 celery-types==0.26.0
-djangorestframework-stubs==3.18.0
-django-stubs==6.1.0
-django-stubs-ext==6.1.0
-types-PyYAML==6.0.12.20260815
+djangorestframework-stubs==3.18.1
+django-stubs==6.1.2
+django-stubs-ext==6.1.2
+types-PyYAML==6.0.12.20260906
