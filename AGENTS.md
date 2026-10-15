@@ -4,9 +4,9 @@
 
 ## 1. Mission
 
-Prepare Checkpoint 3 on `integration/checkpoint-3`: documentation only. First commit updates AGENTS.md; second adds docs/CHECKPOINT3_PLAN.md and docs/SMTP_EMAIL_DESIGN.md. Stop for Michael's answers and approval. No application code, migrations, dependencies, CI changes, pushes, connector writes or production operations.
+Deliver Checkpoint 3A SECURITY HARDENING ONLY, WP11-WP15, on `integration/checkpoint-3`. Michael's 15 October build instructions supersede the previous documentation-only mission and package numbering. Earlier email/privacy WP numbers remain historical proposals, not this scope.
 
-Sections 1, 4, 6 and 12 are time-bound. This checkpoint supersedes section 9's old integration branch name and section 8's instruction to continue implementing packages. Candidate packages are proposals, not implementation authorization. Michael's documentation-only validation instructions apply this round; section 7's application gates remain standing rules for future implementation.
+Branch each package from integration, pass section 7 gates, merge --no-ff, continue unless section 8 applies. Authorized: password validation, content-aware uploads, DRF throttling, deploy-hardening settings and CSRF design documentation. No JWT/refresh-cookie logic, AUTH_USER_MODEL, migrations/history, CORS, ingestion endpoints, hosting config, CI, new dependencies, pushes, main merges, connector writes or production actions. Stop after WP15 and the review.
 
 ## 2. Product
 
@@ -25,15 +25,11 @@ Users are mostly on phones with limited data. **Mobile-first, lightweight, acces
 - Production: PythonAnywhere free tier, a committed `frontend_build`, and a GitHub Actions workflow that posts jobs to `POST /api/jobs/ingest/` and `/api/jobs/sweep/` (header `X-Ingest-Key`)
 - CI exists (`.github/workflows/ci.yml`: backend checks, migrations, tests, frontend lint/build, committed-build consistency; Python matrix 3.12-3.14). Local dev and PythonAnywhere use Python 3.12.
 
-## 4. Current state (Checkpoint 3 preparation, 15 October 2026)
+## 4. Current state (Checkpoint 3A, 15 October 2026)
 
-Checkpoint 1 (WP1-WP6) and Checkpoint 2 (WP7-WP10) are merged. Main and origin/main were verified against the live remote at `2d5d175`, with a clean working tree before preparation. Ajiri is live at https://mathenge.pythonanywhere.com on PythonAnywhere's free tier, deployed from that revision.
+Checkpoint 1 and 2 are merged; production remains at main `2d5d175` on PythonAnywhere free tier. Private media is in place; console email delivers no real mail. GitHub Actions handles ingestion/sweeps. Michael must periodically renew the web app (last recorded expiry 14 November 2026; recheck manually).
 
-Private media storage is in place outside public static mappings; owner-checked downloads remain available. Production uses Django's console email backend, so no real email is delivered. GitHub Actions performs ingestion and matching sweeps. The PythonAnywhere web app must be renewed periodically; the last deployment dashboard showed 14 November 2026 as its expiry, which Michael must recheck.
-
-Prior deployment evidence records direct media URLs 404, owner downloads 200, non-owner 404 and anonymous 401, plus one successful ingestion run with 99 active jobs. These are historical results, not new checks this round. Three harmless probe files, an inactive test job and disabled synthetic users remain a housekeeping backlog.
-
-The old stash contains only an earlier AGENTS.md GitHub write-permission rule. Do not apply, drop or modify it. SMTP/provider access, product restoration behaviour and privacy/retention choices require decisions before implementation.
+Checkpoint 3 planning/audit/decision documents exist at integration tip `0a02c74` before this work. The audit identified password validation bypass, absent throttling, extension-only uploads and deploy warnings W004/W008. CSRF remains a design-only item. No current production inspection is authorized. Preserve the old AGENTS stash untouched; no historical mail/privacy proposals are implemented here.
 
 ## 5. Known gotchas
 
@@ -45,17 +41,17 @@ The old stash contains only an earlier AGENTS.md GitHub write-permission rule. D
 - Windows/PowerShell: use `curl.exe`, not `curl`. `-replace` is case-insensitive; use `-creplace` with `[regex]::Escape()`.
 - Integrate new code alongside existing imports. Never overwrite file tops.
 
-## 6. Checkpoint 3 candidate work packages
+## 6. Checkpoint 3A work packages (in order)
 
-| WP | Proposed branch | Planning scope |
+| WP | Branch | Acceptance |
 |---|---|---|
-| WP11 | feature/email-delivery | SMTP/API provider design, sender identity, delivery failures and shared sending limits |
-| WP12 | feature/application-restore | Product choice: restore saved snapshots to review versus re-draft |
-| WP13 | feature/privacy-consent | DRAFT privacy notice, registration acknowledgement and optional consent; legal review required |
-| WP14 | feature/account-data-rights | Export, deletion and backup retention options; destructive steps require separate approval |
-| WP15 | feature/basic-monitoring | Sanitized logging, minimal health endpoint and manual operations routine |
+| WP11 | feature/password-validation | Configured validators on password-setting paths; field-keyed errors; tests |
+| WP12 | feature/throttling | Scoped env rates, proxy/cache limits documented, 429 UX and tests; ingestion unchanged |
+| WP13 | feature/upload-content-validation | PDF/DOC/DOCX content checks, bounded ZIP, 5 MB and safe filenames; tests |
+| WP14 | feature/deploy-settings | Env-configurable deploy settings, short HSTS, proxy safety, tests/manual rollback |
+| WP15 | feature/refresh-cookie-csrf-design | CSRF design only, options/tests/rollback; Checkpoint 3A review |
 
-Recommended future order: WP13, WP15, WP11, WP12, WP14. Only the integration planning branch is created now. Do not create feature branches or implement packages before Michael answers the questions and approves their designs. Housekeeping is list-only.
+Use section 7 gates per package. Regenerate frontend_build once at the end of each frontend package. No migration or dependency is planned. Document concepts in the existing canonical `ajiri-backend/docs/CONCEPTS.md`; code references retain the backend-relative docs path.
 
 ## 7. Quality gates (every package, no exceptions)
 
@@ -103,8 +99,8 @@ When blocked on one package, record it in the report and continue to the next in
 - Give exact PowerShell commands for anything he needs to run, plus the expected result.
 - Michael tracks work in Monday.com himself. Give completed items and honest story-point suggestions per package; do not assume any Monday.com access.
 
-## 12. Checkpoint 3 preparation handback
+## 12. Checkpoint 3A handback
 
-Deliver docs/CHECKPOINT3_PLAN.md and docs/SMTP_EMAIL_DESIGN.md. Include scope, likely files, migration/destructive impact, tests, risks, suggested points and decisions for each candidate. Include provider verification limits, manual-only server instructions and rollback. End the plan with recommended order, dependencies, branch names and numbered questions for Michael.
+Write docs/CHECKPOINT3A_REVIEW.md in the Checkpoint 2 format: package status/branches/ranges/points; changes; actual verification and limits; manual security verification script; decisions; open risks/follow-ups. Update audit statuses without claiming production fixes. Include docs/REFRESH_COOKIE_CSRF_DESIGN.md with no auth implementation.
 
-Check the branch before each commit. Preserve Git configuration and the old stash. Validate documentation diffs, scope, links and absence of secrets; report actual checks without implying application suites were rerun. Before handback run `git log --format="%h %ae | %ce" origin/main..integration/checkpoint-3` and confirm all authors/committers use Michael's configured noreply address. Stop after the documentation commits and wait for answers and approval.
+Check branch before every commit; preserve Git config/stash. Run `git log --format="%h %ae | %ce" origin/main..integration/checkpoint-3` and confirm every author/committer uses Michael's configured noreply address. No pushes or deployment. Stop and wait for review.

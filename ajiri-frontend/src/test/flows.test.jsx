@@ -44,7 +44,7 @@ describe('Register', () => {
       response: {
         data: {
           email: ['Already registered.', 'Try another email.'],
-          password: ['Too short.'],
+          password: ['Too short.', 'Too common.', 'Entirely numeric.'],
           detail: 'Please correct your entries.',
         },
       },
@@ -56,6 +56,8 @@ describe('Register', () => {
       'Already registered. Try another email.'
     )
     expect(screen.getByRole('alert')).toHaveTextContent('Too short.')
+    expect(screen.getByRole('alert')).toHaveTextContent('Too common.')
+    expect(screen.getByRole('alert')).toHaveTextContent('Entirely numeric.')
     expect(screen.getByRole('alert')).toHaveTextContent(
       'Please correct your entries.'
     )
