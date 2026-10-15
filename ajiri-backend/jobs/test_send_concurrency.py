@@ -1,3 +1,4 @@
+from django.core.cache import cache
 import copy
 import tempfile
 import threading
@@ -16,6 +17,7 @@ from .models import Application, Job
 @override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'], EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
 class ConcurrentSendTests(TransactionTestCase):
     def setUp(self):
+        cache.clear()
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
         self.override = override_settings(MEDIA_ROOT=self.tmp.name)

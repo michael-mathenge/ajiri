@@ -1,3 +1,4 @@
+from django.core.cache import cache
 from django.contrib.auth import get_user_model
 from django.test import TestCase, override_settings
 from rest_framework.test import APIClient
@@ -9,6 +10,7 @@ class AuthFlowTests(TestCase):
     # Fast hashing is isolated to these synthetic tests; real settings stay unchanged.
     # see docs/CONCEPTS.md#isolated-auth-tests
     def setUp(self):
+        cache.clear()
         self.client = APIClient()
         self.payload = {'email': 'auth@example.com', 'password': 'test-password', 'full_name': 'Test User', 'phone_number': '0700000000'}
 

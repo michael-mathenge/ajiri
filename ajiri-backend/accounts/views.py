@@ -6,12 +6,17 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
 from django.contrib.auth import authenticate
+from .throttles import EndpointThrottle
 
 class RegisterView(generics.CreateAPIView):
+    throttle_classes = (EndpointThrottle,)
+    throttle_scope = 'register'
     permission_classes = (permissions.AllowAny,)
     serializer_class = RegisterSerializer
 
 class LoginView(APIView):
+    throttle_classes = (EndpointThrottle,)
+    throttle_scope = 'login'
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request):
@@ -44,6 +49,8 @@ class LoginView(APIView):
 # (set_jti/set_exp/set_iat) BEFORE converting it to a string. Verified this by
 # comparing token strings across two /refresh/ calls in curl — they must differ.
 class RefreshView(APIView):
+    throttle_classes = (EndpointThrottle,)
+    throttle_scope = 'refresh'
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request):
