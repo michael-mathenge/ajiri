@@ -226,6 +226,26 @@ REST_FRAMEWORK = {
 if REST_FRAMEWORK['NUM_PROXIES'] < 0:
     raise ImproperlyConfigured('DRF_NUM_PROXIES must be non-negative.')
 
+# Optional shared filesystem counters; leave local/test defaults unchanged.
+# see docs/CONCEPTS.md#shared-throttle-cache
+throttle_cache_dir = os.environ.get('THROTTLE_CACHE_DIR', '').strip()
+if throttle_cache_dir:
+    cache_path = Path(throttle_cache_dir)
+    if not cache_path.is_absolute():
+        raise ImproperlyConfigured('THROTTLE_CACHE_DIR must be an absolute private path.')
+    cache_path = cache_path.resolve()
+    if cache_path.is_relative_to(BASE_DIR.resolve()):
+        raise ImproperlyConfigured('THROTTLE_CACHE_DIR must be outside the application tree.')
+    CACHES = {
+        'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'},
+        'throttle': {
+            'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+            'LOCATION': str(cache_path),
+            'TIMEOUT': 86400,
+            'OPTIONS': {'MAX_ENTRIES': 10000},
+        },
+    }
+
 from datetime import timedelta
 
 # ACCESS token = short-lived (15 min), sent on every request, proves "I'm logged in".

@@ -250,3 +250,50 @@ render validation; live proxy/header/cache verification and backups/renewal; Pyt
 advisory scan, coverage/E2E/a11y, dependency patches; CSP/Permissions-Policy; query-count,
 scaling/index/caching work; API schema/versioning, SEO/PWA and packaging cleanup.
 None is silently declared fixed by a deploy check or a passing local suite.
+
+## Sprint 3 AJ-14 evidence — 15 October 2026
+
+Supersedes the original audit's UNVERIFIED Python scan and unmeasured backend
+coverage only. Tested source 5e15a11 in an isolated local checkout. Existing tools:
+pip-audit 2.10.1, coverage 7.16.2, Python 3.12. No dependency changes or installs.
+
+`python -m pip_audit -r requirements-prod.txt --progress-spinner off` completed
+with exit 1: **15 known vulnerabilities in two packages**, Django 6.1 and PyJWT
+2.13.0. Django: PYSEC-2026-3717 (reported fixes 5.2.17/6.0.8/6.1.1).
+PyJWT: PYSEC-2026-4140 through PYSEC-2026-4152 inclusive, and PYSEC-2026-4183.
+The scanner reports 2.14.0 or 2.15.0 fixes for most PyJWT findings, but lists no
+fix version for PYSEC-2026-4146. Do not assume upgrading alone clears every finding.
+These are advisory matches, not demonstrated exploits or a production inventory.
+Triage and compatible patch upgrades require a separate reviewed dependency task;
+**P0 release risk remains open**. No ignore flags, audit fixes or dependency edits.
+
+Fresh full suite: 88 run, 87 passed, one Windows symlink privilege skip.
+`manage.py check` passed; `makemigrations --check --dry-run` found no changes.
+Statement coverage: **90% (1182 statements, 121 missed)** excluding tests,
+migrations and upload fixtures. Unfiltered total was 94%, inflated by tests.
+No branch, frontend, E2E or production coverage measured. Notable gaps: tasks.py,
+fix_mojibake command and WSGI/ASGI entrypoints 0%; CV generator 76%; cover-letter
+generator and jobs serializers 80%; upload validator 89%. Coverage is not correctness.
+
+Reproduce from ajiri-backend using its existing virtualenv, with local DEBUG=True,
+in-memory EMAIL_BACKEND and PYTHON_DOTENV_DISABLED=1. Keep COVERAGE_FILE outside
+the repo so existing local .coverage remains untouched:
+
+```powershell
+$env:COVERAGE_FILE = Join-Path $env:TEMP 'ajiri-sprint3-verified.coverage'
+.\.venv\Scripts\python.exe -m pip_audit -r requirements-prod.txt --progress-spinner off
+.\.venv\Scripts\python.exe -m coverage run --source=accounts,profiles,jobs,config manage.py test --noinput
+.\.venv\Scripts\python.exe -m coverage report --omit='*/test*.py,*/migrations/*,*/upload_fixtures.py'
+```
+
+See SPRINT3_REVIEW.md for issue acceptance gaps and manual-only operations.
+
+### Sprint 3 confirmed follow-up
+
+AJ-10 now supports an opt-in private file-cache alias via THROTTLE_CACHE_DIR.
+Independent processes share sequential request budgets; this does not make DRF's
+read/modify/write atomic. Local default and ingestion flow remain unchanged.
+Live cache/proxy activation is still unverified. AJ-13 option C is approved as a
+design only, with implementation deferred. Read-only production HEAD checks found
+HTTP-to-HTTPS redirect and standard frame/referrer/nosniff headers, but **no HSTS**;
+do not declare the deployment-hardening finding fully fixed on the live site.

@@ -26,12 +26,31 @@ https://help.pythonanywhere.com/pages/WebAppClientIPAddresses
 Tests cover 0 and 1 hops and malicious prefixes. With 0 behind a proxy, public users
 may share a quota, so verification is a deployment prerequisite.
 
-Least-invasive shared-counter proposal (NOT applied): a dedicated built-in Django
-FileBasedCache in a private trusted writable directory shared by all workers on the
-same host/filesystem. It needs no dependency/migration, but remains approximate,
-adds disk I/O and is unsuitable across nonshared hosts. Confirm platform topology
-first. DatabaseCache needs a new table (ask first); Redis needs service/config approval.
-No cache table, cache configuration or hosting change is part of this package.
+Approved Sprint 3 follow-up: optional built-in FileBasedCache, selected only when
+THROTTLE_CACHE_DIR is supplied. It uses a dedicated `throttle` alias; other caching
+retains its default. Unset keeps existing development/test LocMemCache behaviour.
+Absolute paths outside the backend application tree are required. Independent
+subprocess tests prove one worker's request consumes another worker's budget.
+Existing expiry/reset and ingestion-exclusion tests still apply. No production
+activation, hosting change, dependency or migration has been performed.
+
+This remains approximate: concurrent read/modify/write can lose increments; eviction
+at 10,000 entries can reset some counters. It is not an atomic quota or a defence
+against large-scale distributed abuse. It works only if all workers use the same
+trusted filesystem and directory. Confirm topology before activation. Cache files
+are pickled: never allow uploads or untrusted writes into the cache directory.
+
+Michael-only activation, after backup/review and confirming worker topology:
+create a dedicated private directory outside every static/media mapping (0700,
+owned by the web-app account). Configure THROTTLE_CACHE_DIR privately to that absolute
+directory, verify writable access from all workers, then activate the reviewed code.
+Do not put it in uploaded media, frontend_build, staticfiles or backups; do not use
+chmod 777. Verify counter sharing with synthetic local subprocess tests before
+activation, not by exhausting live logins. Django file-cache entries use 0600 on
+creation; preserve private directory ownership. Roll back by unsetting the variable
+and reloading the prior reviewed configuration; this resets counters and returns to
+process-local limits. No database rollback is required. Never delete an arbitrary
+directory as part of rollback. DatabaseCache/Redis remain separate proposals.
 
 Michael-only verification: inspect effective cache backend class without printing
 cache credentials; establish whether all workers see the same storage; verify trusted

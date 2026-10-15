@@ -1,6 +1,8 @@
 # Refresh-cookie CSRF design — Checkpoint 3A WP15
 
-Design only. No mitigation below is implemented or approved for automatic deployment.
+Design only. Michael approved option C on 15 October 2026 in the Sprint 3 follow-up.
+This records design acceptance (AJ-13), not authorization to implement or deploy it.
+No mitigation below is implemented or approved for automatic deployment.
 JWT/refresh-cookie logic remains unchanged. Changes to auth, CORS or the interceptor
 need Michael's separate approval. Request throttling is not a CSRF mitigation.
 
