@@ -215,3 +215,9 @@ also prerequisites of real sending, even if broader UX follows later.
 Caching after measurement, schema/versioning formalization, broader coverage/E2E tooling,
 index/load tuning, deterministic packaging cleanup, optional SEO/PWA after product review.
 Production fixture cleanup remains a separately authorized housekeeping task.
+
+## Checkpoint 3A remediation status (local only)
+
+- WP11 password bypass: fixed in registration field validation and manager creation;
+  custom-user admin forms use Django policy. Existing passwords/login unchanged.
+  Other historical findings remain open until listed here with executed checks.

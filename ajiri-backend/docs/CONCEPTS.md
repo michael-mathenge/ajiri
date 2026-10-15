@@ -541,3 +541,11 @@ A conditional database update claims a reviewable application as sent before SMT
 
 ## reproducible-frontend-build
 CI compares generated files byte for byte against frontend_build. Vite preserves HTML and public asset line endings, so a Windows CRLF checkout can differ from Linux despite identical rendered content. Repository attributes keep Vite HTML/public inputs and packaged text at LF without changing anyone's Git config. The packaging script also normalizes index.html to UTF-8 without BOM and LF for older Windows checkouts. Keep the exact CI comparison enabled; regenerate and commit the build after input or packaging changes.
+
+## password-validation
+
+Registration validates the unhashed password against a candidate user, so identity
+similarity checks see email/name. All Django validator messages remain password-field
+arrays. Manager creation also validates non-None passwords; admin/CLI password forms
+use Django's configured validators. Existing hashes are not revalidated at login.
+Direct low-level set_password is a hashing primitive, not a public password endpoint.
