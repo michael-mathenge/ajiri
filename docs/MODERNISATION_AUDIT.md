@@ -287,3 +287,13 @@ $env:COVERAGE_FILE = Join-Path $env:TEMP 'ajiri-sprint3-verified.coverage'
 ```
 
 See SPRINT3_REVIEW.md for issue acceptance gaps and manual-only operations.
+
+### Sprint 3 confirmed follow-up
+
+AJ-10 now supports an opt-in private file-cache alias via THROTTLE_CACHE_DIR.
+Independent processes share sequential request budgets; this does not make DRF's
+read/modify/write atomic. Local default and ingestion flow remain unchanged.
+Live cache/proxy activation is still unverified. AJ-13 option C is approved as a
+design only, with implementation deferred. Read-only production HEAD checks found
+HTTP-to-HTTPS redirect and standard frame/referrer/nosniff headers, but **no HSTS**;
+do not declare the deployment-hardening finding fully fixed on the live site.

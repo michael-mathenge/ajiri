@@ -65,3 +65,39 @@ No app, dependency, migration, CI, hosting, auth or production changes. No pushe
 PR merges, Jira writes or 3B work. Preserve the original checkout's modified npm
 lockfile and untracked coverage data. Review the audit findings and approve a separate
 dependency-remediation scope before addressing them; no automatic audit fix.
+
+## Approved follow-up — 15 October 2026
+
+Michael confirmed the proposed remaining-task choices. AJ-10 now has an opt-in
+private file-cache implementation and separate-process regression test; activation
+and live proxy/worker verification remain pending. See THROTTLING.md. AJ-13 option C
+is approved as a design only; no auth changes authorized by that acceptance.
+
+Read-only production checks: authenticated Web dashboard confirms Python 3.12,
+Force HTTPS enabled, no static mappings, expiry **14 November 2026**. Public HEAD
+HTTP /login returns 302 to HTTPS; HTTPS /login returns 200, no redirect loop,
+DENY frame policy, nosniff, same-origin referrer and no-store. **No HSTS header**
+was returned: AJ-12 is not fully accepted. No reload, renewal or configuration edit
+performed. Live cookie flags and trusted proxy hop/worker topology remain unverified;
+no real account login or request-exhaustion probe performed.
+
+AJ-15: authenticated directory listing confirms the verified-deploy backup folder
+exists. Backup bytes were not opened or transferred; Michael must supply a private
+local destination before download. Renewal reminder creation was rejected by automatic
+approval review because exact persistent-automation authorization was unclear. No
+reminder exists; request explicit approval for 7 and 12 November at 09:00 Africa/Nairobi.
+Production verification authorization does not authorize a deployment to fix HSTS.
+
+Fresh follow-up gates: backend check and migration check passed; **90 tests run,
+89 passed, one Windows symlink skip**. Six targeted throttle tests passed, including
+two new separate-process/configuration regressions. npm ci, lint, all 25 frontend
+tests and build passed. Frontend source/lockfiles/build package unchanged; build was
+a gate only. No regeneration or dependency upgrade needed. Suggested incremental
+effort for the shared-cache follow-up: 2 points within AJ-10's existing estimate.
+
+Proposed local backup destination: `C:\Users\micha\AjiriBackups`, outside the repo
+and standard OneDrive folders. It does not exist yet. Drive encryption could not be
+verified with the available local BitLocker cmdlet (absent). Before transferring
+production data, Michael should confirm device encryption in Windows Settings and
+approve an account-restricted folder (or encrypted removable storage). No backup
+contents, .env or credentials were downloaded; no new backup was taken on production.

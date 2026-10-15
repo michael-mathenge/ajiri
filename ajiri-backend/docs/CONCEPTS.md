@@ -583,3 +583,13 @@ that before activating redirects to avoid loops. HSTS includeSubDomains and prel
 remain off for this rollout; Django may advise enabling them, intentionally not done.
 Header settings and rollback values are env-configurable; JWT/refresh cookie logic
 and its secure-flag expression are unchanged. Production verification is manual only.
+## shared-throttle-cache
+
+Workers normally have separate memory, so one worker cannot see another worker's
+request counter. THROTTLE_CACHE_DIR opts only endpoint throttles into Django's
+built-in private file cache. All workers must share the same trusted directory;
+without the variable, the previous local cache remains in use. Separate-process
+tests prove sequential sharing. Concurrent updates are still approximate, not
+atomic email quotas. File-cache data must never share a directory with uploads or
+public mappings, because Django deserializes it. See docs/THROTTLING.md in the repo
+root for activation, topology checks and rollback. No production change is automatic.
