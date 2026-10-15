@@ -101,3 +101,41 @@ verified with the available local BitLocker cmdlet (absent). Before transferring
 production data, Michael should confirm device encryption in Windows Settings and
 approve an account-restricted folder (or encrypted removable storage). No backup
 contents, .env or credentials were downloaded; no new backup was taken on production.
+
+## Subsequent backup evidence and deployment readiness
+
+Michael completed a fresh production backup at manual-20261015-181545 with writers
+idle and ingestion paused, then re-enabled ingestion. The downloaded database and
+revision hashes matched; browser-decompressed media matched the decompressed server
+hash. Michael's local rehearsal verified all hashes, database integrity `ok`, and
+restored 4 media files / 12,866 bytes into a disposable private directory. BitLocker
+Protection On, recovery-key backup and account/SYSTEM/Administrators folder access
+were confirmed by Michael. This supersedes the earlier backup-transfer blocker;
+it is a basic restore rehearsal, not an authenticated application restore test.
+
+On Michael's request to handle the remaining tasks, read-only server checks found:
+clean tracked checkout at **2d5d175**, DEBUG=False, Django SSL redirect=False,
+HSTS=0, proxy SSL header=None, secure session/CSRF cookies=True, no NUM_PROXIES
+configuration and default LocMemCache. No server settings were changed or reloaded.
+
+Remote main is **1ef6159**; frontend and all three backend CI checks passed. The
+shared-cache commit b860658 is absent from remote main, so shared-cache activation
+cannot proceed through the reviewed release path until Michael reviews/publishes
+that change. No direct production patch, push, PR or main merge was attempted.
+
+PythonAnywhere's current client-IP documentation guarantees the last X-Forwarded-For
+item is the peer seen by its load balancer, but an application's additional upstream
+proxy/CDN topology must be established before configuring NUM_PROXIES. Its Force HTTPS
+documentation confirms host-level redirection; the consulted SSL-header material did
+not establish the required X-Forwarded-Proto sanitation contract. Per
+DEPLOY_SECURITY_VERIFICATION.md step 3, stop the HSTS/redirect rollout until that
+contract or an appropriate native secure-scheme configuration is verified. Keep
+Force HTTPS enabled; do not infer proxy trust from a passing synthetic test.
+
+References: https://help.pythonanywhere.com/pages/WebAppClientIPAddresses/ and
+https://help.pythonanywhere.com/pages/ForcingHTTPS/ .
+
+Renewal automation creation was again rejected by automatic approval review as
+insufficiently specific persistent-action authorization. No reminder exists. Exact
+approval requested: reminders on 7 and 12 November 2026, 09:00 Africa/Nairobi, for
+the 14 November expiry; no automatic renewal or production modification.
