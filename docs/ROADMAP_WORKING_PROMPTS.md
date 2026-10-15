@@ -60,12 +60,20 @@ Production verification remains Michael-only. No repeated live load/brute-force 
 **Working prompt:** Implement real email only after provider reachability and
 sender decisions are confirmed. Keep Brevo HTTPS in one isolated module using
 existing/standard-library capabilities; Gmail is an owner-only pilot fallback.
-Use verified platform From and applicant Reply-To. Enforce 10 accepted applications
+Use verified platform From and applicant Reply-To on a domain Michael controls;
+Michael configures SPF/DKIM/DMARC and credentials privately. Single-sender verification
+is a possible pilot stopgap, not evidence of authenticated domain control or inbox delivery.
+Enforce 10 accepted applications
 per user/day and Michael's confirmed global budget below provider limits, prioritizing
-applications over alerts. Define copy/attachment budgets, bounces, complaints,
+applications: reserve most capacity for applications and let alerts use the remainder.
+The exact global cap and allocation still need a decision. Define copy/attachment budgets, bounces, complaints,
 suppression and minimal attempt metadata before schema approval. Retain 502 and
 reviewable retry for definite failures; never auto-retry ambiguous acceptance, and
-show a duplicate-delivery warning before a manual retry. Keep mail switchable off.
+record an explicit unknown delivery outcome and show a duplicate-delivery warning
+before a manual retry. An unknown delivery attempt must not be misrepresented as a
+definite failure or confirmed arrival. The existing application statuses cannot
+express this reliably: review the proposed attempt/state schema with Michael before
+any additive migration; do not silently add an application status. Keep mail switchable off.
 
 Then implement anti-enumerating password-reset and email-verification flows as a
 separate package. Confirm what unverified/existing accounts may do, expiry/resend
@@ -83,17 +91,28 @@ until supplied; placeholders are never configuration values.
 ## P0-C: privacy and usable rights at launch
 
 **Working prompt:** Keep all legal text DRAFT pending the named reviewer's approval.
+Michael wants an independent data-protection lawyer/adviser, not self-certification.
+Publish a monitored role mailbox on the controlled domain, not personal contact
+details. Ask the adviser whether ODPC registration and other controller/processor
+obligations apply; do not assume the legal answer. Keep signup invite-only until
+review is complete. This is a required launch gate, not a claim that today's live
+registration is already restricted; an invite-only registration design/build needs
+its own explicit scope and server-side tests before rollout.
 Propose a public privacy notice with controller contact, purposes/lawful bases,
 processor/cross-border disclosures, retention and rights. Separate versioned notice
 acknowledgement from optional email choice; alerts default off for new users and
 existing users confirm in-app before any alert email. Record server timestamps and
 consent versions without inventing historical consent or collecting unnecessary IPs.
 
-Provide manual identity-verified export/deletion fulfilment for launch, with a
-dry-run-first deletion command design and separate destructive-action approval.
+The current preference is manual identity-verified export/deletion at launch,
+backed by a dry-run-first deletion command, with self-service later. Michael explicitly
+called this tentative because it affects Sprint 4. Confirm it before changing that
+sprint's eight-point story, scope or estimate; do not treat this preference as permission
+to remove self-service from the backlog. Any deletion still needs reviewed scope and
+separate destructive-action approval.
 Inventory owned DB rows, private media, auth sessions, pending sends, shared records
 to retain, provider copies and backups. Define partial-failure/retry and a restore
-procedure that does not resurrect deleted accounts. Self-service is deferred.
+procedure that does not resurrect deleted accounts.
 
 **Done when:** legal owner/contact and retention are confirmed, notice/choice UI and
 owner-isolation tests pass, export excludes hashes/tokens, and deletion is rehearsed
@@ -215,8 +234,12 @@ Treat each row as its own discovery/design prompt, not a combined build request.
 
 1. Review Checkpoint 3A and verify the repository controls; keep production gates open
    until Michael performs the proxy/cache/header checks. Do not infer deployment.
-2. Launch readiness: CSRF follow-up, controlled mail, account recovery/verification,
-   legal-reviewed privacy/rights and operational recovery; separate bounded packages.
+2. Michael's latest build order is **email transport -> accounts -> privacy ->
+   monitoring**, in separate bounded packages. Email transport starts owner-inbox-only
+   with synthetic data; accounts can be tested locally or in a separately approved
+   controlled pilot. This ordering never opens public signup or general employer mail
+   before security/legal/consent gates pass. Prepare the independent legal review and
+   role contact in parallel; keep any required CSRF/proxy/cache gate ahead of release.
 3. Professional baseline: E2E/a11y/supply-chain gates, then measured frontend/API
    changes and an approved build/deploy replacement. No dependency shopping spree.
 4. Product-led experiments: choose SEO, language, search, payments or analytics based
@@ -226,3 +249,14 @@ For each invoked prompt, hand back scope/branch, actual test results, risks/limi
 manual verification and story-point suggestion. Ask only decisions that block that
 package. Existing open placeholders remain in DECISIONS_NEEDED.md; this roadmap does
 not manufacture answers, legal approval, migration approval or access credentials.
+
+### Outstanding facts after Michael's recommendations
+
+Brevo reachability result, actual sending domain/control, global cap/allocation,
+independent reviewer and controller role mailbox remain unresolved. No connectivity
+test result was supplied in these tables. Export/backup/attempt retention remains
+subject to legal review; seven-day export expiry and 30-day backups are starting
+proposals. The manual-rights versus self-service Sprint 4 split needs final confirmation.
+Each migration design and every new dependency still requires explicit approval.
+Dependency-free monitoring is approved in principle; these prompts do not authorize
+production activity or implementation beyond a separately confirmed build scope.
