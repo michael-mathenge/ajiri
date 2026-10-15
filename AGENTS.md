@@ -4,9 +4,9 @@
 
 ## 1. Mission
 
-Deliver Checkpoint 2 WP7-WP10 on `integration/checkpoint-2`, one feature branch per package, merging passing packages with --no-ff. Continue without stopping between packages unless a section 8 stop condition applies. Stop after the Checkpoint 2 report for Michael's review. No push or deployment.
+Deliver Checkpoint 3A SECURITY HARDENING ONLY, WP11-WP15, on `integration/checkpoint-3`. Michael's 15 October build instructions supersede the previous documentation-only mission and package numbering. Earlier email/privacy WP numbers remain historical proposals, not this scope.
 
-Sections 1, 4, 6 and 12 are time-bound. Standing sections remain unchanged. Michael's checkpoint-specific instructions supersede section 9's old integration branch name. Authorized exceptions: a design-required additive/non-destructive migration (stop for deletion or alteration of existing data), and editing CI only to apply docs/CI_PROPOSAL.md. File relocation must use a dry-run-capable management command. These exceptions do not authorize production operations or other protected changes.
+Branch each package from integration, pass section 7 gates, merge --no-ff, continue unless section 8 applies. Authorized: password validation, content-aware uploads, DRF throttling, deploy-hardening settings and CSRF design documentation. No JWT/refresh-cookie logic, AUTH_USER_MODEL, migrations/history, CORS, ingestion endpoints, hosting config, CI, new dependencies, pushes, main merges, connector writes or production actions. Stop after WP15 and the review.
 
 ## 2. Product
 
@@ -25,13 +25,11 @@ Users are mostly on phones with limited data. **Mobile-first, lightweight, acces
 - Production: PythonAnywhere free tier, a committed `frontend_build`, and a GitHub Actions workflow that posts jobs to `POST /api/jobs/ingest/` and `/api/jobs/sweep/` (header `X-Ingest-Key`)
 - CI exists (`.github/workflows/ci.yml`: backend checks, migrations, tests, frontend lint/build, committed-build consistency; Python matrix 3.12-3.14). Local dev and PythonAnywhere use Python 3.12.
 
-## 4. Current state (Checkpoint 2 preparation, 15 October 2026)
+## 4. Current state (Checkpoint 3A, 15 October 2026)
 
-Checkpoint 1 (WP1-WP6) is reviewed and merged into main at `e5e0038`; its integration tip `b8c1881` is an ancestor. It includes profile preferences, independent alerts, application review/send/dismissal, registration errors, notifications, Profile/CV tools, authenticated downloads, plans preview, tests and polish. Recorded Checkpoint 1 results: 57 Django tests and 24 frontend tests; see `docs/CHECKPOINT1_REVIEW.md` for evidence and limits, not a claim of a new run.
+Checkpoint 1 and 2 are merged; production remains at main `2d5d175` on PythonAnywhere free tier. Private media is in place; console email delivers no real mail. GitHub Actions handles ingestion/sweeps. Michael must periodically renew the web app (last recorded expiry 14 November 2026; recheck manually).
 
-Remaining privacy gap: files beneath the existing media root can bypass owner-checked download endpoints via public media URLs. Django exposes media in DEBUG mode; the PythonAnywhere runbook specifies a public media mapping. Live hosting configuration has not been inspected.
-
-Precondition: verify complete Checkpoint 1 ancestry in fetched origin/main before starting. The option A design in `docs/PRIVATE_MEDIA_DESIGN.md` is approved for implementation. Auth, CORS and download endpoint behaviour stay unchanged. No live relocation or hosting operation is authorized.
+Checkpoint 3 planning/audit/decision documents exist at integration tip `0a02c74` before this work. The audit identified password validation bypass, absent throttling, extension-only uploads and deploy warnings W004/W008. CSRF remains a design-only item. No current production inspection is authorized. Preserve the old AGENTS stash untouched; no historical mail/privacy proposals are implemented here.
 
 ## 5. Known gotchas
 
@@ -43,16 +41,17 @@ Precondition: verify complete Checkpoint 1 ancestry in fetched origin/main befor
 - Windows/PowerShell: use `curl.exe`, not `curl`. `-replace` is case-insensitive; use `-creplace` with `[regex]::Escape()`.
 - Integrate new code alongside existing imports. Never overwrite file tops.
 
-## 6. Checkpoint 2 work packages (in order)
+## 6. Checkpoint 3A work packages (in order)
 
-| WP | Branch | Scope / acceptance |
+| WP | Branch | Acceptance |
 |---|---|---|
-| WP7 | feature/private-media | Approved private root and removal of direct media serving; dry-run relocation command; manual PythonAnywhere docs; owner downloads succeed, non-owner 404, anonymous 401 |
-| WP8 | feature/send-idempotency | Atomic concurrent-send claim, one email, delivery failure retains 502/retry; no new status/migration without asking |
-| WP9 | feature/ci-frontend-tests | Apply CI_PROPOSAL as written; validate config and local equivalent commands |
-| WP10 | feature/deployment-checklist | Docs-only manual backup, jobs/0007 migration order, media relocation, deployment verification and rollback checklist |
+| WP11 | feature/password-validation | Configured validators on password-setting paths; field-keyed errors; tests |
+| WP12 | feature/throttling | Scoped env rates, proxy/cache limits documented, 429 UX and tests; ingestion unchanged |
+| WP13 | feature/upload-content-validation | PDF/DOC/DOCX content checks, bounded ZIP, 5 MB and safe filenames; tests |
+| WP14 | feature/deploy-settings | Env-configurable deploy settings, short HSTS, proxy safety, tests/manual rollback |
+| WP15 | feature/refresh-cookie-csrf-design | CSRF design only, options/tests/rollback; Checkpoint 3A review |
 
-Branch each package from integration/checkpoint-2, run section 7 gates, and merge back with --no-ff. No frontend source work or frontend_build regeneration is planned. Hosting instructions are for Michael, never performed by Codex.
+Use section 7 gates per package. Regenerate frontend_build once at the end of each frontend package. No migration or dependency is planned. Document concepts in the existing canonical `ajiri-backend/docs/CONCEPTS.md`; code references retain the backend-relative docs path.
 
 ## 7. Quality gates (every package, no exceptions)
 
@@ -83,10 +82,15 @@ When blocked on one package, record it in the report and continue to the next in
 - Create `integration/checkpoint-1` from up-to-date `main`. Branch every package from it and merge back with `--no-ff` after the gates pass.
 - **Never commit to `main`. Never push.** Michael reviews and pushes.
 - Small, focused commits with clear messages.
+- Never merge PRs, push, or use GitHub/connector write actions unless Michael asks for that exact action in that session.
 
 ## 10. Do not touch without asking
 
 `AUTH_USER_MODEL` and migration history; the SimpleJWT cookie/rotation logic; `src/api/client.js` interceptor behaviour (extend, do not rewrite); CORS settings; ingestion endpoints and `X-Ingest-Key` handling; CI workflow (propose changes in the report); hosting config.
+
+- Never touch production. Server instructions are for Michael to perform manually.
+- Never ask for or write secrets (keys, passwords, SMTP credentials or tokens) in chat, files or commits. Michael enters credentials privately himself.
+- Changes must support the documented deployment order: backup, migrations, then activation of new code. Migration source may be staged first; new code must not handle requests before its migrations complete.
 
 ## 11. Working with Michael
 
@@ -95,8 +99,8 @@ When blocked on one package, record it in the report and continue to the next in
 - Give exact PowerShell commands for anything he needs to run, plus the expected result.
 - Michael tracks work in Monday.com himself. Give completed items and honest story-point suggestions per package; do not assume any Monday.com access.
 
-## 12. Checkpoint 2 handback
+## 12. Checkpoint 3A handback
 
-Write docs/CHECKPOINT2_REVIEW.md using the Checkpoint 1 report format: package status/branches/ranges and suggested points; changes; actual checks and limitations; manual media and double-send review script; decisions; risks/follow-ups; recommended next sprint. Include the deployment checklist and manual-only hosting boundary.
+Write docs/CHECKPOINT3A_REVIEW.md in the Checkpoint 2 format: package status/branches/ranges/points; changes; actual verification and limits; manual security verification script; decisions; open risks/follow-ups. Update audit statuses without claiming production fixes. Include docs/REFRESH_COOKIE_CSRF_DESIGN.md with no auth implementation.
 
-Before final handback run `git log --format="%h %ae | %ce" origin/main..integration/checkpoint-2` and confirm every author/committer uses Michael's configured noreply address. Do not change Git config. Stop after WP10 and wait for review.
+Check branch before every commit; preserve Git config/stash. Run `git log --format="%h %ae | %ce" origin/main..integration/checkpoint-3` and confirm every author/committer uses Michael's configured noreply address. No pushes or deployment. Stop and wait for review.

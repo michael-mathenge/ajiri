@@ -541,3 +541,45 @@ A conditional database update claims a reviewable application as sent before SMT
 
 ## reproducible-frontend-build
 CI compares generated files byte for byte against frontend_build. Vite preserves HTML and public asset line endings, so a Windows CRLF checkout can differ from Linux despite identical rendered content. Repository attributes keep Vite HTML/public inputs and packaged text at LF without changing anyone's Git config. The packaging script also normalizes index.html to UTF-8 without BOM and LF for older Windows checkouts. Keep the exact CI comparison enabled; regenerate and commit the build after input or packaging changes.
+
+## password-validation
+
+Registration validates the unhashed password against a candidate user, so identity
+similarity checks see email/name. All Django validator messages remain password-field
+arrays. Manager creation also validates non-None passwords; admin/CLI password forms
+use Django's configured validators. Existing hashes are not revalidated at login.
+Direct low-level set_password is a hashing primitive, not a public password endpoint.
+
+## endpoint-throttling
+
+Only login/register/refresh/apply/send use scoped DRF throttles; ingestion and sweep
+have no throttle class changes. Public credential endpoints key by client IP,
+authenticated application actions by user. Rates are request limits, NOT durable
+email daily quotas. 429 includes Retry-After; the UI never retries sending automatically.
+DRF defaults to per-process LocMemCache: counters are not shared across workers and
+read/modify/write is approximate. Treat this as abuse friction, not a strict quota.
+Proxy count defaults to zero (ignore X-Forwarded-For); Michael must verify the trusted
+proxy chain before setting DRF_NUM_PROXIES. Do not trust arbitrary leftmost headers.
+
+## cv-content-validation
+
+CV uploads keep the 5 MB ceiling, but extensions/MIME are not trusted as content.
+PDF needs its version signature and trailing EOF marker; this is not full PDF parsing.
+DOC uses bounded compound-file header/FAT/directory checks and a WordDocument stream
+entry. DOCX requires a readable ZIP with content types, root relationships and Word
+XML; all members are CRC-read without extraction. Limits: 200 members, 10 MB/member,
+20 MB expanded total, 100:1 compression, UTF-8-compatible XML without entities/DTD.
+Encrypted/unsupported compressed packages and macro DOCX packages are rejected.
+Uploads use random UUID filenames; original names never select a private storage path.
+These structural checks do not prove safety: active content and malware require a
+separate reviewed scanning/isolation strategy. Existing stored files are not rewritten.
+
+## deployment-security-profile
+
+DEBUG=False defaults to SSL redirect, secure session/CSRF cookies and HSTS max-age
+300 seconds. Development defaults leave HTTP usable and HSTS off. Proxy SSL trust
+is opt-in only after Michael verifies the host overwrites X-Forwarded-Proto. Configure
+that before activating redirects to avoid loops. HSTS includeSubDomains and preload
+remain off for this rollout; Django may advise enabling them, intentionally not done.
+Header settings and rollback values are env-configurable; JWT/refresh cookie logic
+and its secure-flag expression are unchanged. Production verification is manual only.

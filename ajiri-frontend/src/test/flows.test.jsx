@@ -44,7 +44,7 @@ describe('Register', () => {
       response: {
         data: {
           email: ['Already registered.', 'Try another email.'],
-          password: ['Too short.'],
+          password: ['Too short.', 'Too common.', 'Entirely numeric.'],
           detail: 'Please correct your entries.',
         },
       },
@@ -56,6 +56,8 @@ describe('Register', () => {
       'Already registered. Try another email.'
     )
     expect(screen.getByRole('alert')).toHaveTextContent('Too short.')
+    expect(screen.getByRole('alert')).toHaveTextContent('Too common.')
+    expect(screen.getByRole('alert')).toHaveTextContent('Entirely numeric.')
     expect(screen.getByRole('alert')).toHaveTextContent(
       'Please correct your entries.'
     )
@@ -63,6 +65,14 @@ describe('Register', () => {
       'aria-invalid',
       'true'
     )
+  })
+  it('explains rate limits without retrying registration', async () => {
+    apiClient.post.mockRejectedValue({ response: { status: 429, headers: { 'retry-after': '60' }, data: {} } })
+    renderPage(<Register />)
+    fillRegister()
+    fireEvent.click(screen.getByRole('button', { name: 'Register' }))
+    expect(await screen.findByRole('alert')).toHaveTextContent('wait 60 seconds')
+    expect(apiClient.post).toHaveBeenCalledTimes(1)
   })
   it('navigates to login after successful registration', async () => {
     apiClient.post.mockResolvedValue({ data: {} })

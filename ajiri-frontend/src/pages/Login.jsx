@@ -1,3 +1,4 @@
+import { rateLimitMessage } from '../lib/errors'
 import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { ArrowRight, Check, Eye, EyeOff, ShieldCheck } from 'lucide-react'
@@ -38,7 +39,9 @@ export default function Login() {
       )
     } catch (error) {
       setError(
-        error.response?.status === 401
+        error.response?.status === 429
+          ? rateLimitMessage(error)
+          : error.response?.status === 401
           ? 'The email or password is incorrect. Please try again.'
           : 'We could not log you in. Check your connection and try again.'
       )

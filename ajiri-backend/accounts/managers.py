@@ -1,4 +1,5 @@
 from django.contrib.auth.base_user import BaseUserManager
+from django.contrib.auth.password_validation import validate_password
 
 # WHY THIS FILE EXISTS:
 # Django's default User model creation logic expects a `username` field.
@@ -13,6 +14,10 @@ class UserManager(BaseUserManager):
             raise ValueError('Users must have an email address')
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
+        # Manager callers must not bypass policy; None still creates an unusable password.
+        # see docs/CONCEPTS.md#password-validation
+        if password is not None:
+            validate_password(password, user)
         user.set_password(password)
         user.save(using=self._db)
         return user

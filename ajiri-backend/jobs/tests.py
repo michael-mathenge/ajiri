@@ -1,3 +1,4 @@
+from django.core.cache import cache
 import re
 import tempfile
 
@@ -44,6 +45,7 @@ SAMPLE_FEED = '''<?xml version="1.0" encoding="UTF-8"?>
 @override_settings(INGEST_API_KEY=TEST_KEY)
 class IngestEndpointTests(TestCase):
     def setUp(self):
+        cache.clear()
         self.url = reverse('ingest-feed')
 
     def post(self, body=SAMPLE_FEED, key=TEST_KEY, **extra):
@@ -99,6 +101,7 @@ class IngestEndpointTests(TestCase):
 @override_settings(INGEST_API_KEY=TEST_KEY)
 class SweepEndpointTests(TestCase):
     def setUp(self):
+        cache.clear()
         self.url = reverse('sweep-matches')
 
     def post(self, key=TEST_KEY):

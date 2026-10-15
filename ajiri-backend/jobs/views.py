@@ -18,6 +18,7 @@ from .serializers import (
     NotificationSerializer,
 )
 from .filters import JobFilter
+from accounts.throttles import EndpointThrottle
 from .ingestion import ingest_feed
 from .matching import sweep_all_active_jobs_for_matches
 from .cover_letter_generator import generate_cover_letter_docx
@@ -68,6 +69,8 @@ class ApplyToJobView(generics.GenericAPIView):
     existing Application instead of creating a duplicate (the model's
     unique_together=('user','job') would reject a second row anyway).
     """
+    throttle_classes = (EndpointThrottle,)
+    throttle_scope = 'apply'
     permission_classes = (permissions.IsAuthenticated,)
     queryset = Job.objects.filter(is_active=True, is_flagged_scam=False)
 
@@ -153,6 +156,8 @@ class SendApplicationView(generics.GenericAPIView):
     an application still in READY_FOR_REVIEW — prevents re-sending an
     already-sent application or "sending" a dismissed one.
     """
+    throttle_classes = (EndpointThrottle,)
+    throttle_scope = 'send'
     permission_classes = (permissions.IsAuthenticated,)
     queryset = Application.objects.all()
 

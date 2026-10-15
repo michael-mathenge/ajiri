@@ -3,7 +3,7 @@ into native Python datatypes that can easily be rendered into JSON, XML, or othe
 
 from rest_framework import serializers
 from .models import Profile, Skill
-import os
+from .upload_validation import validate_cv_upload
 
 
 class SkillSerializer(serializers.ModelSerializer):
@@ -47,20 +47,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         return data
 
     def validate_cv_file(self, value):
-        if value:
-            allowed_extensions = ['.pdf', '.doc', '.docx']
-            ext = os.path.splitext(value.name)[1].lower()
-            if ext not in allowed_extensions:
-                raise serializers.ValidationError(
-                    f"Unsupported file type '{ext}'. Allowed: {', '.join(allowed_extensions)}"
-                )
-
-            max_size_mb = 5
-            if value.size > max_size_mb * 1024 * 1024:
-                raise serializers.ValidationError(
-                    f"File too large ({value.size / 1024 / 1024:.1f}MB). Max size: {max_size_mb}MB"
-                )
-        return value
+        return validate_cv_upload(value) if value else value
 
     def update(self, instance, validated_data):
         skill_names = validated_data.pop('skill_names', None)

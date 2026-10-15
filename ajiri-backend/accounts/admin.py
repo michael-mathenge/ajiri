@@ -1,10 +1,13 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .models import User
+from .forms import AccountCreationForm, AccountChangeForm
 
 
 class CustomUserAdmin(UserAdmin):
     model = User
+    add_form = AccountCreationForm
+    form = AccountChangeForm
     list_display = ('email', 'full_name', 'phone_number', 'is_staff', 'is_active')
     ordering = ('email',)
     search_fields = ('email', 'full_name', 'phone_number')
