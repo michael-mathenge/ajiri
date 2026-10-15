@@ -116,7 +116,7 @@ Run only after reviewing this branch; deployment is a separate decision. Local t
 use disposable test DB/media and captured mail, never real employers. In PowerShell:
 
 ```powershell
-cd C:\devjiri
+cd C:\dev\ajiri
 git branch --show-current
 git status --short
 cd ajiri-backend
@@ -126,7 +126,7 @@ $env:EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
 .\.venv\Scripts\python.exe manage.py makemigrations --check --dry-run
 .\.venv\Scripts\python.exe manage.py test accounts.test_passwords accounts.test_throttles profiles.test_upload_content config.test_security --noinput
 .\.venv\Scripts\python.exe manage.py test --noinput
-cd ..jiri-frontend
+cd ..\ajiri-frontend
 npm ci
 npm run lint
 npm run test -- --run
