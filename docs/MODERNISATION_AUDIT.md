@@ -229,3 +229,8 @@ Production fixture cleanup remains a separately authorized housekeeping task.
 - WP13 extension-only uploads: fixed with bounded PDF/DOC/DOCX structural checks,
   5 MB ceiling and UUID stored names. Full parsing and malware scanning remain OPEN;
   signature checks cannot certify files safe. Existing stored files are unchanged.
+
+- WP14 W004/W008: addressed by DEBUG=False defaults and env-configurable profile
+  (HSTS 300s, SSL redirect), with proxy/no-loop tests. Session/CSRF secure flags and
+  standard headers configurable. Actual production remains UNVERIFIED. HSTS broader
+  scope/preload advisories W005/W021 are deliberately retained, not silenced.

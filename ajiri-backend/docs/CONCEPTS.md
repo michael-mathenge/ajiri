@@ -573,3 +573,13 @@ Encrypted/unsupported compressed packages and macro DOCX packages are rejected.
 Uploads use random UUID filenames; original names never select a private storage path.
 These structural checks do not prove safety: active content and malware require a
 separate reviewed scanning/isolation strategy. Existing stored files are not rewritten.
+
+## deployment-security-profile
+
+DEBUG=False defaults to SSL redirect, secure session/CSRF cookies and HSTS max-age
+300 seconds. Development defaults leave HTTP usable and HSTS off. Proxy SSL trust
+is opt-in only after Michael verifies the host overwrites X-Forwarded-Proto. Configure
+that before activating redirects to avoid loops. HSTS includeSubDomains and preload
+remain off for this rollout; Django may advise enabling them, intentionally not done.
+Header settings and rollback values are env-configurable; JWT/refresh cookie logic
+and its secure-flag expression are unchanged. Production verification is manual only.
