@@ -308,8 +308,8 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024
 # Cookies must be HTTPS-only everywhere except local development, where the dev
 # server speaks plain HTTP. REFRESH_COOKIE_SECURE is read by accounts/views.py.
 REFRESH_COOKIE_SECURE = not DEBUG
-SESSION_COOKIE_SECURE = not DEBUG
-CSRF_COOKIE_SECURE = not DEBUG
+SESSION_COOKIE_SECURE = env_bool('SESSION_COOKIE_SECURE', not DEBUG)
+CSRF_COOKIE_SECURE = env_bool('CSRF_COOKIE_SECURE', not DEBUG)
 
 # Opt-in only: tells Django to believe the proxy's X-Forwarded-Proto header, so
 # request.is_secure() and absolute URLs (the CV/cover-letter links in API
@@ -317,6 +317,18 @@ CSRF_COOKIE_SECURE = not DEBUG
 # that header — otherwise a client could spoof it.
 if env_bool('TRUST_PROXY_SSL_HEADER', False):
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# Initial hardening profile; proxy trust above remains explicit opt-in.
+# see docs/CONCEPTS.md#deployment-security-profile
+SECURE_SSL_REDIRECT = env_bool('SECURE_SSL_REDIRECT', not DEBUG)
+SECURE_HSTS_SECONDS = int(os.environ.get('SECURE_HSTS_SECONDS', '0' if DEBUG else '300'))
+if SECURE_HSTS_SECONDS < 0:
+    raise ImproperlyConfigured('SECURE_HSTS_SECONDS must be non-negative.')
+SECURE_HSTS_INCLUDE_SUBDOMAINS = env_bool('SECURE_HSTS_INCLUDE_SUBDOMAINS', False)
+SECURE_HSTS_PRELOAD = env_bool('SECURE_HSTS_PRELOAD', False)
+SECURE_CONTENT_TYPE_NOSNIFF = env_bool('SECURE_CONTENT_TYPE_NOSNIFF', True)
+SECURE_REFERRER_POLICY = os.environ.get('SECURE_REFERRER_POLICY', 'same-origin')
+X_FRAME_OPTIONS = os.environ.get('X_FRAME_OPTIONS', 'DENY')
 
 # The built React app (see scripts/build_frontend.ps1) lives here. When the
 # folder exists, WhiteNoise serves its files at the site root and the catch-all
