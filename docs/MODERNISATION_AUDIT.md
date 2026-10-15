@@ -42,6 +42,9 @@ $env:EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
 .\.venv\Scripts\python.exe manage.py check --deploy
 ```
 
+Historical findings below describe the original audit revision; the final Checkpoint 3A
+remediation status section is authoritative for local fixes and remaining limits.
+
 ## 1. Security
 
 | Status / evidence | Risk | Suggested fix / effort |
@@ -234,3 +237,16 @@ Production fixture cleanup remains a separately authorized housekeeping task.
   (HSTS 300s, SSL redirect), with proxy/no-loop tests. Session/CSRF secure flags and
   standard headers configurable. Actual production remains UNVERIFIED. HSTS broader
   scope/preload advisories W005/W021 are deliberately retained, not silenced.
+
+- WP15 refresh CSRF: design completed in REFRESH_COOKIE_CSRF_DESIGN.md; implementation
+  remains OPEN, as authorized. No SameSite/origin/token validation changes were made.
+
+### Remaining open after Checkpoint 3A
+
+CSRF implementation; inactive-user refresh/alerts; shared-cache/atomic abuse protection;
+durable mail quotas, real SMTP and truthful alert receipt handling; password reset and
+mailbox verification; privacy/legal/consent and account rights; malware scanning/full
+render validation; live proxy/header/cache verification and backups/renewal; Python
+advisory scan, coverage/E2E/a11y, dependency patches; CSP/Permissions-Policy; query-count,
+scaling/index/caching work; API schema/versioning, SEO/PWA and packaging cleanup.
+None is silently declared fixed by a deploy check or a passing local suite.
