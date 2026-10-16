@@ -7,6 +7,7 @@ from pathlib import Path
 import re
 from datetime import datetime, timezone
 import uuid
+import sys
 
 
 class SafeJSONFormatter(logging.Formatter):
@@ -27,6 +28,17 @@ class SafeJSONFormatter(logging.Formatter):
         })
 
 
+class _PrivateRotatingFileHandler(RotatingFileHandler):
+    def _open(self):
+        # Rollover creates a fresh file too; preserve 0600 rather than OS umask.
+        fd = os.open(self.baseFilename, os.O_WRONLY | os.O_CREAT | os.O_APPEND, 0o600)
+        return os.fdopen(fd, self.mode, encoding=self.encoding)
+
+    def handleError(self, record):
+        # logging's default failure report dumps raw message/args/exception text.
+        sys.stderr.write(SafeJSONFormatter().format(record) + '\n')
+
+
 class PrivateProcessRotatingHandler(logging.Handler):
     """Each process owns a rotating file; never race workers on one rollover."""
     def __init__(self, directory, max_bytes=1048576, backup_count=3):
@@ -37,6 +49,12 @@ class PrivateProcessRotatingHandler(logging.Handler):
         self._pid = None
 
     def emit(self, record):
+        try:
+            self._write(record)
+        except (OSError, ValueError):
+            sys.stderr.write(SafeJSONFormatter().format(record) + '\n')
+
+    def _write(self, record):
         pid = os.getpid()
         if self._pid != pid:
             if self._writer:
@@ -51,7 +69,7 @@ class PrivateProcessRotatingHandler(logging.Handler):
                 raise ValueError('Log file must not be a symlink.')
             fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_APPEND, 0o600)
             os.close(fd)
-            self._writer = RotatingFileHandler(path, maxBytes=self.max_bytes,
+            self._writer = _PrivateRotatingFileHandler(path, maxBytes=self.max_bytes,
                                                backupCount=self.backup_count, encoding='utf-8', delay=True)
             self._writer.setFormatter(SafeJSONFormatter())
             self._pid = pid

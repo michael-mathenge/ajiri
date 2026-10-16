@@ -616,3 +616,12 @@ Error text can contain tokens or private CV details. Format only an allowlist of
 server-controlled fields, never arbitrary log messages or tracebacks. Each worker
 rotates its own private file so processes do not race a shared rollover. Old worker
 files need manual quota/retention review; console email remains separately sensitive.
+
+## private-backup-snapshots
+
+SQLite's backup API copies a consistent database while ordinary writers run.
+It does not freeze media: a combined DB/media snapshot requires the operator to
+pause every writer. Verify integrity and hashes before publishing a completion
+manifest; keep failed partial snapshots private. Retention is DRAFT/report-only,
+not permission to delete. Always restore into a new disposable private directory,
+never over the live/development DB. Explicitly close SQLite connections on Windows.
