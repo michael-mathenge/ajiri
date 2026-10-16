@@ -130,6 +130,7 @@ class DeliveryMigrationTests(TransactionTestCase):
         MigrationExecutor(connection).migrate(leaves)
         current = Profile.objects.get(pk=profile.pk)
         self.assertIsNone(current.email_verified_at)
+        self.assertIsNone(current.password_reset_at)
         self.assertEqual(current.verified_email, '')
         self.assertEqual(current.headline, 'Keep me')
         self.assertTrue(current.notify_email)

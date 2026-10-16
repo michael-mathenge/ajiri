@@ -223,3 +223,17 @@ After approving the schema review, Michael approved the isolated transport and q
 service package and confirmed that definite failed provider attempts count against
 capacity. This does not authorize endpoints/tasks integration, real sending, provider
 credentials, DNS changes, push or deployment. See CHECKPOINT3B_DELIVERY_REVIEW.md.
+
+## 9. Accounts flow and approved reset-revocation extension
+
+Michael approved reset/verification implementation with real delivery disabled, then
+explicitly approved the discovered revocation fix: nullable Profile.password_reset_at,
+password-bound new refresh claims and rejecting legacy refresh tokens after reset.
+profiles/0004 adds DateTimeField(null=True, blank=True, default=None), no historical
+backfill. New reset writes the marker; old rows otherwise stay None. No User change.
+New auth code must follow migration. Rollback after resets MUST preserve the marker
+and refresh guard: old code would ignore the marker and accept legacy untracked
+refresh tokens. Dropping the marker loses revocation evidence and is destructive,
+so code rollback is limited to retaining the guard or a separately reviewed session
+invalidation plan. Existing access tokens keep their approved 15-minute grace.
+See CHECKPOINT3B_ACCOUNTS_REVIEW.md for implementation, tests and activation gates.

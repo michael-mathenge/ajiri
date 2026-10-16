@@ -14,6 +14,7 @@ const Applications = lazy(() => import('./pages/Applications'))
 const Notifications = lazy(() => import('./pages/Notifications'))
 const Profile = lazy(() => import('./pages/Profile'))
 const Subscriptions = lazy(() => import('./pages/Subscriptions'))
+const AccountRecovery = lazy(() => import('./pages/AccountRecovery'))
 
 export default function App() {
   return (
@@ -27,9 +28,13 @@ export default function App() {
               <Route path="/applications" element={<Applications />} />
               <Route path="/notifications" element={<Notifications />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="/email-verification" element={<AccountRecovery key="verification" mode="verification" />} />
             </Route>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/forgot-password" element={<AccountRecovery key="request" mode="request-reset" />} />
+            <Route path="/reset-password" element={<AccountRecovery key="reset" mode="reset" />} />
+            <Route path="/verify-email" element={<AccountRecovery key="verify" mode="verify" />} />
             <Route path="/plans" element={<Subscriptions />} />
             <Route
               path="*"

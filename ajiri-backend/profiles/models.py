@@ -33,6 +33,7 @@ class Profile(models.Model):
     # see docs/CONCEPTS.md#verification-proof-schema
     email_verified_at = models.DateTimeField(null=True, blank=True, default=None)
     verified_email = models.EmailField(max_length=254, blank=True, default='')
+    password_reset_at = models.DateTimeField(null=True, blank=True, default=None)
 
     def __str__(self):
         return f"{self.user.email}'s profile"

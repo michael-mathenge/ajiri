@@ -219,6 +219,10 @@ REST_FRAMEWORK = {
     # see docs/CONCEPTS.md#endpoint-throttling
     'NUM_PROXIES': int(os.environ.get('DRF_NUM_PROXIES', '0')),
     'DEFAULT_THROTTLE_RATES': {
+        'account_email': os.environ.get('THROTTLE_ACCOUNT_EMAIL_RATE', '5/hour'),
+        'account_target': os.environ.get('THROTTLE_ACCOUNT_TARGET_RATE', '3/hour'),
+        'account_confirm': os.environ.get('THROTTLE_ACCOUNT_CONFIRM_RATE', '10/hour'),
+        'verification_status': os.environ.get('THROTTLE_VERIFICATION_STATUS_RATE', '60/min'),
         'health': os.environ.get('THROTTLE_HEALTH_RATE', '60/min'),
         'csrf': os.environ.get('THROTTLE_CSRF_RATE', '60/min'),
         'login': os.environ.get('THROTTLE_LOGIN_RATE', '10/min'),
@@ -228,6 +232,9 @@ REST_FRAMEWORK = {
         'send': os.environ.get('THROTTLE_SEND_RATE', '10/hour'),
     },
 }
+
+# Approved reset lifetime; account mail remains unavailable except explicit locmem tests.
+PASSWORD_RESET_TIMEOUT = 30 * 60
 
 if REST_FRAMEWORK['NUM_PROXIES'] < 0:
     raise ImproperlyConfigured('DRF_NUM_PROXIES must be non-negative.')

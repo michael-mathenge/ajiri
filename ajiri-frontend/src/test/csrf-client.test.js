@@ -76,3 +76,11 @@ it('does not retry ordinary forbidden mutations', async () => {
   await expect(client.post('/jobs/1/apply/')).rejects.toBeDefined()
   expect(adapter).toHaveBeenCalledTimes(1)
 })
+
+it.each(['/accounts/password-reset/request/', '/accounts/password-reset/confirm/', '/accounts/verification/confirm/'])('protects public account mutation %s without stale JWT', async path => {
+  localStorage.setItem('access_token', 'stale')
+  await client.post(path, {})
+  const request = calls.find(config => config.url === path)
+  expect(request.headers.Authorization).toBeUndefined()
+  expect(request.headers['X-CSRFToken']).toBe('masked-token')
+})

@@ -664,3 +664,25 @@ Definite failures and unknown outcomes keep consumed capacity. A repeated key
 returns its old receipt, never another send. Reserved/unknown receipts survive
 crashes and block fresh sends until reviewed reconciliation; midnight does not
 release that protection. The default service is disabled and no view/task calls it.
+
+## account-recovery-links
+
+Password reset uses Django's standard token with a 30-minute expiry; password/email
+changes invalidate it. Verification uses a separate purpose-bound 24-hour signature
+and writes proof only after explicit confirmation for the current account address.
+Links put credentials in URL fragments, then remove fragments from browser history
+and retain them only in component memory until submission. No GET verifies or resets.
+All mutations require CSRF and exact trusted Origin; public endpoints ignore stale JWT.
+Reset requests return the same response for unknown/inactive/known accounts. Security
+emails are generated only with explicit test capture and locmem backend, never sent
+to console/SMTP/Brevo; live UI truthfully says delivery is not enabled.
+
+## password-reset-revocation
+
+A password reset writes a nullable Profile reset timestamp and blacklists recorded
+refresh tokens atomically with the password change. New refresh tokens carry a keyed
+fingerprint of the stored password hash. Legacy refresh tokens without the fingerprint
+remain compatible until their account resets; afterwards the reset marker rejects
+them, including tokens missing from old outstanding inventories. Rotated tokens are
+now recorded too. Existing access tokens retain their normal up-to-15-minute grace.
+Rollback must preserve this guard: older refresh code ignores the reset marker.
