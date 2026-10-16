@@ -4,14 +4,13 @@
 
 ## 1. Mission
 
-Checkpoint 3B Phase B preparation: implement only the approved Profile verification
-fields and delivery attempt/daily-budget additive migrations, with tests, on
-feature/verification-delivery-schema based on merged Phase A e4eaefd. Michael's
-latest build prompt supersedes the previous Phase A design-only schema restriction.
-New migrations are authorized; historical migrations and AUTH_USER_MODEL are not.
-No SMTP transport, reset/verification endpoints, sending or quota services, auth
-behavior changes, dependencies, CI/CORS/ingestion edits, pushes or deployment.
-Console email remains unchanged. Stop after this package for review.
+Implement the approved isolated Brevo HTTPS transport and transactional delivery
+budget service on feature/brevo-delivery-service, following the reviewed schema
+package. Michael approved counting definite failed provider attempts against daily
+capacity. No new migration or dependency, endpoint/task wiring, auth/API behavior
+change, real delivery, secrets, DNS/provider writes, pushes or deployment. Console
+email remains unchanged. Stop after this package for review. This supersedes the
+previous schema-only mission only for the authorized dormant service and tests.
 
 ## 2. Product
 
@@ -40,7 +39,9 @@ refresh CSRF rejection, login/logout, profile save, owner download, private-medi
 writing/rotation remains unverified. Redirect=False/HSTS=0 pending the host scheme
 answer; no change authorized here.
 
-Approved schema/token/quota decisions are recorded in docs/MIGRATION_DESIGN_3B1.md.
+The schema package was reviewed and approved locally. The dormant transport and
+quota package is now authorized, with failed provider attempts counting against
+capacity. Approved decisions are recorded in docs/MIGRATION_DESIGN_3B1.md.
 Domain michaelmathenge.dev is active in Michael's Namecheap account using BasicDNS,
 but not authenticated in Brevo. Inspection was read-only; no credentials, DNS,
 provider setting or production changes. Existing original-checkout lockfile,
@@ -59,13 +60,14 @@ coverage data, stash and Git configuration must remain untouched. Queued UI chan
 
 ## 6. Current package
 
-feature/verification-delivery-schema: add Profile proof columns and initially empty
-DeliveryAttempt/DeliveryDailyBudget tables, including verification/reset channels
-and account counter. Additive migrations only, no backfill of consent, proof or
-old delivery. Test old-row preservation, constraints, erasure links and old-code
-read compatibility. Run section 7 gates; frontend build is verification only since
-there is no frontend source change. Document exact rollback and unresolved service
-policies. Do not implement the sender or claim quotas are enforced by schema alone.
+feature/brevo-delivery-service: isolated standard-library HTTPS adapter; atomic
+Nairobi-day 200 total/150 application/30 account/20 alert and 10-user application
+budgets; unique request keys; accepted/definite-failure/unknown outcomes. Definite
+provider failures consume capacity. No provider automatic retries; uncertain or
+crashed sends require reconciliation. Entire service disabled by default and unused
+by current senders. Test concurrency/failures/security, run section 7 gates, document
+activation prerequisites and stop. Do not choose unapproved alert/account retry or
+attachment policy defaults. Frontend builds are verification only.
 
 ## 7. Quality gates (every package, no exceptions)
 
@@ -113,12 +115,10 @@ When blocked on one package, record it in the report and continue to the next in
 - Give exact PowerShell commands for anything he needs to run, plus the expected result.
 - Michael tracks work in Monday.com himself. Give completed items and honest story-point suggestions per package; do not assume any Monday.com access.
 
-## 12. Schema-package handback
+## 12. Delivery-service handback
 
-Write docs/CHECKPOINT3B_SCHEMA_REVIEW.md with exact new migrations, tests/gates,
-existing-data effects, constraints versus future service responsibilities, owner
-runbook, mixed-version compatibility and rollback. No reverse migration on retained
-proof/ledgers as routine rollback; preserve additive schema and newer writes.
-Record domain inspection without personal contact details. Check branch before
-each commit and configured noreply identities; no pushes or deployment. Stop for
-Michael's package review. All other Phase B implementation needs a separate prompt.
+Write docs/CHECKPOINT3B_DELIVERY_REVIEW.md with actual gates, new behavior and limits,
+provider API reference, no-network test evidence, atomicity, failure accounting,
+uncertainty/reconciliation, disabled activation and remaining decisions. Verify new
+commit identities against configured noreply. No push/deployment; preserve original
+checkout changes, stash and Git config. Stop after this package for Michael's review.
