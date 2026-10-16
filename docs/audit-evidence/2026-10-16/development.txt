@@ -1,0 +1,3 @@
+Command: python -m pip_audit -r requirements.txt --progress-spinner off
+Exit: 0
+No known vulnerabilities found

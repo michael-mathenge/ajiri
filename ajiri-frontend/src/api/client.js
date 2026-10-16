@@ -20,7 +20,44 @@ export const mediaUrl = (url) => MEDIA_ORIGIN + new URL(url, MEDIA_ORIGIN).pathn
 // reject the request before the view even runs, even though these
 // views are AllowAny — permission and authentication are separate
 // steps. See docs/CONCEPTS.md#stale-token-on-public-endpoints
-const PUBLIC_ENDPOINTS = ['/accounts/login/', '/accounts/register/', '/accounts/refresh/']
+const PUBLIC_ENDPOINTS = ['/accounts/login/', '/accounts/register/', '/accounts/refresh/', '/accounts/csrf/']
+const COOKIE_ENDPOINTS = ['/accounts/login/', '/accounts/refresh/', '/accounts/logout/']
+
+// CSRF tokens are separate from JWTs and stay in memory. Bootstrap calls never
+// enter the auth interceptor, preventing recursive refresh or stale JWT headers.
+// see docs/CONCEPTS.md#cookie-csrf
+let csrfToken = null
+let csrfBootstrap = null
+let refreshInFlight = null
+const ensureCSRF = async (renew = false) => {
+  if (renew) csrfToken = null
+  if (csrfToken) return csrfToken
+  if (!csrfBootstrap) {
+    csrfBootstrap = axios.get(`${API_BASE_URL}/accounts/csrf/`, { withCredentials: true })
+      .then(({ data }) => { csrfToken = data.csrfToken; return csrfToken })
+      .finally(() => { csrfBootstrap = null })
+  }
+  return csrfBootstrap
+}
+const csrfRejected = (error) => error.response?.status === 403 && error.response?.data?.code === 'csrf_failed'
+const refreshAccess = () => {
+  if (!refreshInFlight) {
+    refreshInFlight = (async () => {
+      const send = async () => axios.post(`${API_BASE_URL}/accounts/refresh/`, {}, {
+        withCredentials: true, headers: { 'X-CSRFToken': await ensureCSRF() },
+      })
+      let response
+      try { response = await send() } catch (error) {
+        if (!csrfRejected(error)) throw error
+        await ensureCSRF(true)
+        response = await send() // Only an identified pre-side-effect rejection is retried.
+      }
+      localStorage.setItem('access_token', response.data.access)
+      return response.data.access
+    })().finally(() => { refreshInFlight = null })
+  }
+  return refreshInFlight
+}
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -31,7 +68,7 @@ const apiClient = axios.create({
   withCredentials: true,
 })
 
-apiClient.interceptors.request.use((config) => {
+apiClient.interceptors.request.use(async (config) => {
   const isPublicEndpoint = PUBLIC_ENDPOINTS.some((path) => config.url.includes(path))
 
   if (!isPublicEndpoint) {
@@ -39,6 +76,10 @@ apiClient.interceptors.request.use((config) => {
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`
     }
+  }
+
+  if (COOKIE_ENDPOINTS.some((path) => config.url.includes(path)) && config.method === 'post') {
+    config.headers['X-CSRFToken'] = await ensureCSRF()
   }
 
   return config
@@ -50,10 +91,24 @@ apiClient.interceptors.request.use((config) => {
 // retry the original request ONCE. Only if that also fails do we give
 // up and send the user to /login. See docs/CONCEPTS.md#refresh-on-401
 apiClient.interceptors.response.use(
-  (response) => response,
+  async (response) => {
+    if (response.config.url.includes('/accounts/login/')) {
+      // Login rotates Django's CSRF secret. A bootstrap outage must not turn a
+      // successful login into a false failure; the next mutation can bootstrap.
+      try { await ensureCSRF(true) } catch { csrfToken = null }
+    }
+    return response
+  },
   async (error) => {
     const originalRequest = error.config
+    if (!originalRequest) return Promise.reject(error)
     const isPublicEndpoint = PUBLIC_ENDPOINTS.some((path) => originalRequest.url.includes(path))
+
+    if (csrfRejected(error) && COOKIE_ENDPOINTS.some((path) => originalRequest.url.includes(path)) && !originalRequest._csrfRetry) {
+      originalRequest._csrfRetry = true
+      await ensureCSRF(true)
+      return apiClient(originalRequest)
+    }
 
     if (error.response?.status === 401 && !isPublicEndpoint && !originalRequest._retry) {
       // Marks this request so we never attempt a second silent refresh
@@ -65,14 +120,7 @@ apiClient.interceptors.response.use(
         // Deliberately using plain axios here, NOT apiClient — calling
         // apiClient would run back through these same interceptors,
         // risking recursive refresh attempts if this call itself 401s.
-        const refreshResponse = await axios.post(
-          `${API_BASE_URL}/accounts/refresh/`,
-          {},
-          { withCredentials: true }
-        )
-
-        const newAccessToken = refreshResponse.data.access
-        localStorage.setItem('access_token', newAccessToken)
+        const newAccessToken = await refreshAccess()
 
         // Update the original request's header and resend it — the
         // user never sees the failure, the page just loads normally.
@@ -81,8 +129,10 @@ apiClient.interceptors.response.use(
       } catch (refreshError) {
         // Refresh token is ALSO invalid/expired (e.g. the full 7-day
         // window passed) — nothing left to try, log the user out.
-        localStorage.removeItem('access_token')
-        window.location.href = '/login'
+        if (refreshError.response?.status === 401) {
+          localStorage.removeItem('access_token')
+          window.location.href = '/login'
+        }
         return Promise.reject(refreshError)
       }
     }
