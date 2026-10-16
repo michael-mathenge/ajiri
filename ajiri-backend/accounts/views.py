@@ -7,6 +7,21 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
 from django.contrib.auth import authenticate
 from .throttles import EndpointThrottle
+from .csrf import CookieCSRFViewMixin
+from django.middleware.csrf import get_token, rotate_token
+from django.utils.cache import patch_cache_control
+
+
+class CSRFView(APIView):
+    authentication_classes = ()
+    permission_classes = (permissions.AllowAny,)
+    throttle_classes = (EndpointThrottle,)
+    throttle_scope = 'csrf'
+
+    def get(self, request):
+        response = Response({'csrfToken': get_token(request._request)})
+        patch_cache_control(response, private=True, no_store=True)
+        return response
 
 class RegisterView(generics.CreateAPIView):
     throttle_classes = (EndpointThrottle,)
@@ -14,7 +29,7 @@ class RegisterView(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny,)
     serializer_class = RegisterSerializer
 
-class LoginView(APIView):
+class LoginView(CookieCSRFViewMixin, APIView):
     throttle_classes = (EndpointThrottle,)
     throttle_scope = 'login'
     permission_classes = (permissions.AllowAny,)
@@ -28,6 +43,7 @@ class LoginView(APIView):
         if user is None:
             return Response({'detail': 'Invalid email or password.'}, status=401)
 
+        rotate_token(request._request)
         refresh = RefreshToken.for_user(user)
         access_token = str(refresh.access_token)
 
@@ -48,7 +64,7 @@ class LoginView(APIView):
 # Real rotation requires: blacklist the old one, then mutate its identity
 # (set_jti/set_exp/set_iat) BEFORE converting it to a string. Verified this by
 # comparing token strings across two /refresh/ calls in curl — they must differ.
-class RefreshView(APIView):
+class RefreshView(CookieCSRFViewMixin, APIView):
     throttle_classes = (EndpointThrottle,)
     throttle_scope = 'refresh'
     permission_classes = (permissions.AllowAny,)
@@ -89,7 +105,7 @@ class RefreshView(APIView):
 
         return response
 
-class LogoutView(APIView):
+class LogoutView(CookieCSRFViewMixin, APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
     def post(self, request):
