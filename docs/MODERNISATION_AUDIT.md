@@ -297,3 +297,10 @@ Live cache/proxy activation is still unverified. AJ-13 option C is approved as a
 design only, with implementation deferred. Read-only production HEAD checks found
 HTTP-to-HTTPS redirect and standard frame/referrer/nosniff headers, but **no HSTS**;
 do not declare the deployment-hardening finding fully fixed on the live site.
+
+## Checkpoint 3B WP16 — current requirement scans
+
+16 October 2026: both production/dev requirement scans return no known vulnerabilities.
+See DEPENDENCY_ADVISORIES.md for all 15 historical IDs, primary metadata discrepancies,
+static applicability, exact captured commands/output and installed-environment distinction.
+Current pins already contain the upgrades; no dependency files changed. No production fix claimed.
