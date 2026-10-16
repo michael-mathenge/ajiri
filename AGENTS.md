@@ -4,9 +4,14 @@
 
 ## 1. Mission
 
-Deliver Checkpoint 3B Phase A locally on integration/checkpoint-3b, pinned to reviewed main c4b93647f65618e8d13f9baa47ded6d22a28f0fb. Michael confirmed Stage A deployed and verified on 16 October at this exact SHA; preserve that deployment base. Stage B remains pending PythonAnywhere's HTTPS scheme answer. Redirect/HSTS stay off until separately approved.
-
-Only WP16, WP18, WP21 and WP22 plus Phase B migration DESIGN are authorized. WP18 narrowly permits CSRF protection on login/refresh/logout and a minimal existing-client extension, without changing token lifetimes/rotation/blacklisting. No model/migration changes, new dependencies, CORS or ingestion changes, CI edits, pushes, main merges, connector writes, production actions or secrets. Stop after the Phase A report and migration design. Section 9's older integration branch name is superseded for this checkpoint.
+Checkpoint 3B Phase B preparation: implement only the approved Profile verification
+fields and delivery attempt/daily-budget additive migrations, with tests, on
+feature/verification-delivery-schema based on merged Phase A e4eaefd. Michael's
+latest build prompt supersedes the previous Phase A design-only schema restriction.
+New migrations are authorized; historical migrations and AUTH_USER_MODEL are not.
+No SMTP transport, reset/verification endpoints, sending or quota services, auth
+behavior changes, dependencies, CI/CORS/ingestion edits, pushes or deployment.
+Console email remains unchanged. Stop after this package for review.
 
 ## 2. Product
 
@@ -25,11 +30,22 @@ Users are mostly on phones with limited data. **Mobile-first, lightweight, acces
 - Production: PythonAnywhere free tier, a committed `frontend_build`, and a GitHub Actions workflow that posts jobs to `POST /api/jobs/ingest/` and `/api/jobs/sweep/` (header `X-Ingest-Key`)
 - CI exists (`.github/workflows/ci.yml`: backend checks, migrations, tests, frontend lint/build, committed-build consistency; Python matrix 3.12-3.14). Local dev and PythonAnywhere use Python 3.12.
 
-## 4. Current state (Checkpoint 3B Phase A, 16 October 2026)
+## 4. Current state (Phase B schema preparation, 16 October 2026)
 
-Checkpoint 3A and PR #17 are merged at c4b9364; their CI passed. Michael reports Stage A deployed and reloaded on 16 October at this exact SHA, with SECURE_SSL_REDIRECT=False, SECURE_HSTS_SECONDS=0 and THROTTLE_CACHE_DIR writing counters. He verified weak-password rejection, login, jobs list, profile save and no public media mapping. This is owner-reported evidence, not an agent production inspection. Stage B awaits PythonAnywhere's HTTPS scheme answer. Private media, console-only mail and GitHub Actions ingestion remain. No 3B production actions are authorized.
+Michael deployed merged Phase A e4eaefd after verified DB/media backup and isolated
+restore, plus a preserved virtualenv recovery copy. Production pins now report
+Django 6.1.2/PyJWT 2.15.1. Owner-reported checks passed: health GET/HEAD, tokenless
+refresh CSRF rejection, login/logout, profile save, owner download, private-media
+404, ingestion run #32, log directory 0700 and backup dry-run (7 files). Live log
+writing/rotation remains unverified. Redirect=False/HSTS=0 pending the host scheme
+answer; no change authorized here.
 
-Requirement scans on 16 October found no known vulnerabilities for production and development pins (Django 6.1.2, PyJWT 2.15.1); the older 15 findings concerned older pins and require documented reconciliation. Preserve Michael's dirty Dependabot lockfile, local coverage data and old stash. Fresh backup and basic disposable restore rehearsal were completed by Michael. Renewal/backup reminders are scheduled for 2/9 November at 09:00 Nairobi; last verified expiry 14 November. No expiry update is inferred.
+Approved schema/token/quota decisions are recorded in docs/MIGRATION_DESIGN_3B1.md.
+Domain michaelmathenge.dev is active in Michael's Namecheap account using BasicDNS,
+but not authenticated in Brevo. Inspection was read-only; no credentials, DNS,
+provider setting or production changes. Existing original-checkout lockfile,
+coverage data, stash and Git configuration must remain untouched. Queued UI changes
+(no-skills prompt, registration styling, alert defaults) are not this package.
 
 ## 5. Known gotchas
 
@@ -41,16 +57,15 @@ Requirement scans on 16 October found no known vulnerabilities for production an
 - Windows/PowerShell: use `curl.exe`, not `curl`. `-replace` is case-insensitive; use `-creplace` with `[regex]::Escape()`.
 - Integrate new code alongside existing imports. Never overwrite file tops.
 
-## 6. Checkpoint 3B Phase A packages
+## 6. Current package
 
-| WP | Branch | Acceptance |
-|---|---|---|
-| WP16 | feature/dependency-advisories | Reconcile historical findings, retain current safe pins, capture scans and gates |
-| WP18 | feature/refresh-cookie-csrf | Django CSRF bootstrap/token/origin validation; bounded client recovery and tests |
-| WP21 | feature/health-and-logging | Minimal DB health, loose throttling, sanitized rotating per-process error logs |
-| WP22 | feature/backup-routine | Private SQLite backup/optional media, dry-run and report-only DRAFT retention |
-
-Branch packages from integration/checkpoint-3b and merge --no-ff after section 7 gates. Regenerate frontend_build once as WP18's last package commit. Use supported existing Node runtime. No actual migration, SMTP, password reset or email verification. Core concepts remain in ajiri-backend/docs/CONCEPTS.md. If main advances beyond the pinned deployment SHA, report it without silently rebasing.
+feature/verification-delivery-schema: add Profile proof columns and initially empty
+DeliveryAttempt/DeliveryDailyBudget tables, including verification/reset channels
+and account counter. Additive migrations only, no backfill of consent, proof or
+old delivery. Test old-row preservation, constraints, erasure links and old-code
+read compatibility. Run section 7 gates; frontend build is verification only since
+there is no frontend source change. Document exact rollback and unresolved service
+policies. Do not implement the sender or claim quotas are enforced by schema alone.
 
 ## 7. Quality gates (every package, no exceptions)
 
@@ -98,9 +113,12 @@ When blocked on one package, record it in the report and continue to the next in
 - Give exact PowerShell commands for anything he needs to run, plus the expected result.
 - Michael tracks work in Monday.com himself. Give completed items and honest story-point suggestions per package; do not assume any Monday.com access.
 
-## 12. Checkpoint 3B Phase A handback
+## 12. Schema-package handback
 
-Write docs/MIGRATION_DESIGN_3B1.md (design only; each future migration requires Michael's review) and docs/CHECKPOINT3B_PHASE_A_REVIEW.md in the 3A format, including actual gates, manual verification, deployment/session compatibility, rollback and open risks. Keep all Phase B implementations stopped. Backup retention defaults to 30 days DRAFT, lists candidates only, never deletes. PythonAnywhere's new free accounts lack scheduled tasks; document manual operation and conditional scheduling.
-
-Check branch before each commit; preserve Git config/stash and unrelated work. Check every new commit author/committer against Michael's configured noreply identity. No pushes or production actions. Stop for migration-design review.
-
+Write docs/CHECKPOINT3B_SCHEMA_REVIEW.md with exact new migrations, tests/gates,
+existing-data effects, constraints versus future service responsibilities, owner
+runbook, mixed-version compatibility and rollback. No reverse migration on retained
+proof/ledgers as routine rollback; preserve additive schema and newer writes.
+Record domain inspection without personal contact details. Check branch before
+each commit and configured noreply identities; no pushes or deployment. Stop for
+Michael's package review. All other Phase B implementation needs a separate prompt.
