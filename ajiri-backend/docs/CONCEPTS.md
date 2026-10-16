@@ -625,3 +625,21 @@ pause every writer. Verify integrity and hashes before publishing a completion
 manifest; keep failed partial snapshots private. Retention is DRAFT/report-only,
 not permission to delete. Always restore into a new disposable private directory,
 never over the live/development DB. Explicitly close SQLite connections on Windows.
+
+## verification-proof-schema
+
+A nullable verification timestamp plus the exact verified email lives on Profile.
+Existing accounts start with no proof; a future service must compare the proof's
+address to the current account email. Adding columns does not verify anybody or
+change login/send behavior. Profile API fields do not expose writable proof.
+
+## delivery-accounting-schema
+
+Delivery attempts record minimal receipts and uncertain outcomes; daily budgets
+hold separate application, alert and account-email counters for an explicit Nairobi
+date. Partial unique indexes prevent two unresolved attempts for the same document
+or alert. New tables start empty, leaving console delivery untouched. Future sending
+code must validate creation ownership and atomically reserve limits before network
+I/O; schema alone does not enforce the 10/user or 200/platform policy. SET_NULL
+retains a receipt when related data is deleted, so later privacy erasure must also
+address pseudonymous metadata. No tokens or message contents belong in these rows.
