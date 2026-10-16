@@ -10,6 +10,7 @@ from .throttles import EndpointThrottle
 from .csrf import CookieCSRFViewMixin
 from django.middleware.csrf import get_token, rotate_token
 from django.utils.cache import patch_cache_control
+from .recovery import password_fingerprint, refresh_owner
 
 
 class CSRFView(APIView):
@@ -45,6 +46,7 @@ class LoginView(CookieCSRFViewMixin, APIView):
 
         rotate_token(request._request)
         refresh = RefreshToken.for_user(user)
+        refresh['password_version'] = password_fingerprint(user)
         access_token = str(refresh.access_token)
 
         response = Response({'access': access_token})
@@ -80,6 +82,11 @@ class RefreshView(CookieCSRFViewMixin, APIView):
         except TokenError:
             return Response({'detail': 'Invalid or expired refresh token.'}, status=401)
 
+        user = refresh_owner(refresh)
+        if user is None:
+            return Response({'detail': 'Invalid or expired refresh token.'}, status=401)
+        refresh['password_version'] = password_fingerprint(user)
+
         access_token = str(refresh.access_token)
         response = Response({'access': access_token})
 
@@ -93,6 +100,7 @@ class RefreshView(CookieCSRFViewMixin, APIView):
             refresh.set_jti()
             refresh.set_exp()
             refresh.set_iat()
+            refresh.outstand()
 
             response.set_cookie(
                 key='refresh_token',

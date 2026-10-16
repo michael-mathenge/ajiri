@@ -205,6 +205,20 @@ EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
 EMAIL_USE_TLS = env_bool('EMAIL_USE_TLS', True)
 DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'Ajiri <noreply@ajiri.co.ke>')
 
+# see docs/CONCEPTS.md#owner-email-pilot
+REAL_EMAIL_ENABLED = env_bool('REAL_EMAIL_ENABLED', False)
+EMAIL_DELIVERY_MODE = os.environ.get('EMAIL_DELIVERY_MODE', '')
+EMAIL_PILOT_OWNER_ID = os.environ.get('EMAIL_PILOT_OWNER_ID', '')
+EMAIL_PILOT_RECIPIENT = os.environ.get('EMAIL_PILOT_RECIPIENT', '')
+EMAIL_PLATFORM_FROM = os.environ.get('EMAIL_PLATFORM_FROM', '')
+EMAIL_PILOT_DAILY_LIMIT = os.environ.get('EMAIL_PILOT_DAILY_LIMIT', '5')
+BREVO_TIMEOUT_SECONDS = os.environ.get('BREVO_TIMEOUT_SECONDS', '10')
+ACCOUNT_EMAIL_TEST_CAPTURE = False
+ACCOUNT_LINK_ORIGIN = os.environ.get('ACCOUNT_LINK_ORIGIN', 'https://mathenge.pythonanywhere.com')
+# Disabled processes do not read the provider credential at all.
+if REAL_EMAIL_ENABLED:
+    BREVO_API_KEY = os.environ.get('BREVO_API_KEY', '')
+
 AUTH_USER_MODEL = 'accounts.User'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -219,6 +233,10 @@ REST_FRAMEWORK = {
     # see docs/CONCEPTS.md#endpoint-throttling
     'NUM_PROXIES': int(os.environ.get('DRF_NUM_PROXIES', '0')),
     'DEFAULT_THROTTLE_RATES': {
+        'account_email': os.environ.get('THROTTLE_ACCOUNT_EMAIL_RATE', '5/hour'),
+        'account_target': os.environ.get('THROTTLE_ACCOUNT_TARGET_RATE', '3/hour'),
+        'account_confirm': os.environ.get('THROTTLE_ACCOUNT_CONFIRM_RATE', '10/hour'),
+        'verification_status': os.environ.get('THROTTLE_VERIFICATION_STATUS_RATE', '60/min'),
         'health': os.environ.get('THROTTLE_HEALTH_RATE', '60/min'),
         'csrf': os.environ.get('THROTTLE_CSRF_RATE', '60/min'),
         'login': os.environ.get('THROTTLE_LOGIN_RATE', '10/min'),
@@ -228,6 +246,9 @@ REST_FRAMEWORK = {
         'send': os.environ.get('THROTTLE_SEND_RATE', '10/hour'),
     },
 }
+
+# Approved reset lifetime; account mail remains unavailable except explicit locmem tests.
+PASSWORD_RESET_TIMEOUT = 30 * 60
 
 if REST_FRAMEWORK['NUM_PROXIES'] < 0:
     raise ImproperlyConfigured('DRF_NUM_PROXIES must be non-negative.')

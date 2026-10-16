@@ -1,5 +1,6 @@
 import { beforeEach, expect, it, vi } from 'vitest'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom'
 import apiClient from '../api/client'
 import Profile, { ProfileEditor } from '../pages/Profile'
 import { downloadFile } from '../lib/download'
@@ -18,7 +19,7 @@ beforeEach(() => vi.resetAllMocks())
 it('loads and saves contact, skills and independent alert preferences', async () => {
   apiClient.get.mockResolvedValue({ data: profile })
   apiClient.patch.mockResolvedValue({ data: profile })
-  render(<Profile />)
+  render(<MemoryRouter><Profile /></MemoryRouter>)
   await screen.findByLabelText('Full name')
   fireEvent.change(screen.getByLabelText('Full name'), {
     target: { value: 'Updated User' },

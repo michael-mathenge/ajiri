@@ -625,3 +625,96 @@ pause every writer. Verify integrity and hashes before publishing a completion
 manifest; keep failed partial snapshots private. Retention is DRAFT/report-only,
 not permission to delete. Always restore into a new disposable private directory,
 never over the live/development DB. Explicitly close SQLite connections on Windows.
+
+## verification-proof-schema
+
+A nullable verification timestamp plus the exact verified email lives on Profile.
+Existing accounts start with no proof; a future service must compare the proof's
+address to the current account email. Adding columns does not verify anybody or
+change login/send behavior. Profile API fields do not expose writable proof.
+
+## delivery-accounting-schema
+
+Delivery attempts record minimal receipts and uncertain outcomes; daily budgets
+hold separate application, alert and account-email counters for an explicit Nairobi
+date. Partial unique indexes prevent two unresolved attempts for the same document
+or alert. New tables start empty, leaving console delivery untouched. Future sending
+code must validate creation ownership and atomically reserve limits before network
+I/O; schema alone does not enforce the 10/user or 200/platform policy. SET_NULL
+retains a receipt when related data is deleted, so later privacy erasure must also
+address pseudonymous metadata. No tokens or message contents belong in these rows.
+
+## isolated-email-transport
+
+Brevo transport is a small standard-library HTTPS adapter, not a registered Django
+email backend. It freezes a single-recipient JSON payload before accounting and
+rejects redirects so an API key or CV cannot be forwarded to another host. A valid
+201 receipt means provider acceptance, not inbox delivery. Timeouts, malformed
+acceptance and server errors remain unknown; provider error bodies are not logged.
+Payloads/attachments live only in memory; explicit attachment limits are required.
+
+## atomic-delivery-budgets
+
+The dormant delivery service first writes the global daily budget inside a short
+transaction, serializing SQLite writers before reads. It conditionally increments
+category/total and user counters and creates a validated unique attempt atomically.
+The provider call happens only after commit, outside caller transactions. Only DB
+lock retries occur before network I/O; no provider retries happen automatically.
+Definite failures and unknown outcomes keep consumed capacity. A repeated key
+returns its old receipt, never another send. Reserved/unknown receipts survive
+crashes and block fresh sends until reviewed reconciliation; midnight does not
+release that protection. The default service is disabled and no view/task calls it.
+
+## account-recovery-links
+
+Password reset uses Django's standard token with a 30-minute expiry; password/email
+changes invalidate it. Verification uses a separate purpose-bound 24-hour signature
+and writes proof only after explicit confirmation for the current account address.
+Links put credentials in URL fragments, then remove fragments from browser history
+and retain them only in component memory until submission. No GET verifies or resets.
+All mutations require CSRF and exact trusted Origin; public endpoints ignore stale JWT.
+Reset requests return the same response for unknown/inactive/known accounts. Security
+emails are generated only with explicit test capture and locmem backend, never sent
+to console/SMTP/Brevo; live UI truthfully says delivery is not enabled.
+
+## password-reset-revocation
+
+A password reset writes a nullable Profile reset timestamp and blacklists recorded
+refresh tokens atomically with the password change. New refresh tokens carry a keyed
+fingerprint of the stored password hash. Legacy refresh tokens without the fingerprint
+remain compatible until their account resets; afterwards the reset marker rejects
+them, including tokens missing from old outstanding inventories. Rotated tokens are
+now recorded too. Existing access tokens retain their normal up-to-15-minute grace.
+Rollback must preserve this guard: older refresh code ignores the reset marker.
+
+## account-email-accounting
+
+Reset/verification requests now reach the shared quota service only through a
+closed in-memory test transport. Both explicit test capture and the locmem backend
+are required; there is no SMTP/Brevo production factory or console fallback. Account
+emails share 30 attempts/day within the 200 total, separate from applications/alerts.
+The browser sends a request UUID in JSON (no new CORS header), keeps it after a
+network failure, and uses a new ID for a new explicit accepted/definite-failure
+request. Same ID never repeats delivery. Unknown/reserved outcomes require
+reconciliation and cannot be reset by the public API. Public reset masks receipt,
+quota and account-existence differences; authenticated verification can report safe
+failure/quota/uncertainty details. Only definite failures can retry on an explicit
+new request; no automatic provider retry. Receipt digests derive from Django's
+signing configuration; key rotation/retention must preserve duplicate protection.
+# Owner-only email pilot
+
+## owner-email-pilot
+
+Real account delivery is off by default. Explicit pilot configuration must select
+one active owner ID, that account's exact recipient, the verified platform sender,
+console as the unchanged Django mail backend, HTTPS account-link origin and private
+runtime provider configuration. Missing or invalid configuration fails closed;
+system check accounts.E001 reports no secret values. Do not set test capture in pilot.
+Only verification/reset purposes are allowed, before link generation and budget
+reservation. The final transport checks the single-recipient payload again.
+Recipients are never rewritten. Applications/alerts remain on existing console paths.
+The atomic global budget condition uses min(global limit, pilot limit), so all prior
+attempts that Nairobi day count against the five-attempt ceiling. No migration,
+cache quota, refunds or automatic resend. Disable and reload for rollback, retaining
+receipt rows and password-reset revocation guards. See docs/OWNER_EMAIL_PILOT.md
+in the repository root for manual release steps; no activation is performed by tests.

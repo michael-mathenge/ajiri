@@ -20,8 +20,9 @@ export const mediaUrl = (url) => MEDIA_ORIGIN + new URL(url, MEDIA_ORIGIN).pathn
 // reject the request before the view even runs, even though these
 // views are AllowAny — permission and authentication are separate
 // steps. See docs/CONCEPTS.md#stale-token-on-public-endpoints
-const PUBLIC_ENDPOINTS = ['/accounts/login/', '/accounts/register/', '/accounts/refresh/', '/accounts/csrf/']
-const COOKIE_ENDPOINTS = ['/accounts/login/', '/accounts/refresh/', '/accounts/logout/']
+const ACCOUNT_PUBLIC = ['/accounts/password-reset/request/', '/accounts/password-reset/confirm/', '/accounts/verification/confirm/']
+const PUBLIC_ENDPOINTS = ['/accounts/login/', '/accounts/register/', '/accounts/refresh/', '/accounts/csrf/', ...ACCOUNT_PUBLIC]
+const COOKIE_ENDPOINTS = ['/accounts/login/', '/accounts/refresh/', '/accounts/logout/', ...ACCOUNT_PUBLIC, '/accounts/verification/request/']
 
 // CSRF tokens are separate from JWTs and stay in memory. Bootstrap calls never
 // enter the auth interceptor, preventing recursive refresh or stale JWT headers.

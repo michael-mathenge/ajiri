@@ -1,4 +1,8 @@
+import uuid
+
 from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.core.validators import RegexValidator
 from django.db import models
 from profiles.models import Skill
 
@@ -173,3 +177,94 @@ class Notification(models.Model):
 
     def __str__(self):
         return f"{self.user.email} matched with {self.job.title} ({self.match_score}%)"
+
+
+# Schema only: existing senders do not read or write these tables yet.
+# see docs/CONCEPTS.md#delivery-accounting-schema
+class DeliveryAttempt(models.Model):
+    class Channel(models.TextChoices):
+        APPLICATION = 'application', 'Application'
+        ALERT = 'alert', 'Alert'
+        EMAIL_VERIFICATION = 'email_verification', 'Email verification'
+        PASSWORD_RESET = 'password_reset', 'Password reset'
+
+    class State(models.TextChoices):
+        RESERVED = 'reserved', 'Reserved'
+        ACCEPTED = 'accepted', 'Accepted by provider'
+        DEFINITE_FAILURE = 'definite_failure', 'Definite failure'
+        UNKNOWN = 'unknown', 'Unknown outcome'
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,
+                             on_delete=models.SET_NULL, related_name='delivery_attempts')
+    application = models.ForeignKey(Application, null=True, blank=True,
+                                    on_delete=models.SET_NULL, related_name='delivery_attempts')
+    notification = models.ForeignKey(Notification, null=True, blank=True,
+                                     on_delete=models.SET_NULL, related_name='delivery_attempts')
+    channel = models.CharField(max_length=24, choices=Channel.choices)
+    state = models.CharField(max_length=24, choices=State.choices, default=State.RESERVED)
+    idempotency_key = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    recipient_digest = models.CharField(max_length=64, validators=[
+        RegexValidator(r'\A[0-9a-f]{64}\Z', 'A lowercase keyed SHA-256 digest is required.')])
+    provider_message_id = models.CharField(max_length=255, blank=True, default='')
+    failure_category = models.CharField(max_length=32, blank=True, default='', choices=[
+        ('', 'None'), ('transport', 'Transport'), ('provider_rejected', 'Provider rejected'),
+        ('timeout', 'Timeout'), ('configuration', 'Configuration')])
+    created_at = models.DateTimeField(auto_now_add=True)
+    resolved_at = models.DateTimeField(null=True, blank=True, default=None)
+
+    def clean(self):
+        super().clean()
+        if not self._state.adding:
+            return  # Retained receipts may have SET_NULL links after erasure.
+        errors = {}
+        if not self.user_id:
+            errors['user'] = 'An owner is required when creating a delivery attempt.'
+        if self.channel == self.Channel.APPLICATION:
+            if not self.application_id:
+                errors['application'] = 'Application delivery requires an application.'
+            elif self.application.user_id != self.user_id:
+                errors['application'] = 'Application owner does not match.'
+        elif self.channel == self.Channel.ALERT:
+            if not self.notification_id:
+                errors['notification'] = 'Alert delivery requires a notification.'
+            elif self.notification.user_id != self.user_id:
+                errors['notification'] = 'Notification owner does not match.'
+        if errors:
+            raise ValidationError(errors)
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(condition=models.Q(channel__in=[
+                'application', 'alert', 'email_verification', 'password_reset']),
+                name='delivery_channel_valid'),
+            models.CheckConstraint(condition=models.Q(state__in=[
+                'reserved', 'accepted', 'definite_failure', 'unknown']), name='delivery_state_valid'),
+            # Permit erased links but never cross-link a channel to another purpose.
+            models.CheckConstraint(condition=(
+                models.Q(channel='application', notification__isnull=True)
+                | models.Q(channel='alert', application__isnull=True)
+                | models.Q(channel__in=['email_verification', 'password_reset'],
+                           application__isnull=True, notification__isnull=True)),
+                name='delivery_channel_links_valid'),
+            models.CheckConstraint(condition=models.Q(failure_category__in=[
+                '', 'transport', 'provider_rejected', 'timeout', 'configuration']),
+                name='delivery_failure_category_valid'),
+            models.UniqueConstraint(fields=['application'],
+                condition=models.Q(state__in=['reserved', 'unknown']), name='delivery_app_unresolved'),
+            models.UniqueConstraint(fields=['notification'],
+                condition=models.Q(state__in=['reserved', 'unknown']), name='delivery_alert_unresolved'),
+        ]
+
+
+class DeliveryDailyBudget(models.Model):
+    scope = models.CharField(max_length=64, validators=[
+        RegexValidator(r'\A(?:global|user:[1-9][0-9]*)\Z', 'Use global or user:<positive id>.')])
+    # Explicit Nairobi calendar day; no server-local date default.
+    day = models.DateField()
+    application_reserved = models.PositiveIntegerField(default=0)
+    alert_reserved = models.PositiveIntegerField(default=0)
+    account_reserved = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=['scope', 'day'], name='delivery_budget_scope_day')]

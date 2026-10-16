@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 import apiClient from '../api/client'
 import { useApiResource } from '../hooks/useApiResource'
 import {
@@ -244,6 +245,7 @@ export default function Profile() {
           Make your skills visible and choose how you hear about opportunities.
         </p>
       </div>
+      <Link to="/email-verification">Check email verification</Link>
       <ProfileEditor profile={data} />
     </div>
   )
