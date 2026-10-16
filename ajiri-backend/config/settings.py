@@ -87,6 +87,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'config.safe_logging.CorrelationMiddleware',
     'django.middleware.security.SecurityMiddleware',
     # CorsMiddleware must sit ABOVE CommonMiddleware (and as high as
     # practical overall) — it needs to attach CORS headers before
@@ -218,6 +219,7 @@ REST_FRAMEWORK = {
     # see docs/CONCEPTS.md#endpoint-throttling
     'NUM_PROXIES': int(os.environ.get('DRF_NUM_PROXIES', '0')),
     'DEFAULT_THROTTLE_RATES': {
+        'health': os.environ.get('THROTTLE_HEALTH_RATE', '60/min'),
         'csrf': os.environ.get('THROTTLE_CSRF_RATE', '60/min'),
         'login': os.environ.get('THROTTLE_LOGIN_RATE', '10/min'),
         'register': os.environ.get('THROTTLE_REGISTER_RATE', '5/hour'),
@@ -361,3 +363,28 @@ X_FRAME_OPTIONS = os.environ.get('X_FRAME_OPTIONS', 'DENY')
 FRONTEND_BUILD_DIR = BASE_DIR / 'frontend_build'
 if FRONTEND_BUILD_DIR.is_dir():
     WHITENOISE_ROOT = FRONTEND_BUILD_DIR
+
+# see docs/CONCEPTS.md#sanitized-error-logging
+private_log_dir = os.environ.get('PRIVATE_LOG_DIR', '' if DEBUG else str(BASE_DIR.parent.parent / 'ajiri-private-logs'))
+log_max_bytes = int(os.environ.get('PRIVATE_LOG_MAX_BYTES', '1048576'))
+log_backup_count = int(os.environ.get('PRIVATE_LOG_BACKUP_COUNT', '3'))
+if log_max_bytes < 1024 or not 1 <= log_backup_count <= 10:
+    raise ImproperlyConfigured('Private log rotation limits are invalid.')
+if private_log_dir:
+    log_path = Path(private_log_dir)
+    if not log_path.is_absolute() or log_path.resolve().is_relative_to(BASE_DIR.parent.resolve()):
+        raise ImproperlyConfigured('PRIVATE_LOG_DIR must be absolute and outside the application tree.')
+    error_handler = {'class': 'config.safe_logging.PrivateProcessRotatingHandler',
+                     'directory': str(log_path), 'max_bytes': log_max_bytes,
+                     'backup_count': log_backup_count, 'level': 'ERROR'}
+else:
+    error_handler = {'class': 'logging.StreamHandler', 'formatter': 'safe', 'level': 'ERROR'}
+LOGGING = {
+    'version': 1, 'disable_existing_loggers': False,
+    'formatters': {'safe': {'()': 'config.safe_logging.SafeJSONFormatter'}},
+    'handlers': {'safe_errors': error_handler},
+    'loggers': {
+        'django': {'handlers': ['safe_errors'], 'level': 'ERROR', 'propagate': False},
+        'ajiri.errors': {'handlers': ['safe_errors'], 'level': 'ERROR', 'propagate': False},
+    },
+}

@@ -1,9 +1,10 @@
 from django.contrib import admin
 from django.urls import path, re_path, include
 
-from .views import frontend
+from .views import frontend, HealthView
 
 urlpatterns = [
+    path('api/health/', HealthView.as_view(), name='health'),
     path('admin/', admin.site.urls),
     path('api/accounts/', include('accounts.urls')),
     path('api/profiles/', include('profiles.urls')),
