@@ -207,3 +207,14 @@ Console backend remains unchanged.
 Phase B remains STOPPED until Michael sends a separate implementation prompt and
 approves exact migrations. Domain setup can proceed independently; no production,
 model, migration, auth, SMTP or provider-setting change is made in this update.
+
+## 7. Subsequent schema-only build authorization
+
+Michael explicitly authorized implementing the verification and delivery-budget
+migrations with tests, keeping console email unchanged, no push/deployment, and
+stopping after the package. This supersedes the earlier implementation gate only
+for these additive fields/tables, not transport/accounts endpoints or sending.
+See CHECKPOINT3B_SCHEMA_REVIEW.md for implemented constraints and remaining service
+policy decisions. michaelmathenge.dev was confirmed active in the signed-in
+Namecheap account, with Namecheap BasicDNS; DNS authentication in Brevo is pending.
+No DNS/provider writes or secret access were performed.
