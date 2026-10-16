@@ -304,3 +304,21 @@ do not declare the deployment-hardening finding fully fixed on the live site.
 See DEPENDENCY_ADVISORIES.md for all 15 historical IDs, primary metadata discrepancies,
 static applicability, exact captured commands/output and installed-environment distinction.
 Current pins already contain the upgrades; no dependency files changed. No production fix claimed.
+
+## Checkpoint 3B Phase A — local remediation, 16 October 2026
+
+This dated status supersedes earlier open findings only for the reviewed local code:
+cookie mutation CSRF protection is implemented with Django tokens and exact origins
+(WP18); minimal database health and allowlisted private rotating error logs are
+implemented (WP21); verified manual private backups and report-only retention are
+implemented (WP22). See CHECKPOINT3B_PHASE_A_REVIEW.md for actual gates and limits.
+Production configuration/rollout remains UNVERIFIED and Michael-owned. No deployment.
+
+Still open: SMTP and truthful alert delivery; password reset/mailbox verification;
+inactive-user policy; legal/privacy/consent and rights; exact delivery quotas and
+uncertain outcomes; automatic free-tier scheduling availability; production proxy/
+cache/header verification; platform console email exposure; malware scanning;
+coverage improvements/E2E/a11y; API contract, CSP/Permissions-Policy, performance/
+query scaling, SEO/PWA and packaging follow-ups. New backup tooling does not imply
+an executed production backup or a complete application restore test. No migrations
+or dependency changes were made in this phase.
