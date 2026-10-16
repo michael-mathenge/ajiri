@@ -4,7 +4,7 @@
 
 ## 1. Mission
 
-Deliver Checkpoint 3B Phase A locally on integration/checkpoint-3b, pinned to reviewed main c4b93647f65618e8d13f9baa47ded6d22a28f0fb. Michael's 16 October instruction permits local work in parallel with his separate two-stage 3A deployment; do not change his deployment SHA or claim deployment verification. Stage A keeps redirect/HSTS off.
+Deliver Checkpoint 3B Phase A locally on integration/checkpoint-3b, pinned to reviewed main c4b93647f65618e8d13f9baa47ded6d22a28f0fb. Michael confirmed Stage A deployed and verified on 16 October at this exact SHA; preserve that deployment base. Stage B remains pending PythonAnywhere's HTTPS scheme answer. Redirect/HSTS stay off until separately approved.
 
 Only WP16, WP18, WP21 and WP22 plus Phase B migration DESIGN are authorized. WP18 narrowly permits CSRF protection on login/refresh/logout and a minimal existing-client extension, without changing token lifetimes/rotation/blacklisting. No model/migration changes, new dependencies, CORS or ingestion changes, CI edits, pushes, main merges, connector writes, production actions or secrets. Stop after the Phase A report and migration design. Section 9's older integration branch name is superseded for this checkpoint.
 
@@ -27,7 +27,7 @@ Users are mostly on phones with limited data. **Mobile-first, lightweight, acces
 
 ## 4. Current state (Checkpoint 3B Phase A, 16 October 2026)
 
-Checkpoint 3A and PR #17 are merged at c4b9364; their CI passed. Michael is deploying this exact SHA separately in two stages, initially with redirect/HSTS off. Production completion remains unverified by this work. Existing private media and console-only mail remain; GitHub Actions handles ingestion/sweeps. No 3B production actions are authorized.
+Checkpoint 3A and PR #17 are merged at c4b9364; their CI passed. Michael reports Stage A deployed and reloaded on 16 October at this exact SHA, with SECURE_SSL_REDIRECT=False, SECURE_HSTS_SECONDS=0 and THROTTLE_CACHE_DIR writing counters. He verified weak-password rejection, login, jobs list, profile save and no public media mapping. This is owner-reported evidence, not an agent production inspection. Stage B awaits PythonAnywhere's HTTPS scheme answer. Private media, console-only mail and GitHub Actions ingestion remain. No 3B production actions are authorized.
 
 Requirement scans on 16 October found no known vulnerabilities for production and development pins (Django 6.1.2, PyJWT 2.15.1); the older 15 findings concerned older pins and require documented reconciliation. Preserve Michael's dirty Dependabot lockfile, local coverage data and old stash. Fresh backup and basic disposable restore rehearsal were completed by Michael. Renewal/backup reminders are scheduled for 2/9 November at 09:00 Nairobi; last verified expiry 14 November. No expiry update is inferred.
 

@@ -3,8 +3,12 @@
 16 October 2026, Africa/Nairobi. Local implementation only, based on exact reviewed
 main `c4b93647f65618e8d13f9baa47ded6d22a28f0fb`. Remote main was rechecked at handback
 and still resolves to that SHA. No rebasing or changes to Michael's deployment SHA.
-Michael is separately deploying 3A in stages; Stage A redirect/HSTS remain off.
-Production completion is not verified or claimed by this work.
+Michael confirmed Stage A deployed/reloaded on 16 October at c4b9364: redirect=False,
+HSTS=0, shared cache writing counters, weak-password rejection, login, jobs list,
+profile save and no public media mapping verified by him. This is owner-reported
+evidence, not an agent inspection. Stage B awaits PythonAnywhere's HTTPS scheme
+answer; keep redirect/HSTS off. The Phase A branch was already completed locally
+before this confirmation; its base was not changed.
 
 ## 1. Package summary
 
@@ -150,7 +154,9 @@ and the existing deployment checklist; do not change the pinned 3A rollout now.
 - No real SMTP, password reset, verification, consent or rights features implemented.
   Approve exact migration design, token expiry/revocation behavior, global delivery
   cap/allocation, metadata retention and unverified-account restrictions first.
-- Production rollout/HTTPS/cache verification stays Michael-owned and unverified.
+- Future 3B rollout and Stage B HTTPS verification stay Michael-owned. Stage A
+  success is owner-confirmed as above. See PHASE_A_DEPLOYMENT.md for exact server
+  steps, requirements installation/version checks and rollback.
   No pushes, main merges, connector writes or production operations performed.
 
 ## 6. Git and review gate
@@ -165,3 +171,11 @@ git log --format="%h %ae | %ce" c4b9364..integration/checkpoint-3b
 ```
 
 STOP for Michael's migration-design review. Phase B requires a separate prompt.
+
+## 7. Queued follow-ups — not started
+
+- No-skills job cards: replace misleading 0% match with an add-skills prompt.
+- Registration error-message styling.
+- New-account job-alert checkboxes default off.
+
+These remain later work, outside Phase A. No implementation was made.
