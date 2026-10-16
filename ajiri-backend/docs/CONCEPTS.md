@@ -643,3 +643,24 @@ code must validate creation ownership and atomically reserve limits before netwo
 I/O; schema alone does not enforce the 10/user or 200/platform policy. SET_NULL
 retains a receipt when related data is deleted, so later privacy erasure must also
 address pseudonymous metadata. No tokens or message contents belong in these rows.
+
+## isolated-email-transport
+
+Brevo transport is a small standard-library HTTPS adapter, not a registered Django
+email backend. It freezes a single-recipient JSON payload before accounting and
+rejects redirects so an API key or CV cannot be forwarded to another host. A valid
+201 receipt means provider acceptance, not inbox delivery. Timeouts, malformed
+acceptance and server errors remain unknown; provider error bodies are not logged.
+Payloads/attachments live only in memory; explicit attachment limits are required.
+
+## atomic-delivery-budgets
+
+The dormant delivery service first writes the global daily budget inside a short
+transaction, serializing SQLite writers before reads. It conditionally increments
+category/total and user counters and creates a validated unique attempt atomically.
+The provider call happens only after commit, outside caller transactions. Only DB
+lock retries occur before network I/O; no provider retries happen automatically.
+Definite failures and unknown outcomes keep consumed capacity. A repeated key
+returns its old receipt, never another send. Reserved/unknown receipts survive
+crashes and block fresh sends until reviewed reconciliation; midnight does not
+release that protection. The default service is disabled and no view/task calls it.
