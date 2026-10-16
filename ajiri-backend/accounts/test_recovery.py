@@ -6,7 +6,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.core import mail, signing
 from django.core.cache import caches
-from django.test import TestCase, override_settings
+from django.test import TransactionTestCase, override_settings
 from django.utils import timezone
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
@@ -21,7 +21,7 @@ from .recovery import VERIFY_SALT, password_fingerprint, verification_token
 @override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'],
     EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend', ACCOUNT_EMAIL_TEST_CAPTURE=True,
     ALLOWED_HOSTS=['testserver'], ACCOUNT_LINK_ORIGIN='https://testserver')
-class RecoveryTests(TestCase):
+class RecoveryTests(TransactionTestCase):
     def setUp(self):
         for cache in caches.all():
             cache.clear()
@@ -68,7 +68,7 @@ class RecoveryTests(TestCase):
 
     @override_settings(EMAIL_BACKEND='django.core.mail.backends.console.EmailBackend')
     def test_console_backend_never_receives_security_links(self):
-        with patch('accounts.recovery.EmailMessage.send') as send:
+        with patch('accounts.email_delivery.EmailMessage.send') as send:
             response = self.client.post('/api/accounts/password-reset/request/', {'email': self.user.email})
         self.assertFalse(response.data['delivery_available'])
         send.assert_not_called()

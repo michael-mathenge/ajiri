@@ -686,3 +686,18 @@ remain compatible until their account resets; afterwards the reset marker reject
 them, including tokens missing from old outstanding inventories. Rotated tokens are
 now recorded too. Existing access tokens retain their normal up-to-15-minute grace.
 Rollback must preserve this guard: older refresh code ignores the reset marker.
+
+## account-email-accounting
+
+Reset/verification requests now reach the shared quota service only through a
+closed in-memory test transport. Both explicit test capture and the locmem backend
+are required; there is no SMTP/Brevo production factory or console fallback. Account
+emails share 30 attempts/day within the 200 total, separate from applications/alerts.
+The browser sends a request UUID in JSON (no new CORS header), keeps it after a
+network failure, and uses a new ID for a new explicit accepted/definite-failure
+request. Same ID never repeats delivery. Unknown/reserved outcomes require
+reconciliation and cannot be reset by the public API. Public reset masks receipt,
+quota and account-existence differences; authenticated verification can report safe
+failure/quota/uncertainty details. Only definite failures can retry on an explicit
+new request; no automatic provider retry. Receipt digests derive from Django's
+signing configuration; key rotation/retention must preserve duplicate protection.

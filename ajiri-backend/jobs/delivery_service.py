@@ -1,4 +1,4 @@
-"""Dormant delivery service: no endpoint/task imports this module.
+"""Delivery accounting service; only a closed locmem account bridge is connected.
 
 see docs/CONCEPTS.md#atomic-delivery-budgets
 """

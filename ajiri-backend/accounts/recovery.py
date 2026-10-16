@@ -8,12 +8,12 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.core import signing
-from django.core.mail import EmailMessage
 from django.utils.crypto import constant_time_compare, salted_hmac
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 
 from profiles.models import Profile
+from .email_delivery import available, deliver_account_link
 
 VERIFY_SALT = 'ajiri.accounts.verify-email.v1'
 
@@ -46,17 +46,16 @@ def verification_token(user, profile):
 def capture_enabled():
     # A test-only capture path, NOT a real SMTP/Brevo activation switch. In particular
     # console output must never receive password reset or verification credentials.
-    return (getattr(settings, 'ACCOUNT_EMAIL_TEST_CAPTURE', False) is True
-        and settings.EMAIL_BACKEND == 'django.core.mail.backends.locmem.EmailBackend')
+    return available()
 
 
-def capture_link(user, purpose):
+def capture_link(user, purpose, request_id):
     if not capture_enabled():
-        return
+        return 'disabled'
     origin = getattr(settings, 'ACCOUNT_LINK_ORIGIN', 'https://mathenge.pythonanywhere.com')
     parsed = urlsplit(origin)
     if parsed.scheme not in ('http', 'https') or not parsed.netloc or parsed.path not in ('', '/') or parsed.query or parsed.fragment or parsed.username:
-        return  # Never build links from request Host or persist broken configuration.
+        return 'unavailable'  # Never build links from request Host or broken configuration.
     if purpose == 'password_reset':
         values = {'uid': urlsafe_base64_encode(force_bytes(user.pk)),
                   'token': default_token_generator.make_token(user)}
@@ -66,5 +65,4 @@ def capture_link(user, purpose):
         values = {'token': verification_token(user, profile)}
         route = '/verify-email'
     link = origin.rstrip('/') + route + '#' + urlencode(values)
-    EmailMessage(subject='Ajiri account security', body=f'Use this account link: {link}',
-        from_email=settings.DEFAULT_FROM_EMAIL, to=[user.email]).send(fail_silently=False)
+    return deliver_account_link(user, purpose, f'Use this account link: {link}', request_id)

@@ -18,7 +18,7 @@ it('requests a reset and truthfully shows that email is disabled', async () => {
   fireEvent.change(screen.getByLabelText('Email address'), { target: { value: 'owner@example.invalid' } })
   fireEvent.click(screen.getByRole('button', { name: 'Request reset link' }))
   expect(await screen.findByRole('status')).toHaveTextContent('No email was sent')
-  expect(apiClient.post).toHaveBeenCalledWith('/accounts/password-reset/request/', { email: 'owner@example.invalid' })
+  expect(apiClient.post).toHaveBeenCalledWith('/accounts/password-reset/request/', expect.objectContaining({ email: 'owner@example.invalid', request_id: expect.any(String) }))
 })
 
 it('retains fragment credentials in StrictMode, removes them from URL and submits once', async () => {
@@ -83,5 +83,27 @@ it('renders rate limit guidance without automatic mutation retries', async () =>
   fireEvent.change(screen.getByLabelText('Email address'), { target: { value: 'owner@example.invalid' } })
   fireEvent.click(screen.getByRole('button', { name: 'Request reset link' }))
   expect(await screen.findByRole('alert')).toHaveTextContent('60 seconds')
+  expect(apiClient.post).toHaveBeenCalledTimes(1)
+})
+
+it('keeps the same request identity after a network failure and warns about duplicate delivery', async () => {
+  apiClient.post.mockRejectedValue({})
+  page('request-reset')
+  fireEvent.change(screen.getByLabelText('Email address'), { target: { value: 'owner@example.invalid' } })
+  fireEvent.click(screen.getByRole('button', { name: 'Request reset link' }))
+  expect(await screen.findByRole('alert')).toHaveTextContent('may already have been accepted')
+  const first = apiClient.post.mock.calls[0][1].request_id
+  fireEvent.click(screen.getByRole('button', { name: 'Request reset link' }))
+  await waitFor(() => expect(apiClient.post).toHaveBeenCalledTimes(2))
+  expect(apiClient.post.mock.calls[1][1].request_id).toBe(first)
+})
+
+it('shows an uncertain verification result without automatically retrying', async () => {
+  apiClient.get.mockResolvedValue({ data: { verified: false } })
+  apiClient.post.mockRejectedValue({ response: { status: 409, data: { detail: 'Check your inbox. Reconciliation required.' } } })
+  page('verification')
+  await screen.findByText(/current email is not verified/)
+  fireEvent.click(screen.getByRole('button', { name: 'Request verification link' }))
+  expect(await screen.findByRole('alert')).toHaveTextContent('Reconciliation required')
   expect(apiClient.post).toHaveBeenCalledTimes(1)
 })

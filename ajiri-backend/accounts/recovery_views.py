@@ -1,3 +1,5 @@
+import uuid
+
 from django.contrib.auth import get_user_model, password_validation
 from django.contrib.auth.tokens import default_token_generator
 from django.core import signing
@@ -18,9 +20,14 @@ from profiles.models import Profile
 from .csrf import CookieCSRFViewMixin
 from .recovery import VERIFY_SALT, capture_enabled, capture_link, verification_state
 from .throttles import EndpointThrottle, AccountTargetThrottle
+from .email_delivery import next_day_wait
 
 
-class EmailInput(serializers.Serializer):
+class RequestInput(serializers.Serializer):
+    request_id = serializers.UUIDField(required=False, default=uuid.uuid4)
+
+
+class EmailInput(RequestInput):
     email = serializers.EmailField(max_length=254)
 
 
@@ -59,8 +66,8 @@ class PasswordResetRequest(AccountMutation):
         if capture_enabled():
             user = get_user_model().objects.filter(email__iexact=serializer.validated_data['email'], is_active=True).first()
             if user and user.has_usable_password():
-                capture_link(user, 'password_reset')
-        return Response({'detail': 'If an eligible account exists, a reset link can be requested when email delivery is available.',
+                capture_link(user, 'password_reset', serializer.validated_data['request_id'])
+        return Response({'detail': 'If an eligible account exists and sending is available, a reset link will be attempted. Check your inbox before requesting another link; a previous attempt may already have been accepted.',
                          'delivery_available': capture_enabled()}, status=202)
 
 
@@ -110,9 +117,24 @@ class VerificationRequest(AccountMutation):
     throttle_classes = (EndpointThrottle, AccountTargetThrottle)
 
     def post(self, request):
+        serializer = RequestInput(data=request.data)
+        serializer.is_valid(raise_exception=True)
         profile = Profile.objects.filter(user=request.user).first()
+        outcome = 'disabled'
         if profile and not (profile.email_verified_at and profile.verified_email.casefold() == request.user.email.casefold()):
-            capture_link(request.user, 'email_verification')
+            outcome = capture_link(request.user, 'email_verification', serializer.validated_data['request_id'])
+        elif profile:
+            return Response({'detail': 'Your current email is already verified.', 'delivery_available': capture_enabled()}, status=200)
+        if outcome == 'quota':
+            response = Response({'detail': 'Daily account-email capacity reached. Try again next Nairobi day.'}, status=429)
+            response['Retry-After'] = str(next_day_wait())
+            return response
+        if outcome == 'definite_failure':
+            return Response({'detail': 'The provider rejected this attempt. It counts toward the daily limit. You may make a new explicit request.'}, status=502)
+        if outcome in ('unknown', 'reserved', 'unavailable'):
+            return Response({'detail': 'Delivery could not be confirmed. Check your inbox; an email may already have been accepted. Reconciliation is required before a new attempt.'}, status=409)
+        if outcome == 'accepted':
+            return Response({'detail': 'Verification email accepted for delivery. This does not guarantee inbox delivery.', 'delivery_available': True}, status=202)
         return Response({'detail': 'A verification link can be requested when email delivery is available.',
                          'delivery_available': capture_enabled()}, status=202)
 

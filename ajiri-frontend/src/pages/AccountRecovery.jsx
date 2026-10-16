@@ -23,6 +23,7 @@ export default function AccountRecovery({ mode }) {
   const [busy, setBusy] = useState(false)
   const [done, setDone] = useState(false)
   const [verified, setVerified] = useState(null)
+  const [requestId, setRequestId] = useState(() => crypto.randomUUID())
   useEffect(() => {
     if (window.location.hash) window.history.replaceState(window.history.state, '', window.location.pathname + window.location.search)
   }, [])
@@ -49,11 +50,12 @@ export default function AccountRecovery({ mode }) {
     setBusy(true)
     try {
       const path = requestReset ? 'password-reset/request' : reset ? 'password-reset/confirm' : verify ? 'verification/confirm' : 'verification/request'
-      const payload = requestReset ? { email } : reset ? { ...link, password, password_confirm: confirm } : verify ? { token: link.token } : {}
+      const payload = requestReset ? { email, request_id: requestId } : reset ? { ...link, password, password_confirm: confirm } : verify ? { token: link.token } : { request_id: requestId }
       const { data } = await apiClient.post(`/accounts/${path}/`, payload)
       setMessage(data.delivery_available === false
         ? 'Email delivery is not enabled yet. No email was sent. Please try again after email service is available.'
         : data.detail)
+      if (requestReset || mode === 'verification') setRequestId(crypto.randomUUID())
       if (reset || verify) {
         setDone(true)
         setLink({ uid: '', token: '' })
@@ -61,7 +63,8 @@ export default function AccountRecovery({ mode }) {
         setConfirm('')
       }
     } catch (error) {
-      setErrors(apiErrors(error))
+      setErrors(apiErrors(error, 'Delivery could not be confirmed. Check your inbox before retrying; an email may already have been accepted.'))
+      if (error.response?.status === 502) setRequestId(crypto.randomUUID())
     } finally {
       setBusy(false)
     }
@@ -78,7 +81,7 @@ export default function AccountRecovery({ mode }) {
       <FormErrors errors={errors} prefix="recovery" />
       <form className="stack mt-8" onSubmit={submit} aria-busy={busy}>
         {requestReset && <div className="field"><label htmlFor="recovery-email">Email address</label>
-          <Input id="recovery-email" type="email" autoComplete="email" value={email} onChange={e => setEmail(e.target.value)} required /></div>}
+          <Input id="recovery-email" type="email" autoComplete="email" value={email} onChange={e => { setEmail(e.target.value); setRequestId(crypto.randomUUID()) }} required /></div>}
         {reset && !done && <>
           <div className="field"><label htmlFor="recovery-password">New password</label>
             <Input id="recovery-password" type="password" autoComplete="new-password" value={password} onChange={e => setPassword(e.target.value)} required /></div>
