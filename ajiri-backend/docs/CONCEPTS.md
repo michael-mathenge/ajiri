@@ -593,3 +593,13 @@ tests prove sequential sharing. Concurrent updates are still approximate, not
 atomic email quotas. File-cache data must never share a directory with uploads or
 public mappings, because Django deserializes it. See docs/THROTTLING.md in the repo
 root for activation, topology checks and rollback. No production change is automatic.
+
+## cookie-csrf
+
+An HttpOnly refresh cookie is sent by the browser automatically. Login, refresh
+and logout therefore require a separate Django CSRF cookie plus masked header
+and an exact Origin check. GET /api/accounts/csrf/ bootstraps only the CSRF token,
+never JWTs. The client keeps it in memory, renews it after login and retries only
+one explicitly identified CSRF rejection, before side effects. Parallel 401s
+share one refresh. 403/429/network failures do not mean the session expired.
+Token lifetime, refresh identity rotation and blacklisting stay unchanged.

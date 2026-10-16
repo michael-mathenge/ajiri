@@ -62,7 +62,10 @@ ALLOWED_HOSTS = env_list('ALLOWED_HOSTS')
 
 # Needed for form POSTs (the Django admin login) over HTTPS, e.g.
 # "https://yourname.pythonanywhere.com". Must include the scheme.
-CSRF_TRUSTED_ORIGINS = env_list('CSRF_TRUSTED_ORIGINS')
+CSRF_TRUSTED_ORIGINS = env_list(
+    'CSRF_TRUSTED_ORIGINS',
+    'http://localhost:5173,http://127.0.0.1:5173' if DEBUG else '',
+)
 
 
 # Application definition
@@ -215,6 +218,7 @@ REST_FRAMEWORK = {
     # see docs/CONCEPTS.md#endpoint-throttling
     'NUM_PROXIES': int(os.environ.get('DRF_NUM_PROXIES', '0')),
     'DEFAULT_THROTTLE_RATES': {
+        'csrf': os.environ.get('THROTTLE_CSRF_RATE', '60/min'),
         'login': os.environ.get('THROTTLE_LOGIN_RATE', '10/min'),
         'register': os.environ.get('THROTTLE_REGISTER_RATE', '5/hour'),
         'refresh': os.environ.get('THROTTLE_REFRESH_RATE', '60/min'),

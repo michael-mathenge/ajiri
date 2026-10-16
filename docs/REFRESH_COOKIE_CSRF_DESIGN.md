@@ -98,3 +98,34 @@ invalidate/reset every account merely to roll back request validation.
 
 References: [DRF CSRF/CORS](https://www.django-rest-framework.org/topics/ajax-csrf-cors/),
 [Django CSRF protection](https://docs.djangoproject.com/en/6.1/ref/csrf/).
+
+## WP18 local implementation — 16 October 2026
+
+Option C is implemented locally for Phase A, not deployed. GET /api/accounts/csrf/
+returns {csrfToken: masked Django token}, sets the CSRF cookie, and is no-store.
+It ignores stale JWT headers and has THROTTLE_CSRF_RATE=60/min by default.
+POST login/refresh/logout require exact Origin plus Django cookie/header checks;
+rejection is 403 {detail: generic message, code: csrf_failed}. Validate before
+credentials, blacklist or cookie side effects. Successful login rotates CSRF;
+JWT access-only JSON, refresh cookie flags/lifetimes/rotation are unchanged.
+
+DEBUG dev CSRF defaults list only the existing localhost/127.0.0.1:5173 UI origins;
+explicit CSRF_TRUSTED_ORIGINS overrides them. CORS is unchanged. Production trusts
+only its own origin plus exact explicitly configured CSRF origins, no wildcard match.
+The ordinary Django test client's exemption remains; attack tests explicitly enforce
+checks and cannot be taken as a reason to disable production CSRF.
+
+Current sessions need no forced reset: upgraded frontend bootstraps before the next
+cookie mutation. An old open tab may fail with CSRF 403 until reloaded; tell users
+to reload, never clear every token/account. Failed post-login bootstrap does not
+turn an issued login into failure; the next mutation fetches again. Parallel expired
+requests share one refresh. Identified CSRF rejection gets one bootstrap/retry;
+other mutations/403s never automatically retry. Refresh 401 alone retains existing
+logout handling; 403/429/network failures preserve local access and surface errors.
+
+No runtime bypass switch is added. Roll back the reviewed backend and packaged
+frontend together via Michael's normal deployment flow. Rollback reopens the known
+gap; do not weaken CORS/cookie security, erase DB data or rotate all sessions.
+Manual review: new login; reload; expire access; confirm silent refresh; logout;
+check missing/wrong token and hostile/null/missing Origin return 403 without rotating
+refresh; existing sessions bootstrap successfully. Use synthetic local users only.
