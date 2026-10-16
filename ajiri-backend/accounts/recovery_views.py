@@ -135,8 +135,8 @@ class VerificationRequest(AccountMutation):
             return Response({'detail': 'Delivery could not be confirmed. Check your inbox; an email may already have been accepted. Reconciliation is required before a new attempt.'}, status=409)
         if outcome == 'accepted':
             return Response({'detail': 'Verification email accepted for delivery. This does not guarantee inbox delivery.', 'delivery_available': True}, status=202)
-        return Response({'detail': 'A verification link can be requested when email delivery is available.',
-                         'delivery_available': capture_enabled()}, status=202)
+        return Response({'detail': 'Email delivery is not enabled for this account. No email was sent.',
+                         'delivery_available': False}, status=202)
 
 
 class VerificationConfirm(AccountMutation):

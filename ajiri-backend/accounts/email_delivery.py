@@ -1,6 +1,6 @@
-"""Closed, locmem-only account bridge to the reviewed quota service.
+"""Account bridge to shared budgets: closed tests or explicit owner-only pilot.
 
-No production transport factory or activation switch. Never fall back to console.
+Real sending defaults off. Never fall back to console for security links.
 see docs/CONCEPTS.md#account-email-accounting
 """
 import hashlib
@@ -18,11 +18,22 @@ from django.utils.crypto import salted_hmac
 from jobs.brevo_transport import Result
 from jobs.delivery_service import DeliveryError, DeliveryService, QuotaExceeded
 from jobs.models import DeliveryAttempt
+from . import pilot
+
+
+def test_available():
+    return (getattr(settings, 'ACCOUNT_EMAIL_TEST_CAPTURE', False) is True
+        and settings.EMAIL_BACKEND == 'django.core.mail.backends.locmem.EmailBackend')
 
 
 def available():
-    return (getattr(settings, 'ACCOUNT_EMAIL_TEST_CAPTURE', False) is True
-        and settings.EMAIL_BACKEND == 'django.core.mail.backends.locmem.EmailBackend')
+    return pilot.configuration() is not None or test_available()
+
+
+def eligible(user, purpose):
+    if getattr(settings, 'REAL_EMAIL_ENABLED', False):
+        return pilot.eligible(user, purpose)
+    return test_available()
 
 
 class MemoryTransport:
@@ -34,7 +45,7 @@ class MemoryTransport:
             'subject': subject, 'textContent': text}).encode()
 
     def send(self, payload):
-        if not available():
+        if getattr(settings, 'REAL_EMAIL_ENABLED', False) or not available():
             return Result('definite_failure', failure_category='configuration')
         message = json.loads(payload)
         sent = EmailMessage(subject=message['subject'], body=message['textContent'],
@@ -55,7 +66,7 @@ def deliver_account_link(user, purpose, text, request_id):
     A definite-failure retry is selected only for a NEW explicit HTTP request ID.
     Unknown/reserved outcomes are never reset by this bridge.
     """
-    if not available():
+    if not eligible(user, purpose):
         return 'disabled'
     if purpose not in ('password_reset', 'email_verification'):
         raise ValueError('Invalid account email purpose.')
@@ -64,8 +75,10 @@ def deliver_account_link(user, purpose, text, request_id):
     previous = DeliveryAttempt.objects.filter(user=user, channel=purpose,
         recipient_digest=digest, state='definite_failure').order_by('-created_at').first()
     try:
-        attempt = DeliveryService(MemoryTransport(), digest_key=key, enabled=True).deliver(
-            user_id=user.pk, channel=purpose, recipient=user.email, subject='Ajiri account security',
+        policy = pilot.configuration()
+        sink = pilot.transport(policy) if policy else MemoryTransport()
+        attempt = DeliveryService(sink, digest_key=key, enabled=True, pilot=policy).deliver(
+            user_id=user.pk, channel=purpose, recipient=user.email.casefold(), subject='Ajiri account security',
             text=text, idempotency_key=request_id, retry_of=previous.pk if previous else None)
         return attempt.state
     except QuotaExceeded:

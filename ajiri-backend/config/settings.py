@@ -205,6 +205,20 @@ EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
 EMAIL_USE_TLS = env_bool('EMAIL_USE_TLS', True)
 DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'Ajiri <noreply@ajiri.co.ke>')
 
+# see docs/CONCEPTS.md#owner-email-pilot
+REAL_EMAIL_ENABLED = env_bool('REAL_EMAIL_ENABLED', False)
+EMAIL_DELIVERY_MODE = os.environ.get('EMAIL_DELIVERY_MODE', '')
+EMAIL_PILOT_OWNER_ID = os.environ.get('EMAIL_PILOT_OWNER_ID', '')
+EMAIL_PILOT_RECIPIENT = os.environ.get('EMAIL_PILOT_RECIPIENT', '')
+EMAIL_PLATFORM_FROM = os.environ.get('EMAIL_PLATFORM_FROM', '')
+EMAIL_PILOT_DAILY_LIMIT = os.environ.get('EMAIL_PILOT_DAILY_LIMIT', '5')
+BREVO_TIMEOUT_SECONDS = os.environ.get('BREVO_TIMEOUT_SECONDS', '10')
+ACCOUNT_EMAIL_TEST_CAPTURE = False
+ACCOUNT_LINK_ORIGIN = os.environ.get('ACCOUNT_LINK_ORIGIN', 'https://mathenge.pythonanywhere.com')
+# Disabled processes do not read the provider credential at all.
+if REAL_EMAIL_ENABLED:
+    BREVO_API_KEY = os.environ.get('BREVO_API_KEY', '')
+
 AUTH_USER_MODEL = 'accounts.User'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (

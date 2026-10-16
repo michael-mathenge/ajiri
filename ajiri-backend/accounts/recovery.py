@@ -1,4 +1,4 @@
-"""Purpose-bound account links and reset revocation; no real sending integration.
+"""Purpose-bound account links and reset revocation; owner pilot defaults off.
 
 see docs/CONCEPTS.md#account-recovery-links
 """
@@ -13,7 +13,7 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 
 from profiles.models import Profile
-from .email_delivery import available, deliver_account_link
+from .email_delivery import available, eligible, deliver_account_link
 
 VERIFY_SALT = 'ajiri.accounts.verify-email.v1'
 
@@ -44,13 +44,13 @@ def verification_token(user, profile):
 
 
 def capture_enabled():
-    # A test-only capture path, NOT a real SMTP/Brevo activation switch. In particular
-    # console output must never receive password reset or verification credentials.
+    # Availability is global for non-enumerating responses. Per-owner eligibility
+    # is checked before security-link generation. Console never receives links.
     return available()
 
 
 def capture_link(user, purpose, request_id):
-    if not capture_enabled():
+    if not eligible(user, purpose):
         return 'disabled'
     origin = getattr(settings, 'ACCOUNT_LINK_ORIGIN', 'https://mathenge.pythonanywhere.com')
     parsed = urlsplit(origin)

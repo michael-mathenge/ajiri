@@ -701,3 +701,20 @@ quota and account-existence differences; authenticated verification can report s
 failure/quota/uncertainty details. Only definite failures can retry on an explicit
 new request; no automatic provider retry. Receipt digests derive from Django's
 signing configuration; key rotation/retention must preserve duplicate protection.
+# Owner-only email pilot
+
+## owner-email-pilot
+
+Real account delivery is off by default. Explicit pilot configuration must select
+one active owner ID, that account's exact recipient, the verified platform sender,
+console as the unchanged Django mail backend, HTTPS account-link origin and private
+runtime provider configuration. Missing or invalid configuration fails closed;
+system check accounts.E001 reports no secret values. Do not set test capture in pilot.
+Only verification/reset purposes are allowed, before link generation and budget
+reservation. The final transport checks the single-recipient payload again.
+Recipients are never rewritten. Applications/alerts remain on existing console paths.
+The atomic global budget condition uses min(global limit, pilot limit), so all prior
+attempts that Nairobi day count against the five-attempt ceiling. No migration,
+cache quota, refunds or automatic resend. Disable and reload for rollback, retaining
+receipt rows and password-reset revocation guards. See docs/OWNER_EMAIL_PILOT.md
+in the repository root for manual release steps; no activation is performed by tests.

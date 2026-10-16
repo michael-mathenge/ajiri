@@ -29,6 +29,7 @@ class BrevoTransport:
     api_key: str = field(repr=False)
     sender: str
     timeout: float = 10
+    sender_name: str = ''
 
     def __repr__(self):
         return 'BrevoTransport(configuration=redacted)'
@@ -49,6 +50,10 @@ class BrevoTransport:
             raise ValueError('Invalid message.')
         payload = {'sender': {'email': self.sender}, 'to': [{'email': recipient}],
                    'subject': subject, 'textContent': text}
+        if self.sender_name:
+            if self.sender_name != 'Ajiri':
+                raise ValueError('Invalid sender name.')
+            payload['sender']['name'] = self.sender_name
         if reply_to:
             payload['replyTo'] = {'email': reply_to}
         total, files = 0, []

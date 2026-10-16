@@ -1,4 +1,4 @@
-"""Delivery accounting service; only a closed locmem account bridge is connected.
+"""Delivery accounting service; only account test/pilot callers are connected.
 
 see docs/CONCEPTS.md#atomic-delivery-budgets
 """
@@ -43,11 +43,12 @@ class Policy:
 
 
 class DeliveryService:
-    def __init__(self, transport, *, digest_key, policy=None, enabled=False):
+    def __init__(self, transport, *, digest_key, policy=None, enabled=False, pilot=None):
         self.transport = transport
         self._digest_key = digest_key
         self.policy = policy or Policy()
-        self.enabled = enabled  # Explicit opt-in for future reviewed caller; no env switch or wiring.
+        self.enabled = enabled  # Caller must pass eligibility and transport configuration checks.
+        self.pilot = pilot
 
     def deliver(self, *, user_id, channel, recipient, subject, text, idempotency_key,
                 application_id=None, notification_id=None, alert_consent_confirmed=False,
@@ -62,6 +63,7 @@ class DeliveryService:
         if channel not in Attempt.Channel.values:
             raise DeliveryError('Invalid delivery channel.')
         user = get_user_model().objects.get(pk=user_id, is_active=True)
+        self._check_pilot(user, channel, recipient)
         application, notification = None, None
         if channel == 'application':
             application = Application.objects.get(pk=application_id, user=user)
@@ -116,6 +118,12 @@ class DeliveryService:
             raise DeliveryError('Delivery outcome needs reconciliation; do not retry.') from None
         return attempt
 
+    def _check_pilot(self, user, channel, recipient):
+        if self.pilot is not None and (channel not in ('password_reset', 'email_verification')
+            or user.pk != self.pilot.owner_id or recipient.casefold() != self.pilot.recipient
+            or user.email.casefold() != self.pilot.recipient):
+            raise DeliveryError('Pilot delivery is not allowed.')
+
     def _reserve(self, user, channel, digest, key, day, application, notification, retry_of):
         counter, cap = {'application': ('application_reserved', self.policy.applications),
             'alert': ('alert_reserved', self.policy.alerts)}.get(channel, ('account_reserved', self.policy.accounts))
@@ -146,6 +154,7 @@ class DeliveryService:
                     raise DeliveryError('Alert preference changed before reservation.')
             elif get_user_model().objects.get(pk=user.pk).email != user.email:
                 raise DeliveryError('Account email changed before reservation.')
+            self._check_pilot(user, channel, user.email)
             target = Attempt.objects.filter(application=application) if application else (
                 Attempt.objects.filter(notification=notification) if notification else
                 Attempt.objects.filter(user=user, channel=channel, recipient_digest=digest))
@@ -168,7 +177,9 @@ class DeliveryService:
                 raise DeliveryError('Retry must name its definite-failure receipt.')
             budgets = Budget.objects.filter(scope='global', day=day).annotate(
                 total=F('application_reserved') + F('account_reserved') + F('alert_reserved'))
-            if not budgets.filter(total__lt=self.policy.total, **{counter+'__lt': cap}).update(**{counter: F(counter)+1}):
+            # One atomic shared total, including earlier non-pilot attempts that day.
+            limit = min(self.policy.total, self.pilot.limit) if self.pilot else self.policy.total
+            if not budgets.filter(total__lt=limit, **{counter+'__lt': cap}).update(**{counter: F(counter)+1}):
                 raise QuotaExceeded('Daily platform allocation reached; keep the draft and try next Nairobi day.')
             if channel == 'application':
                 scope = f'user:{user.pk}'

@@ -17,37 +17,39 @@ Source evidence:
   response/timeout, no automatic network retries, no credential loading.
 - `jobs/delivery_service.py`: atomic ledger, daily partitions, disabled by default;
   application eligibility, verified address and recipient-purpose checks.
-- `accounts/email_delivery.py`: ONLY explicit test capture plus the exact locmem
-  backend enables the bridge. No production factory exists.
+- `accounts/email_delivery.py`: explicit test capture plus the exact locmem backend enables the test sink;
+  explicit owner-only settings select the isolated Brevo pilot sink. The owner-only production factory now exists behind default-off activation.
 - `jobs/views.py` and `jobs/matching.py`: application/alert delivery still uses
   Django mail directly. Switching EMAIL_BACKEND to SMTP could bypass new controls.
 
-Consequently this document is NOT an executable sending configuration. Do not
+This checklist is not authorization to activate real sending. Do not
 replace the test sink or enable SMTP to make the pilot work. Keep console email;
 its existing output can contain private application/alert content. Do not publish
 console logs. No application or alert real delivery is approved here.
 
-## Proposed configuration contract — not implemented
+## Configuration contract — implemented, not activated
 
-Names below are proposed; adding them today has no activation effect. No secret
-values or actual recipient addresses belong in this file or commits. Michael
-enters configuration privately during a separately approved deployment.
+The reviewed pilot implementation uses the activation/owner/sender/credential/timeout
+and pilot-limit settings below. The global/category/per-user limits remain fixed
+Policy defaults, NOT environment settings in this package. No secret values or
+actual recipient addresses belong in commits. Michael enters configuration privately
+during a separately approved deployment; no activation is performed here.
 
-| Proposed setting | Pilot policy |
+| Setting or fixed policy field | Pilot policy |
 |---|---|
 | REAL_EMAIL_ENABLED | False by default; separate explicit activation |
 | EMAIL_DELIVERY_MODE | owner_pilot only; reject unknown modes |
 | EMAIL_PILOT_OWNER_ID | One approved active account, no wildcard |
 | EMAIL_PILOT_RECIPIENT | One owner-controlled address, confirmed before activation |
-| EMAIL_PLATFORM_FROM / EMAIL_PLATFORM_NAME | Verified domain alias / Ajiri |
+| EMAIL_PLATFORM_FROM | Verified domain alias; display name fixed to Ajiri |
 | BREVO_API_KEY | Private runtime input; never printed, committed or supplied to Codex |
 | BREVO_TIMEOUT_SECONDS | 10; validate range 1–60 |
-| EMAIL_GLOBAL_DAILY_LIMIT | Existing approved ceiling 200 attempts |
-| EMAIL_APPLICATION_DAILY_LIMIT | Existing allocation 150; channel disabled in first pilot |
-| EMAIL_ACCOUNT_DAILY_LIMIT | Existing shared reset/verification allocation 30 |
-| EMAIL_ALERT_DAILY_LIMIT | Existing allocation 20; channel disabled in pilot |
-| EMAIL_PER_USER_APPLICATION_DAILY_LIMIT | Existing ceiling 10; channel disabled initially |
-| EMAIL_PILOT_DAILY_LIMIT | Proposed additional 5 attempts total; approval needed |
+| Policy.total (fixed) | Existing approved ceiling 200 attempts |
+| Policy.applications (fixed) | Existing allocation 150; channel disabled in first pilot |
+| Policy.accounts (fixed) | Existing shared reset/verification allocation 30 |
+| Policy.alerts (fixed) | Existing allocation 20; channel disabled in pilot |
+| Policy.per_user_applications (fixed) | Existing ceiling 10; channel disabled initially |
+| EMAIL_PILOT_DAILY_LIMIT | Approved additional 5 attempts total; configurable downward to 1 |
 
 EMAIL_BACKEND remains console and ACCOUNT_EMAIL_TEST_CAPTURE stays absent/false.
 The new factory must reject incomplete or inconsistent activation configuration
@@ -70,9 +72,10 @@ Never clear receipts to force a retry. Definite failures may be manually retried
 with a new action ID and consume another slot. Keep digest derivation stable;
 signing-key rotation and receipt expiry remain separate review items.
 
-## Next implementation package and required tests
+## Pilot implementation and required tests
 
-Separately authorize a production factory plus account-email pilot integration.
+The separately approved production factory and account-email pilot integration are
+implemented locally; see CHECKPOINT3B_PILOT_REVIEW.md for actual results.
 Keep real activation off and use mocked HTTP/locmem in all tests. No dependency,
 DNS, CORS, ingestion or token lifetime change. Test disabled/incomplete configuration,
 owner/recipient/channel rejection with no side effects, mixed-case canonicalization,
@@ -163,7 +166,6 @@ remain open; a small supervised pilot does not resolve those wider-release gates
 
 Read-only inspection of the files above and the schema/delivery/accounts/integration
 reviews. Browser-confirmed domain and sender/alias status was established in the
-preceding setup. No live reachability, inbox delivery or production factory is
-claimed. No application code, configuration values, migration, dependency, CI or
-frontend build changed. Application suites are not rerun for this documentation-only
-preparation; earlier package results remain historical, not new test claims.
+preceding setup. Live reachability and inbox delivery remain unverified. Preparation commit c4b6a37
+changed documentation only; the later pilot implementation and actual gate outcomes
+are recorded separately in CHECKPOINT3B_PILOT_REVIEW.md. No activation occurred.
