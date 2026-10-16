@@ -4,13 +4,14 @@
 
 ## 1. Mission
 
-Implement the approved isolated Brevo HTTPS transport and transactional delivery
-budget service on feature/brevo-delivery-service, following the reviewed schema
-package. Michael approved counting definite failed provider attempts against daily
-capacity. No new migration or dependency, endpoint/task wiring, auth/API behavior
-change, real delivery, secrets, DNS/provider writes, pushes or deployment. Console
-email remains unchanged. Stop after this package for review. This supersedes the
-previous schema-only mission only for the authorized dormant service and tests.
+Build the approved password reset/email verification package with tests on
+feature/account-recovery-verification, then stop for review. Michael additionally
+approved Profile.password_reset_at (additive migration), password-bound refresh
+claims and rejecting pre-reset legacy refresh tokens, preserving the 15-minute
+access-token grace and existing lifetimes/rotation/cookie behavior. These narrow
+auth/schema/client changes supersede the previous dormant-service-only restriction.
+Real delivery stays disabled; console email unchanged. No provider/DNS/secrets,
+dependencies, CI/CORS/ingestion changes, pushes or deployment. No live send integration.
 
 ## 2. Product
 
@@ -40,8 +41,8 @@ writing/rotation remains unverified. Redirect=False/HSTS=0 pending the host sche
 answer; no change authorized here.
 
 The schema package was reviewed and approved locally. The dormant transport and
-quota package is now authorized, with failed provider attempts counting against
-capacity. Approved decisions are recorded in docs/MIGRATION_DESIGN_3B1.md.
+quota package was reviewed and approved locally. Michael has now authorized
+reset/verification flows and the narrow reset-revocation design extension. Approved decisions are recorded in docs/MIGRATION_DESIGN_3B1.md.
 Domain michaelmathenge.dev is active in Michael's Namecheap account using BasicDNS,
 but not authenticated in Brevo. Inspection was read-only; no credentials, DNS,
 provider setting or production changes. Existing original-checkout lockfile,
@@ -60,14 +61,14 @@ coverage data, stash and Git configuration must remain untouched. Queued UI chan
 
 ## 6. Current package
 
-feature/brevo-delivery-service: isolated standard-library HTTPS adapter; atomic
-Nairobi-day 200 total/150 application/30 account/20 alert and 10-user application
-budgets; unique request keys; accepted/definite-failure/unknown outcomes. Definite
-provider failures consume capacity. No provider automatic retries; uncertain or
-crashed sends require reconciliation. Entire service disabled by default and unused
-by current senders. Test concurrency/failures/security, run section 7 gates, document
-activation prerequisites and stop. Do not choose unapproved alert/account retry or
-attachment policy defaults. Frontend builds are verification only.
+Password reset: standard Django token, 30-minute expiry, validators/all field errors,
+one-use atomic reset, tracked refresh blacklist plus password fingerprint/reset
+marker for legacy untracked refresh. Verification: purpose-signed 24-hour links,
+current-address proof and explicit confirmation; authenticated request/status.
+CSRF protection, public-endpoint client extensions, env-overridable request/target
+limits and UI routes. Security link mail exists only in opt-in locmem tests; never
+console or Brevo. Run section 7 gates and package frontend_build once as final
+commit. Stop for review with docs/CHECKPOINT3B_ACCOUNTS_REVIEW.md.
 
 ## 7. Quality gates (every package, no exceptions)
 
@@ -115,10 +116,12 @@ When blocked on one package, record it in the report and continue to the next in
 - Give exact PowerShell commands for anything he needs to run, plus the expected result.
 - Michael tracks work in Monday.com himself. Give completed items and honest story-point suggestions per package; do not assume any Monday.com access.
 
-## 12. Delivery-service handback
+## 12. Accounts-package handback
 
-Write docs/CHECKPOINT3B_DELIVERY_REVIEW.md with actual gates, new behavior and limits,
-provider API reference, no-network test evidence, atomicity, failure accounting,
-uncertainty/reconciliation, disabled activation and remaining decisions. Verify new
-commit identities against configured noreply. No push/deployment; preserve original
-checkout changes, stash and Git config. Stop after this package for Michael's review.
+Document actual tests/gates, additive migration, token revocation/legacy behavior,
+rate limits, disabled mail, fragment link handling, migration-first activation and
+rollback retaining reset revocation. Old refresh code must not be restored after
+password resets without a separately reviewed revocation plan. Verify configured
+noreply identities and preserve other work/stash/config. No pushes/deployment; stop
+for Michael's review. Existing dependency/schema/dormant service packages remain
+local prerequisites, not production features.
