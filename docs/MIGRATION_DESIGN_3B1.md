@@ -119,11 +119,9 @@ emails and 20 alerts. Use Africa/Nairobi calendar days; no automatic borrowing
 from another allocation. Account requests also require per-user throttling. At caps,
 preserve application drafts and show availability guidance; reset requests retain
 generic anti-enumeration responses. Network I/O occurs after
-commit, never while holding SQLite locks. Accepted/unknown outcomes consume capacity. Proposed clarification needing confirmation: for an attempts-based cap, count
+commit, never while holding SQLite locks. Accepted/unknown outcomes consume capacity. Michael approved the clarification: for an attempts-based cap, count
 definite provider failures once a network attempt is made too; release only
-reservations cancelled before any send attempt. This differs from the earlier
-failure-refund proposal. Resolve that detail before implementation so retries cannot
-evade the provider allowance. No automatic unknown retry or midnight refund
+reservations cancelled before any send attempt. This supersedes the earlier failure-refund proposal; retries cannot evade the provider allowance. No automatic unknown retry or midnight refund
 of an old unresolved attempt. Bounded alert retries only after definite failure.
 DRF file-cache counters are not the hard quota and cannot replace these tables.
 
@@ -218,3 +216,10 @@ See CHECKPOINT3B_SCHEMA_REVIEW.md for implemented constraints and remaining serv
 policy decisions. michaelmathenge.dev was confirmed active in the signed-in
 Namecheap account, with Namecheap BasicDNS; DNS authentication in Brevo is pending.
 No DNS/provider writes or secret access were performed.
+
+## 8. Subsequent dormant transport/service authorization
+
+After approving the schema review, Michael approved the isolated transport and quota
+service package and confirmed that definite failed provider attempts count against
+capacity. This does not authorize endpoints/tasks integration, real sending, provider
+credentials, DNS changes, push or deployment. See CHECKPOINT3B_DELIVERY_REVIEW.md.
