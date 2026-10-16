@@ -4,14 +4,13 @@
 
 ## 1. Mission
 
-Build the approved password reset/email verification package with tests on
-feature/account-recovery-verification, then stop for review. Michael additionally
-approved Profile.password_reset_at (additive migration), password-bound refresh
-claims and rejecting pre-reset legacy refresh tokens, preserving the 15-minute
-access-token grace and existing lifetimes/rotation/cookie behavior. These narrow
-auth/schema/client changes supersede the previous dormant-service-only restriction.
-Real delivery stays disabled; console email unchanged. No provider/DNS/secrets,
-dependencies, CI/CORS/ingestion changes, pushes or deployment. No live send integration.
+Build the approved account-email integration package on feature/account-email-integration,
+then stop for review. Connect reset/verification requests to shared delivery accounting
+through a closed locmem-only test sink. Real sending stays disabled; console mail is
+unchanged. No production transport factory, secrets, DNS/provider writes, pushes,
+deployment, migrations, dependencies, CI/CORS/ingestion or reset/refresh logic changes.
+This supersedes the previous accounts-package mission only for the approved bridge,
+request identity/outcome UX and tests. Keep public reset responses non-enumerating.
 
 ## 2. Product
 
@@ -42,7 +41,8 @@ answer; no change authorized here.
 
 The schema package was reviewed and approved locally. The dormant transport and
 quota package was reviewed and approved locally. Michael has now authorized
-reset/verification flows and the narrow reset-revocation design extension. Approved decisions are recorded in docs/MIGRATION_DESIGN_3B1.md.
+reset/verification flows and the narrow reset-revocation design extension; that
+package was reviewed. Account-email integration is now authorized with sending disabled. Approved decisions are recorded in docs/MIGRATION_DESIGN_3B1.md.
 Domain michaelmathenge.dev is active in Michael's Namecheap account using BasicDNS,
 but not authenticated in Brevo. Inspection was read-only; no credentials, DNS,
 provider setting or production changes. Existing original-checkout lockfile,
@@ -61,14 +61,14 @@ coverage data, stash and Git configuration must remain untouched. Queued UI chan
 
 ## 6. Current package
 
-Password reset: standard Django token, 30-minute expiry, validators/all field errors,
-one-use atomic reset, tracked refresh blacklist plus password fingerprint/reset
-marker for legacy untracked refresh. Verification: purpose-signed 24-hour links,
-current-address proof and explicit confirmation; authenticated request/status.
-CSRF protection, public-endpoint client extensions, env-overridable request/target
-limits and UI routes. Security link mail exists only in opt-in locmem tests; never
-console or Brevo. Run section 7 gates and package frontend_build once as final
-commit. Stop for review with docs/CHECKPOINT3B_ACCOUNTS_REVIEW.md.
+Account-email request IDs, 30/day shared verification/reset accounting, one-send per
+identity, definite failures count, uncertain outcomes block further sends. Public
+reset outcomes stay generic; authenticated verification can show quota/failure/
+uncertainty. No provider automatic retry. Explicit manual retry after definite
+failure uses a new ID and consumes capacity. Existing request throttles remain.
+Keep test-capture flag PLUS exact locmem backend required; no activation by SMTP
+or Brevo. Run section 7 gates, package frontend once as final commit and stop with
+docs/CHECKPOINT3B_ACCOUNT_EMAIL_REVIEW.md.
 
 ## 7. Quality gates (every package, no exceptions)
 
@@ -116,12 +116,10 @@ When blocked on one package, record it in the report and continue to the next in
 - Give exact PowerShell commands for anything he needs to run, plus the expected result.
 - Michael tracks work in Monday.com himself. Give completed items and honest story-point suggestions per package; do not assume any Monday.com access.
 
-## 12. Accounts-package handback
+## 12. Account-email integration handback
 
-Document actual tests/gates, additive migration, token revocation/legacy behavior,
-rate limits, disabled mail, fragment link handling, migration-first activation and
-rollback retaining reset revocation. Old refresh code must not be restored after
-password resets without a separately reviewed revocation plan. Verify configured
-noreply identities and preserve other work/stash/config. No pushes/deployment; stop
-for Michael's review. Existing dependency/schema/dormant service packages remain
-local prerequisites, not production features.
+Record actual tests/gates, idempotency, safe public/private outcomes, disabled real
+sending and remaining rollout blockers. No new migration. Future deployment must
+include the reviewed schema/accounts prerequisites and preserve reset revocation
+on rollback. Verify noreply identities, preserve other work/stash/config. No push,
+deployment or DNS changes; stop for Michael's review after this package.
