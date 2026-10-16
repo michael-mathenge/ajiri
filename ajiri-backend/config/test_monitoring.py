@@ -2,6 +2,8 @@ import json
 import logging
 import tempfile
 from pathlib import Path
+from io import StringIO
+import os
 from unittest.mock import patch
 from django.core.cache import cache
 from django.db import OperationalError
@@ -74,3 +76,16 @@ class SanitizedLogTests(SimpleTestCase):
             self.assertLessEqual(len(names), 4)
             for path in Path(directory).iterdir():
                 self.assertNotIn('secret', path.read_text())
+                if os.name != 'nt':
+                    self.assertEqual(path.stat().st_mode & 0o777, 0o600)
+
+    def test_unwritable_log_falls_back_without_sensitive_error_dump(self):
+        handler = PrivateProcessRotatingHandler('/unused-private-log')
+        output = StringIO()
+        try:
+            with patch('config.safe_logging.Path.mkdir', side_effect=PermissionError('secret path')), patch('config.safe_logging.sys.stderr', output):
+                handler.emit(self.record())
+            self.assertNotIn('secret', output.getvalue())
+            self.assertEqual(json.loads(output.getvalue())['event'], 'application_error')
+        finally:
+            handler.close()
