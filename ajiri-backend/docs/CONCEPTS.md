@@ -603,3 +603,16 @@ never JWTs. The client keeps it in memory, renews it after login and retries onl
 one explicitly identified CSRF rejection, before side effects. Parallel 401s
 share one refresh. 403/429/network failures do not mean the session expired.
 Token lifetime, refresh identity rotation and blacklisting stay unchanged.
+
+## minimal-health-check
+
+A health response reports whether the web app can reach its DB, not whether jobs,
+mail or backups are fresh. /api/health/ is public, no-store, loosely throttled,
+and returns only a generic status. HEAD returns no body and failures reveal no SQL.
+
+## sanitized-error-logging
+
+Error text can contain tokens or private CV details. Format only an allowlist of
+server-controlled fields, never arbitrary log messages or tracebacks. Each worker
+rotates its own private file so processes do not race a shared rollover. Old worker
+files need manual quota/retention review; console email remains separately sensitive.

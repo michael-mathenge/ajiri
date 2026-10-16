@@ -2,6 +2,34 @@ from django.conf import settings
 from django.http import HttpResponse, HttpResponseNotFound
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_safe
+from django.db import connection, DatabaseError
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
+from accounts.throttles import EndpointThrottle
+
+
+class HealthView(APIView):
+    # see docs/CONCEPTS.md#minimal-health-check
+    authentication_classes = ()
+    permission_classes = (AllowAny,)
+    throttle_classes = (EndpointThrottle,)
+    throttle_scope = 'health'
+
+    def get(self, request):
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute('SELECT 1')
+                cursor.fetchone()
+            response = Response({'status': 'ok'})
+        except DatabaseError:
+            response = Response({'status': 'unavailable'}, status=503)
+        return response
+
+    def finalize_response(self, request, response, *args, **kwargs):
+        response = super().finalize_response(request, response, *args, **kwargs)
+        response['Cache-Control'] = 'no-store, private'
+        return response
 
 
 @require_safe
