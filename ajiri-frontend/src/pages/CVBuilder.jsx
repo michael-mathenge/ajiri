@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import apiClient from '../api/client'
 import { useApiResource } from '../hooks/useApiResource'
@@ -13,6 +13,30 @@ const sections = [
   ['certifications', 'Certifications', 20, [['name', 'Certification'], ['issuer', 'Issuer'], ['issued', 'Issued month', 'month'], ['expiry', 'Expiry month', 'month'], ['description', 'Description', 'textarea']]],
   ['projects', 'Projects', 20, [['name', 'Project name'], ['organisation', 'Organisation (optional)'], ['url', 'Project URL', 'url'], ['description', 'Description', 'textarea']]],
 ]
+
+// Keep row numbers and field labels: repeated blank-field messages hide what to fix.
+// see docs/CONCEPTS.md#cv-builder-flow
+function cvErrors(error, fallback) {
+  if (error.response?.status !== 400) return apiErrors(error, fallback)
+  const labels = Object.fromEntries(sections.map(([key, title, , fields]) => [key,
+    { title, fields: Object.fromEntries(fields.map(([field, label]) => [field, label])) }]))
+  const result = {}
+  const visit = (value, path = []) => {
+    if (Array.isArray(value)) {
+      value.forEach((item, index) => visit(item, item && typeof item === 'object' ? [...path, index] : path))
+    } else if (value && typeof value === 'object') {
+      Object.entries(value).forEach(([key, item]) => visit(item, key === 'content' ? path : [...path, key]))
+    } else if (value != null) {
+      const [section, row, field] = path
+      const label = labels[section] && typeof row === 'number'
+        ? `${labels[section].title} ${row + 1}${field ? ` — ${labels[section].fields[field] || field.replaceAll('_', ' ')}` : ''}`
+        : path.join(' ').replaceAll('_', ' ') || 'detail'
+      ;(result[label] ||= []).push(String(value))
+    }
+  }
+  visit(error.response?.data)
+  return Object.keys(result).length ? result : apiErrors(error, fallback)
+}
 
 function Field({ id, label, value, type = 'text', onChange, maxLength = 255 }) {
   const Component = type === 'textarea' || type === 'bullets' ? Textarea : Input
@@ -52,6 +76,14 @@ export function CVEditor({ initial }) {
   const [review, setReview] = useState(false)
   const [approved, setApproved] = useState(false)
   const [conflict, setConflict] = useState(false)
+  const errorSummary = useRef(null)
+  const previewHeading = useRef(null)
+  useEffect(() => {
+    // Bring feedback into view after submitting a long form, including keyboard use.
+    const target = Object.keys(errors).length ? errorSummary.current : review ? previewHeading.current : null
+    target?.focus()
+    target?.scrollIntoView?.({ block: 'start', behavior: 'auto' })
+  }, [errors, review, saved.revision])
   const content = { ...values, skills: skills.split(',').map(s => s.trim()).filter(Boolean),
     employment: values.employment.map(row => ({ ...row, achievements: bullets[row.id] === undefined ? row.achievements : bullets[row.id].split('\n').map(s => s.trim()).filter(Boolean) })) }
   const dirty = JSON.stringify(content) !== JSON.stringify(saved.content)
@@ -80,7 +112,7 @@ export function CVEditor({ initial }) {
       setSaved(data); setValues(data.content); setSkills(data.content.skills.join(', ')); setBullets({})
       setReview(true); setMessage(`Revision ${data.revision} saved. Review the preview before approving.`)
     } catch (error) {
-      setErrors(apiErrors(error, 'Save could not be confirmed. Your edits are still here; reload only when ready.'))
+      setErrors(cvErrors(error, 'Save could not be confirmed. Your edits are still here; reload only when ready.'))
       if (error.response?.status === 409) setConflict(true)
     } finally { setBusy(false) }
   }
@@ -104,7 +136,9 @@ export function CVEditor({ initial }) {
   return <div className="stack">
     <p role="status">{message || (dirty ? 'Unsaved changes. Save and preview before approval.' : `Saved revision ${saved.revision}.`)}</p>
     <p className="muted">This personal CV is separate from job application drafts. Editing it does not change your account or saved applications.</p>
-    <FormErrors errors={errors} prefix="cv" className="form-error-summary" />
+    {Object.keys(errors).length > 0 && <div ref={errorSummary} tabIndex={-1} aria-label="CV save errors">
+      <FormErrors errors={errors} prefix="cv" className="form-error-summary" />
+    </div>}
     {conflict && <p role="alert">Another change was saved. Your edits remain on this page. Copy anything you need before reloading to compare with the current version.</p>}
     <form onSubmit={save} className="stack" aria-busy={busy}>
       <fieldset disabled={busy} className="stack">
@@ -134,7 +168,7 @@ export function CVEditor({ initial }) {
       <Button type="submit" disabled={busy || conflict}>{busy ? 'Please wait…' : 'Save and preview CV'}</Button>
     </form>
     {review && !dirty && <Card className="stack">
-      <h2>Review revision {saved.revision}</h2>
+      <h2 ref={previewHeading} tabIndex={-1}>Review revision {saved.revision}</h2>
       <p>Check every detail. The DOCX uses this content and section order; page breaks may differ. No information is invented.</p>
       <CVPreview preview={saved.preview} />
       {!saved.approval_id && <><label className="check-field"><input type="checkbox" checked={approved} disabled={busy || conflict} onChange={e => setApproved(e.target.checked)} />I have reviewed this CV and approve this version.</label>

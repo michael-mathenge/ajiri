@@ -742,6 +742,10 @@ must be checked if host-level responses recur.
 
 ## cv-builder-flow
 
+After a CV save, focus moves to the saved preview or the error summary so feedback
+is visible above/below the long editor. Nested validation errors retain section,
+entry number and field label; unsaved input remains available for correction.
+
 The personal CV builder explicitly seeds an independent draft from Profile/User.
 Subsequent profile changes never rewrite it. Saving validates the complete merged
 JSON and atomically compares/increments revision, preserving stale-tab edits with
