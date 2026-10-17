@@ -79,7 +79,8 @@ class ProfileCVTests(TestCase):
 
     def test_generated_documents_are_docx(self):
         job = Job.objects.create(title='Developer', company_name='Example', description='Build', source_url='https://example.com/cv', source_name='test')
-        for url in ['/api/profiles/me/generate-cv/', f'/api/jobs/{job.pk}/generate-cover-letter/']:
+        self.assertEqual(self.client.get('/api/profiles/me/generate-cv/').status_code, 409)
+        for url in [f'/api/jobs/{job.pk}/generate-cover-letter/']:
             response = self.client.get(url)
             self.assertEqual(response.status_code, 200)
             self.assertTrue(response.content.startswith(b'PK'))

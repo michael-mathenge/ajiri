@@ -222,12 +222,7 @@ export function ProfileEditor({ profile }) {
               Download uploaded CV
             </DownloadButton>
           )}
-          <DownloadButton
-            path="/profiles/me/generate-cv/"
-            filename="Ajiri_CV.docx"
-          >
-            Generate CV from profile
-          </DownloadButton>
+          <Button asChild><Link to="/cv-builder">Build and review my CV</Link></Button>
         </div>
       </Card>
     </div>

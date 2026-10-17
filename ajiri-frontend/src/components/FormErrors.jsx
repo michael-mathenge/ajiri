@@ -1,7 +1,7 @@
-export default function FormErrors({ errors, prefix = 'form' }) {
+export default function FormErrors({ errors, prefix = 'form', className = '' }) {
   if (!Object.keys(errors).length) return null
   return (
-    <div role="alert" className="error-text">
+    <div role="alert" className={`error-text ${className}`}>
       <p>Please check the following:</p>
       <ul>
         {Object.entries(errors).map(([field, messages]) => (

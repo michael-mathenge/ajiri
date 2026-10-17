@@ -4,6 +4,7 @@ import apiClient from '../api/client'
 import FormErrors from '../components/FormErrors'
 import { Button, Card, Input } from '../components/ui'
 import { apiErrors } from '../lib/errors'
+import { retryDeadline, waitLabel } from '../lib/retryAfter'
 
 // Fragment credentials never reach access logs/referrers. Remove from history
 // immediately and keep only in component memory; never local/session storage.
@@ -24,6 +25,20 @@ export default function AccountRecovery({ mode }) {
   const [done, setDone] = useState(false)
   const [verified, setVerified] = useState(null)
   const [requestId, setRequestId] = useState(() => crypto.randomUUID())
+  const [retryAt, setRetryAt] = useState(0)
+  const [now, setNow] = useState(Date.now)
+  const remaining = Math.max(0, Math.ceil((retryAt - now) / 1000))
+  useEffect(() => {
+    if (!retryAt) return
+    // Use the clock so a sleeping/background tab does not extend the wait.
+    // see docs/CONCEPTS.md#ui-feedback
+    const timer = setInterval(() => {
+      const current = Date.now()
+      setNow(current)
+      if (current >= retryAt) clearInterval(timer)
+    }, 1000)
+    return () => clearInterval(timer)
+  }, [retryAt])
   useEffect(() => {
     if (window.location.hash) window.history.replaceState(window.history.state, '', window.location.pathname + window.location.search)
   }, [])
@@ -41,8 +56,9 @@ export default function AccountRecovery({ mode }) {
   const missing = !done && (reset || verify) && (!link.token || (reset && !link.uid))
   const submit = async event => {
     event.preventDefault()
-    if (busy || done || missing) return
+    if (busy || done || missing || Date.now() < retryAt) return
     setErrors({})
+    setMessage('')
     if (reset && password !== confirm) {
       setErrors({ password_confirm: ['Passwords must match.'] })
       return
@@ -63,7 +79,10 @@ export default function AccountRecovery({ mode }) {
         setConfirm('')
       }
     } catch (error) {
-      setErrors(apiErrors(error, 'Delivery could not be confirmed. Check your inbox before retrying; an email may already have been accepted.'))
+      const deadline = error.response?.status === 429 ? retryDeadline(error.response.headers) : 0
+      setNow(Date.now())
+      setRetryAt(deadline)
+      setErrors(deadline ? { detail: ['Too many requests. Please wait before trying again.'] } : apiErrors(error, 'Delivery could not be confirmed. Check your inbox before retrying; an email may already have been accepted.'))
       if (error.response?.status === 502) setRequestId(crypto.randomUUID())
     } finally {
       setBusy(false)
@@ -79,6 +98,7 @@ export default function AccountRecovery({ mode }) {
       {verified === false && <p>Your current email is not verified. You can still browse jobs and prepare drafts.</p>}
       {message && <p role="status">{message}</p>}
       <FormErrors errors={errors} prefix="recovery" />
+      {retryAt > 0 && <p aria-live="off">{remaining > 0 ? `You can try again in ${waitLabel(remaining)}.` : 'You can now try again. No request has been sent automatically.'}</p>}
       <form className="stack mt-8" onSubmit={submit} aria-busy={busy}>
         {requestReset && <div className="field"><label htmlFor="recovery-email">Email address</label>
           <Input id="recovery-email" type="email" autoComplete="email" value={email} onChange={e => { setEmail(e.target.value); setRequestId(crypto.randomUUID()) }} required /></div>}
@@ -88,7 +108,7 @@ export default function AccountRecovery({ mode }) {
           <div className="field"><label htmlFor="recovery-confirm">Confirm new password</label>
             <Input id="recovery-confirm" type="password" autoComplete="new-password" value={confirm} onChange={e => setConfirm(e.target.value)} required /></div>
         </>}
-        <Button type="submit" disabled={busy || done || missing || verified === true}>
+        <Button type="submit" disabled={busy || done || missing || verified === true || remaining > 0}>
           {busy ? 'Please wait…' : requestReset ? 'Request reset link' : reset ? 'Save new password' : verify ? 'Confirm email verification' : 'Request verification link'}
         </Button>
       </form>

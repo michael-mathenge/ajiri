@@ -1,6 +1,6 @@
 import { StrictMode } from 'react'
-import { beforeEach, expect, it, vi } from 'vitest'
-import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { afterEach, beforeEach, expect, it, vi } from 'vitest'
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import AccountRecovery from '../pages/AccountRecovery'
 import apiClient from '../api/client'
@@ -10,6 +10,7 @@ beforeEach(() => {
   vi.resetAllMocks()
   window.history.replaceState({}, '', '/')
 })
+afterEach(() => vi.useRealTimers())
 const page = mode => render(<StrictMode><MemoryRouter><AccountRecovery mode={mode} /></MemoryRouter></StrictMode>)
 
 it('requests a reset and truthfully shows that email is disabled', async () => {
@@ -82,7 +83,52 @@ it('renders rate limit guidance without automatic mutation retries', async () =>
   page('request-reset')
   fireEvent.change(screen.getByLabelText('Email address'), { target: { value: 'owner@example.invalid' } })
   fireEvent.click(screen.getByRole('button', { name: 'Request reset link' }))
-  expect(await screen.findByRole('alert')).toHaveTextContent('60 seconds')
+  expect(await screen.findByRole('alert')).toHaveTextContent('Too many requests')
+  expect(screen.getByText('You can try again in 1 min.')).toBeVisible()
+  expect(screen.getByRole('button', { name: 'Request reset link' })).toBeDisabled()
+  expect(apiClient.post).toHaveBeenCalledTimes(1)
+})
+
+it('counts down the verification wait and requires a manual click after expiry', async () => {
+  vi.useFakeTimers()
+  apiClient.get.mockResolvedValue({ data: { verified: false } })
+  apiClient.post.mockRejectedValue({ response: { status: 429, headers: { 'retry-after': '2270' } } })
+  page('verification')
+  await act(async () => {})
+  const button = screen.getByRole('button', { name: 'Request verification link' })
+  await act(async () => { fireEvent.click(button) })
+  expect(screen.getByText('You can try again in 37 min 50 sec.')).toBeVisible()
+  expect(button).toBeDisabled()
+  fireEvent.submit(button.closest('form'))
+  expect(apiClient.post).toHaveBeenCalledTimes(1)
+  await act(async () => { vi.advanceTimersByTime(2270000) })
+  expect(button).toBeEnabled()
+  expect(screen.getByText(/No request has been sent automatically/)).toBeVisible()
+  expect(apiClient.post).toHaveBeenCalledTimes(1)
+  await act(async () => { fireEvent.click(button) })
+  expect(apiClient.post).toHaveBeenCalledTimes(2)
+})
+
+it('uses elapsed clock time when a background tab resumes', async () => {
+  vi.useFakeTimers()
+  apiClient.post.mockRejectedValue({ response: { status: 429, headers: { 'retry-after': '60' } } })
+  page('request-reset')
+  fireEvent.change(screen.getByLabelText('Email address'), { target: { value: 'owner@example.invalid' } })
+  const button = screen.getByRole('button', { name: 'Request reset link' })
+  await act(async () => { fireEvent.click(button) })
+  vi.setSystemTime(Date.now() + 120000)
+  await act(async () => { vi.advanceTimersByTime(1000) })
+  expect(button).toBeEnabled()
+  expect(apiClient.post).toHaveBeenCalledTimes(1)
+})
+
+it('shows generic guidance without inventing a timer for an invalid retry header', async () => {
+  apiClient.post.mockRejectedValue({ response: { status: 429, headers: { 'retry-after': 'invalid' } } })
+  page('request-reset')
+  fireEvent.change(screen.getByLabelText('Email address'), { target: { value: 'owner@example.invalid' } })
+  fireEvent.click(screen.getByRole('button', { name: 'Request reset link' }))
+  expect(await screen.findByRole('alert')).toHaveTextContent('Please wait a moment')
+  expect(screen.queryByText(/You can try again in/)).not.toBeInTheDocument()
   expect(apiClient.post).toHaveBeenCalledTimes(1)
 })
 

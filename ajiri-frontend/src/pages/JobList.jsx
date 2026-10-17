@@ -71,6 +71,10 @@ export default function JobList() {
   if (location) query.set('location', location)
   if (type) query.set('job_type', type)
   const { data, loading, error, retry } = useApiResource(`/jobs/?${query}`)
+  const { data: profile } = useApiResource('/profiles/me/')
+  // Missing profile data is unknown, not evidence of an empty skills list.
+  // see docs/CONCEPTS.md#ui-feedback
+  const hasSkills = Array.isArray(profile?.skills) ? profile.skills.length > 0 : null
   const [showFilters, setShowFilters] = useState(false)
   const filtered = Boolean(title || location || type)
   const submit = (event) => {
@@ -181,7 +185,9 @@ export default function JobList() {
                   <span className="company-avatar" aria-hidden="true">
                     {job.company_name.slice(0, 2).toUpperCase()}
                   </span>
-                  <MatchScore score={job.match_score} />
+                  {hasSkills === false ? (
+                    <Link to="/profile" className="inline-link text-sm">Add skills to see your match</Link>
+                  ) : hasSkills === true ? <MatchScore score={job.match_score} /> : null}
                 </div>
                 <p className="company-name">{job.company_name}</p>
                 <h3>

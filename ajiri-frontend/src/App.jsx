@@ -13,6 +13,7 @@ const JobDetail = lazy(() => import('./pages/JobDetail'))
 const Applications = lazy(() => import('./pages/Applications'))
 const Notifications = lazy(() => import('./pages/Notifications'))
 const Profile = lazy(() => import('./pages/Profile'))
+const CVBuilder = lazy(() => import('./pages/CVBuilder'))
 const Subscriptions = lazy(() => import('./pages/Subscriptions'))
 const AccountRecovery = lazy(() => import('./pages/AccountRecovery'))
 
@@ -28,6 +29,7 @@ export default function App() {
               <Route path="/applications" element={<Applications />} />
               <Route path="/notifications" element={<Notifications />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="/cv-builder" element={<CVBuilder />} />
               <Route path="/email-verification" element={<AccountRecovery key="verification" mode="verification" />} />
             </Route>
             <Route path="/login" element={<Login />} />

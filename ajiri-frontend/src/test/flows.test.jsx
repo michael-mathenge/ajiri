@@ -65,6 +65,9 @@ describe('Register', () => {
       'aria-invalid',
       'true'
     )
+    expect(screen.getByRole('alert')).toHaveClass('form-error-summary')
+    expect(screen.getByLabelText('Password')).toHaveAttribute('aria-describedby', 'register-password-error')
+    expect(document.getElementById('register-password-error')).toHaveTextContent('Too short. Too common. Entirely numeric.')
   })
   it('explains rate limits without retrying registration', async () => {
     apiClient.post.mockRejectedValue({ response: { status: 429, headers: { 'retry-after': '60' }, data: {} } })

@@ -703,6 +703,107 @@ new request; no automatic provider retry. Receipt digests derive from Django's
 signing configuration; key rotation/retention must preserve duplicate protection.
 # Owner-only email pilot
 
+## approved-cv-applications
+
+New applications require an explicit owner-approved CV UUID. The job page reads
+only version metadata, suggests the current approved version and labels older
+choices; it never silently chooses an earlier version for an unapproved draft.
+Missing selection returns a stable review-required 409; invalid/other-owner IDs
+cannot disclose private documents. The service verifies the approved file hash
+and copies its exact bytes into the application's independent private snapshot.
+The letter/email use the current Profile and retain separate review before send.
+
+Repeated preparation returns the existing application without changing its files,
+status or selected documents. Database uniqueness arbitrates concurrent requests;
+the losing request cleans only its own newly written files. Storage/DB failures
+use safe guidance to check My applications before a manual retry. No mutation is
+automatically retried. A hard crash/cleanup failure can leave private orphan files
+for report-only reconciliation; it must never trigger broad deletion. Random,
+neutral filenames exclude employer-supplied path text. No provider sending is
+introduced and no auth, ingestion, schema or alert behavior changes.
+The approval UUID is not persisted as provenance: existing Application file fields
+hold the independent snapshot. A future audit link requires a reviewed schema.
+
+## ingestion-readiness
+
+GitHub ingestion first requires the public health endpoint to return HTTP 200 and
+the exact JSON status. Three bounded read-only probes can bridge a short host
+reload; a persistent host placeholder/404 stops before the credentialled POST.
+Configuration must be an HTTPS origin, with no embedded credentials or API path.
+Redirects are refused rather than forwarding the ingestion key elsewhere.
+Only one feed POST is attempted: an HTTP/network/invalid-response failure can
+follow partial processing, so inspect server state before a manual retry. Output
+contains fixed diagnostics and allowlisted integer counters, never raw bodies or
+network exception text. Failures stay red; notifications are not suppressed.
+The .github/scripts helper uses only Python's standard library and tests run before
+delivery. This does not fix host downtime, change endpoint authentication, adjust
+schedules, or create an exactly-once delivery guarantee. Platform availability
+must be checked if host-level responses recur.
+
+## cv-builder-flow
+
+The personal CV builder explicitly seeds an independent draft from Profile/User.
+Subsequent profile changes never rewrite it. Saving validates the complete merged
+JSON and atomically compares/increments revision, preserving stale-tab edits with
+a 409 instead of overwriting. An incomplete draft can be saved; approval requires
+the user's name and substantive content. Preview and DOCX share one plain-text
+layout; React escapes preview text and python-docx writes literal paragraphs,
+never HTML, external templates or fetched links. Unsupported XML controls fail
+validation. No qualification or fallback name is inferred.
+
+Approval names the saved revision/hash and requires explicit consent. It creates
+an immutable API snapshot and exact private DOCX bytes. A SQLite conditional write
+serializes approval against concurrent edits/approvals. Files are unique, bounded
+to 2 MiB, hashed, and cleaned on a failed DB transaction; crashes can leave orphans
+for report-only reconciliation. Duplicate approval returns its existing version.
+Downloads require ownership, verify saved bytes, and never silently regenerate a
+missing/corrupt file. Current/legacy downloads require matching revision; explicitly
+labelled earlier versions remain downloadable. Responses are private/no-store.
+
+There are no update routes for approval rows. ORM maintenance must preserve that
+rule. On row/account deletion, file removal runs only after DB commit; a filesystem
+failure leaves an orphan for private review without exposing exception text.
+No retention pruning is introduced. SQLite and private-media backup already cover
+the new data. Deploy the reviewed additive migration before activating this pair.
+Application CV/letter snapshots and sending retain their existing behavior and
+must be integrated in a later reviewed package.
+
+## cv-builder-schema
+
+CVWorkspace is an explicit, owner-linked editable JSON draft with a positive
+revision. CVApproval holds a separate version snapshot and private document
+reference; unique (profile, revision) prevents duplicate approval rows. The new
+tables do not backfill drafts or imply approval for existing accounts. Nested
+validation allowlists fields and bounds text, dates, section counts and UTF-8 size;
+entry UUIDs preserve identity through edits. Drafts may be incomplete, while
+approval validation requires a name and substantive content. No facts are guessed.
+This schema package has no routes or renderer integration. JSON constraints,
+immutable approval behavior, revision comparisons and file integrity must be used
+by the later reviewed service; direct ORM writes do not invoke DRF validation.
+The schema constraints guarantee uniqueness and positive revisions in the DB.
+SQLite revision updates must compare the expected revision in the write itself;
+select_for_update alone is insufficient. Concurrent writers can encounter lock
+contention and must not silently overwrite each other. New file paths ignore
+provided filenames; ownership enforcement remains a service responsibility.
+Cascade deletion removes rows, not storage objects automatically. Media cleanup
+and version retention require the documented service/runbook work before release.
+
+## ui-feedback
+
+Job cards use the current profile's actual skills list to distinguish an empty
+profile from a genuine zero match. An unavailable profile is unknown: jobs stay
+usable while scores and empty-profile advice are withheld. One profile read is
+shared by all cards on that screen; returning from Profile fetches it again.
+Registration keeps every field error in an associated, bordered summary and marks
+invalid inputs, using the existing light/dark theme danger colors.
+Account forms honor a valid Retry-After deadline (seconds or HTTP date). The
+countdown uses elapsed wall-clock time, disables submission during the wait and
+never submits automatically on expiry. Missing/malformed headers get generic wait
+guidance without a guessed timer. This is a local display aid, not a replacement
+for server throttles: reload resets the display; server limits still apply.
+Second-by-second updates are not announced by screen readers. No credentials,
+email content or deadlines are saved to browser storage.
+
 ## owner-email-pilot
 
 Real account delivery is off by default. Explicit pilot configuration must select

@@ -6,6 +6,7 @@ from django.core import mail
 from django.test import TestCase, override_settings
 from rest_framework.test import APIClient
 from profiles.models import Skill
+from profiles.cv_test_helpers import approved_cv
 from .models import Application, Job, Notification
 from .matching import calculate_match_score, notify_matching_profiles
 
@@ -76,7 +77,8 @@ class ApplicationLifecycleTests(TestCase):
         self.client.force_authenticate(self.user)
 
     def prepare(self):
-        response = self.client.post(f'/api/jobs/{self.job.pk}/apply/')
+        approval = approved_cv(self.user)
+        response = self.client.post(f'/api/jobs/{self.job.pk}/apply/', {'cv_version': str(approval.pk)}, format='json')
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.data['status'], 'ready_for_review')
         return Application.objects.get(pk=response.data['id'])

@@ -1,4 +1,5 @@
-import { rateLimitMessage } from '../lib/errors'
+import { apiErrors } from '../lib/errors'
+import FormErrors from '../components/FormErrors'
 import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import {
@@ -19,6 +20,7 @@ import {
   ErrorState,
   LoadingState,
   MatchScore,
+  Select,
 } from '../components/ui'
 import { useToast } from '../hooks/useToast'
 import { dateLabel, jobType, salaryLabel } from '../lib/utils'
@@ -26,16 +28,19 @@ import { dateLabel, jobType, salaryLabel } from '../lib/utils'
 export default function JobDetail() {
   const { id } = useParams()
   const { data: job, loading, error, retry } = useApiResource(`/jobs/${id}/`)
+  const { data: cv, loading: cvLoading, error: cvError, retry: retryCV } = useApiResource('/profiles/me/cv-versions/')
+  const [selection, setSelection] = useState(null)
+  const cvVersion = selection ?? cv?.approval_id ?? ''
   const [applying, setApplying] = useState(false)
-  const [applyError, setApplyError] = useState('')
+  const [applyError, setApplyError] = useState({})
   const navigate = useNavigate()
   const toast = useToast()
   const handleApply = async () => {
-    if (applying) return
+    if (applying || !cvVersion) return
     setApplying(true)
-    setApplyError('')
+    setApplyError({})
     try {
-      const response = await apiClient.post(`/jobs/${id}/apply/`)
+      const response = await apiClient.post(`/jobs/${id}/apply/`, { cv_version: cvVersion })
       toast(
         response.status === 201
           ? 'Your application is ready to review'
@@ -44,10 +49,7 @@ export default function JobDetail() {
       )
       navigate('/applications')
     } catch (error) {
-      setApplyError(
-        (error.response?.status === 429 ? rateLimitMessage(error) : error.response?.data?.detail) ||
-          'Could not prepare your application. Please try again.'
-      )
+      setApplyError(apiErrors(error, 'Preparation could not be confirmed. Check My applications before retrying; no automatic retry was made.'))
     } finally {
       setApplying(false)
     }
@@ -109,39 +111,41 @@ export default function JobDetail() {
             <span className="eyebrow">YOUR NEXT STEP</span>
             <h2>Interested in this role?</h2>
             <p className="muted mb-6">
-              Prepare your CV and cover letter, then review your application.
+              Choose an approved CV. We copy it exactly and draft a separate cover letter from your current profile. Review both before confirming.
             </p>
             <p className="salary mb-6">{salaryLabel(job)}</p>
+            {cvLoading ? <p role="status">Loading approved CV versions…</p> : cvError ? <ErrorState onRetry={retryCV}>{cvError}</ErrorState> :
+              cv?.versions?.length ? <div className="field mb-6">
+                <label htmlFor="application-cv">Approved CV version</label>
+                <Select id="application-cv" value={cvVersion} disabled={applying} onChange={event => setSelection(event.target.value)}>
+                  <option value="">Choose an approved version</option>
+                  {cv.versions.map(version => <option key={version.id} value={version.id}>Revision {version.revision}{version.revision === cv.revision ? ' (current)' : ' (earlier approved version)'}</option>)}
+                </Select>
+                <p className="muted text-sm">An existing application keeps its original documents, even if you select another CV.</p>
+                {cvVersion && <DownloadButton path={`/profiles/me/cv-versions/${cvVersion}/download/`} filename="Selected_CV.docx">Review selected CV</DownloadButton>}
+              </div> : <p>No approved CV yet. <Link to="/cv-builder">Build and approve your CV</Link> to prepare a new application.</p>}
+            <p><Link to="/applications">Open My applications</Link> to review an existing draft without replacing its documents.</p>
             <Button
               className="w-full"
-              disabled={applying}
+              disabled={applying || cvLoading || Boolean(cvError) || !cvVersion}
               onClick={handleApply}
             >
               {applying ? 'Preparing application…' : 'Prepare application'}
               <ArrowRight size={18} aria-hidden="true" />
             </Button>
-            {applyError && (
-              <p role="alert" className="error-text mt-4">
-                {applyError}
-              </p>
-            )}
+            <FormErrors errors={applyError} prefix="application" />
             <p className="trust-note">
               <ShieldCheck size={20} aria-hidden="true" />
               <span>Nothing is sent until you confirm.</span>
             </p>
           </Card>
           <Card>
-            <h2>Generate documents</h2>
+            <h2>Review your documents</h2>
             <p className="muted">
-              Use your current profile to create a DOCX for this role.
+              Your approved CV stays unchanged. The cover letter uses your current profile and needs a separate review.
             </p>
             <div className="stack">
-              <DownloadButton
-                path="/profiles/me/generate-cv/"
-                filename="Ajiri_CV.docx"
-              >
-                Generate CV
-              </DownloadButton>
+              <Link to="/cv-builder">Edit and approve my CV</Link>
               <DownloadButton
                 path={`/jobs/${job.id}/generate-cover-letter/`}
                 filename="Cover_Letter.docx"

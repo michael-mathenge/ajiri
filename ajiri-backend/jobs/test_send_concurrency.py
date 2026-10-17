@@ -12,6 +12,7 @@ from django.test import TransactionTestCase, override_settings
 from rest_framework.test import APIClient
 
 from .models import Application, Job
+from profiles.cv_test_helpers import approved_cv
 
 
 @override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'], EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
@@ -27,7 +28,8 @@ class ConcurrentSendTests(TransactionTestCase):
         job = Job.objects.create(title='Test', company_name='Test', description='Test', source_name='test', source_url='https://example.com/concurrent', application_method='email', application_email='jobs@example.com')
         self.client = APIClient()
         self.client.force_authenticate(self.user)
-        response = self.client.post(f'/api/jobs/{job.pk}/apply/')
+        approval = approved_cv(self.user)
+        response = self.client.post(f'/api/jobs/{job.pk}/apply/', {'cv_version': str(approval.pk)}, format='json')
         self.app = Application.objects.get(pk=response.data['id'])
         self.url = f'/api/jobs/applications/{self.app.pk}/send/'
         mail.get_connection()  # Initialize the captured outbox before spawning.

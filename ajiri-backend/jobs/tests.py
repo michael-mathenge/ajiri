@@ -142,7 +142,7 @@ class SweepEndpointTests(TestCase):
 
 
 class ApplyFilenameTests(TestCase):
-    """Generated CVs are served as static files, so names must be unguessable."""
+    """Private snapshots retain random names as defence in depth."""
 
     def test_generated_filenames_contain_a_random_token(self):
         user = get_user_model().objects.create_user(
@@ -157,7 +157,9 @@ class ApplyFilenameTests(TestCase):
         client.force_authenticate(user=user)
 
         with tempfile.TemporaryDirectory() as media_root, override_settings(MEDIA_ROOT=media_root):
-            response = client.post(reverse('job-apply', args=[job.pk]))
+            from profiles.cv_test_helpers import approved_cv
+            approval = approved_cv(user)
+            response = client.post(reverse('job-apply', args=[job.pk]), {'cv_version': str(approval.pk)}, format='json')
 
         self.assertEqual(response.status_code, 201)
         for field in ('generated_cv', 'generated_cover_letter'):

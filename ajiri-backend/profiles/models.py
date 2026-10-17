@@ -1,5 +1,7 @@
 from django.conf import settings
 from django.db import models
+from django.utils import timezone
+import uuid
 
 
 class Skill(models.Model):
@@ -37,3 +39,38 @@ class Profile(models.Model):
 
     def __str__(self):
         return f"{self.user.email}'s profile"
+
+
+# New workspaces are explicit; existing profiles acquire no inferred approval.
+# see docs/CONCEPTS.md#cv-builder-schema
+class CVWorkspace(models.Model):
+    profile = models.OneToOneField(Profile, on_delete=models.CASCADE, related_name='cv_workspace')
+    content = models.JSONField(default=dict, blank=True)
+    revision = models.PositiveIntegerField(default=1)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [models.CheckConstraint(condition=models.Q(revision__gte=1), name='cv_workspace_revision_positive')]
+
+
+def approved_cv_path(instance, filename):
+    # Ignore user filenames; files remain under the existing private storage.
+    return f'approved-cvs/{uuid.uuid4().hex}.docx'
+
+
+class CVApproval(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='cv_approvals')
+    revision = models.PositiveIntegerField()
+    content = models.JSONField()
+    content_sha256 = models.CharField(max_length=64)
+    template_version = models.CharField(max_length=32)
+    document = models.FileField(upload_to=approved_cv_path, max_length=100)
+    document_sha256 = models.CharField(max_length=64)
+    approved_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(condition=models.Q(revision__gte=1), name='cv_approval_revision_positive'),
+            models.UniqueConstraint(fields=('profile', 'revision'), name='cv_approval_unique_revision'),
+        ]
