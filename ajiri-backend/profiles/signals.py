@@ -12,10 +12,28 @@
 from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from .models import Profile
+from django.db import transaction
+from django.db.models.signals import post_delete
+from .models import Profile, CVApproval
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_profile(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance)
+
+
+@receiver(post_delete, sender=CVApproval)
+def remove_approved_cv(sender, instance, **kwargs):
+    # A rolled-back deletion must not remove a still-referenced private file.
+    # see docs/CONCEPTS.md#cv-builder-flow
+    name, storage = instance.document.name, instance.document.storage
+    def cleanup():
+        try:
+            if name:
+                storage.delete(name)
+        except OSError:
+            # The row deletion already committed. Report-only orphan review is
+            # documented; never expose filenames or exception text to callers.
+            pass
+    transaction.on_commit(cleanup)

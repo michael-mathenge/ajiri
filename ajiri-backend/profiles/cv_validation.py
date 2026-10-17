@@ -16,6 +16,8 @@ class StrictText(serializers.CharField):
     def to_internal_value(self, data):
         if not isinstance(data, str):
             self.fail('invalid')
+        if re.search(r'[\x00-\x08\x0b\x0c\x0e-\x1f\ufffe\uffff]', data):
+            raise serializers.ValidationError('Remove unsupported control characters.')
         # Markup-looking input is literal text; renderers must escape it, never
         # interpret it as HTML, template source or executable document fields.
         return super().to_internal_value(data)

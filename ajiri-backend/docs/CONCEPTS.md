@@ -703,6 +703,34 @@ new request; no automatic provider retry. Receipt digests derive from Django's
 signing configuration; key rotation/retention must preserve duplicate protection.
 # Owner-only email pilot
 
+## cv-builder-flow
+
+The personal CV builder explicitly seeds an independent draft from Profile/User.
+Subsequent profile changes never rewrite it. Saving validates the complete merged
+JSON and atomically compares/increments revision, preserving stale-tab edits with
+a 409 instead of overwriting. An incomplete draft can be saved; approval requires
+the user's name and substantive content. Preview and DOCX share one plain-text
+layout; React escapes preview text and python-docx writes literal paragraphs,
+never HTML, external templates or fetched links. Unsupported XML controls fail
+validation. No qualification or fallback name is inferred.
+
+Approval names the saved revision/hash and requires explicit consent. It creates
+an immutable API snapshot and exact private DOCX bytes. A SQLite conditional write
+serializes approval against concurrent edits/approvals. Files are unique, bounded
+to 2 MiB, hashed, and cleaned on a failed DB transaction; crashes can leave orphans
+for report-only reconciliation. Duplicate approval returns its existing version.
+Downloads require ownership, verify saved bytes, and never silently regenerate a
+missing/corrupt file. Current/legacy downloads require matching revision; explicitly
+labelled earlier versions remain downloadable. Responses are private/no-store.
+
+There are no update routes for approval rows. ORM maintenance must preserve that
+rule. On row/account deletion, file removal runs only after DB commit; a filesystem
+failure leaves an orphan for private review without exposing exception text.
+No retention pruning is introduced. SQLite and private-media backup already cover
+the new data. Deploy the reviewed additive migration before activating this pair.
+Application CV/letter snapshots and sending retain their existing behavior and
+must be integrated in a later reviewed package.
+
 ## cv-builder-schema
 
 CVWorkspace is an explicit, owner-linked editable JSON draft with a positive

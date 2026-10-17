@@ -44,7 +44,7 @@ it('loads and saves contact, skills and independent alert preferences', async ()
 })
 it('clears skills explicitly with an empty array', async () => {
   apiClient.patch.mockResolvedValue({ data: profile })
-  render(<ProfileEditor profile={profile} />)
+  render(<MemoryRouter><ProfileEditor profile={profile} /></MemoryRouter>)
   fireEvent.change(screen.getByLabelText('Skills (comma separated)'), {
     target: { value: '' },
   })
@@ -62,14 +62,14 @@ it('renders all server errors and preserves entered values', async () => {
       data: { phone_number: ['Too long.'], headline: ['Invalid headline.'] },
     },
   })
-  render(<ProfileEditor profile={profile} />)
+  render(<MemoryRouter><ProfileEditor profile={profile} /></MemoryRouter>)
   fireEvent.click(screen.getByRole('button', { name: 'Save profile' }))
   expect(await screen.findByRole('alert')).toHaveTextContent('Too long.')
   expect(screen.getByRole('alert')).toHaveTextContent('Invalid headline.')
   expect(screen.getByLabelText('Full name')).toHaveValue('Test User')
 })
 it('validates file type and the 5 MB boundary before upload', () => {
-  render(<ProfileEditor profile={profile} />)
+  render(<MemoryRouter><ProfileEditor profile={profile} /></MemoryRouter>)
   fireEvent.change(screen.getByLabelText('Choose CV file'), {
     target: { files: [new File(['data'], 'bad.txt')] },
   })
@@ -83,7 +83,7 @@ it('uploads FormData and offers an authenticated download', async () => {
   apiClient.patch.mockResolvedValue({
     data: { ...profile, cv_file: '/media/cv.pdf' },
   })
-  render(<ProfileEditor profile={profile} />)
+  render(<MemoryRouter><ProfileEditor profile={profile} /></MemoryRouter>)
   const file = new File(['document'], 'cv.pdf', { type: 'application/pdf' })
   fireEvent.change(screen.getByLabelText('Choose CV file'), {
     target: { files: [file] },

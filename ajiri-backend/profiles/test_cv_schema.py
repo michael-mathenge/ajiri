@@ -43,6 +43,7 @@ class CVValidationTests(SimpleTestCase):
         variants = [
             {**content(), 'national_id': 'not-allowed'},
             {**content(), 'contact': {'name': 123}},
+            {**content(), 'summary': 'invalid\x01control'},
             {**content(), 'contact': {'name': 'Test', 'street_address': 'not-allowed'}},
             {**content(), 'employment': 'invalid'},
             {**content(), 'skills': [123]},

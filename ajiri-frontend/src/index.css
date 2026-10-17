@@ -513,6 +513,10 @@ textarea.input {
 .form-error-summary ul { margin: 0; padding-inline-start: 1.25rem; list-style: disc; }
 .form-error-summary li + li { margin-top: 0.5rem; }
 .form-card .input[aria-invalid='true'] { border: 2px solid var(--danger); }
+.cv-entry { border: 1px solid var(--border); border-radius: 0.5rem; padding: 1rem; min-width: 0; }
+.cv-preview { background: var(--surface); border: 1px solid var(--border); padding: clamp(1rem, 4vw, 2rem); overflow-wrap: anywhere; }
+.cv-preview p, .cv-preview li { white-space: pre-wrap; }
+.cv-preview ul { list-style: disc; padding-inline-start: 1.5rem; }
 .skeleton {
   background: var(--border);
   border-radius: 0.3rem;
