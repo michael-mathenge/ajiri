@@ -703,6 +703,22 @@ new request; no automatic provider retry. Receipt digests derive from Django's
 signing configuration; key rotation/retention must preserve duplicate protection.
 # Owner-only email pilot
 
+## ingestion-readiness
+
+GitHub ingestion first requires the public health endpoint to return HTTP 200 and
+the exact JSON status. Three bounded read-only probes can bridge a short host
+reload; a persistent host placeholder/404 stops before the credentialled POST.
+Configuration must be an HTTPS origin, with no embedded credentials or API path.
+Redirects are refused rather than forwarding the ingestion key elsewhere.
+Only one feed POST is attempted: an HTTP/network/invalid-response failure can
+follow partial processing, so inspect server state before a manual retry. Output
+contains fixed diagnostics and allowlisted integer counters, never raw bodies or
+network exception text. Failures stay red; notifications are not suppressed.
+The .github/scripts helper uses only Python's standard library and tests run before
+delivery. This does not fix host downtime, change endpoint authentication, adjust
+schedules, or create an exactly-once delivery guarantee. Platform availability
+must be checked if host-level responses recur.
+
 ## cv-builder-flow
 
 The personal CV builder explicitly seeds an independent draft from Profile/User.
