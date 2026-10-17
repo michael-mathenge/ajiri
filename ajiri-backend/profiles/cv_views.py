@@ -87,6 +87,18 @@ class CVVersionDownloadView(PrivateCVView):
         return cv_response(approval)
 
 
+class CVVersionListView(PrivateCVView):
+    def get(self, request):
+        # Job pages need version labels, never the CV's contact/history content.
+        # see docs/CONCEPTS.md#approved-cv-applications
+        workspace = CVWorkspace.objects.filter(profile=request.user.profile).only('revision').first()
+        versions = list(CVApproval.objects.filter(profile=request.user.profile).order_by('-revision')
+                        .values('id', 'revision', 'approved_at')[:20])
+        revision = workspace.revision if workspace else None
+        current = next((version for version in versions if version['revision'] == revision), None)
+        return Response({'revision': revision, 'approval_id': current['id'] if current else None, 'versions': versions})
+
+
 def cv_response(approval):
     response = HttpResponse(document_bytes(approval), content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
     response['Content-Disposition'] = 'attachment; filename="Ajiri_CV.docx"'

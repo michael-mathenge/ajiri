@@ -1,4 +1,5 @@
 from profiles.upload_fixtures import pdf_bytes
+from profiles.cv_test_helpers import approved_cv
 from django.core.cache import cache
 import importlib
 from io import StringIO
@@ -36,7 +37,8 @@ class PrivateMediaTests(TestCase):
         self.client.patch('/api/profiles/me/', {'cv_file': SimpleUploadedFile('cv.pdf', pdf_bytes())}, format='multipart')
         self.user.profile.refresh_from_db()
         self.job = Job.objects.create(title='Test', company_name='Test', description='Test', source_name='test', source_url='https://example.com/private')
-        response = self.client.post(f'/api/jobs/{self.job.pk}/apply/')
+        approval = approved_cv(self.user)
+        response = self.client.post(f'/api/jobs/{self.job.pk}/apply/', {'cv_version': str(approval.pk)}, format='json')
         self.assertEqual(response.status_code, 201)
         self.app = Application.objects.get(pk=response.data['id'])
 

@@ -703,6 +703,27 @@ new request; no automatic provider retry. Receipt digests derive from Django's
 signing configuration; key rotation/retention must preserve duplicate protection.
 # Owner-only email pilot
 
+## approved-cv-applications
+
+New applications require an explicit owner-approved CV UUID. The job page reads
+only version metadata, suggests the current approved version and labels older
+choices; it never silently chooses an earlier version for an unapproved draft.
+Missing selection returns a stable review-required 409; invalid/other-owner IDs
+cannot disclose private documents. The service verifies the approved file hash
+and copies its exact bytes into the application's independent private snapshot.
+The letter/email use the current Profile and retain separate review before send.
+
+Repeated preparation returns the existing application without changing its files,
+status or selected documents. Database uniqueness arbitrates concurrent requests;
+the losing request cleans only its own newly written files. Storage/DB failures
+use safe guidance to check My applications before a manual retry. No mutation is
+automatically retried. A hard crash/cleanup failure can leave private orphan files
+for report-only reconciliation; it must never trigger broad deletion. Random,
+neutral filenames exclude employer-supplied path text. No provider sending is
+introduced and no auth, ingestion, schema or alert behavior changes.
+The approval UUID is not persisted as provenance: existing Application file fields
+hold the independent snapshot. A future audit link requires a reviewed schema.
+
 ## ingestion-readiness
 
 GitHub ingestion first requires the public health endpoint to return HTTP 200 and

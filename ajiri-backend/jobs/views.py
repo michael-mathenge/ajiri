@@ -1,12 +1,10 @@
 import hmac
-import uuid
 import feedparser
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from django.http import HttpResponse, FileResponse
 from pathlib import Path
 from django.shortcuts import get_object_or_404
-from django.core.files.base import ContentFile
 from django.core.mail import EmailMessage
 from django.conf import settings
 from django.utils import timezone
@@ -22,7 +20,12 @@ from accounts.throttles import EndpointThrottle
 from .ingestion import ingest_feed
 from .matching import sweep_all_active_jobs_for_matches
 from .cover_letter_generator import generate_cover_letter_docx
-from profiles.cv_generator import generate_cv_docx
+from profiles.models import CVApproval
+from profiles.cv_builder import CVUnavailable
+from profiles.cv_validation import StrictSerializer
+from rest_framework import serializers
+from django.db import OperationalError
+from .application_drafting import prepare_application
 
 
 class JobListView(generics.ListAPIView):
@@ -60,7 +63,7 @@ class GenerateCoverLetterView(generics.GenericAPIView):
 class ApplyToJobView(generics.GenericAPIView):
     """
     POST /jobs/<pk>/apply/ — the on-demand replacement for automatic
-    Application drafting. Generates the CV + cover letter ONCE and saves
+    Application drafting. Copies the selected approved CV + generates a letter ONCE and saves
     them as real files on the new Application (unlike the on-the-fly,
     regenerate-every-time GenerateCoverLetterView above), then sets
     status straight to ready_for_review — see docs/CONCEPTS.md#application-lifecycle.
@@ -83,47 +86,23 @@ class ApplyToJobView(generics.GenericAPIView):
             serializer = ApplicationSerializer(existing, context={'request': request})
             return Response(serializer.data, status=status.HTTP_200_OK)
 
-        cv_buffer = generate_cv_docx(profile)
-        cover_letter_buffer = generate_cover_letter_docx(profile, job)
-        safe_company = job.company_name.replace(' ', '_')
-        # Random prefixes remain defence in depth; storage is private and
-        # owner endpoints enforce access. See docs/CONCEPTS.md#private-media-storage
-        file_token = uuid.uuid4().hex
-
-        application = Application(
-            user=request.user,
-            job=job,
-            status=Application.Status.READY_FOR_REVIEW,
-            # Snapshotted now, per docs/CONCEPTS.md#application-lifecycle —
-            # won't silently change if the job listing is edited later.
-            application_method=job.application_method,
-            application_email=job.application_email,
-        )
-
-        # save(..., save=False) writes the file to storage immediately but
-        # doesn't hit the DB yet — we want one single application.save()
-        # call below, not three separate writes.
-        application.generated_cv.save(
-            f"{file_token}_CV_{safe_company}.docx", ContentFile(cv_buffer.read()), save=False
-        )
-        application.generated_cover_letter.save(
-            f"{file_token}_Cover_Letter_{safe_company}.docx", ContentFile(cover_letter_buffer.read()), save=False
-        )
-
-        if application.application_method == Job.ApplicationMethod.EMAIL:
-            applicant_name = request.user.full_name or request.user.email
-            application.email_subject = f"Application for {job.title} position"
-            application.email_body = (
-                f"Dear Hiring Manager,\n\n"
-                f"Please find attached my CV and cover letter for the "
-                f"{job.title} position at {job.company_name}.\n\n"
-                f"Kind regards,\n{applicant_name}"
-            )
-
-        application.save()
+        if isinstance(request.data, dict) and not request.data.get('cv_version'):
+            return Response({'detail': 'Choose an approved CV version in the CV builder before preparing an application.',
+                             'code': 'cv_approval_required'}, status=409)
+        selection = ApplicationCVInput(data=request.data)
+        selection.is_valid(raise_exception=True)
+        approval = get_object_or_404(CVApproval, pk=selection.validated_data['cv_version'], profile=profile)
+        try:
+            application, created = prepare_application(request.user, job, approval)
+        except (OSError, OperationalError):
+            raise CVUnavailable('Application preparation could not be confirmed. Check My applications before retrying.') from None
 
         serializer = ApplicationSerializer(application, context={'request': request})
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
+
+
+class ApplicationCVInput(StrictSerializer):
+    cv_version = serializers.UUIDField()
 
 
 class ApplicationListView(generics.ListAPIView):
