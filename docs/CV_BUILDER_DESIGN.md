@@ -1,0 +1,182 @@
+# CV builder — data and approval design for review
+
+17 October 2026. Inspected local `codex/ui-feedback-polish` at `4e3b1f3`.
+Design only: no model, migration, endpoint or frontend changes in this handback.
+The reviewed UI package remains local for the batch release. This scope supersedes
+AGENTS.md's older pilot mission; its quality and approval boundaries still apply.
+
+## Evidence and gap
+
+- `ajiri-backend/profiles/models.py`: Profile has headline, bio, location,
+  years_of_experience, skills and an uploaded CV. Contact data lives on User.
+  There are no structured employment, education, certification or project fields.
+- `ajiri-backend/profiles/cv_generator.py`: DOCX uses current Profile/User values;
+  its experience section is only a total-years sentence. It guesses a display
+  name from the email address if the name is absent.
+- `ajiri-backend/profiles/views.py`, `profiles/urls.py`: authenticated
+  `GET /api/profiles/me/generate-cv/` immediately generates a download, no approval.
+- `ajiri-frontend/src/pages/Profile.jsx`: profile editing and immediate generated
+  download exist; there is no CV preview or revision review.
+- `ajiri-backend/jobs/views.py`: applying generates private CV/letter snapshots
+  once. Existing application download tests in `profiles/test_cv.py` establish
+  owner-only access and preservation after profile edits.
+
+## User flow and content
+
+1. Open CV builder; explicitly start a draft from current profile/contact data.
+2. Enter or edit contact details, headline/summary, skills, employment, education,
+   certifications and projects. Optional sections may be empty. Save to continue
+   later; show unsaved changes and explicit save status. No browser storage of CVs.
+3. Preview the saved revision in accessible HTML, using the same validated content
+   and section order as DOCX. Return to edit whenever needed.
+4. Explicitly confirm “I have reviewed this CV and approve this version.” Approval
+   applies to the revision displayed, not whatever happens to be newest on submit.
+5. Download that approved version as DOCX. Editing creates an unapproved revision;
+   downloading the revised content requires a new review and approval.
+
+Use deterministic templates and existing python-docx, without AI, external calls
+or new dependencies. Do not invent names, qualifications, employers or achievements.
+Require a user-entered name before approval rather than guessing it from email.
+Label partial dates and current roles accurately; omit empty sections and the
+existing unconditional zero-years sentence. No parsing/extraction of uploaded CVs.
+Uploaded CV download remains a separate existing feature, clearly labelled.
+
+The CV draft holds its own contact snapshot: editing it does not alter account
+identity or silently update Profile. Profile changes do not silently rewrite a CV.
+No date of birth, national ID, gender, marital status, photo, referee contacts or
+home street address is requested in this first version. Existing account email
+can seed the contact field; editing CV contact text does not verify/change login.
+
+## Proposed additive schema — approval required
+
+Two new models in the profiles app; User, existing Profile fields and migration
+history remain unchanged. Do not backfill approval or create drafts for existing
+users automatically. Proposed fields are non-null unless explicitly noted.
+
+| Model.field | Type / default | Purpose and existing-row impact |
+|---|---|---|
+| CVWorkspace.id | BigAutoField, generated | New draft workspace identifier; no existing rows affected |
+| CVWorkspace.profile | OneToOneField(Profile), CASCADE, no default | One active draft per owner; unique constraint |
+| CVWorkspace.content | JSONField(default=dict) | Validated complete CV content, including schema_version=1 and contact snapshot; empty dict is incomplete, never approvable |
+| CVWorkspace.revision | PositiveIntegerField(default=1) | Optimistic concurrency version; database check revision >= 1 |
+| CVWorkspace.updated_at | DateTimeField(auto_now=True) | Last saved edit; not an approval signal |
+| CVApproval.id | UUIDField(primary_key=True, default=uuid.uuid4) | Private version identifier; randomness supplements ownership checks |
+| CVApproval.profile | ForeignKey(Profile), CASCADE, no default | Owner; inherited account deletion scope |
+| CVApproval.revision | PositiveIntegerField, no default | Exact approved workspace revision; check >= 1 |
+| CVApproval.content | JSONField, no default | Immutable validated content snapshot, including schema_version |
+| CVApproval.content_sha256 | CharField(64), no default | Hash of canonical UTF-8 JSON; detects content mismatches, not a signature |
+| CVApproval.template_version | CharField(32), no default | Explicit renderer version, initially cv-v1 |
+| CVApproval.document | FileField(private UUID path), no default | Exact reviewed-version DOCX bytes, never public MEDIA mapping |
+| CVApproval.document_sha256 | CharField(64), no default | Download integrity check against generated bytes |
+| CVApproval.approved_at | DateTimeField(default=timezone.now) | Explicit owner approval time; never inferred from earlier downloads |
+
+Unique constraint on CVApproval(profile, revision) makes repeat approval of the
+same revision idempotent. Approval rows and stored documents are immutable through
+the API. No generic model update route or admin edit action for approval content.
+Draft JSON is preferable to several child tables in this bounded first version:
+it avoids ordering/multi-table update complexity. Strict nested serializers provide
+field validation; JSON sacrifices SQL-level validation and cross-user reporting.
+
+### JSON validation contract
+
+Allowlist keys only. Validate the entire merged document on PATCH; reject unknown
+keys and invalid nested types. Strings are plain text, trimmed, no HTML or templates.
+Bounds: name/headline/location 255 characters; email 254; phone 20; summary 3,000;
+skills at most 50 entries of 100 characters. Employment at most 20, education 15,
+certifications 20, projects 20. Each section entry has a client-independent UUID,
+title/name and organisation where applicable (255 each), optional plain-text
+description (2,000), and no arbitrary nested data. Employment achievements allow
+at most 10 bullets of 500 characters. Total request/document content capped at
+100 KiB; generated DOCX capped at 2 MiB. Exact nested errors remain field-keyed.
+
+Dates are optional YYYY-MM strings with valid months, end >= start and an explicit
+current flag mutually exclusive with an end date. Certification expiry is optional
+YYYY-MM. Project links accept only absolute HTTP(S) URLs, max 2,048 characters;
+render as text, never fetch them. Minimal approval requirement: name and one
+substantive section; do not require employment or education from first-time workers.
+
+## API, concurrency and file consistency
+
+All CV routes require the existing authenticated owner; no ownership IDs accepted
+from clients. Cross-owner identifiers return 404; unauthenticated access 401.
+Responses and downloads use private, no-store. Reuse existing error/429 handling.
+
+- `GET /api/profiles/me/cv-draft/`: draft or a clear not-started response; GET has
+  no creation side effects. `POST` starts a draft explicitly and seeds the profile
+  snapshot server-side. Repeated creation returns the existing workspace.
+- `PATCH .../cv-draft/`: content and expected_revision. Atomic compare-and-swap
+  update increments revision; stale edits return JSON 409 without overwriting.
+- `POST .../cv-draft/approve/`: expected_revision, content_sha256 and explicit
+  approval=true. Server recomputes the hash; mismatch returns 409. Drafts cannot
+  set approved_at or supply stored file paths. Return the immutable approval ID.
+- `GET .../cv-versions/<uuid>/download/`: owner-only exact saved DOCX; missing or
+  corrupt file returns a generic unavailable error, never silently regenerates.
+- The current-draft download control is enabled only for its matching approval.
+  Earlier approved versions can be downloaded only through clearly labelled
+  earlier-version controls; they never masquerade as the newly edited draft.
+
+SQLite select_for_update alone does not serialize writers. Use a short transaction
+with a conditional workspace write on expected revision to acquire the write lock,
+re-read/validate, then create approval under its unique constraint. Generate bounded
+DOCX outside the lock, then recheck revision/hash inside the transaction. Handle
+concurrent approvals idempotently; stale edits cannot approve different content.
+Lock contention returns a safe retryable error without automatic mutation retry.
+
+File storage is not transactional. Write to a unique private path before the DB
+transaction; on a rejected/failed insert remove only that request's new file.
+Return success only after DB commit. A crash may leave an orphan file: document
+report-only reconciliation; no broad cleanup or automatic deletion in this package.
+Never delete an existing approved document to replace it. Use a neutral fixed
+download filename and no personal data in paths/logs. Include new rows and private
+files in the existing backup/restore and eventual account deletion/export scope.
+Historical version retention is a privacy follow-up; implement no automatic purge.
+
+## Compatibility and rollout
+
+All new fields live in new tables, so existing rows need no data migration. Fresh
+and existing accounts begin with no workspace/approval; old generated documents
+are not retrospectively approved. Run backup, stage migration source, inspect the
+exact migration plan, apply additive migration, then activate matching code/client.
+Stop if the plan touches User, existing data or unrelated migrations.
+
+The immediate-download endpoint must not bypass the new approval rule: retain its
+URL but make it return the latest matching approved CV, or JSON 409 requiring CV
+review. Update Profile's generated download control to the builder in the same
+release. Old tabs may need reload; existing uploaded downloads remain unchanged.
+Do not activate the new client against an unmigrated server.
+
+For the first implementation, application drafting/sending behavior stays unchanged
+and is labelled separately from the approved personal CV. A later reviewed package
+must make applications copy an explicitly selected approved CV and review the job
+letter/email separately; never silently regenerate an approved CV or alter existing
+application snapshots. No real application email or alert changes in this package.
+
+Rollback the application/client pair while keeping additive tables/files. Do not
+reverse the migration or restore an older DB over newer data as routine rollback.
+Old code ignores the new tables but resumes immediate generation, so rollback
+removes the approval guarantee: clearly disable/withhold the builder release until
+the forward fix is ready. Destructive reversal drops new CV data; it requires a
+separately reviewed export/backup and explicit approval, never this rollout.
+
+## Implementation packages after design approval
+
+1. Additive schema plus strict validation, migration and concurrency tests. Stop
+   for schema-package review before proceeding to runtime behavior.
+2. Draft/approval/download service and deterministic renderer, then mobile form,
+   preview and approval controls. Keep the existing reviewed UI changes in the batch.
+3. Full gates, regenerated frontend_build last, manual owner checks and review.
+   No push/deployment until the batch is explicitly authorized.
+
+Focused tests: existing accounts untouched; nested validation/limits/dates; no
+fabricated content; edit/review/approve/download round trip; stale edit/approval;
+repeat/concurrent approval; approval failure and orphan boundaries; exact file hash;
+cross-owner/anonymous access; current revision reapproval; earlier version labels;
+old download URL cannot bypass review; uploaded CV and application snapshots remain
+unchanged; no provider sends. Validate produced DOCX text with python-docx, plus
+mobile keyboard, long content and light/dark visual checks. Run all AGENTS gates.
+
+## Review decision
+
+Approve the two-table additive schema, bounded structured input, exact-version
+approval and legacy-download compatibility behavior above before generating the
+migration. No runtime implementation is claimed by this document.

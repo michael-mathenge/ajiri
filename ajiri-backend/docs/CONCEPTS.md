@@ -703,6 +703,26 @@ new request; no automatic provider retry. Receipt digests derive from Django's
 signing configuration; key rotation/retention must preserve duplicate protection.
 # Owner-only email pilot
 
+## cv-builder-schema
+
+CVWorkspace is an explicit, owner-linked editable JSON draft with a positive
+revision. CVApproval holds a separate version snapshot and private document
+reference; unique (profile, revision) prevents duplicate approval rows. The new
+tables do not backfill drafts or imply approval for existing accounts. Nested
+validation allowlists fields and bounds text, dates, section counts and UTF-8 size;
+entry UUIDs preserve identity through edits. Drafts may be incomplete, while
+approval validation requires a name and substantive content. No facts are guessed.
+This schema package has no routes or renderer integration. JSON constraints,
+immutable approval behavior, revision comparisons and file integrity must be used
+by the later reviewed service; direct ORM writes do not invoke DRF validation.
+The schema constraints guarantee uniqueness and positive revisions in the DB.
+SQLite revision updates must compare the expected revision in the write itself;
+select_for_update alone is insufficient. Concurrent writers can encounter lock
+contention and must not silently overwrite each other. New file paths ignore
+provided filenames; ownership enforcement remains a service responsibility.
+Cascade deletion removes rows, not storage objects automatically. Media cleanup
+and version retention require the documented service/runbook work before release.
+
 ## ui-feedback
 
 Job cards use the current profile's actual skills list to distinguish an empty
