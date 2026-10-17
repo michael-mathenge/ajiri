@@ -5,6 +5,7 @@ import { useApiResource } from '../hooks/useApiResource'
 import { apiErrors } from '../lib/errors'
 import FormErrors from '../components/FormErrors'
 import DownloadButton from '../components/DownloadButton'
+import MonthYearField from '../components/MonthYearField'
 import { Button, Card, ErrorState, Input, LoadingState, Textarea } from '../components/ui'
 
 const sections = [
@@ -38,7 +39,8 @@ function cvErrors(error, fallback) {
   return Object.keys(result).length ? result : apiErrors(error, fallback)
 }
 
-function Field({ id, label, value, type = 'text', onChange, maxLength = 255 }) {
+function Field({ id, label, value, type = 'text', onChange, maxLength = 255, disabled = false }) {
+  if (type === 'month') return <MonthYearField id={id} label={label} value={value || ''} onChange={onChange} disabled={disabled} />
   const Component = type === 'textarea' || type === 'bullets' ? Textarea : Input
   return <div className="field">
     <label htmlFor={id}>{label}</label>
@@ -158,6 +160,7 @@ export function CVEditor({ initial }) {
             <legend>{title} {index + 1}</legend>
             <div className="profile-grid">{fields.map(([key, label, type]) => <Field key={key} id={`cv-${row.id}-${key}`} label={`${label} (${title.toLowerCase()} ${index + 1})`}
               type={type} maxLength={key === 'description' ? 2000 : key === 'url' ? 2048 : 255}
+              disabled={key === 'end' && Boolean(row.current)}
               value={type === 'bullets' ? (bullets[row.id] ?? row.achievements?.join('\n') ?? '') : row[key]}
               onChange={value => type === 'bullets' ? (setBullets(current => ({ ...current, [row.id]: value })), setReview(false), setApproved(false), setMessage('')) : changeRow(section, index, key, value)} />)}</div>
             <Button variant="outline" onClick={() => change(section, values[section].filter((_, i) => i !== index))}>Remove {title.toLowerCase()} {index + 1}</Button>

@@ -125,6 +125,43 @@ it('adds and removes optional entries without requiring employment for a first C
   expect(apiClient.post).not.toHaveBeenCalled()
 })
 
+it('chooses readable months and typed years, clears dates and handles current employment', async () => {
+  apiClient.patch.mockImplementation((_, payload) => Promise.resolve({ data: { ...structuredClone(draft), content: payload.content, revision: 2 } }))
+  page()
+  fireEvent.click(screen.getByRole('button', { name: 'Add work experience' }))
+  fireEvent.change(screen.getByLabelText('Role (work experience 1)'), { target: { value: 'Developer' } })
+  fireEvent.change(screen.getByLabelText('Employer (work experience 1)'), { target: { value: 'Test Team' } })
+  const month = screen.getByLabelText('Start month (work experience 1) — month')
+  expect(within(month).getByRole('option', { name: 'September' })).toHaveValue('09')
+  fireEvent.change(month, { target: { value: '09' } })
+  fireEvent.click(screen.getByRole('button', { name: 'Save and preview CV' }))
+  expect(apiClient.patch).not.toHaveBeenCalled() // A partial date cannot be silently saved as empty.
+  fireEvent.change(screen.getByLabelText('Start month (work experience 1) — year'), { target: { value: '2018' } })
+  fireEvent.change(screen.getByLabelText('End month (work experience 1) — month'), { target: { value: '06' } })
+  fireEvent.change(screen.getByLabelText('End month (work experience 1) — year'), { target: { value: '2020' } })
+  fireEvent.click(screen.getByLabelText('I currently work here (work experience 1)'))
+  expect(screen.getByLabelText('End month (work experience 1) — year')).toBeDisabled()
+  fireEvent.click(screen.getByRole('button', { name: 'Save and preview CV' }))
+  await screen.findByText('Revision 2 saved. Review the preview before approving.')
+  expect(apiClient.patch).toHaveBeenCalledWith('/profiles/me/cv-draft/', expect.objectContaining({
+    content: expect.objectContaining({ employment: [expect.objectContaining({ start: '2018-09', end: '', current: true })] }),
+  }))
+  fireEvent.click(screen.getByRole('button', { name: 'Clear start month (work experience 1)' }))
+  expect(month).toHaveValue('')
+  expect(screen.getByLabelText('Start month (work experience 1) — year')).toHaveValue(null)
+})
+
+it('loads saved certificate months and preserves expiry while editing the issue year', () => {
+  const initial = structuredClone(draft)
+  initial.content.certifications = [{ id: 'cert-one', name: 'Test certificate', issuer: 'Test institute', issued: '2024-02', expiry: '2028-11', description: '' }]
+  page(<CVEditor initial={initial} />)
+  expect(screen.getByLabelText('Issued month (certifications 1) — month')).toHaveValue('02')
+  expect(screen.getByLabelText('Issued month (certifications 1) — year')).toHaveValue(2024)
+  fireEvent.change(screen.getByLabelText('Issued month (certifications 1) — year'), { target: { value: '2025' } })
+  expect(screen.getByLabelText('Expiry month (certifications 1) — month')).toHaveValue('11')
+  expect(screen.getByLabelText('Expiry month (certifications 1) — year')).toHaveValue(2028)
+})
+
 it('warns before leaving with unsaved changes and retains edits if cancelled', () => {
   const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false)
   page(<><CVEditor initial={structuredClone(draft)} /><a href="/profile">Leave editor</a></>)
