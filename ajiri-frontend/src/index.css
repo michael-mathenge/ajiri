@@ -501,6 +501,18 @@ textarea.input {
 .error-panel p {
   margin-bottom: 1rem;
 }
+.form-error-summary {
+  border: 1px solid var(--danger);
+  border-inline-start-width: 4px;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  background: var(--surface);
+  overflow-wrap: anywhere;
+}
+.form-error-summary p { margin: 0 0 0.5rem; font-weight: 600; }
+.form-error-summary ul { margin: 0; padding-inline-start: 1.25rem; list-style: disc; }
+.form-error-summary li + li { margin-top: 0.5rem; }
+.form-card .input[aria-invalid='true'] { border: 2px solid var(--danger); }
 .skeleton {
   background: var(--border);
   border-radius: 0.3rem;

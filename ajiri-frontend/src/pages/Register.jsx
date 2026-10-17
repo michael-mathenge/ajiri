@@ -49,7 +49,7 @@ export default function Register() {
         className="form-card"
         aria-busy={submitting}
       >
-        <FormErrors errors={errors} prefix="register" />
+        <FormErrors errors={errors} prefix="register" className="form-error-summary" />
         {fields.map(([name, label, type, autoComplete]) => (
           <div className="field" key={name}>
             <label htmlFor={name}>{label}</label>

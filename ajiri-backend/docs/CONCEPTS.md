@@ -703,6 +703,22 @@ new request; no automatic provider retry. Receipt digests derive from Django's
 signing configuration; key rotation/retention must preserve duplicate protection.
 # Owner-only email pilot
 
+## ui-feedback
+
+Job cards use the current profile's actual skills list to distinguish an empty
+profile from a genuine zero match. An unavailable profile is unknown: jobs stay
+usable while scores and empty-profile advice are withheld. One profile read is
+shared by all cards on that screen; returning from Profile fetches it again.
+Registration keeps every field error in an associated, bordered summary and marks
+invalid inputs, using the existing light/dark theme danger colors.
+Account forms honor a valid Retry-After deadline (seconds or HTTP date). The
+countdown uses elapsed wall-clock time, disables submission during the wait and
+never submits automatically on expiry. Missing/malformed headers get generic wait
+guidance without a guessed timer. This is a local display aid, not a replacement
+for server throttles: reload resets the display; server limits still apply.
+Second-by-second updates are not announced by screen readers. No credentials,
+email content or deadlines are saved to browser storage.
+
 ## owner-email-pilot
 
 Real account delivery is off by default. Explicit pilot configuration must select
