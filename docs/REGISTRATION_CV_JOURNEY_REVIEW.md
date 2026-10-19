@@ -1,5 +1,7 @@
 # Registration to approved CV journey
 
+> Status as of 19 October 2026: document version included on merged main `4b6e99bac4995fd3e36e6fbe1c7e3176383b6214`. Deployment of this document version/package is not verified here. Historical statements/results below are preserved; see AGENTS.md section 4.
+
 17 October 2026. Synthetic test data only. No production writes, mail, applications,
 credential changes or pilot allowlist expansion were performed for this review.
 

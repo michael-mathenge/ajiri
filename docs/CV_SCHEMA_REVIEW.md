@@ -1,5 +1,7 @@
 # CV builder schema package review
 
+> Status as of 19 October 2026: document version included on merged main `4b6e99bac4995fd3e36e6fbe1c7e3176383b6214`. This document version was already present at recorded production revision 641cdfb. Historical statements/results below are preserved; see AGENTS.md section 4.
+
 17 October 2026. Design approved by Michael in chat before implementation.
 Branch: `codex/cv-builder-schema`, based on reviewed UI batch tip `4e3b1f3`.
 Suggested estimate: 3 points. This is schema preparation, not a working CV builder.
