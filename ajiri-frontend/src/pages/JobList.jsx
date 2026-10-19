@@ -186,7 +186,7 @@ export default function JobList() {
                     {job.company_name.slice(0, 2).toUpperCase()}
                   </span>
                   {hasSkills === false ? (
-                    <Link to="/profile" className="inline-link text-sm">Add skills to see your match</Link>
+                    <Link to="/profile" className="inline-link text-sm">Add skills to see matches</Link>
                   ) : hasSkills === true ? <MatchScore score={job.match_score} /> : null}
                 </div>
                 <p className="company-name">{job.company_name}</p>

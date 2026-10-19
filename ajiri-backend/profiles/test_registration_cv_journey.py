@@ -13,7 +13,7 @@ from django.test import TransactionTestCase, override_settings
 from docx import Document
 from rest_framework.test import APIClient
 
-from jobs.models import Application, DeliveryAttempt, Job
+from jobs.models import Application, DeliveryAttempt, DeliveryDailyBudget, Job
 from .models import CVApproval, CVWorkspace
 
 
@@ -139,6 +139,7 @@ class RegistrationCVJourneyTests(TransactionTestCase):
             application_method=Job.ApplicationMethod.EMAIL, application_email='employer@example.invalid')
         mail.outbox.clear()
         ledger_before = list(DeliveryAttempt.objects.order_by('pk').values())
+        budgets_before = list(DeliveryDailyBudget.objects.order_by('pk').values())
         # Preparation and review are read/draft operations, not authorization to send.
         # see docs/CONCEPTS.md#acceptance-journey
         with patch('jobs.brevo_transport.BrevoTransport.send') as provider, patch('django.core.mail.EmailMessage.send') as send:
@@ -165,6 +166,7 @@ class RegistrationCVJourneyTests(TransactionTestCase):
             send.assert_not_called()
         self.assertEqual(mail.outbox, [])
         self.assertEqual(list(DeliveryAttempt.objects.order_by('pk').values()), ledger_before)
+        self.assertEqual(list(DeliveryDailyBudget.objects.order_by('pk').values()), budgets_before)
         application.refresh_from_db()
         self.assertIsNone(application.sent_at)
         self.assertEqual(self.client.post('/api/accounts/logout/', {}, format='json', secure=True).status_code, 200)

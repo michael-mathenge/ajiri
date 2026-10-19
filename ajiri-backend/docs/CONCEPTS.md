@@ -848,3 +848,20 @@ the inherited Word Title border is removed. Dates are separate paragraphs below
 entry headings, with no implicit alignment tabs or tables. Headings keep with the
 following paragraph. Existing approval files and hashes are immutable. Structure
 tests complement Word rendering; Google Docs and phone pagination need manual QA.
+
+## readable-document-downloads
+
+Download headers use approved contact names for personal CVs and current account
+names plus company-last for application documents. All name parts are retained,
+Unicode-normalized, unsafe/control characters removed, whitespace joined with
+underscores and each component bounded to 60 characters. Empty values become
+Applicant/Company. Django encodes Unicode headers; the client honors them. Labels
+may change after account/company edits, but storage UUIDs and approved bytes do
+not. Uploaded CVs use Uploaded_CV plus their supported original extension.
+
+## readable-form-errors
+
+FormErrors preserves field association IDs while rendering human-readable labels
+and one spaced list item per server message. Nested DRF messages remain complete;
+errors never discard input. Empty skills offer a profile prompt; unavailable
+profile data is unknown and never implies an empty skills list.
