@@ -840,3 +840,11 @@ then selects an approved CV and prepares an application for separate review. It
 checks exact document bytes and proves preparation consumes no delivery budget and
 sends no mail. Vitest covers client transitions with mocked HTTP; this is not one
 browser end-to-end test. Captured verification mail is cleared before preparation.
+
+## cv-layout-verification
+
+New CV approvals use template cv-v2 with explicit Calibri sizes and black text;
+the inherited Word Title border is removed. Dates are separate paragraphs below
+entry headings, with no implicit alignment tabs or tables. Headings keep with the
+following paragraph. Existing approval files and hashes are immutable. Structure
+tests complement Word rendering; Google Docs and phone pagination need manual QA.
