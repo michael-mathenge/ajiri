@@ -76,7 +76,7 @@ it('renders every nested validation message and retains the draft', async () => 
   const alert = await screen.findByRole('alert')
   expect(alert).toHaveTextContent('Work experience 1 — Role: Required.')
   expect(alert).toHaveTextContent('Work experience 1 — Employer: Enter an employer.')
-  expect(screen.getByLabelText('CV save errors')).toHaveFocus()
+  await waitFor(() => expect(screen.getByLabelText('CV save errors')).toHaveFocus())
   expect(screen.getByLabelText('Full name')).toHaveValue('Retained Name')
 })
 
