@@ -30,6 +30,7 @@ it('previews saved content and requires explicit consent before approving and do
   expect(screen.queryByRole('article')).not.toBeInTheDocument()
   fireEvent.click(screen.getByRole('button', { name: 'Save and preview CV' }))
   expect(await screen.findByRole('article')).toHaveTextContent('Test summary')
+  expect(screen.getByRole('heading', { name: 'Review revision 1' })).toHaveFocus()
   const approve = screen.getByRole('button', { name: 'Approve this CV version' })
   expect(approve).toBeDisabled()
   expect(apiClient.post).not.toHaveBeenCalled()
@@ -72,8 +73,39 @@ it('renders every nested validation message and retains the draft', async () => 
   page()
   fireEvent.change(screen.getByLabelText('Full name'), { target: { value: 'Retained Name' } })
   fireEvent.click(screen.getByRole('button', { name: 'Save and preview CV' }))
-  expect(await screen.findByRole('alert')).toHaveTextContent('Required. Enter an employer.')
+  const alert = await screen.findByRole('alert')
+  expect(alert).toHaveTextContent('Work experience 1 — Role: Required.')
+  expect(alert).toHaveTextContent('Work experience 1 — Employer: Enter an employer.')
+  expect(screen.getByLabelText('CV save errors')).toHaveFocus()
   expect(screen.getByLabelText('Full name')).toHaveValue('Retained Name')
+})
+
+it('brings repeated save errors into view and identifies the exact optional entry', async () => {
+  const scroll = vi.fn()
+  const original = HTMLElement.prototype.scrollIntoView
+  HTMLElement.prototype.scrollIntoView = scroll
+  try {
+    apiClient.patch.mockRejectedValue({ response: { status: 400, data: {
+      employment: [{}, { title: ['This field may not be blank.'], organisation: ['This field may not be blank.'] }],
+      education: [{ institution: ['This field may not be blank.'] }],
+    } } })
+    page()
+    fireEvent.change(screen.getByLabelText('Full name'), { target: { value: 'Retained Name' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Save and preview CV' }))
+    const alert = await screen.findByRole('alert')
+    expect(alert).toHaveTextContent('Work experience 2 — Role: This field may not be blank.')
+    expect(alert).toHaveTextContent('Work experience 2 — Employer: This field may not be blank.')
+    expect(alert).toHaveTextContent('Education 1 — Institution: This field may not be blank.')
+    expect(screen.getByLabelText('CV save errors')).toHaveFocus()
+    expect(scroll).toHaveBeenCalledWith({ block: 'start', behavior: 'auto' })
+    fireEvent.click(screen.getByRole('button', { name: 'Save and preview CV' }))
+    await waitFor(() => expect(apiClient.patch).toHaveBeenCalledTimes(2))
+    await waitFor(() => expect(screen.getByLabelText('CV save errors')).toHaveFocus())
+    expect(screen.getByLabelText('Full name')).toHaveValue('Retained Name')
+    expect(apiClient.post).not.toHaveBeenCalled()
+  } finally {
+    HTMLElement.prototype.scrollIntoView = original
+  }
 })
 
 it('labels earlier versions separately and escapes preview text', () => {
@@ -91,6 +123,43 @@ it('adds and removes optional entries without requiring employment for a first C
   fireEvent.click(screen.getByRole('button', { name: 'Remove education 1' }))
   expect(screen.queryByLabelText('Qualification (education 1)')).not.toBeInTheDocument()
   expect(apiClient.post).not.toHaveBeenCalled()
+})
+
+it('chooses readable months and typed years, clears dates and handles current employment', async () => {
+  apiClient.patch.mockImplementation((_, payload) => Promise.resolve({ data: { ...structuredClone(draft), content: payload.content, revision: 2 } }))
+  page()
+  fireEvent.click(screen.getByRole('button', { name: 'Add work experience' }))
+  fireEvent.change(screen.getByLabelText('Role (work experience 1)'), { target: { value: 'Developer' } })
+  fireEvent.change(screen.getByLabelText('Employer (work experience 1)'), { target: { value: 'Test Team' } })
+  const month = screen.getByLabelText('Start month (work experience 1) — month')
+  expect(within(month).getByRole('option', { name: 'September' })).toHaveValue('09')
+  fireEvent.change(month, { target: { value: '09' } })
+  fireEvent.click(screen.getByRole('button', { name: 'Save and preview CV' }))
+  expect(apiClient.patch).not.toHaveBeenCalled() // A partial date cannot be silently saved as empty.
+  fireEvent.change(screen.getByLabelText('Start month (work experience 1) — year'), { target: { value: '2018' } })
+  fireEvent.change(screen.getByLabelText('End month (work experience 1) — month'), { target: { value: '06' } })
+  fireEvent.change(screen.getByLabelText('End month (work experience 1) — year'), { target: { value: '2020' } })
+  fireEvent.click(screen.getByLabelText('I currently work here (work experience 1)'))
+  expect(screen.getByLabelText('End month (work experience 1) — year')).toBeDisabled()
+  fireEvent.click(screen.getByRole('button', { name: 'Save and preview CV' }))
+  await screen.findByText('Revision 2 saved. Review the preview before approving.')
+  expect(apiClient.patch).toHaveBeenCalledWith('/profiles/me/cv-draft/', expect.objectContaining({
+    content: expect.objectContaining({ employment: [expect.objectContaining({ start: '2018-09', end: '', current: true })] }),
+  }))
+  fireEvent.click(screen.getByRole('button', { name: 'Clear start month (work experience 1)' }))
+  expect(month).toHaveValue('')
+  expect(screen.getByLabelText('Start month (work experience 1) — year')).toHaveValue(null)
+})
+
+it('loads saved certificate months and preserves expiry while editing the issue year', () => {
+  const initial = structuredClone(draft)
+  initial.content.certifications = [{ id: 'cert-one', name: 'Test certificate', issuer: 'Test institute', issued: '2024-02', expiry: '2028-11', description: '' }]
+  page(<CVEditor initial={initial} />)
+  expect(screen.getByLabelText('Issued month (certifications 1) — month')).toHaveValue('02')
+  expect(screen.getByLabelText('Issued month (certifications 1) — year')).toHaveValue(2024)
+  fireEvent.change(screen.getByLabelText('Issued month (certifications 1) — year'), { target: { value: '2025' } })
+  expect(screen.getByLabelText('Expiry month (certifications 1) — month')).toHaveValue('11')
+  expect(screen.getByLabelText('Expiry month (certifications 1) — year')).toHaveValue(2028)
 })
 
 it('warns before leaving with unsaved changes and retains edits if cancelled', () => {
