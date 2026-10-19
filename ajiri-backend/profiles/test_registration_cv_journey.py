@@ -3,6 +3,7 @@ from io import BytesIO
 from pathlib import Path
 import tempfile
 from urllib.parse import parse_qs, urlsplit
+from unittest.mock import patch
 import uuid
 
 from django.contrib.auth import get_user_model
@@ -12,7 +13,7 @@ from django.test import TransactionTestCase, override_settings
 from docx import Document
 from rest_framework.test import APIClient
 
-from jobs.models import Application, DeliveryAttempt
+from jobs.models import Application, DeliveryAttempt, Job
 from .models import CVApproval, CVWorkspace
 
 
@@ -40,7 +41,7 @@ class RegistrationCVJourneyTests(TransactionTestCase):
             headers['HTTP_AUTHORIZATION'] = 'Bearer ' + self.access
         self.client.credentials(**headers)
 
-    def test_register_verify_login_profile_review_approve_and_download_before_applying(self):
+    def test_register_verify_build_approve_download_prepare_and_review_without_sending(self):
         # Use actual endpoints/JWT/CSRF rather than force_authenticate or ORM account setup.
         self.assertEqual(self.client.get('/api/profiles/me/', secure=True).status_code, 401)
         self.csrf()
@@ -131,6 +132,41 @@ class RegistrationCVJourneyTests(TransactionTestCase):
         self.assertFalse(Application.objects.exists())
         self.assertEqual(list(DeliveryAttempt.objects.values_list('channel', flat=True)), ['email_verification'])
         self.assertEqual(len(mail.outbox), 1)
+        versions = self.client.get('/api/profiles/me/cv-versions/', secure=True)
+        self.assertEqual(str(versions.data['approval_id']), str(snapshot.pk))
+        job = Job.objects.create(title='Synthetic Developer', company_name='Synthetic Company',
+            description='Synthetic role', source_name='journey', source_url='https://example.invalid/journey',
+            application_method=Job.ApplicationMethod.EMAIL, application_email='employer@example.invalid')
+        mail.outbox.clear()
+        ledger_before = list(DeliveryAttempt.objects.order_by('pk').values())
+        # Preparation and review are read/draft operations, not authorization to send.
+        # see docs/CONCEPTS.md#acceptance-journey
+        with patch('jobs.brevo_transport.BrevoTransport.send') as provider, patch('django.core.mail.EmailMessage.send') as send:
+            prepared = self.client.post(f'/api/jobs/{job.pk}/apply/',
+                {'cv_version': str(snapshot.pk)}, format='json', secure=True)
+            self.assertEqual(prepared.status_code, 201)
+            application = Application.objects.get()
+            review = self.client.get('/api/jobs/applications/', secure=True)
+            self.assertEqual(review.status_code, 200)
+            self.assertEqual(review.data['results'][0]['status'], 'ready_for_review')
+            document_url = f'/api/jobs/applications/{application.pk}/documents/cv/'
+            document = self.client.get(document_url, secure=True)
+            self.assertEqual(b''.join(document.streaming_content), download.content)
+            self.assertIn('no-store', document['Cache-Control'])
+            self.client.patch('/api/profiles/me/', {'headline': 'Later profile edit'}, format='json', secure=True)
+            repeated = self.client.get(document_url, secure=True)
+            self.assertEqual(b''.join(repeated.streaming_content), download.content)
+            intruder = get_user_model().objects.create_user(email='intruder@example.invalid', password='test-only')
+            other = APIClient()
+            other.force_authenticate(intruder)
+            self.assertEqual(other.get(document_url, secure=True).status_code, 404)
+            self.assertEqual(other.get(url, secure=True).status_code, 404)
+            provider.assert_not_called()
+            send.assert_not_called()
+        self.assertEqual(mail.outbox, [])
+        self.assertEqual(list(DeliveryAttempt.objects.order_by('pk').values()), ledger_before)
+        application.refresh_from_db()
+        self.assertIsNone(application.sent_at)
         self.assertEqual(self.client.post('/api/accounts/logout/', {}, format='json', secure=True).status_code, 200)
         self.client.credentials()
         self.assertEqual(self.client.get(url, secure=True).status_code, 401)

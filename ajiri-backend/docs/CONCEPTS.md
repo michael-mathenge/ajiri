@@ -832,3 +832,11 @@ attempts that Nairobi day count against the five-attempt ceiling. No migration,
 cache quota, refunds or automatic resend. Disable and reload for rollback, retaining
 receipt rows and password-reset revocation guards. See docs/OWNER_EMAIL_PILOT.md
 in the repository root for manual release steps; no activation is performed by tests.
+
+## acceptance-journey
+
+The synthetic acceptance journey uses real Django endpoints, JWT and CSRF checks,
+then selects an approved CV and prepares an application for separate review. It
+checks exact document bytes and proves preparation consumes no delivery budget and
+sends no mail. Vitest covers client transitions with mocked HTTP; this is not one
+browser end-to-end test. Captured verification mail is cleared before preparation.
