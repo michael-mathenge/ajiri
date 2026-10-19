@@ -9,6 +9,7 @@ from django.db import OperationalError, close_old_connections
 from django.test import TestCase, TransactionTestCase, override_settings
 from rest_framework.test import APIClient
 from profiles.cv_test_helpers import approved_cv
+from profiles.models import CVApproval
 from .application_drafting import prepare_application
 from .models import Application, Job
 
@@ -110,24 +111,29 @@ class ConcurrentDraftTests(TransactionTestCase):
         user = get_user_model().objects.create_user(email='draft-race@example.invalid', password='test-only')
         job = Job.objects.create(title='Test', company_name='Test', description='Test', source_name='test', source_url='https://example.invalid/draft-race')
         barrier = Barrier(2)
-        from .application_drafting import generate_cover_letter_docx
-        def letter(*args):
-            buffer = generate_cover_letter_docx(*args)
+        original_save = Application.save
+        def competing_insert(application, *args, **kwargs):
+            # Synchronize after document/profile reads and file writes, before SQL.
+            # A deferred SQLite transaction has not acquired a write lock here.
+            # see docs/CONCEPTS.md#approved-cv-applications
             barrier.wait(timeout=15)
-            return buffer
+            return original_save(application, *args, **kwargs)
         with tempfile.TemporaryDirectory() as folder, override_settings(MEDIA_ROOT=folder):
             approval = approved_cv(user)
             def prepare():
                 close_old_connections()
                 try:
-                    return prepare_application(get_user_model().objects.get(pk=user.pk), job, approval)[0].pk
+                    # Real requests load independent FieldFiles; sharing one instance
+                    # across threads lets one reader close another reader's handle.
+                    own_approval = CVApproval.objects.get(pk=approval.pk)
+                    return prepare_application(get_user_model().objects.get(pk=user.pk), job, own_approval)[0].pk
                 except OperationalError as error:
                     if 'locked' not in str(error).lower():
                         raise
                     return None
                 finally:
                     close_old_connections()
-            with patch('jobs.application_drafting.generate_cover_letter_docx', side_effect=letter), ThreadPoolExecutor(max_workers=2) as pool:
+            with patch.object(Application, 'save', new=competing_insert), ThreadPoolExecutor(max_workers=2) as pool:
                 futures = [pool.submit(prepare) for _ in range(2)]
                 results = [future.result() for future in futures]
             self.assertEqual(Application.objects.count(), 1)
