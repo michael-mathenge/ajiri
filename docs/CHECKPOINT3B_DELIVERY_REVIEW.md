@@ -1,5 +1,7 @@
 # Checkpoint 3B — dormant Brevo transport and quota service review
 
+> Status as of 19 October 2026: document version included on merged main `4b6e99bac4995fd3e36e6fbe1c7e3176383b6214`. This document version was already present at recorded production revision 641cdfb. Historical statements/results below are preserved; see AGENTS.md section 4.
+
 16 October 2026. Branch feature/brevo-delivery-service, based on locally approved
 schema package 6fe90d3. Michael authorized this package and confirmed that definite
 provider failures consume quota. No push, deployment, provider/DNS write or real

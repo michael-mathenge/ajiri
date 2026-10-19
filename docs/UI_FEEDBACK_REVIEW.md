@@ -1,5 +1,7 @@
 # UI feedback review — 17 October 2026
 
+> Status as of 19 October 2026: document version included on merged main `4b6e99bac4995fd3e36e6fbe1c7e3176383b6214`. This document version was already present at recorded production revision 641cdfb. Historical statements/results below are preserved; see AGENTS.md section 4.
+
 One local frontend package, three approved steps. Base: main `3309803`.
 Branch: `codex/ui-feedback-polish`. No push, deployment, real email, backend
 behavior, dependencies, migrations, auth interceptor, CI or production changes.

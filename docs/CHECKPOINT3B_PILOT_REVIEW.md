@@ -1,5 +1,7 @@
 # Checkpoint 3B — owner-only account-email pilot review
 
+> Status as of 19 October 2026: document version included on merged main `4b6e99bac4995fd3e36e6fbe1c7e3176383b6214`. This document version was already present at recorded production revision 641cdfb. Historical statements/results below are preserved; see AGENTS.md section 4.
+
 16 October 2026. Branch `codex/owner-email-pilot`, based on documentation preparation
 `c4b6a37` and reviewed account-email integration `92c739d`. Suggested 5 points.
 Michael approved building the pilot controls/tests with real sending disabled,

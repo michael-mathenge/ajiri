@@ -1,5 +1,7 @@
 # Sprint 3 review
 
+> Status as of 19 October 2026: document version included on merged main `4b6e99bac4995fd3e36e6fbe1c7e3176383b6214`. This document version was already present at recorded production revision 641cdfb. Historical statements/results below are preserved; see AGENTS.md section 4.
+
 15 October 2026 (Africa/Nairobi). Read directly from Jira board 34, sprint ID 3,
 Ajiri Sprint 3, all nine issues AJ-8 through AJ-16. Jira reports this sprint as
 future and Sprint 4 as active; no sprint or issue was changed. Source tested:

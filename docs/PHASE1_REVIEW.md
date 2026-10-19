@@ -1,5 +1,7 @@
 # Phase 1 review
 
+> Status as of 19 October 2026: document version included on merged main `4b6e99bac4995fd3e36e6fbe1c7e3176383b6214`. This document version was already present at recorded production revision 641cdfb. Historical statements/results below are preserved; see AGENTS.md section 4.
+
 ## 1. What changed
 
 - `ajiri-frontend/src/index.css`, `index.html`, `package*.json`, `vite.config.js`: semantic light/dark tokens, Tailwind 4, system fonts, Radix primitives and lucide icons. JSX only.
