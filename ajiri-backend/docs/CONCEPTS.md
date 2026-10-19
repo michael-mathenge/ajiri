@@ -705,6 +705,11 @@ signing configuration; key rotation/retention must preserve duplicate protection
 
 ## approved-cv-applications
 
+Concurrency tests must load an independent approval/FieldFile per simulated request
+and synchronize immediately before competing inserts, after profile/document reads
+and file writes. Sharing FieldFile handles can corrupt concurrent reads in a test;
+an earlier barrier can strand a worker when another exits before reaching it.
+
 New applications require an explicit owner-approved CV UUID. The job page reads
 only version metadata, suggests the current approved version and labels older
 choices; it never silently chooses an earlier version for an unapproved draft.
