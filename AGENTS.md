@@ -4,11 +4,17 @@
 
 ## 1. Mission
 
-Build the approved owner-only account-email pilot on codex/owner-email-pilot.
-Default real sending off; mocked provider tests only. This supersedes the prior
-closed-test-only mission for the reviewed production factory and pilot guards.
-No push, deployment, real messages, credentials handling, migrations, dependencies,
-CI, CORS, ingestion or token/reset/refresh behavior changes. Stop for review.
+Deliver Checkpoint 4 Phase C on integration/checkpoint-4, pinned to
+4b6e99bac4995fd3e36e6fbe1c7e3176383b6214. Michael's 19 October Phase C prompt
+supersedes historical mission/package numbering and integration branch references.
+Build C1 acceptance journey, C2 CV layout verification, C3 UI polish and C4 status
+housekeeping, then document D1 alert defaults, D2 certificate decisions and D3
+application/alert sending. Branch packages from integration and locally merge
+--no-ff after section 7 gates; Michael explicitly approved these local merges.
+No pushes, PRs, remote merges, connector writes, production actions, migrations or
+new dependencies. Do not change auth/JWT/cookies/CSRF, CORS, ingestion, hosting or
+CI. Stop affected work for a migration/auth requirement; continue independent
+packages under section 8. All sending/consent/certificate designs remain proposals.
 
 ## 2. Product
 
@@ -27,26 +33,31 @@ Users are mostly on phones with limited data. **Mobile-first, lightweight, acces
 - Production: PythonAnywhere free tier, a committed `frontend_build`, and a GitHub Actions workflow that posts jobs to `POST /api/jobs/ingest/` and `/api/jobs/sweep/` (header `X-Ingest-Key`)
 - CI exists (`.github/workflows/ci.yml`: backend checks, migrations, tests, frontend lint/build, committed-build consistency; Python matrix 3.12-3.14). Local dev and PythonAnywhere use Python 3.12.
 
-## 4. Current state (Phase B schema preparation, 16 October 2026)
+## 4. Current state as of 19 October 2026
 
-Michael deployed merged Phase A e4eaefd after verified DB/media backup and isolated
-restore, plus a preserved virtualenv recovery copy. Production pins now report
-Django 6.1.2/PyJWT 2.15.1. Owner-reported checks passed: health GET/HEAD, tokenless
-refresh CSRF rejection, login/logout, profile save, owner download, private-media
-404, ingestion run #32, log directory 0700 and backup dry-run (7 files). Live log
-writing/rotation remains unverified. Redirect=False/HSTS=0 pending the host scheme
-answer; no change authorized here.
+Pinned merged main is 4b6e99bac4995fd3e36e6fbe1c7e3176383b6214, including PRs
+21-24. Last recorded production is 641cdfb; no production inspection/deployment
+occurs in Phase C. The pinned main must not be described as deployed. Since the
+recorded deployment: CV date/save feedback and registration journey coverage,
+frontend dependency/build updates, checkout updates and draft concurrency test
+repair. No requirements or migration changes occur in that release delta.
 
-The schema package was reviewed and approved locally. The dormant transport and
-quota package was reviewed and approved locally. Michael has now authorized
-reset/verification flows and the narrow reset-revocation design extension; that
-package was reviewed. Account-email integration is now authorized with sending disabled. Approved decisions are recorded in docs/MIGRATION_DESIGN_3B1.md.
-Michael approved the account-email bridge and owner-only pilot preparation.
-Browser setup confirmed the sending domain authenticated in Brevo, Ajiri sender
-verified and an alias attached to the existing Zoho mailbox. No inbox-delivery
-test or credential creation occurred. Preserve original-checkout lockfile,
-coverage data, stash and Git configuration must remain untouched. Queued UI changes
-(no-skills prompt, registration styling, alert defaults) are not this package.
+Repository code includes 3A hardening, Phase A CSRF/health/logging/backup tools,
+account verification/reset and owner-only email pilot, CV builder approval and
+approved-CV application snapshots. Michael reported receiving and verifying his
+pilot email and successful registration/profile/CV download. These are historical
+owner reports, not a current production audit. Broader application/alert real
+sending remains gated; existing console paths do not prove inbox delivery.
+Redirect=False/HSTS=0 was last reported pending proxy scheme verification; current
+settings are UNVERIFIED here. Renewal expiry must be rechecked by Michael.
+
+C1-C3 local gates are recorded in package reviews: 216 Django tests run at C3,
+one Windows symlink skip; 71 component tests; Node 24.19 locked install/lint/build.
+Future approvals use cv-v2; Word synthetic rendering was inspected (six pages and
+one page). Google Docs/phone/browser visual checks remain UNVERIFIED. The full
+checkpoint results and limits belong in CHECKPOINT4_PHASE_C_REVIEW.md. New alert
+email defaults/consent, certificate uploads and broad sending are NOT implemented.
+Preserve original checkout changes, coverage, stash and Git configuration.
 
 ## 5. Known gotchas
 
@@ -58,13 +69,22 @@ coverage data, stash and Git configuration must remain untouched. Queued UI chan
 - Windows/PowerShell: use `curl.exe`, not `curl`. `-replace` is case-insensitive; use `-creplace` with `[regex]::Escape()`.
 - Integrate new code alongside existing imports. Never overwrite file tops.
 
-## 6. Current package
+## 6. Checkpoint 4 Phase C packages
 
-Exact owner ID and recipient, account purposes only, fail-closed configuration,
-transport boundary checks, five-attempt atomic daily ceiling within the existing
-shared budgets. Definite failures count; uncertainty blocks retries. Keep console
-application/alert paths unchanged. No frontend source changes planned. Run gates
-and hand back docs/CHECKPOINT3B_PILOT_REVIEW.md; no activation or credentials.
+| Package | Branch | Acceptance |
+|---|---|---|
+| C1 | feature/acceptance-journey | Real API registration through approved-CV application review, exact bytes, no send/budget consumption; client transition tests |
+| C2 | feature/cv-layout-verification | DOCX structure, installed Word rendering, manual cross-viewer checks; immutable old approvals |
+| C3 | feature/ui-polish | Empty-skills prompt, readable complete form errors, safe readable download headers; snapshots unchanged |
+| C4 | docs/housekeeping | Only sections 1/4/6/12 rewritten; ancestry-grounded banners preserve historical text |
+| D1 | docs/alert-defaults-design | New-user email OFF and existing-user confirmation design; no code/migration |
+| D2 | docs/certificates-decisions | Options/recommendations/defaults and explicit pending approvals; no uploads/schema |
+| D3 | docs/application-alert-sending-design | Ledger/consent/truthful states and owner-only pilot design; no sending/schema |
+
+Use section 7 gates for every package, including full Django and component tests.
+Use Node 24.19 explicitly. Refresh frontend_build as the last frontend package
+commit; verification-only builds must match. No dependency/migration is authorized.
+Document concepts in ajiri-backend/docs/CONCEPTS.md with backend-relative references.
 
 ## 7. Quality gates (every package, no exceptions)
 
@@ -112,9 +132,15 @@ When blocked on one package, record it in the report and continue to the next in
 - Give exact PowerShell commands for anything he needs to run, plus the expected result.
 - Michael tracks work in Monday.com himself. Give completed items and honest story-point suggestions per package; do not assume any Monday.com access.
 
-## 12. Owner-only pilot handback
+## 12. Checkpoint 4 Phase C handback
 
-Record actual gates and limitations, blocked recipients/channels, conservative
-shared cap and rollback retaining reset revocation. Preserve other work, stash and
-Git configuration; verify noreply identity. No push/deployment/real email. Stop
-for review with the pilot implementation and release checklist.
+Write docs/CHECKPOINT4_PHASE_C_REVIEW.md in the Checkpoint 3B format: package
+status/branches/ranges/points, actual commands/counts, manual verification script,
+decisions, unresolved risks and Jira-ready title/acceptance criteria per package.
+Include ALERT_DEFAULTS_DESIGN.md, CERTIFICATES_DECISIONS.md and
+APPLICATION_ALERT_SENDING_DESIGN.md as proposals only. Preserve historical reviews
+and distinguish merged source, local work, owner reports and verified deployment.
+Check branch before every commit. Run a non-empty git log identity range from
+4b6e99bac4995fd3e36e6fbe1c7e3176383b6214 to HEAD and verify configured noreply
+author/committer identities. No push, remote merge, connector write or deployment
+unless Michael asks for that exact action. Stop and wait for review.

@@ -1,5 +1,7 @@
 # Personal CV builder review
 
+> Status as of 19 October 2026: document version included on merged main `4b6e99bac4995fd3e36e6fbe1c7e3176383b6214`. This document version was already present at recorded production revision 641cdfb. Historical statements/results below are preserved; see AGENTS.md section 4.
+
 17 October 2026. Branch `codex/cv-builder-flow`, based on approved schema commit
 `42eaa4d`. Suggested estimate: 8 points. The reviewed UI polish and schema commits
 remain in this local batch. No push, deployment, real email or production actions.

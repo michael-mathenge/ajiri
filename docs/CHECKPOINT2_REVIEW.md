@@ -1,5 +1,7 @@
 # Checkpoint 2 review
 
+> Status as of 19 October 2026: document version included on merged main `4b6e99bac4995fd3e36e6fbe1c7e3176383b6214`. This document version was already present at recorded production revision 641cdfb. Historical statements/results below are preserved; see AGENTS.md section 4.
+
 15 October 2026, Africa/Nairobi. Local review candidate on
 `integration/checkpoint-2`; main and origin/main remain at reviewed Checkpoint 1
 merge `e5e0038`. Checkpoint 1 tip `b8c1881` was verified as an ancestor after fetch.

@@ -8,7 +8,7 @@ import hashlib
 from io import BytesIO
 import json
 from docx import Document
-from docx.shared import Pt
+from docx.shared import Pt, RGBColor
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.db import transaction
@@ -18,7 +18,7 @@ from rest_framework.exceptions import APIException
 from .cv_validation import validate_content, MAX_DOCUMENT_BYTES
 from .models import CVWorkspace, CVApproval, approved_cv_path
 
-TEMPLATE_VERSION = 'cv-v1'
+TEMPLATE_VERSION = 'cv-v2'
 
 
 class CVConflict(APIException):
@@ -76,8 +76,21 @@ def layout(content):
 def render_docx(content):
     preview = layout(content)
     document = Document()
-    document.styles['Normal'].font.name = 'Calibri'
-    document.styles['Normal'].font.size = Pt(11)
+    # Explicit fonts prevent viewer themes from silently changing the hierarchy.
+    # Dates remain their own paragraphs, never aligned by implicit tab positions.
+    # see docs/CONCEPTS.md#cv-layout-verification
+    for name, size in [('Normal', 11), ('Title', 22), ('Heading 1', 14), ('Heading 2', 12), ('List Bullet', 11)]:
+        style = document.styles[name]
+        style.font.name = 'Calibri'
+        style.font.size = Pt(size)
+        style.font.color.rgb = RGBColor(0, 0, 0)
+        for attribute in list(style.element.rPr.rFonts.attrib):
+            if 'theme' in attribute.lower():
+                del style.element.rPr.rFonts.attrib[attribute]
+    title_style = document.styles['Title']
+    title_style.paragraph_format.keep_with_next = True
+    for border in title_style.element.xpath('./w:pPr/w:pBdr'):
+        border.getparent().remove(border)
     document.core_properties.author = ''
     document.core_properties.last_modified_by = ''
     document.core_properties.created = datetime(2000, 1, 1)

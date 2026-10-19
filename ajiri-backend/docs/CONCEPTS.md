@@ -832,3 +832,36 @@ attempts that Nairobi day count against the five-attempt ceiling. No migration,
 cache quota, refunds or automatic resend. Disable and reload for rollback, retaining
 receipt rows and password-reset revocation guards. See docs/OWNER_EMAIL_PILOT.md
 in the repository root for manual release steps; no activation is performed by tests.
+
+## acceptance-journey
+
+The synthetic acceptance journey uses real Django endpoints, JWT and CSRF checks,
+then selects an approved CV and prepares an application for separate review. It
+checks exact document bytes and proves preparation consumes no delivery budget and
+sends no mail. Vitest covers client transitions with mocked HTTP; this is not one
+browser end-to-end test. Captured verification mail is cleared before preparation.
+
+## cv-layout-verification
+
+New CV approvals use template cv-v2 with explicit Calibri sizes and black text;
+the inherited Word Title border is removed. Dates are separate paragraphs below
+entry headings, with no implicit alignment tabs or tables. Headings keep with the
+following paragraph. Existing approval files and hashes are immutable. Structure
+tests complement Word rendering; Google Docs and phone pagination need manual QA.
+
+## readable-document-downloads
+
+Download headers use approved contact names for personal CVs and current account
+names plus company-last for application documents. All name parts are retained,
+Unicode-normalized, unsafe/control characters removed, whitespace joined with
+underscores and each component bounded to 60 characters. Empty values become
+Applicant/Company. Django encodes Unicode headers; the client honors them. Labels
+may change after account/company edits, but storage UUIDs and approved bytes do
+not. Uploaded CVs use Uploaded_CV plus their supported original extension.
+
+## readable-form-errors
+
+FormErrors preserves field association IDs while rendering human-readable labels
+and one spaced list item per server message. Nested DRF messages remain complete;
+errors never discard input. Empty skills offer a profile prompt; unavailable
+profile data is unknown and never implies an empty skills list.

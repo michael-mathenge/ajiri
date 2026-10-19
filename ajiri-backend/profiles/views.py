@@ -24,7 +24,11 @@ class DownloadUploadedCVView(generics.GenericAPIView):
         if not cv:
             return Response({'detail': 'No CV uploaded.'}, status=404)
         try:
-            response = FileResponse(cv.open('rb'), as_attachment=True, filename=Path(cv.name).name)
+            suffix = Path(cv.name).suffix.lower()
+            # Only the genuine supported format is retained, never its stored UUID.
+            # see docs/CONCEPTS.md#readable-document-downloads
+            suffix = suffix if suffix in ('.pdf', '.doc', '.docx') else '.bin'
+            response = FileResponse(cv.open('rb'), as_attachment=True, filename='Uploaded_CV' + suffix)
         except FileNotFoundError:
             return Response({'detail': 'The CV file is unavailable. Please upload it again.'}, status=404)
         response['Cache-Control'] = 'private, no-store'

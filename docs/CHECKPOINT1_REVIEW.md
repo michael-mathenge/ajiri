@@ -1,5 +1,7 @@
 # Checkpoint 1 review
 
+> Status as of 19 October 2026: document version included on merged main `4b6e99bac4995fd3e36e6fbe1c7e3176383b6214`. This document version was already present at recorded production revision 641cdfb. Historical statements/results below are preserved; see AGENTS.md section 4.
+
 Review date: 14 October 2026 (Africa/Nairobi).
 
 Checkpoint 1 is implemented and locally verified. All six packages have passed their quality gates and are integrated on `integration/checkpoint-1`. Michael's review and approval are still required before merging into main or deployment. No checkpoint branches were pushed, and main remains at `cbd9ce7`.

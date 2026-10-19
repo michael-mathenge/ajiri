@@ -2,6 +2,7 @@ import { beforeEach, expect, it, vi } from 'vitest'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter, Routes, Route } from 'react-router-dom'
 import JobDetail from '../pages/JobDetail'
+import Applications from '../pages/Applications'
 import apiClient from '../api/client'
 import { ToastProvider } from '../components/ui'
 vi.mock('../api/client', () => ({ default: { get: vi.fn(), post: vi.fn() } }))
@@ -46,4 +47,24 @@ it('retains uncertainty guidance without automatically retrying preparation', as
   expect(await screen.findByRole('alert')).toHaveTextContent('Check My applications')
   await waitFor(() => expect(apiClient.post).toHaveBeenCalledTimes(1))
   expect(screen.getByRole('link', { name: 'Open My applications' })).toHaveAttribute('href', '/applications')
+})
+
+it('prepares a selected approval then opens real application review without sending', async () => {
+  const application = { id: 9, job: 1, job_title: job.title, company_name: job.company_name,
+    status: 'ready_for_review', application_method: 'email', application_email: 'synthetic@example.invalid',
+    email_subject: 'Synthetic application', email_body: 'Review this draft.', generated_cv: true, generated_cover_letter: true }
+  apiClient.get.mockImplementation(url => Promise.resolve({ data: url === '/profiles/me/cv-versions/' ? cv
+    : url.startsWith('/jobs/applications/') ? { results: [application], count: 1 } : job }))
+  apiClient.post.mockResolvedValue({ status: 201, data: application })
+  render(<MemoryRouter initialEntries={['/jobs/1']}><ToastProvider><Routes>
+    <Route path="/jobs/:id" element={<JobDetail />} />
+    <Route path="/applications" element={<Applications />} />
+  </Routes></ToastProvider></MemoryRouter>)
+  fireEvent.change(await screen.findByLabelText('Approved CV version'), { target: { value: 'old-id' } })
+  fireEvent.click(screen.getByRole('button', { name: 'Prepare application' }))
+  fireEvent.click(await screen.findByText('Review application'))
+  expect(screen.getByText('Review this draft.')).toBeVisible()
+  expect(screen.getByRole('button', { name: 'Send application' })).toBeDisabled()
+  expect(screen.getByRole('button', { name: 'Download CV' })).toBeVisible()
+  expect(apiClient.post.mock.calls).toEqual([['/jobs/1/apply/', { cv_version: 'old-id' }]])
 })
