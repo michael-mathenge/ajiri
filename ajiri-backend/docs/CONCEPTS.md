@@ -658,8 +658,12 @@ Payloads/attachments live only in memory; explicit attachment limits are require
 The dormant delivery service first writes the global daily budget inside a short
 transaction, serializing SQLite writers before reads. It conditionally increments
 category/total and user counters and creates a validated unique attempt atomically.
-The provider call happens only after commit, outside caller transactions. Only DB
-lock retries occur before network I/O; no provider retries happen automatically.
+The provider call happens only after commit, outside caller transactions. Database
+reservation retries happen before network I/O. After the single provider call,
+receipt recording separately retries OperationalError at most three times, with
+20/40 ms pauses; it conditionally updates only reserved rows and rereads the receipt.
+No provider retries happen automatically. Exhausted receipt retries leave the durable
+reservation/result intact and require reconciliation; they never refund capacity.
 Definite failures and unknown outcomes keep consumed capacity. A repeated key
 returns its old receipt, never another send. Reserved/unknown receipts survive
 crashes and block fresh sends until reviewed reconciliation; midnight does not

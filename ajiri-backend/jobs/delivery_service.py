@@ -108,15 +108,24 @@ class DeliveryService:
                 result = Result('unknown', failure_category='transport')
         except Exception:
             result = Result('unknown', failure_category='transport')  # Never surface credentials/provider text.
-        try:
-            Attempt.objects.filter(pk=attempt.pk, state='reserved').update(state=result.state,
-                provider_message_id=result.provider_message_id, failure_category=result.failure_category,
-                resolved_at=timezone.now() if result.state != 'unknown' else None)
-            attempt.refresh_from_db()
-        except Exception:
-            # A reserved receipt still blocks repeats if recording provider acceptance fails.
+        # see docs/CONCEPTS.md#atomic-delivery-budgets
+        # A competing reservation may hold SQLite's writer lock after provider I/O.
+        # Retry only the conditional receipt write/read, never the provider call.
+        for number in range(3):
+            try:
+                Attempt.objects.filter(pk=attempt.pk, state='reserved').update(state=result.state,
+                    provider_message_id=result.provider_message_id, failure_category=result.failure_category,
+                    resolved_at=timezone.now() if result.state != 'unknown' else None)
+                attempt.refresh_from_db()
+                return attempt
+            except OperationalError:
+                if number < 2:
+                    time.sleep(0.02 * (number + 1))
+                    continue
+            except Exception:
+                pass
+            # A durable reserved/finished receipt blocks repeats even if reading it fails.
             raise DeliveryError('Delivery outcome needs reconciliation; do not retry.') from None
-        return attempt
 
     def _check_pilot(self, user, channel, recipient):
         if self.pilot is not None and (channel not in ('password_reset', 'email_verification')

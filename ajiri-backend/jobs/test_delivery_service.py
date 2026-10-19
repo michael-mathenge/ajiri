@@ -284,14 +284,87 @@ class DeliveryServiceTests(TransactionTestCase):
                 raise OperationalError('sensitive database detail')
             return original(queryset, **kwargs)
         app = self.application()
-        with patch.object(QuerySet, 'update', new=fail_receipt):
+        with patch.object(QuerySet, 'update', autospec=True, side_effect=fail_receipt) as update, \
+                patch('jobs.delivery_service.time.sleep') as sleep:
             with self.assertRaisesMessage(DeliveryError, 'needs reconciliation'):
                 self.deliver(app)
+        self.assertEqual(sum(call.args[0].model is Attempt for call in update.call_args_list), 3)
+        self.assertEqual(sleep.call_count, 2)
         self.assertEqual(Attempt.objects.get().state, 'reserved')
         with self.assertRaises(DeliveryError):
             self.deliver(app)
         self.assertEqual(len(self.transport.calls), 1)
         self.assertEqual(Budget.objects.get(scope='global').application_reserved, 1)
+
+    def test_receipt_read_retry_preserves_committed_result_without_resending(self):
+        original = Attempt.refresh_from_db
+        reads = []
+
+        def read(attempt, *args, **kwargs):
+            reads.append(attempt.pk)
+            if len(reads) == 1:
+                raise OperationalError('private database detail')
+            return original(attempt, *args, **kwargs)
+
+        app, key = self.application(), uuid.uuid4()
+        with patch.object(Attempt, 'refresh_from_db', new=read), \
+                patch('jobs.delivery_service.time.sleep') as sleep:
+            receipt = self.deliver(app, idempotency_key=key)
+        self.assertEqual(receipt.state, 'accepted')
+        self.assertEqual(len(reads), 2)
+        self.assertEqual(sleep.call_count, 1)
+        self.assertEqual(self.deliver(app, idempotency_key=key).pk, receipt.pk)
+        self.assertEqual(len(self.transport.calls), 1)
+        self.assertEqual(Budget.objects.get(scope='global').application_reserved, 1)
+
+    def test_receipt_recovers_from_overlapping_sqlite_writer_without_resending(self):
+        """An unrelated reservation can hold SQLite's writer lock after send."""
+        locked, release = threading.Event(), threading.Event()
+        errors = []
+
+        def writer():
+            close_old_connections()
+            try:
+                with transaction.atomic():
+                    Budget.objects.filter(scope='global').update(account_reserved=0)
+                    locked.set()
+                    if not release.wait(timeout=10):
+                        raise RuntimeError('Writer release timed out')
+            except Exception as error:
+                errors.append(type(error).__name__)
+            finally:
+                close_old_connections()
+
+        thread = threading.Thread(target=writer)
+
+        def send(payload):
+            self.assertFalse(connection.in_atomic_block)
+            thread.start()
+            self.assertTrue(locked.wait(timeout=10))
+            return Result('accepted', '<synthetic@brevo.invalid>')
+
+        def release_writer(delay):
+            release.set()
+            thread.join(timeout=10)
+            self.assertFalse(thread.is_alive())
+
+        app, key = self.application(), uuid.uuid4()
+        try:
+            with patch.object(FakeTransport, 'send', side_effect=send) as provider, \
+                    patch('jobs.delivery_service.time.sleep', side_effect=release_writer) as sleep:
+                receipt = self.deliver(app, idempotency_key=key)
+                self.assertEqual(receipt.state, 'accepted')
+                self.assertEqual(sleep.call_count, 1)
+                self.assertEqual(self.deliver(app, idempotency_key=key).pk, receipt.pk)
+                self.assertEqual(provider.call_count, 1)
+        finally:
+            release.set()
+            if thread.ident is not None:
+                thread.join(timeout=10)
+        self.assertEqual(errors, [])
+        self.assertEqual(Attempt.objects.count(), 1)
+        self.assertEqual(Budget.objects.get(scope='global').application_reserved, 1)
+        self.assertEqual(Budget.objects.get(scope=f'user:{self.user.pk}').application_reserved, 1)
 
     def test_busy_accounting_is_bounded_and_outer_transaction_rejected(self):
         with patch.object(self.service, '_reserve', side_effect=OperationalError('private')) as reserve:
