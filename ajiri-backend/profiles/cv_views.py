@@ -1,5 +1,7 @@
 from django.db import OperationalError
 from django.http import HttpResponse
+from django.utils.http import content_disposition_header
+from .download_names import document_name
 from django.shortcuts import get_object_or_404
 from rest_framework import permissions, serializers
 from rest_framework.parsers import JSONParser
@@ -101,7 +103,8 @@ class CVVersionListView(PrivateCVView):
 
 def cv_response(approval):
     response = HttpResponse(document_bytes(approval), content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
-    response['Content-Disposition'] = 'attachment; filename="Ajiri_CV.docx"'
+    response['Content-Disposition'] = content_disposition_header(True,
+        document_name(approval.content.get('contact', {}).get('name', '')))
     response['Cache-Control'] = 'private, no-store'
     return response
 

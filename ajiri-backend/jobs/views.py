@@ -3,10 +3,11 @@ import feedparser
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from django.http import HttpResponse, FileResponse
-from pathlib import Path
 from django.shortcuts import get_object_or_404
 from django.core.mail import EmailMessage
 from django.conf import settings
+from django.utils.http import content_disposition_header
+from profiles.download_names import document_name
 from django.utils import timezone
 from .models import Job, Application, Notification
 from .serializers import (
@@ -54,8 +55,8 @@ class GenerateCoverLetterView(generics.GenericAPIView):
             buffer.getvalue(),
             content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
         )
-        safe_company = job.company_name.replace(' ', '_')
-        response['Content-Disposition'] = f'attachment; filename="Cover_Letter_{safe_company}.docx"'
+        response['Content-Disposition'] = content_disposition_header(True,
+            document_name(request.user.full_name, 'Cover_Letter', job.company_name))
         response['Cache-Control'] = 'private, no-store'
         return response
 
@@ -199,7 +200,9 @@ class ApplicationDocumentView(generics.GenericAPIView):
         # Stream the saved snapshot belonging to this user, not a freshly generated file.
         # see docs/CONCEPTS.md#authenticated-document-downloads
         try:
-            response = FileResponse(document.open('rb'), as_attachment=True, filename=Path(document.name).name)
+            response = FileResponse(document.open('rb'), as_attachment=True,
+                filename=document_name(request.user.full_name,
+                    'CV' if kind == 'cv' else 'Cover_Letter', application.job.company_name))
         except FileNotFoundError:
             return Response({'detail': 'The document file is unavailable.'}, status=404)
         response['Cache-Control'] = 'private, no-store'
