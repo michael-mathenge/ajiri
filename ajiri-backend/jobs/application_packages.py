@@ -93,6 +93,13 @@ def package_data(package):
         'template_version': package.template_version, 'created_at': package.created_at}
 
 
+def package_fingerprint(package):
+    return content_hash({'job': package.job_snapshot, 'cv_version': str(package.cv_approval_id),
+        'cv_sha256': package.cv_sha256, 'letter_sha256': package.letter_sha256,
+        'letter_text': package.letter_text, 'email_subject': package.email_subject,
+        'email_body': package.email_body, 'template_version': package.template_version})
+
+
 def save_package(user, application_id, data):
     application = get_object_or_404(Application.objects.select_related('job'), pk=application_id, user=user)
     require_editable(application)
@@ -107,10 +114,7 @@ def save_package(user, application_id, data):
         email_subject=data['email_subject'], email_body=data['email_body'],
         cv_sha256=hashlib.sha256(cv).hexdigest(), letter_sha256=hashlib.sha256(letter).hexdigest(),
         cv_size=len(cv), letter_size=len(letter), template_version=TEMPLATE_VERSION)
-    package.content_sha256 = content_hash({'job': displayed, 'cv_version': str(approval.pk),
-        'cv_sha256': package.cv_sha256, 'letter_sha256': package.letter_sha256,
-        'letter_text': package.letter_text, 'email_subject': package.email_subject,
-        'email_body': package.email_body, 'template_version': TEMPLATE_VERSION})
+    package.content_sha256 = package_fingerprint(package)
     written = []
     try:
         for field, payload in [(package.cv_document, cv), (package.letter_document, letter)]:

@@ -912,3 +912,29 @@ manual-verification limit. Exact saved-package preview/download and approval are
 P3, not implied by the working letter editor. Managed application email is disabled
 at both page and legacy send endpoint, before state claims, with no runtime bypass.
 External website submission confirmation remains a user report, not email delivery.
+
+## application-package-approval
+
+Document review reads the saved CV and letter bytes. Both documents must match
+their recorded sizes and SHA-256 hashes, the selected approved-CV provenance and
+the package's canonical fingerprint. Existing bounded DOCX checks run before the
+paragraph parser. No preview or download regenerates a document, fetches a URL or
+uses current Profile content. HTML shows escaped stored paragraph text/order;
+downloaded DOCX remains the layout reference. Unexpected tables or oversized
+previews fail closed rather than silently omitting content. GET/HEAD and errors
+are private/no-store, with owner-scoped lookups and safe download labels.
+
+Explicit document approval binds a saved package UUID, latest revision and exact
+fingerprint to the owner, server time and application-documents-v1 wording. A
+conditional Application write serializes approvals with package saves on SQLite;
+files/provenance are checked again under that claim. Identical current approval
+is idempotent. New revisions receive no approval automatically: prior approvals
+remain historical. Missing/changed files, stale state/revision/hash or delivery
+blockers prevent approval. Later filesystem changes cannot be made atomic with SQL,
+so every download and repeated approval checks the actual bytes again.
+
+Working edits reset the client preview/checkbox. An uncertain approval is reconciled
+by a fresh GET, never an automatic POST retry. Saved packages remain privately
+readable for sent/dismissed applications, without permitting a fresh approval.
+This is document approval only: no email/submission permission, provider call,
+delivery-ledger write, attachment activation or legacy sender enablement follows.

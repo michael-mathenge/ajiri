@@ -1,5 +1,10 @@
 # Application package roadmap and schema handback
 
+> P3 approval update, 20 October 2026: Michael reviewed P2 through `ae8d05f` and
+> instructed proceeding with saved-package review, downloads and document approval.
+> P3 is local and awaits its own review. P4-P5 delivery authorization, sending and
+> pilot remain separately gated. See APPLICATION_PACKAGE_APPROVAL_REVIEW.md.
+
 > P2 approval update, 20 October 2026: Michael reviewed and approved P1 commit
 > `e1e8f94`. P2 editing is now implemented locally for its own review. P3 approval
 > controls and P4-P5 sending/pilot remain later work. See

@@ -4,11 +4,12 @@ import apiClient from '../api/client'
 import { apiErrors } from '../lib/errors'
 import DownloadButton from './DownloadButton'
 import FormErrors from './FormErrors'
+import ApplicationPackageReview from './ApplicationPackageReview'
 import { Button } from './ui'
 
 // Saving a revision never approves documents or sends an application.
 // see docs/CONCEPTS.md#application-package-editor
-export default function ApplicationPackageEditor({ applicationId }) {
+export default function ApplicationPackageEditor({ applicationId, readOnly = false }) {
   const id = useId()
   const inFlight = useRef(false)
   const [opened, setOpened] = useState(false)
@@ -105,7 +106,7 @@ export default function ApplicationPackageEditor({ applicationId }) {
   }
   return <section className="stack" aria-label="Application document editor">
     <Button variant="outline" disabled={busy} onClick={() => load()}>
-      {opened ? 'Reload saved revisions' : 'Choose CV and edit cover letter'}
+      {opened ? 'Reload saved revisions' : readOnly ? 'View saved package revisions' : 'Choose CV and edit cover letter'}
     </Button>
     {opened && <>
       <FormErrors errors={errors} prefix={id} />
@@ -155,8 +156,10 @@ export default function ApplicationPackageEditor({ applicationId }) {
           <Button type="submit" disabled={busy || uncertain || !cv || !letter.trim() || !dirty}>
             {busy ? 'Working…' : 'Save new package revision'}
           </Button>
-          <p>Saving preserves a draft only. Exact package preview and document approval are a later step. Managed sending is awaiting activation.</p>
+          <p>Saving preserves a draft only. Review its saved package below before approving documents. Managed sending is awaiting activation.</p>
         </form>}
+        {data.results.map((row) => <ApplicationPackageReview key={row.id} applicationId={applicationId}
+          packageId={row.id} revision={row.revision} disabled={dirty || busy || uncertain} />)}
       </>}
     </>}
   </section>

@@ -67,7 +67,7 @@ export function ApplicationRow({ application: app, onUpdate }) {
       <details className="review-details">
         <summary>Review application</summary>
         <div className="stack mt-4">
-          {dismissible && <ApplicationPackageEditor applicationId={app.id} />}
+          <ApplicationPackageEditor applicationId={app.id} readOnly={!dismissible} />
           <p>Original application documents (saving a new package does not replace these):</p>
           <div className="action-group">
             {app.generated_cv && (

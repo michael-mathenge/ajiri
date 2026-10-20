@@ -1,5 +1,6 @@
 from django.urls import path
-from .package_views import PackageListView, PackageDraftView
+from .package_views import (PackageListView, PackageDraftView, PackageReviewView,
+                            PackageApprovalView, PackageDocumentView)
 from .views import (
     JobListView,
     JobDetailView,
@@ -23,6 +24,9 @@ urlpatterns = [
     path('applications/', ApplicationListView.as_view(), name='application-list'),
     path('applications/<int:pk>/packages/', PackageListView.as_view(), name='application-packages'),
     path('applications/<int:pk>/package-draft/', PackageDraftView.as_view(), name='application-package-draft'),
+    path('applications/<int:pk>/packages/<uuid:package_id>/', PackageReviewView.as_view(), name='application-package-review'),
+    path('applications/<int:pk>/packages/<uuid:package_id>/approve/', PackageApprovalView.as_view(), name='application-package-approve'),
+    path('applications/<int:pk>/packages/<uuid:package_id>/documents/<str:kind>/', PackageDocumentView.as_view(), name='application-package-document'),
     path('applications/<int:pk>/send/', SendApplicationView.as_view(), name='application-send'),
     path('applications/<int:pk>/dismiss/', DismissApplicationView.as_view(), name='application-dismiss'),
     path('applications/<int:pk>/documents/<str:kind>/', ApplicationDocumentView.as_view(), name='application-document'),

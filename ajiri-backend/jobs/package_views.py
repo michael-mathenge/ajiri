@@ -1,17 +1,21 @@
-"""Private drafting endpoints; approval and sending remain separate packages."""
+"""Private drafting and document approval endpoints; managed sending stays disabled."""
 from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
+from django.http import HttpResponse
+from django.utils.http import content_disposition_header
 from rest_framework import serializers
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
 from accounts.throttles import EndpointThrottle
 from profiles.cv_builder import content_hash
-from profiles.cv_validation import StrictSerializer, StrictText, SchemaVersion
+from profiles.cv_validation import StrictSerializer, StrictText, SchemaVersion, StrictBoolean
+from profiles.download_names import document_name
 from profiles.cv_views import PrivateCVView
 from .models import Application
 from .application_packages import (context, blocked, require_editable, selected_cv,
     draft_letter, package_data, save_package, PackageConflict)
+from .package_review import owner_package, review_data, verified_documents, approve_package
 
 
 class DraftInput(StrictSerializer):
@@ -78,3 +82,49 @@ class PackageDraftView(PrivateCVView):
             'job_context': current, 'context_sha256': content_hash(current),
             'missing_information': [label for key, label in [('summary', 'CV summary'), ('skills', 'CV skills')]
                 if not approval.content.get(key)]})
+
+
+class PackageReviewView(PrivateCVView):
+    def get(self, request, pk, package_id):
+        return Response(review_data(owner_package(request.user, pk, package_id)))
+
+
+class ApprovalInput(StrictSerializer):
+    expected_revision = SchemaVersion(min_value=1, max_value=2147483647)
+    content_sha256 = serializers.RegexField(r'\A[0-9a-f]{64}\Z')
+    approval = StrictBoolean()
+
+    def validate_approval(self, value):
+        if value is not True:
+            raise serializers.ValidationError('Explicit document approval is required.')
+        return value
+
+
+class PackageApprovalView(PrivateCVView):
+    throttle_classes = (EndpointThrottle,)
+    throttle_scope = 'apply'
+
+    def post(self, request, pk, package_id):
+        owner_package(request.user, pk, package_id)
+        serializer = ApprovalInput(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+        proof, created = approve_package(request.user, pk, package_id,
+            data['expected_revision'], data['content_sha256'])
+        return Response({'approval': proof}, status=201 if created else 200)
+
+
+class PackageDocumentView(PrivateCVView):
+    def get(self, request, pk, package_id, kind):
+        if kind not in ('cv', 'cover-letter'):
+            return Response({'detail': 'Document not found.'}, status=404)
+        package = owner_package(request.user, pk, package_id)
+        data = verified_documents(package)[kind]
+        # Serve the verified in-memory bytes, avoiding a second open/path race.
+        response = HttpResponse(b'' if request.method == 'HEAD' else data,
+            content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+        response['Content-Length'] = len(data)
+        response['Content-Disposition'] = content_disposition_header(True,
+            document_name(request.user.full_name, 'CV' if kind == 'cv' else 'Cover_Letter',
+                          package.application.job.company_name))
+        return response
