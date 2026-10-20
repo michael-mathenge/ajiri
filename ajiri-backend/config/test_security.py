@@ -12,7 +12,8 @@ class DeploySettingsTests(SimpleTestCase):
         env = os.environ.copy()
         env.update(PYTHON_DOTENV_DISABLED='1', DEBUG='False', SECRET_KEY='audit-dummy-not-real-configuration-' * 3,
                    ALLOWED_HOSTS='audit.invalid', TRUST_PROXY_SSL_HEADER='False',
-                   SECURE_HSTS_INCLUDE_SUBDOMAINS='False', SECURE_HSTS_PRELOAD='False')
+                   SECURE_HSTS_INCLUDE_SUBDOMAINS='False', SECURE_HSTS_PRELOAD='False',
+                   PRIVATE_LOG_DIR='')  # Header snapshots must not write platform log directories.
         for name in ['SECURE_SSL_REDIRECT', 'SECURE_HSTS_SECONDS', 'SESSION_COOKIE_SECURE',
                      'CSRF_COOKIE_SECURE', 'SECURE_CONTENT_TYPE_NOSNIFF', 'SECURE_REFERRER_POLICY', 'X_FRAME_OPTIONS']:
             env.pop(name, None)

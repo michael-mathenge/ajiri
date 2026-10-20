@@ -305,12 +305,15 @@ class DeliveryServiceTests(TransactionTestCase):
             close_old_connections()
             try:
                 gate.wait(timeout=10)
-                self.deliver(app)
-                outcomes.append('accepted')
+                attempt = self.deliver(app, idempotency_key=app.test_authorization.pk)
+                outcomes.append((app.pk, attempt.state))
             except QuotaExceeded:
-                outcomes.append('quota')
+                outcomes.append((app.pk, 'quota'))
+            except DeliveryError as error:
+                outcomes.append((app.pk, 'busy' if str(error) ==
+                    'Delivery accounting is busy; no email was attempted.' else 'unexpected_delivery_error'))
             except Exception as error:
-                outcomes.append(type(error).__name__)
+                outcomes.append((app.pk, type(error).__name__))
             finally:
                 close_old_connections()
         threads = [threading.Thread(target=worker, args=(app,)) for app in apps]
@@ -318,8 +321,21 @@ class DeliveryServiceTests(TransactionTestCase):
             thread.start()
         for thread in threads:
             thread.join(timeout=15)
-        self.assertCountEqual(outcomes, ['accepted', 'quota'])
+        self.assertFalse(any(thread.is_alive() for thread in threads))
+        states = [state for _, state in outcomes]
+        self.assertEqual(states.count('accepted'), 1)
+        self.assertEqual(len(states), 2)
+        self.assertTrue(all(state in ('accepted', 'quota', 'busy') for state in states), outcomes)
+        # Exhausted SQLite lock retries are a documented no-handoff outcome.
+        # Reconcile that same key only after both workers finish; never resend a winner.
+        for pk, state in outcomes:
+            if state == 'busy':
+                app = next(app for app in apps if app.pk == pk)
+                self.assertFalse(Attempt.objects.filter(application=app).exists())
+                with self.assertRaises(QuotaExceeded):
+                    self.deliver(app, idempotency_key=app.test_authorization.pk)
         self.assertEqual(len(self.transport.calls), 1)
+        self.assertEqual(Attempt.objects.count(), 1)
         self.assertEqual(Budget.objects.get(scope='global').application_reserved, 1)
 
     def test_unexpected_transport_exception_is_sanitized_and_never_retried(self):
@@ -330,6 +346,16 @@ class DeliveryServiceTests(TransactionTestCase):
             self.assertNotIn('sensitive', str(attempt.__dict__))
             self.deliver(app, idempotency_key=key)
             self.assertEqual(send.call_count, 1)
+
+    def test_exhausted_reservation_lock_retries_never_handoff_or_consume_budget(self):
+        app = self.application()
+        with patch.object(self.service, '_reserve', side_effect=OperationalError('synthetic lock')) as reserve:
+            with self.assertRaisesMessage(DeliveryError, 'no email was attempted'):
+                self.deliver(app, idempotency_key=app.test_authorization.pk)
+        self.assertEqual(reserve.call_count, 3)
+        self.assertFalse(self.transport.calls)
+        self.assertFalse(Attempt.objects.exists())
+        self.assertFalse(Budget.objects.exists())
 
     def test_failed_receipt_write_retains_blocking_reservation(self):
         original = QuerySet.update

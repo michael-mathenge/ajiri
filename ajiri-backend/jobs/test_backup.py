@@ -1,6 +1,8 @@
 from datetime import datetime, timedelta, timezone
 from contextlib import closing
-from io import StringIO
+from io import StringIO, BytesIO
+import gzip
+import hashlib
 import json
 from pathlib import Path
 import sqlite3
@@ -46,6 +48,72 @@ class BackupTests(SimpleTestCase):
         self.assertIn('no writes', result)
         self.assertFalse(self.destination.exists())
         self.assertEqual(digest(self.db), before)
+
+    def test_packaged_app_without_git_can_back_up_with_explicit_unverified_revision(self):
+        app = self.root / 'container-app'
+        app.mkdir()
+        with self.settings(BASE_DIR=app), patch(
+                'jobs.management.commands.backup_private_data.subprocess.run', side_effect=FileNotFoundError):
+            self.run_backup()
+        manifest = json.loads((self.completed()[0] / 'manifest.json').read_text())
+        self.assertEqual(manifest['revision'], 'unverified')
+        self.assertTrue(manifest['complete'])
+
+    def test_git_checkout_sibling_trees_are_not_backup_destinations(self):
+        repo = self.root / 'repo'
+        backend = repo / 'backend'
+        backend.mkdir(parents=True)
+        (repo / '.git').mkdir()
+        with self.settings(BASE_DIR=backend), self.assertRaisesMessage(CommandError, 'outside application'):
+            call_command('backup_private_data', '--destination', str(repo / 'frontend' / 'backups'), '--dry-run')
+
+    def test_independent_verify_and_isolated_restore_never_overwrite_existing_folder(self):
+        self.run_backup('--include-media', '--writers-paused')
+        folder = self.completed()[0]
+        restored = self.root / 'restored'
+        output = StringIO()
+        call_command('verify_private_backup', '--backup', str(folder), stdout=output)
+        self.assertIn('no writes', output.getvalue())
+        self.assertFalse(restored.exists())
+        call_command('verify_private_backup', '--backup', str(folder), '--restore-to', str(restored), stdout=StringIO())
+        self.assertEqual((restored/'media'/'synthetic.pdf').read_bytes(), b'%PDF-synthetic')
+        self.assertTrue(json.loads((restored/'restore-verification.json').read_text())['complete'])
+        with self.assertRaisesMessage(CommandError, 'new isolated'):
+            call_command('verify_private_backup', '--backup', str(folder), '--restore-to', str(restored))
+
+    def test_independent_verify_rejects_corruption_before_restore(self):
+        self.run_backup()
+        folder = self.completed()[0]
+        (folder/'db.sqlite3').write_bytes(b'corrupt')
+        restored = self.root/'must-not-exist'
+        with self.assertRaisesMessage(CommandError, 'checksum mismatch'):
+            call_command('verify_private_backup', '--backup', str(folder), '--restore-to', str(restored))
+        self.assertFalse(restored.exists())
+
+    def test_independent_verify_rejects_incomplete_manifest(self):
+        self.run_backup()
+        folder = self.completed()[0]
+        manifest = folder/'manifest.json'
+        data = json.loads(manifest.read_text()); data['complete'] = False
+        manifest.write_text(json.dumps(data))
+        with self.assertRaisesMessage(CommandError, 'completed format-1'):
+            call_command('verify_private_backup', '--backup', str(folder))
+
+    def test_independent_verify_rejects_traversal_even_with_matching_checksums(self):
+        self.run_backup('--include-media', '--writers-paused')
+        folder = self.completed()[0]
+        archive = folder/'private-media.tar.gz'
+        with tarfile.open(archive, 'w:gz') as tar:
+            item = tarfile.TarInfo('../outside'); item.size = 1
+            tar.addfile(item, BytesIO(b'x'))
+        manifest = folder/'manifest.json'; data = json.loads(manifest.read_text())
+        data['sha256']['private-media.tar.gz'] = digest(archive)
+        with gzip.open(archive, 'rb') as stream:
+            data['sha256']['media_uncompressed'] = hashlib.file_digest(stream, 'sha256').hexdigest()
+        manifest.write_text(json.dumps(data))
+        with self.assertRaisesMessage(CommandError, 'Unsafe archive'):
+            call_command('verify_private_backup', '--backup', str(folder), '--restore-to', str(self.root/'unsafe'))
+        self.assertFalse((self.root/'unsafe').exists())
 
     def test_database_snapshot_integrity_hash_and_unique_runs(self):
         before = digest(self.db)

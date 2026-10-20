@@ -3,6 +3,7 @@ import { Link, Route, Routes } from 'react-router-dom'
 import AppShell, { AuthProvider, ProtectedRoute } from './components/AppShell'
 import { Button, EmptyState, ToastProvider } from './components/ui'
 import './App.css'
+import PageErrorBoundary from './components/PageErrorBoundary'
 
 // Download each screen when it is visited, keeping the first mobile load smaller.
 // see docs/CONCEPTS.md#route-code-splitting
@@ -20,6 +21,7 @@ const Privacy = lazy(() => import('./pages/Privacy'))
 
 export default function App() {
   return (
+    <PageErrorBoundary>
     <AuthProvider>
       <ToastProvider>
         <Routes>
@@ -60,5 +62,6 @@ export default function App() {
         </Routes>
       </ToastProvider>
     </AuthProvider>
+    </PageErrorBoundary>
   )
 }

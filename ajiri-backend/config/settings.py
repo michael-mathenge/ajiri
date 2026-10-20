@@ -15,6 +15,7 @@ from pathlib import Path
 
 from django.core.exceptions import ImproperlyConfigured
 from dotenv import load_dotenv
+from .paths import application_tree
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -393,7 +394,7 @@ if log_max_bytes < 1024 or not 1 <= log_backup_count <= 10:
     raise ImproperlyConfigured('Private log rotation limits are invalid.')
 if private_log_dir:
     log_path = Path(private_log_dir)
-    if not log_path.is_absolute() or log_path.resolve().is_relative_to(BASE_DIR.parent.resolve()):
+    if not log_path.is_absolute() or log_path.resolve().is_relative_to(application_tree(BASE_DIR)):
         raise ImproperlyConfigured('PRIVATE_LOG_DIR must be absolute and outside the application tree.')
     error_handler = {'class': 'config.safe_logging.PrivateProcessRotatingHandler',
                      'directory': str(log_path), 'max_bytes': log_max_bytes,

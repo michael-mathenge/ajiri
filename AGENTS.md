@@ -23,14 +23,16 @@ Users are mostly on phones with limited data. **Mobile-first, lightweight, acces
 ## 3. Repo and stack (verified, but re-check if something looks off)
 
 - Repo root: `C:\dev\ajiri`. `ajiri-backend/` (Django + DRF) and `ajiri-frontend/` (React + Vite, JavaScript/JSX only, no TypeScript)
-- Backend: Django 6.1, SQLite, SimpleJWT (access token in JSON, refresh in httpOnly cookie, rotation + blacklisting), django-cors-headers, django-filter, python-docx, feedparser. Celery/Redis available locally only.
+- Backend: Django 6.1.2, SQLite, SimpleJWT (access token in JSON, refresh in httpOnly cookie, rotation + blacklisting), django-cors-headers, django-filter, python-docx, feedparser. Celery/Redis available locally only.
 - Frontend: Tailwind 4, Radix-backed shadcn-style components, lucide-react, React Router, axios (`src/api/client.js` handles auth interceptors and silent refresh)
 - Production: PythonAnywhere free tier, a committed `frontend_build`, and a GitHub Actions workflow that posts jobs to `POST /api/jobs/ingest/` and `/api/jobs/sweep/` (header `X-Ingest-Key`)
 - CI exists (`.github/workflows/ci.yml`: backend checks, migrations, tests, frontend lint/build, committed-build consistency; Python matrix 3.12-3.14). Local dev and PythonAnywhere use Python 3.12.
 
-## 4. Verified state (20 October 2026)
+## 4. Verified state (21 October 2026)
 
-Recorded deployed source is `647449851c98f5b22e0419db673f2500c86d1e86` (PR #26).
+Recorded deployed source is `cc731976de13a5b5d561739def8dd93a26f70bff` (PR #27):
+dismissed snapshot restoration, explicit draft privacy agreement and updated guides.
+Only profiles.0006_privacy_notice was applied; existing row values were preserved.
 Account email verification/reset has an owner-only Brevo pilot. Reviewed application
 packages and explicit authorization exist; broader application sending remains disabled
 until its gated integration and pilot pass. Never treat console output/provider
