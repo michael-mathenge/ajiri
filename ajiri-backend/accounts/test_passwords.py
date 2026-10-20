@@ -24,7 +24,7 @@ class PasswordPolicyTests(TestCase):
         client = APIClient()
         response = client.post('/api/accounts/register/', {'email': 'applicant@example.invalid', 'password': '123'})
         self.assertGreaterEqual(len(response.data['password']), 3)
-        response = client.post('/api/accounts/register/', {'email': 'applicant@example.invalid', 'password': 'Rivers!Quartz78-Orbit'})
+        response = client.post('/api/accounts/register/', {'email': 'applicant@example.invalid', 'password': 'Rivers!Quartz78-Orbit', 'privacy_consent': True, 'privacy_policy_version': 'privacy-draft-v1'})
         self.assertEqual(response.status_code, 201)
 
     def test_manager_and_forms(self):

@@ -76,3 +76,43 @@ machine availability and platform constraints honestly. Retention remains report
 only. Simplify developer/user onboarding after feature changes settle. Housekeeping
 must inspect references and preserve private data, backups, stash, Docker lesson
 files, coverage and original checkout changes. No cleanup has yet been performed.
+
+## Resumed execution results
+
+AJ-37 committed locally as 7382c79 (source) and bb3c4b2 (build). All 283 backend
+tests passed (one Windows skip); 99 frontend tests passed. Not yet merged/deployed.
+
+AJ-24: explicit draft-policy agreement, additive profiles.0006_privacy_notice,
+owner-visible read-only evidence, public draft notice and UI. Focused 16 backend
+tests passed; full suite 286 passed with one Windows skip (426.804s) after isolating
+a historical migration regression to its fixed target instead of future leaf nodes.
+No production privacy migration has been applied yet. New frontend gate: 100 tests,
+lint and repeated build passed using explicit Node 24.19. The final locked install
+passed in .verification/frontend; original worktree reinstall hit a Windows-locked
+native Tailwind binary, which was preserved. Lint used the original source path
+explicitly because the verification folder is Git-ignored. The CV focus regression
+now awaits the animation-frame effect rather than asserting synchronously.
+Tailwind scanning is explicitly limited to src so nested checkout/build folders
+cannot add unrelated CSS; repeated verification builds matched their asset names.
+
+A newly published npm advisory affected transitive follow-redirects 1.16.0
+(GHSA-q3jh-wrc6-jgq8 / GHSA-8r9p-f939-6h3c). Patched only its version, resolved URL
+and integrity to 1.16.1, preserving other lockfile entries/platform metadata.
+After patch, npm audit reported zero findings; this is advisory matching, not proof
+that browser Ajiri credentials were exploitable through a Node-only redirect path.
+
+AJ-12 completed in production on unchanged source 6474498: native secure recognition
+verified, original WSGI restored, Django redirect True and HSTS 300 activated without
+proxy trust/subdomains/preload. Live header/loop/spoof checks passed; owner reads
+and private download passed. Only deliberate check --deploy W005/W021 remain.
+Jira Done status was reread and confirmed. See HTTPS_ACTIVATION_20261020.md.
+
+Backup automation verify-and-copy-ajiri-daily-backup created ACTIVE for 10:00 Nairobi
+daily, using the documented private snapshot/off-server/restore procedure and
+failure reporting. Its first scheduled run remains UNVERIFIED. No always-on
+PythonAnywhere scheduler or disk-encryption guarantee is claimed.
+
+README/SETUP simplified; USER_GUIDE and operator backup guidelines added. Verified
+unused social sprite removed; no private/user data or original Docker lesson
+removed. See HOUSEKEEPING_REVIEW.md. AJ-31/38/41 decisions recorded in
+ROADMAP_SPIKE_DECISIONS.md; local staging setup/verification is in progress.

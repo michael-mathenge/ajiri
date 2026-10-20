@@ -36,6 +36,10 @@ class Profile(models.Model):
     email_verified_at = models.DateTimeField(null=True, blank=True, default=None)
     verified_email = models.EmailField(max_length=254, blank=True, default='')
     password_reset_at = models.DateTimeField(null=True, blank=True, default=None)
+    # No historical acknowledgement is inferred for existing accounts.
+    # see docs/CONCEPTS.md#privacy-notice-acknowledgement
+    privacy_consented_at = models.DateTimeField(null=True, blank=True, default=None)
+    privacy_policy_version = models.CharField(max_length=40, blank=True, default='')
 
     def __str__(self):
         return f"{self.user.email}'s profile"

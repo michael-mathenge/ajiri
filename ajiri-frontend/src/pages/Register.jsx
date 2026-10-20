@@ -11,6 +11,8 @@ export default function Register() {
     email: '',
     phone_number: '',
     password: '',
+    privacy_consent: false,
+    privacy_policy_version: 'privacy-draft-v1',
   })
   const [errors, setErrors] = useState({})
   const [submitting, setSubmitting] = useState(false)
@@ -71,6 +73,14 @@ export default function Register() {
             />
           </div>
         ))}
+        <label className="check-field">
+          <input type="checkbox" name="privacy_consent" required
+            checked={values.privacy_consent}
+            aria-invalid={Boolean(errors.privacy_consent)}
+            aria-describedby={errors.privacy_consent ? 'register-privacy_consent-error' : undefined}
+            onChange={(event) => setValues({ ...values, privacy_consent: event.target.checked })} />
+          <span>I have read the <Link to="/privacy" target="_blank" rel="noopener noreferrer">privacy notice (draft; opens in a new tab)</Link> and agree to the account processing it describes. This does not enable email alerts or authorize job applications.</span>
+        </label>
         <Button type="submit" disabled={submitting}>
           {submitting ? 'Creating account…' : 'Register'}
         </Button>

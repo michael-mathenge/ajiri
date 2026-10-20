@@ -152,6 +152,8 @@ class ApplicationSendMigrationTests(TransactionTestCase):
         leaves = executor.loader.graph.leaf_nodes()
         self.addCleanup(lambda: MigrationExecutor(connection).migrate(leaves))
         before = [('jobs', '0009_application_package_schema'), ('profiles', '0005_cv_workspace_approval')]
+        # Test this historical upgrade alone, not unrelated future leaf migrations.
+        after = [('jobs', '0010_application_send_authorization_schema'), ('profiles', '0005_cv_workspace_approval')]
         executor.migrate(before)
         old_state = executor.loader.project_state(before)
         old = old_state.apps
@@ -194,15 +196,15 @@ class ApplicationSendMigrationTests(TransactionTestCase):
                 path.write_bytes(b'Synthetic persisted bytes: '+path.name.encode())
             saved = [path.read_bytes() for path in paths]
             executor = MigrationExecutor(connection)
-            plan = executor.migration_plan(leaves)
+            plan = executor.migration_plan(after)
             self.assertEqual([(migration.app_label, migration.name, backwards) for migration, backwards in plan],
                              [('jobs', '0010_application_send_authorization_schema', False)])
             operations = plan[0][0].operations
             self.assertEqual(sum(type(op).__name__ == 'CreateModel' for op in operations), 2)
             self.assertEqual(sum(type(op).__name__ == 'AddConstraint' for op in operations), 6)
             self.assertTrue(all(type(op).__name__ in ('CreateModel', 'AddConstraint') for op in operations))
-            executor.migrate(leaves)
-            current_state = executor.loader.project_state(leaves)
+            executor.migrate(after)
+            current_state = executor.loader.project_state(after)
             current = current_state.apps
             for key, model in old_state.models.items():
                 self.assertEqual({name: field.deconstruct() for name, field in model.fields.items()},

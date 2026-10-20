@@ -13,6 +13,7 @@ vi.mock('../api/client', () => ({
 beforeEach(() => vi.resetAllMocks())
 const renderPage = (page) => render(<MemoryRouter>{page}</MemoryRouter>)
 const fillRegister = () => {
+  fireEvent.click(screen.getByRole('checkbox', { name: /I have read the/ }))
   fireEvent.change(screen.getByLabelText('Full name'), {
     target: { value: 'Test User' },
   })
@@ -39,6 +40,16 @@ const app = {
 }
 
 describe('Register', () => {
+  it('starts privacy agreement unchecked and submits the displayed policy only after agreement', async () => {
+    apiClient.post.mockResolvedValue({ data: {} })
+    renderPage(<Register />)
+    expect(screen.getByRole('checkbox', { name: /I have read the/ })).not.toBeChecked()
+    expect(screen.getByRole('link', { name: /privacy notice/ })).toHaveAttribute('href', '/privacy')
+    fillRegister()
+    fireEvent.click(screen.getByRole('button', { name: 'Register' }))
+    await waitFor(() => expect(apiClient.post).toHaveBeenCalledWith('/accounts/register/',
+      expect.objectContaining({ privacy_consent: true, privacy_policy_version: 'privacy-draft-v1' })))
+  })
   it('shows all field errors and complete messages', async () => {
     apiClient.post.mockRejectedValue({
       response: {

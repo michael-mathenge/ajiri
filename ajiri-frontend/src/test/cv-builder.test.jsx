@@ -96,7 +96,7 @@ it('brings repeated save errors into view and identifies the exact optional entr
     expect(alert).toHaveTextContent('Work experience 2 — Role: This field may not be blank.')
     expect(alert).toHaveTextContent('Work experience 2 — Employer: This field may not be blank.')
     expect(alert).toHaveTextContent('Education 1 — Institution: This field may not be blank.')
-    expect(screen.getByLabelText('CV save errors')).toHaveFocus()
+    await waitFor(() => expect(screen.getByLabelText('CV save errors')).toHaveFocus())
     expect(scroll).toHaveBeenCalledWith({ block: 'start', behavior: 'auto' })
     fireEvent.click(screen.getByRole('button', { name: 'Save and preview CV' }))
     await waitFor(() => expect(apiClient.patch).toHaveBeenCalledTimes(2))

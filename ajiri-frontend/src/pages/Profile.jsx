@@ -109,6 +109,9 @@ export function ProfileEditor({ profile }) {
       <Card>
         <h2>Your profile</h2>
         <p className="muted">Account email: {profile.email}</p>
+        <p>Privacy notice: {profile.privacy_consented_at
+          ? `Agreed ${new Date(profile.privacy_consented_at).toLocaleString('en-KE')} (${profile.privacy_policy_version})`
+          : 'No registration agreement recorded for this existing account.'} <Link to="/privacy">Read notice</Link></p>
         <form onSubmit={save} className="stack" aria-busy={saving}>
           <FormErrors errors={errors} prefix="profile" />
           <div className="profile-grid">
