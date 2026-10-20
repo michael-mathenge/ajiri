@@ -2,6 +2,7 @@ import io
 import json
 import threading
 import uuid
+import tempfile
 from datetime import datetime, timezone as dt_timezone
 from unittest.mock import patch
 from urllib.error import HTTPError, URLError
@@ -13,6 +14,12 @@ from django.test import SimpleTestCase, TransactionTestCase, override_settings
 from django.utils import timezone
 
 from profiles.models import Profile
+from profiles.cv_test_helpers import approved_cv
+from profiles.cv_builder import content_hash
+from .application_packages import save_package, context, PackageConflict
+from .package_review import approve_package
+from .send_authorization import plan_response, authorize, dispatch_inputs
+from .models import ApplicationSendAuthorization
 from .brevo_transport import BrevoTransport, NoRedirect, Result
 from .delivery_service import DeliveryError, DeliveryService, Policy, QuotaExceeded
 from .models import Application, DeliveryAttempt as Attempt, DeliveryDailyBudget as Budget, Job, Notification
@@ -86,7 +93,7 @@ class BrevoTransportTests(SimpleTestCase):
 
 class FakeTransport(BrevoTransport):
     def __init__(self, result=None):
-        super().__init__('test-placeholder', 'platform@example.invalid')
+        super().__init__('test-placeholder', 'platform@example.invalid', sender_name='Ajiri')
         object.__setattr__(self, 'calls', [])
         object.__setattr__(self, 'result', result or Result('accepted', '<synthetic@brevo.invalid>'))
 
@@ -96,9 +103,16 @@ class FakeTransport(BrevoTransport):
         return self.result
 
 
-@override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
+@override_settings(PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'],
+                   EMAIL_PLATFORM_FROM='platform@example.invalid')
 class DeliveryServiceTests(TransactionTestCase):
     def setUp(self):
+        temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(temporary.cleanup)
+        media = override_settings(MEDIA_ROOT=temporary.name)
+        media.enable()
+        self.addCleanup(media.disable)
+        self.keys = {}
         self.user = get_user_model().objects.create_user(email='owner@example.invalid', password='synthetic-password')
         Profile.objects.filter(user=self.user).update(email_verified_at=timezone.now(), verified_email=self.user.email)
         self.transport = FakeTransport()
@@ -106,25 +120,65 @@ class DeliveryServiceTests(TransactionTestCase):
 
     def application(self, user=None):
         job = Job.objects.create(title='Test', company_name='Example', description='Synthetic',
-            source_name='test', source_url='https://example.invalid/' + uuid.uuid4().hex)
-        return Application.objects.create(user=user or self.user, job=job, status='ready_for_review',
+            source_name='test', source_url='https://example.invalid/' + uuid.uuid4().hex,
             application_method='email', application_email='employer@example.invalid')
+        app = Application.objects.create(user=user or self.user, job=job, status='ready_for_review',
+            application_method='email', application_email='employer@example.invalid')
+        from profiles.models import CVApproval
+        cv = CVApproval.objects.filter(profile__user=app.user).first() or approved_cv(app.user)
+        package = save_package(app.user, app.pk, {'cv_version': cv.pk, 'expected_revision': 0,
+            'context_sha256': content_hash(context(app)), 'letter_text': 'Synthetic letter',
+            'email_subject': 'Synthetic', 'email_body': 'Private test body'})
+        approve_package(app.user, app.pk, package.pk, 1, package.content_sha256)
+        app.test_authorization = self.authorization(app)
+        return app
+
+    def authorization(self, app, retry_of=None):
+        plan = plan_response(app.user, app, retry_of)
+        return authorize(app.user, app.pk, {'request_key': uuid.uuid4(),
+            'package_id': uuid.UUID(plan['plan']['package_id']), 'expected_revision': 1,
+            'plan_sha256': plan['plan_sha256'], 'retry_of': retry_of, 'authorization': True})[0]
 
     def deliver(self, application=None, **changes):
+        app = application or self.application()
         args = dict(user_id=self.user.pk, channel='application', recipient='employer@example.invalid',
-            subject='Synthetic', text='Private test body', application_id=(application or self.application()).pk,
+            subject='Synthetic', text='Private test body', application_id=app.pk,
             idempotency_key=uuid.uuid4())
         args.update(changes)
+        if args['channel'] == 'application':
+            key = uuid.UUID(str(args['idempotency_key']))
+            auth = self.keys.get(key)
+            if auth is None:
+                auth = ApplicationSendAuthorization.objects.get(pk=app.test_authorization.pk)
+                if changes.get('retry_of'):
+                    try:
+                        auth = self.authorization(app, changes['retry_of'])
+                    except PackageConflict as error:
+                        raise DeliveryError(str(error)) from None
+                elif auth.state != 'authorized':
+                    raise DeliveryError('A new authorization is required for another explicit action.')
+                self.keys[key] = auth
+            auth.refresh_from_db()
+            args['authorization_id'] = auth.pk
+            args['idempotency_key'] = auth.pk
+            # Frozen inputs prepared by the approved service, never arbitrary test attachments.
+            if auth.state == 'authorized':
+                try:
+                    args.update(dispatch_inputs(app.user, auth))
+                except PackageConflict as error:
+                    raise DeliveryError(str(error)) from None
+                args.update({key: value for key, value in changes.items() if key != 'idempotency_key'})
         return self.service.deliver(**args)
 
     def test_disabled_by_default_and_unverified_block_before_reservation(self):
+        app = self.application()
         self.service.enabled = False
         with self.assertRaises(DeliveryError):
-            self.deliver()
+            self.deliver(app)
         self.service.enabled = True
         Profile.objects.filter(user=self.user).update(email_verified_at=None)
         with self.assertRaises(DeliveryError):
-            self.deliver()
+            self.deliver(app)
         self.assertEqual(Budget.objects.count(), 0)
         self.assertEqual(self.transport.calls, [])
 

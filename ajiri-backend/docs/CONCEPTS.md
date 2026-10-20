@@ -964,3 +964,27 @@ ownership cannot be guaranteed by a foreign key. PROTECT retains referenced evid
 and needs review in AJ-25 erasure work. Routine rollback keeps populated tables and
 newer writes; reversing their creation drops evidence and is not a routine rollback.
 No P4a endpoint, admin registration, background task or real sender uses these rows.
+
+## application-send-authorization
+
+Document approval and permission to email are separate actions. The private send
+plan freezes the actual recipient, verified Reply-To, configured From, exact saved
+email text and two verified DOCX attachments. Authorizing records permission for
+24 hours without spending quota or sending. A changed plan requires fresh review.
+New package saves supersede active permission in their existing transaction.
+
+Withdrawal, saving and dispatch use the same SQLite writer ordering. The shared
+budget transaction rechecks current identity, job, proof, files and the complete
+prepared payload, then atomically reserves capacity, creates the receipt/link and
+closes permission as dispatch_started. Network I/O happens once after commit.
+After that cutoff cancellation cannot be promised. Replays read the linked receipt
+before checking changed files/configuration; they never spend again or resend.
+Unknown/reserved/accepted outcomes block new attempts. One explicitly authorized
+retry of an initial definite failure is allowed; failures still consume quota.
+
+The account pilot is unchanged. A separate application-only boundary checks an exact
+owner/recipient, synthetic subject, two attachments, a reviewed serialized ceiling,
+one application/Nairobi day and five shared messages. It has no live factory here.
+The public dispatch endpoint is deliberately disconnected even if a setting is
+enabled: final release/pilot approval and a reviewed adapter connection are still
+needed. There is no console/SMTP fallback, copy, broad sender or automatic retry.

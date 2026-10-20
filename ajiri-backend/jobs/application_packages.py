@@ -12,12 +12,13 @@ from django.core.files.base import ContentFile
 from django.db import OperationalError, transaction
 from django.db.models import F
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from rest_framework.exceptions import APIException
 
 from profiles.cv_builder import content_hash, document_bytes, CVUnavailable
 from profiles.cv_validation import MAX_DOCUMENT_BYTES
 from profiles.models import CVApproval
-from .models import Application, ApplicationPackage
+from .models import Application, ApplicationPackage, ApplicationSendAuthorization
 
 TEMPLATE_VERSION = 'application-letter-v1'
 
@@ -134,6 +135,8 @@ def save_package(user, application_id, data):
             if not CVApproval.objects.filter(pk=approval.pk, profile__user=user).exists():
                 raise PackageConflict()
             package.save(force_insert=True)
+            ApplicationSendAuthorization.objects.filter(application=current, state='authorized').update(
+                state='superseded', closed_at=timezone.now())
         return package
     except Exception as error:
         # Only files staged by this request can be removed; crash orphans require report-only review.
