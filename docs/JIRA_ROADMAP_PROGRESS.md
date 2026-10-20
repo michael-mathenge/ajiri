@@ -116,3 +116,57 @@ README/SETUP simplified; USER_GUIDE and operator backup guidelines added. Verifi
 unused social sprite removed; no private/user data or original Docker lesson
 removed. See HOUSEKEEPING_REVIEW.md. AJ-31/38/41 decisions recorded in
 ROADMAP_SPIKE_DECISIONS.md; local staging setup/verification is in progress.
+
+## Release #27 completed (overnight 20–21 October Nairobi)
+
+PR #27 head 1afa17d61ff0baf06ba6a456f84e137ef964ab99 passed all four checks, then
+merged as cc731976de13a5b5d561739def8dd93a26f70bff. All four merge checks passed too.
+That exact release is now deployed. Fresh paused-writer snapshot:
+backup-20261020T205514252995Z-8ba8d533; server and independent private local restore
+verified (12 media files, 212184 bytes). Only profiles.0006_privacy_notice applied;
+every pre-existing row value and unset historical consent was preserved. No runtime
+requirements changed and no pip install was required. Web app and both previously
+active workflows resumed and reread active. Live asset bytes match the release;
+health/login/register/privacy/applications 200 with HSTS300. Live invalid registration
+400, anonymous restore401 and missing-CSRF refresh403; owner profile read200.
+Normal ingestion succeeded: https://github.com/michael-mathenge/ajiri/actions/runs/39497734521
+Private rollout/rollback receipt is alongside the off-server backup. No real
+production account/document/authorization was created for QA. Browser registration
+agreement verified unchecked after an old tab reload. The obsolete lazy-chunk blank
+page observed before that reload has a regression/recovery boundary in the next batch.
+
+Jira AJ-12/24/37/31/38/41 are Done and statuses were reread. AJ-31/38/41 are decision
+spikes, not claims of live public SEO or Swahili. Remaining defined features stay open.
+
+## Operations batch in progress
+
+Branch codex/jira-operations starts at deployed cc731976. Isolated staging image
+builds, fresh-volume migrations and localhost:8001 health passed. UID10001,
+/data/db.sqlite3, no baked .env, real mail off and empty ingestion credential verified;
+original localhost:8000 learning container preserved. Full Linux suite reached
+296 tests OK, with no Windows symlink skip. Final allowlisted image also passed all 296 tests (79.426s), no skips.
+See OPERATIONS_ROADMAP_REVIEW.md. Native focused backup/preflight tests:20 passed. Repaired
+concurrency scenario was run five separate times successfully; an initial repeated
+label command was deduplicated by Django and is not counted as five runs.
+
+The SQLite last-slot test now accepts only documented no-handoff busy exhaustion,
+then reconciles the same losing key after workers finish and still proves exactly
+one provider call/attempt/quota claim. Added deterministic exhausted-lock regression.
+No automatic provider retries or delivery-service policy changes.
+
+Reusable verify_private_backup validates completion, hashes, SQLite and bounded safe
+archive inventory, and optionally restores into a new private folder only. Its
+actual independent local restore of the private release snapshot passed:12 files.
+Container path guards now recognize a packaged /app without treating its parent /
+as all application data; missing Git provenance explicitly records unverified.
+Fresh .env example fixes blank mail backend and local trusted-origin setup.
+Read-only release_preflight validates clean exact SHA, reviewed migration delta and
+build references; actual clean-checkout execution occurs after its package commit.
+No fetch/install/migration/activation is performed by that planner.
+
+Frontend locked install/lint/102 tests/build passed in the isolated Node24.19 runner.
+New render boundary offers explicit reload for obsolete lazy chunks, without echoing
+exception text, clearing authentication or retrying mutations. New build awaits its
+last package commit. Historical Checkpoint2 checklist is archived, not deleted.
+Provisional AJ-42–AJ-52 requirements prepared; test integrations and live services are
+not claimed complete. Daily backup scheduling is active; first scheduled run pending.

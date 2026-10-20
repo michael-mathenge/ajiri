@@ -74,3 +74,18 @@ Current release recovery evidence remains in the private 20 October backup folde
 For unattended reliability when this desktop is off, provision an eligible
 always-on scheduler with narrowly scoped private access; until then retain this
 availability limitation and the manual recovery fallback in operational reporting.
+
+## Reusable verifier
+
+Where the operations package is installed, replace ad hoc verification scripts with:
+
+```bash
+python manage.py verify_private_backup --backup COMPLETED_BACKUP --restore-to NEW_PRIVATE_FOLDER
+```
+
+Omitting --restore-to performs hashes/integrity/archive checks without writing.
+Actual restore verification requires a new private folder; existing destinations,
+traversal, links, oversized expansion, mismatched inventory and partial manifests
+are rejected. The same command works on a private downloaded backup in development
+configuration. It never writes the live database. A source revision of unverified
+in a Git-free packaged backup is explicit missing provenance, not a verified release.

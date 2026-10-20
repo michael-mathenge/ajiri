@@ -1,0 +1,18 @@
+services:
+  web:
+    build: .
+    ports:
+      - "127.0.0.1:8001:8000"
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings_staging
+      DEBUG: "True"
+      PYTHON_DOTENV_DISABLED: "1"
+      ALLOWED_HOSTS: localhost,127.0.0.1
+      REAL_EMAIL_ENABLED: "False"
+    volumes:
+      - staging-data:/data
+    read_only: true
+    tmpfs:
+      - /tmp
+volumes:
+  staging-data:

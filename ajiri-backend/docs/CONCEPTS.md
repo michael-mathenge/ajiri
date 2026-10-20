@@ -1013,3 +1013,36 @@ accounts and administrative creation acquire no inferred historical agreement.
 This record does not authorize email alerts or individual application sending, and
 the draft notice does not represent completed legal review. Old registration tabs
 must reload to include the current policy version before submitting.
+
+## isolated-container-staging
+
+The staging image uses synthetic data in its own named volume and loopback port
+8001, non-root UID 10001 and a read-only root filesystem. Settings force real mail
+off and clear ingestion credentials; production files are excluded from its build.
+A packaged /app without Git metadata is its own application tree, not the whole
+filesystem. Backups without available source provenance explicitly record
+revision unverified; that must never be described as a verified release SHA.
+
+## updated-page-recovery
+
+A tab opened before deployment may request an obsolete lazy-loaded JavaScript
+chunk. A render boundary shows a safe explicit Reload action instead of a blank
+page. It does not display exception details, clear authentication, retry mutations
+or reload automatically; users are warned that unsaved edits can be lost.
+
+## verified-backup-restoration
+
+The independent verifier requires a completed manifest, exact database/archive
+hashes and valid SQLite data. It bounds archive expansion/count/bytes, rejects
+links, traversal, duplicate paths and inventory mismatch, and restores only into a
+new private directory. No existing/live data is overwritten. Completion evidence
+is published only after the copied database and restored media verify. Checksums
+detect corruption; they are not a signature proving authenticity of a maliciously
+replaced manifest. A Git-free source revision remains explicitly unverified.
+
+## release-preflight
+
+The release planner reads a clean checkout and exact reviewed commit identifiers,
+checks migration changes against the explicit list, and verifies committed asset
+references remain inside frontend_build. It prints the backup/stage/migration/
+activation order, performs no external writes and does not replace runtime checks.

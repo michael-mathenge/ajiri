@@ -5,6 +5,7 @@ import gzip
 import hashlib
 import json
 import os
+import re
 from pathlib import Path
 import sqlite3
 import stat
@@ -14,6 +15,7 @@ import time
 import uuid
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
+from config.paths import application_tree
 
 
 def digest(path):
@@ -25,6 +27,19 @@ def no_links(path):
     for item in [path, *path.parents]:
         if item.is_symlink() or (hasattr(item, 'is_junction') and item.is_junction()):
             raise CommandError('Backup paths must not contain links or junctions.')
+
+
+def source_revision():
+    try:
+        result = subprocess.run(['git', 'rev-parse', 'HEAD'], cwd=settings.BASE_DIR,
+                                capture_output=True, text=True, check=True)
+        revision = result.stdout.strip()
+        if re.fullmatch(r'[0-9a-f]{40}', revision):
+            return revision
+    except (OSError, subprocess.CalledProcessError):
+        pass
+    # Missing build provenance must be explicit, not prevent protecting local data.
+    return 'unverified'
 
 
 def media_inventory(root):
@@ -103,7 +118,7 @@ class Command(BaseCommand):
         source, media, destination = source.resolve(), media.resolve(), destination.resolve()
         if not source.is_file():
             raise CommandError('Configured SQLite database must exist as a regular file.')
-        if (destination.is_relative_to(settings.BASE_DIR.parent.resolve())
+        if (destination.is_relative_to(application_tree(settings.BASE_DIR))
                 or destination.is_relative_to(source.parent)
                 or destination.is_relative_to(media) or media.is_relative_to(destination)):
             raise CommandError('Destination must be outside application, database and media trees.')
@@ -146,8 +161,7 @@ class Command(BaseCommand):
                 hashes[archive.name] = digest(archive)
                 with gzip.open(archive, 'rb') as stream:
                     hashes['media_uncompressed'] = hashlib.file_digest(stream, 'sha256').hexdigest()
-            revision = subprocess.run(['git', 'rev-parse', 'HEAD'], cwd=settings.BASE_DIR,
-                                      capture_output=True, text=True, check=True).stdout.strip()
+            revision = source_revision()
             manifest = {'format': 1, 'complete': True, 'created_at': datetime.now(timezone.utc).isoformat(),
                         'revision': revision, 'sha256': hashes, 'media_included': options['include_media'],
                         'media_files': len(inventory), 'media_bytes': sum(v[0] for v in inventory.values()),
