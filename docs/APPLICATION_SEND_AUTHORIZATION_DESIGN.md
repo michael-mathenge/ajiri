@@ -1,5 +1,10 @@
 # P4 application-email authorization — design for review
 
+> P4a approval update, 20 October 2026: Michael reviewed this design and approved
+> proceeding with the additive schema and migration tests only. Implementation
+> evidence is in APPLICATION_SEND_SCHEMA_REVIEW.md. P4b/P4c services/client and P5
+> activation remain later packages; no live dispatch is authorized by this update.
+
 20 October 2026. Based on reviewed P3 `9f08327`. **Proposal only:** no model,
 migration, endpoint, transport integration, provider call or production change.
 P3 review authorizes preparing this design; it does not approve this schema,

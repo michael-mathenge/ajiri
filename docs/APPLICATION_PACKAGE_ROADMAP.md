@@ -1,5 +1,10 @@
 # Application package roadmap and schema handback
 
+> P4a update, 20 October 2026: the P4 design was reviewed and approved for schema
+> implementation. New authorization/link tables and migration tests are local for
+> review; see APPLICATION_SEND_SCHEMA_REVIEW.md. No service/API/dispatch activation,
+> push or deployment is included. Later P4b/P4c/P5 work remains gated.
+
 > P4 design update, 20 October 2026: Michael reviewed P3 `9f08327` and instructed
 > proceeding to P4's separate authorization design review. The design-only proposal
 > is APPLICATION_SEND_AUTHORIZATION_DESIGN.md; defaults/schema/attachment policy

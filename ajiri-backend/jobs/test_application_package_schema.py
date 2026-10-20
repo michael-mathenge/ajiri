@@ -85,6 +85,8 @@ class ApplicationPackageMigrationTests(TransactionTestCase):
         self.addCleanup(lambda: MigrationExecutor(connection).migrate(leaves))
         before = [('jobs', '0008_deliverydailybudget_deliveryattempt'),
                   ('profiles', '0005_cv_workspace_approval')]
+        after = [('jobs', '0009_application_package_schema'),
+                 ('profiles', '0005_cv_workspace_approval')]
         executor.migrate(before)
         old = executor.loader.project_state(before).apps
         User = old.get_model('accounts', 'User')
@@ -115,14 +117,14 @@ class ApplicationPackageMigrationTests(TransactionTestCase):
                 path.write_bytes(b'Synthetic saved bytes: '+path.name.encode())
             saved = [path.read_bytes() for path in paths]
             executor = MigrationExecutor(connection)
-            plan = executor.migration_plan(leaves)
+            plan = executor.migration_plan(after)
             self.assertEqual([(migration.app_label, migration.name, backwards)
                               for migration, backwards in plan],
                              [('jobs', '0009_application_package_schema', False)])
             operations = plan[0][0].operations
             self.assertTrue(all(type(op).__name__ in ('CreateModel', 'AddConstraint') for op in operations))
-            executor.migrate(leaves)
-            current = executor.loader.project_state(leaves).apps
+            executor.migrate(after)
+            current = executor.loader.project_state(after).apps
             for label in labels:
                 self.assertEqual(list(current.get_model(*label).objects.values()), rows[label])
             self.assertEqual([path.read_bytes() for path in paths], saved)

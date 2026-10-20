@@ -315,3 +315,65 @@ class DeliveryDailyBudget(models.Model):
 
     class Meta:
         constraints = [models.UniqueConstraint(fields=['scope', 'day'], name='delivery_budget_scope_day')]
+
+
+# Dormant P4a evidence tables; no API, authorization service or sender reads them yet.
+# see docs/CONCEPTS.md#application-send-authorization-schema
+class ApplicationSendAuthorization(models.Model):
+    class State(models.TextChoices):
+        AUTHORIZED = 'authorized', 'Authorized'
+        WITHDRAWN = 'withdrawn', 'Withdrawn'
+        SUPERSEDED = 'superseded', 'Superseded'
+        EXPIRED = 'expired', 'Expired'
+        DISPATCH_STARTED = 'dispatch_started', 'Dispatch started'
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    request_key = models.UUIDField(unique=True)
+    application = models.ForeignKey(Application, on_delete=models.PROTECT, related_name='send_authorizations')
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT,
+                              related_name='application_send_authorizations')
+    document_approval = models.ForeignKey(ApplicationPackageApproval, on_delete=models.PROTECT,
+                                          related_name='send_authorizations')
+    plan = models.JSONField()
+    plan_sha256 = models.CharField(max_length=64, validators=[
+        RegexValidator(r'\A[0-9a-f]{64}\Z', 'A lowercase SHA-256 fingerprint is required.')])
+    policy_version = models.CharField(max_length=40)
+    authorized_at = models.DateTimeField()
+    expires_at = models.DateTimeField()
+    state = models.CharField(max_length=16, choices=State.choices, default=State.AUTHORIZED)
+    closed_at = models.DateTimeField(null=True, blank=True, default=None)
+    retry_of = models.ForeignKey(DeliveryAttempt, on_delete=models.PROTECT, null=True, blank=True,
+                                 default=None, related_name='retry_authorizations')
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(condition=models.Q(state__in=[
+                'authorized', 'withdrawn', 'superseded', 'expired', 'dispatch_started']),
+                name='app_send_state_valid'),
+            models.CheckConstraint(condition=(
+                models.Q(state='authorized', closed_at__isnull=True)
+                | models.Q(state__in=['withdrawn', 'superseded', 'expired', 'dispatch_started'],
+                           closed_at__isnull=False)), name='app_send_closed_time'),
+            models.CheckConstraint(condition=models.Q(expires_at__gt=models.F('authorized_at')),
+                                   name='app_send_expiry_valid'),
+            models.UniqueConstraint(fields=['application'], condition=models.Q(state='authorized'),
+                                    name='app_send_active_unique'),
+        ]
+
+
+class ApplicationSendAttemptLink(models.Model):
+    authorization = models.OneToOneField(ApplicationSendAuthorization, on_delete=models.PROTECT,
+                                         related_name='attempt_link')
+    attempt = models.OneToOneField(DeliveryAttempt, on_delete=models.PROTECT,
+                                   related_name='send_authorization_link')
+    previous_attempt = models.ForeignKey(DeliveryAttempt, on_delete=models.PROTECT, null=True, blank=True,
+                                         default=None, related_name='authorization_retry_links')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['previous_attempt'],
+                condition=models.Q(previous_attempt__isnull=False), name='app_send_retry_unique'),
+            models.CheckConstraint(condition=(models.Q(previous_attempt__isnull=True)
+                | ~models.Q(previous_attempt=models.F('attempt'))), name='app_send_retry_not_self'),
+        ]

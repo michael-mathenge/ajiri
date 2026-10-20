@@ -947,3 +947,20 @@ policy version. Creating it must not dispatch mail. The proposed atomic dispatch
 handoff defines when withdrawal can no longer guarantee cancellation. This is
 design only; see ../../docs/APPLICATION_SEND_AUTHORIZATION_DESIGN.md for pending
 schema, attachment, privacy and pilot decisions. P3 still blocks application email.
+
+## application-send-authorization-schema
+
+P4a adds dormant authorization and attempt-link tables. SQL enforces one active
+authorization per application, unique reconciliation keys, valid state/closed-time
+combinations, expiry after authorization, one attempt per authorization, and no
+forked or self-referential retry edge. Existing tables and ledger rules do not change.
+No existing rows become authorized and no migration creates plans, files or messages.
+
+These constraints are not the complete permission system. P4b must validate owner,
+package proof, exact plan/hash, expiry policy, forward-only lifecycle, linked channel,
+retry limits and byte integrity transactionally before any API writer or dispatch.
+Ordinary ORM save does not run every model validator; JSON structure and cross-table
+ownership cannot be guaranteed by a foreign key. PROTECT retains referenced evidence
+and needs review in AJ-25 erasure work. Routine rollback keeps populated tables and
+newer writes; reversing their creation drops evidence and is not a routine rollback.
+No P4a endpoint, admin registration, background task or real sender uses these rows.
