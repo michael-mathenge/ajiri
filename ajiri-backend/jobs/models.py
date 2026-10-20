@@ -137,6 +137,53 @@ class Application(models.Model):
         return f"{self.user.email} -> {self.job.title} ({self.status})"
 
 
+def application_package_document_path(instance, filename):
+    # see docs/CONCEPTS.md#application-package-schema
+    # Private UUID paths never disclose or trust the supplied filename.
+    return f'application-packages/{uuid.uuid4().hex}.docx'
+
+
+class ApplicationPackage(models.Model):
+    """Dormant revision snapshot; owner/byte validation belongs to future APIs."""
+    # see docs/CONCEPTS.md#application-package-schema
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    application = models.ForeignKey(Application, on_delete=models.CASCADE, related_name='packages')
+    revision = models.PositiveIntegerField()
+    cv_approval = models.ForeignKey('profiles.CVApproval', on_delete=models.PROTECT, related_name='application_packages')
+    job_snapshot = models.JSONField()
+    letter_text = models.TextField()
+    email_subject = models.CharField(max_length=255, blank=True, default='')
+    email_body = models.TextField(blank=True, default='')
+    cv_document = models.FileField(upload_to=application_package_document_path, max_length=100)
+    letter_document = models.FileField(upload_to=application_package_document_path, max_length=100)
+    cv_sha256 = models.CharField(max_length=64)
+    letter_sha256 = models.CharField(max_length=64)
+    content_sha256 = models.CharField(max_length=64)
+    cv_size = models.PositiveIntegerField()
+    letter_size = models.PositiveIntegerField()
+    template_version = models.CharField(max_length=40)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=('application', 'revision'), name='app_package_unique_revision'),
+            models.CheckConstraint(condition=models.Q(revision__gte=1), name='app_package_revision_positive'),
+            models.CheckConstraint(condition=models.Q(cv_size__gte=1), name='app_package_cv_size_positive'),
+            models.CheckConstraint(condition=models.Q(letter_size__gte=1), name='app_package_letter_size_positive'),
+        ]
+
+
+class ApplicationPackageApproval(models.Model):
+    """Document approval evidence only; never permission to send email."""
+    # see docs/CONCEPTS.md#application-package-schema
+    package = models.OneToOneField(ApplicationPackage, on_delete=models.CASCADE, related_name='approval')
+    approved_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT,
+                                    related_name='application_package_approvals')
+    approved_at = models.DateTimeField(auto_now_add=True)
+    content_sha256 = models.CharField(max_length=64)
+    policy_version = models.CharField(max_length=40)
+
+
 class Notification(models.Model):
     """
     A record that a user was alerted about a job matching their profile at

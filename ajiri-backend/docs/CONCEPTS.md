@@ -653,6 +653,22 @@ rejects redirects so an API key or CV cannot be forwarded to another host. A val
 acceptance and server errors remain unknown; provider error bodies are not logged.
 Payloads/attachments live only in memory; explicit attachment limits are required.
 
+## application-package-schema
+
+ApplicationPackage is a dormant additive snapshot table linking one application
+revision to its approved CV source, private UUID document paths, job/letter/email
+content, sizes, byte hashes and template version. Revision is positive and unique
+per application; document sizes are positive. ApplicationPackageApproval records
+one document approval and its policy version, not permission to send email.
+No historical application is backfilled and no existing file is regenerated.
+P1 adds no routes, writers, serializers, sender or admin access to these tables.
+Future services must validate ownership, content/hash integrity, current revision,
+bounded reads and immutability before exposing them; SQL foreign keys alone cannot
+enforce those rules. Approved-by and source-CV PROTECT relationships can prevent
+deletion once referenced, so future erasure requires explicit retention review.
+Routine rollback retains populated tables and newer data; reversing their migration
+would delete snapshots/approvals. Files are not automatically deleted by cascades.
+
 ## atomic-delivery-budgets
 
 The dormant delivery service first writes the global daily budget inside a short
