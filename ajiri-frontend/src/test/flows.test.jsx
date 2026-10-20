@@ -94,28 +94,16 @@ describe('Register', () => {
 })
 
 describe('Applications', () => {
-  it('requires review approval, sends, and removes the send control', async () => {
+  it('keeps managed email sending unavailable and preserves original downloads', async () => {
     apiClient.get.mockResolvedValue({ data: { results: [app], count: 1 } })
-    apiClient.post.mockResolvedValue({ data: { ...app, status: 'sent' } })
     renderPage(<Applications />)
     await screen.findByText('Developer, Example')
     fireEvent.click(screen.getByText('Review application'))
-    expect(
-      screen.getByRole('button', { name: 'Send application' })
-    ).toBeDisabled()
-    fireEvent.click(screen.getByRole('checkbox'))
-    fireEvent.click(screen.getByRole('button', { name: 'Send application' }))
-    await waitFor(() =>
-      expect(
-        screen.queryByRole('button', { name: 'Send application' })
-      ).not.toBeInTheDocument()
-    )
-    expect(apiClient.post).toHaveBeenCalledWith('/jobs/applications/1/send/')
-    await waitFor(() =>
-      expect(
-        screen.getByRole('heading', { name: 'Developer, Example' })
-      ).toHaveFocus()
-    )
+    expect(screen.getByText(/Managed application sending is awaiting activation/)).toBeVisible()
+    expect(screen.queryByRole('button', { name: 'Send application' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('checkbox')).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Download CV' })).toBeVisible()
+    expect(apiClient.post).not.toHaveBeenCalled()
   })
   it('requires opening the employer link and confirming submission', async () => {
     const onUpdate = vi.fn()
@@ -156,10 +144,11 @@ describe('Applications', () => {
         data: { detail: 'Cannot send an application with status sent.' },
       },
     })
-    renderPage(<ApplicationRow application={app} onUpdate={vi.fn()} />)
+    renderPage(<ApplicationRow application={{ ...app, application_method: 'external_link' }} onUpdate={vi.fn()} />)
     fireEvent.click(screen.getByText('Review application'))
+    fireEvent.click(screen.getByRole('link', { name: /Open employer listing/ }))
     fireEvent.click(screen.getByRole('checkbox'))
-    fireEvent.click(screen.getByRole('button', { name: 'Send application' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Confirm external submission' }))
     expect(await screen.findByRole('alert')).toHaveTextContent('Cannot send')
     expect(screen.getByText('Developer, Example')).toBeVisible()
   })

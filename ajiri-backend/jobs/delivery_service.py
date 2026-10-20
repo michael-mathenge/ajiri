@@ -11,13 +11,16 @@ from zoneinfo import ZoneInfo
 
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
+from django.http import Http404
 from django.db import IntegrityError, OperationalError, transaction
 from django.db.models import F
 from django.utils import timezone
+from rest_framework.exceptions import APIException
 
 from profiles.models import Profile
 from .brevo_transport import Result
 from .models import Application, DeliveryAttempt as Attempt, DeliveryDailyBudget as Budget, Notification
+from .models import ApplicationSendAuthorization as Authorization, ApplicationSendAttemptLink as SendLink
 
 
 class DeliveryError(Exception):
@@ -52,7 +55,21 @@ class DeliveryService:
 
     def deliver(self, *, user_id, channel, recipient, subject, text, idempotency_key,
                 application_id=None, notification_id=None, alert_consent_confirmed=False,
-                retry_of=None, attachments=(), max_attachment_bytes=0):
+                retry_of=None, attachments=(), max_attachment_bytes=0, authorization_id=None):
+        authorization = None
+        if channel == 'application':
+            from .send_authorization import linked_attempt
+            from .application_packages import PackageConflict
+            if authorization_id is None:
+                raise DeliveryError('An exact application authorization is required.')
+            if not get_user_model().objects.filter(pk=user_id, is_active=True).exists():
+                raise DeliveryError('Inactive delivery owner.')
+            try:
+                authorization, existing = linked_attempt(user_id, application_id, authorization_id, idempotency_key)
+                if existing is not None:
+                    return existing  # Reconcile before eligibility/config/file checks; never repeat network I/O.
+            except (APIException, Http404) as error:
+                raise DeliveryError(str(error)) from None
         if not self.enabled:
             raise DeliveryError('Real delivery is disabled.')
         if transaction.get_connection().in_atomic_block:
@@ -88,11 +105,21 @@ class DeliveryService:
         payload = self.transport.prepare(recipient=recipient, subject=subject, text=text,
             reply_to=user.email if channel == 'application' else None,
             attachments=attachments, max_attachment_bytes=max_attachment_bytes)
+        if authorization:
+            try:
+                self._validate_authorization(user, authorization, payload, retry_of)
+            except DeliveryError:
+                # Another identical request may commit its handoff during preflight.
+                # Reconcile that link instead of treating its durable blocker as new failure.
+                _, existing = linked_attempt(user_id, application_id, authorization_id, idempotency_key)
+                if existing is not None:
+                    return existing
+                raise
         day = timezone.now().astimezone(ZoneInfo('Africa/Nairobi')).date()
         for number in range(3):
             try:
                 attempt, created = self._reserve(user, channel, digest, key, day, application, notification,
-                    retry_of)
+                    retry_of, authorization, payload)
                 break
             except OperationalError:
                 if number == 2:
@@ -108,23 +135,50 @@ class DeliveryService:
                 result = Result('unknown', failure_category='transport')
         except Exception:
             result = Result('unknown', failure_category='transport')  # Never surface credentials/provider text.
-        try:
-            Attempt.objects.filter(pk=attempt.pk, state='reserved').update(state=result.state,
-                provider_message_id=result.provider_message_id, failure_category=result.failure_category,
-                resolved_at=timezone.now() if result.state != 'unknown' else None)
-            attempt.refresh_from_db()
-        except Exception:
-            # A reserved receipt still blocks repeats if recording provider acceptance fails.
+        # see docs/CONCEPTS.md#atomic-delivery-budgets
+        # A competing reservation may hold SQLite's writer lock after provider I/O.
+        # Retry only the conditional receipt write/read, never the provider call.
+        for number in range(3):
+            try:
+                Attempt.objects.filter(pk=attempt.pk, state='reserved').update(state=result.state,
+                    provider_message_id=result.provider_message_id, failure_category=result.failure_category,
+                    resolved_at=timezone.now() if result.state != 'unknown' else None)
+                attempt.refresh_from_db()
+                return attempt
+            except OperationalError:
+                if number < 2:
+                    time.sleep(0.02 * (number + 1))
+                    continue
+            except Exception:
+                pass
+            # A durable reserved/finished receipt blocks repeats even if reading it fails.
             raise DeliveryError('Delivery outcome needs reconciliation; do not retry.') from None
-        return attempt
 
     def _check_pilot(self, user, channel, recipient):
+        if self.pilot is not None and getattr(self.pilot, 'application_only', False):
+            if channel != 'application' or user.pk != self.pilot.owner_id or recipient.casefold() != self.pilot.recipient:
+                raise DeliveryError('Application pilot delivery is not allowed.')
+            return
         if self.pilot is not None and (channel not in ('password_reset', 'email_verification')
             or user.pk != self.pilot.owner_id or recipient.casefold() != self.pilot.recipient
             or user.email.casefold() != self.pilot.recipient):
             raise DeliveryError('Pilot delivery is not allowed.')
 
-    def _reserve(self, user, channel, digest, key, day, application, notification, retry_of):
+    def _validate_authorization(self, user, authorization, payload, retry_of):
+        from .send_authorization import validate_payload
+        from .application_packages import PackageConflict
+        try:
+            if authorization.retry_of_id != retry_of:
+                raise PackageConflict('Retry does not match the exact authorization.')
+            current_user = get_user_model().objects.filter(pk=user.pk, is_active=True).first()
+            if current_user is None:
+                raise DeliveryError('Inactive delivery owner.')
+            validate_payload(current_user, authorization, payload)
+        except APIException as error:
+            raise DeliveryError(str(error)) from None
+
+    def _reserve(self, user, channel, digest, key, day, application, notification, retry_of,
+                 authorization=None, payload=None):
         counter, cap = {'application': ('application_reserved', self.policy.applications),
             'alert': ('alert_reserved', self.policy.alerts)}.get(channel, ('account_reserved', self.policy.accounts))
         with transaction.atomic():
@@ -137,10 +191,16 @@ class DeliveryService:
                     existing.notification_id) != (user.pk, channel, digest,
                     application.pk if application else None, notification.pk if notification else None):
                     raise DeliveryError('Idempotency key belongs to another delivery.')
+                if authorization and not SendLink.objects.filter(authorization=authorization, attempt=existing).exists():
+                    raise DeliveryError('Delivery is not linked to this authorization.')
                 return existing, False
             if not get_user_model().objects.filter(pk=user.pk, is_active=True).exists():
                 raise DeliveryError('Inactive delivery owner.')
             if application:
+                # Same SQLite writer claim as withdrawal and package saves, before authoritative rechecks.
+                Application.objects.filter(pk=application.pk).update(status=F('status'))
+                authorization = Authorization.objects.get(pk=authorization.pk, owner=user, application=application)
+                self._validate_authorization(user, authorization, payload, retry_of)
                 proof = Profile.objects.get(user=user)
                 current_email = get_user_model().objects.get(pk=user.pk).email
                 if (not Application.objects.filter(pk=application.pk, user=user,
@@ -154,7 +214,7 @@ class DeliveryService:
                     raise DeliveryError('Alert preference changed before reservation.')
             elif get_user_model().objects.get(pk=user.pk).email != user.email:
                 raise DeliveryError('Account email changed before reservation.')
-            self._check_pilot(user, channel, user.email)
+            self._check_pilot(user, channel, application.application_email if application else user.email)
             target = Attempt.objects.filter(application=application) if application else (
                 Attempt.objects.filter(notification=notification) if notification else
                 Attempt.objects.filter(user=user, channel=channel, recipient_digest=digest))
@@ -182,6 +242,10 @@ class DeliveryService:
             if not budgets.filter(total__lt=limit, **{counter+'__lt': cap}).update(**{counter: F(counter)+1}):
                 raise QuotaExceeded('Daily platform allocation reached; keep the draft and try next Nairobi day.')
             if channel == 'application':
+                if self.pilot and getattr(self.pilot, 'application_only', False):
+                    today = Budget.objects.get(scope='global', day=day)
+                    if today.application_reserved > 1:
+                        raise QuotaExceeded('The owner pilot allows one application attempt per Nairobi day.')
                 scope = f'user:{user.pk}'
                 Budget.objects.bulk_create([Budget(scope=scope, day=day)], ignore_conflicts=True)
                 if not Budget.objects.filter(scope=scope, day=day,
@@ -191,4 +255,9 @@ class DeliveryService:
                 application=application, notification=notification, idempotency_key=key)
             attempt.full_clean()
             attempt.save(force_insert=True)
+            if authorization:
+                SendLink.objects.create(authorization=authorization, attempt=attempt, previous_attempt_id=retry_of)
+                authorization.state = 'dispatch_started'
+                authorization.closed_at = timezone.now()
+                authorization.save(update_fields=['state', 'closed_at'])
             return attempt, True

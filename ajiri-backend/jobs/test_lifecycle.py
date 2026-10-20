@@ -93,17 +93,18 @@ class ApplicationLifecycleTests(TestCase):
         self.assertEqual(repeat.data['id'], app.pk)
         self.assertEqual(Application.objects.count(), 1)
 
-    def test_email_sends_once_with_both_saved_attachments(self):
+    @patch('django.core.mail.EmailMessage.send')
+    def test_legacy_email_send_is_disabled_without_status_or_mail_changes(self, send):
         app = self.prepare()
         response = self.client.post(f'/api/jobs/applications/{app.pk}/send/')
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data['status'], 'sent')
-        self.assertIsNotNone(response.data['sent_at'])
-        self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(mail.outbox[0].to, ['jobs@example.com'])
-        self.assertEqual(len(mail.outbox[0].attachments), 2)
-        self.assertEqual(self.client.post(f'/api/jobs/applications/{app.pk}/send/').status_code, 400)
-        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(response.status_code, 409)
+        self.assertEqual(response.data['code'], 'application_sending_disabled')
+        app.refresh_from_db()
+        self.assertEqual(app.status, 'ready_for_review')
+        self.assertIsNone(app.sent_at)
+        send.assert_not_called()
+        self.assertEqual(self.client.post(f'/api/jobs/applications/{app.pk}/send/').status_code, 409)
+        self.assertEqual(len(mail.outbox), 0)
 
     def test_external_submission_records_confirmation_without_email(self):
         self.job.application_method = 'external_link'
@@ -120,18 +121,19 @@ class ApplicationLifecycleTests(TestCase):
             self.assertEqual(self.client.post(f'/api/jobs/applications/{app.pk}/send/').status_code, 400)
         self.assertEqual(len(mail.outbox), 0)
 
-    @patch('jobs.views.EmailMessage.send', side_effect=OSError('mail service unavailable'))
-    def test_email_failure_keeps_reviewable_application(self, send):
+    @patch('django.core.mail.EmailMessage.send', side_effect=OSError('mail service unavailable'))
+    def test_email_backend_is_not_called_even_when_unavailable(self, send):
         app = self.prepare()
-        self.assertEqual(self.client.post(f'/api/jobs/applications/{app.pk}/send/').status_code, 502)
+        self.assertEqual(self.client.post(f'/api/jobs/applications/{app.pk}/send/').status_code, 409)
+        send.assert_not_called()
         app.refresh_from_db()
         self.assertEqual(app.status, 'ready_for_review')
         self.assertIsNone(app.sent_at)
 
-    def test_missing_attachment_returns_retryable_error(self):
+    def test_missing_attachment_does_not_bypass_disabled_sending(self):
         app = self.prepare()
         app.generated_cv.storage.delete(app.generated_cv.name)
-        self.assertEqual(self.client.post(f'/api/jobs/applications/{app.pk}/send/').status_code, 502)
+        self.assertEqual(self.client.post(f'/api/jobs/applications/{app.pk}/send/').status_code, 409)
         app.refresh_from_db()
         self.assertEqual(app.status, 'ready_for_review')
         self.assertIsNone(app.sent_at)

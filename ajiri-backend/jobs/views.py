@@ -4,7 +4,6 @@ from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from django.http import HttpResponse, FileResponse
 from django.shortcuts import get_object_or_404
-from django.core.mail import EmailMessage
 from django.conf import settings
 from django.utils.http import content_disposition_header
 from profiles.download_names import document_name
@@ -125,9 +124,7 @@ class SendApplicationView(generics.GenericAPIView):
     POST /jobs/applications/<pk>/send/ — the final step in the Application
     lifecycle. Behavior branches on application_method:
 
-    - EMAIL: actually sends the email to application_email, with the
-      generated CV and cover letter attached as files. Uses the (possibly
-      user-edited) email_subject/email_body already stored on the record.
+    - EMAIL: disabled pending separate exact-package authorization and delivery review.
     - EXTERNAL_LINK: there's nothing for us to send — the user applies
       manually on the employer's own site. This just records that they've
       confirmed doing so.
@@ -150,8 +147,14 @@ class SendApplicationView(generics.GenericAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # No legacy console/SMTP bypass of the package review and sending boundary.
+        # see docs/CONCEPTS.md#application-package-editor
+        if application.application_method == Job.ApplicationMethod.EMAIL:
+            return Response({'detail': 'Managed application sending is awaiting activation. No email was sent.',
+                             'code': 'application_sending_disabled'}, status=409)
+
         # One autocommitted conditional write wins even when both callers read READY.
-        # Do not hold a database transaction open across SMTP.
+        # External submission is a user report, never provider delivery.
         # see docs/CONCEPTS.md#application-send-claim
         claimed_at = timezone.now()
         claimed = Application.objects.filter(
@@ -161,29 +164,6 @@ class SendApplicationView(generics.GenericAPIView):
             return Response({'detail': 'This application has already been claimed or is no longer reviewable.'}, status=400)
         application.status = Application.Status.SENT
         application.sent_at = claimed_at
-
-        if application.application_method == Job.ApplicationMethod.EMAIL:
-            email = EmailMessage(
-                subject=application.email_subject,
-                body=application.email_body,
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                to=[application.application_email],
-            )
-            try:
-                # Missing attachments are delivery failures too; keep the draft reviewable.
-                # see docs/CONCEPTS.md#application-delivery-failure
-                email.attach_file(application.generated_cv.path)
-                email.attach_file(application.generated_cover_letter.path)
-                email.send(fail_silently=False)
-            except Exception:
-                # Only the winning claim may release itself for retry.
-                Application.objects.filter(
-                    pk=application.pk, status=Application.Status.SENT, sent_at=claimed_at,
-                ).update(status=Application.Status.READY_FOR_REVIEW, sent_at=None)
-                return Response(
-                    {"detail": "Could not send this application. Its documents or email service may be unavailable. Please try again later."},
-                    status=status.HTTP_502_BAD_GATEWAY,
-                )
 
         serializer = ApplicationSerializer(application, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)

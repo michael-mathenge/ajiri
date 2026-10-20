@@ -3,6 +3,7 @@ import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import apiClient from '../api/client'
 import DownloadButton from '../components/DownloadButton'
+import ApplicationPackageEditor from '../components/ApplicationPackageEditor'
 import { useApiResource } from '../hooks/useApiResource'
 import {
   ApplicationStatus,
@@ -66,7 +67,8 @@ export function ApplicationRow({ application: app, onUpdate }) {
       <details className="review-details">
         <summary>Review application</summary>
         <div className="stack mt-4">
-          <p>Review the generated documents before your next step.</p>
+          <ApplicationPackageEditor applicationId={app.id} readOnly={!dismissible} />
+          <p>Original application documents (saving a new package does not replace these):</p>
           <div className="action-group">
             {app.generated_cv && (
               <DownloadButton
@@ -98,7 +100,8 @@ export function ApplicationRow({ application: app, onUpdate }) {
               </p>
             </div>
           )}
-          {ready && (
+          {ready && email && <p>Managed application sending is awaiting activation. No email will be sent from this page.</p>}
+          {ready && !email && (
             <>
               {!email && (
                 <>

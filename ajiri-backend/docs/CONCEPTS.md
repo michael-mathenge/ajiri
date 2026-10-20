@@ -653,13 +653,33 @@ rejects redirects so an API key or CV cannot be forwarded to another host. A val
 acceptance and server errors remain unknown; provider error bodies are not logged.
 Payloads/attachments live only in memory; explicit attachment limits are required.
 
+## application-package-schema
+
+ApplicationPackage is a dormant additive snapshot table linking one application
+revision to its approved CV source, private UUID document paths, job/letter/email
+content, sizes, byte hashes and template version. Revision is positive and unique
+per application; document sizes are positive. ApplicationPackageApproval records
+one document approval and its policy version, not permission to send email.
+No historical application is backfilled and no existing file is regenerated.
+P1 adds no routes, writers, serializers, sender or admin access to these tables.
+Future services must validate ownership, content/hash integrity, current revision,
+bounded reads and immutability before exposing them; SQL foreign keys alone cannot
+enforce those rules. Approved-by and source-CV PROTECT relationships can prevent
+deletion once referenced, so future erasure requires explicit retention review.
+Routine rollback retains populated tables and newer data; reversing their migration
+would delete snapshots/approvals. Files are not automatically deleted by cascades.
+
 ## atomic-delivery-budgets
 
 The dormant delivery service first writes the global daily budget inside a short
 transaction, serializing SQLite writers before reads. It conditionally increments
 category/total and user counters and creates a validated unique attempt atomically.
-The provider call happens only after commit, outside caller transactions. Only DB
-lock retries occur before network I/O; no provider retries happen automatically.
+The provider call happens only after commit, outside caller transactions. Database
+reservation retries happen before network I/O. After the single provider call,
+receipt recording separately retries OperationalError at most three times, with
+20/40 ms pauses; it conditionally updates only reserved rows and rereads the receipt.
+No provider retries happen automatically. Exhausted receipt retries leave the durable
+reservation/result intact and require reconciliation; they never refund capacity.
 Definite failures and unknown outcomes keep consumed capacity. A repeated key
 returns its old receipt, never another send. Reserved/unknown receipts survive
 crashes and block fresh sends until reviewed reconciliation; midnight does not
@@ -865,3 +885,114 @@ FormErrors preserves field association IDs while rendering human-readable labels
 and one spaced list item per server message. Nested DRF messages remain complete;
 errors never discard input. Empty skills offer a profile prompt; unavailable
 profile data is unknown and never implies an empty skills list.
+
+## application-package-editor
+
+My applications can save a new, private document-package revision without changing
+the original application files or older revisions. The owner explicitly selects
+an approved CV. A neutral deterministic letter uses only that approved CV's name,
+summary and skills, with the displayed job title/company; it does not infer
+qualifications or a suitability score. The user can edit it or copy an older
+letter from this application's revision history. Job text is bounded reference
+material, rendered as text, never executable instructions. Saving copies the exact
+approved CV bytes and renders the edited letter once under UUID private paths.
+
+The server checks owner, editable state, delivery blockers, expected latest revision
+and a fingerprint of the displayed job context. A conditional Application write
+starts the transaction before reads so SQLite serializes concurrent saves. A loser
+gets 409 and cleans only its own staged files. Profile changes do not regenerate
+saved packages. Read/list/draft/save never create approval, mail or budget records.
+The package list is paginated (20); the existing approved-CV chooser exposes the
+latest 20 approved versions, plus a package's previously selected version.
+
+After an uncertain save, reload the saved revisions before explicitly trying
+another mutation; there is no automatic mutation retry. Unsaved edits warn on
+page unload and same-window link navigation. Browser history navigation remains a
+manual-verification limit. Exact saved-package preview/download and approval are
+P3, not implied by the working letter editor. Managed application email is disabled
+at both page and legacy send endpoint, before state claims, with no runtime bypass.
+External website submission confirmation remains a user report, not email delivery.
+
+## application-package-approval
+
+Document review reads the saved CV and letter bytes. Both documents must match
+their recorded sizes and SHA-256 hashes, the selected approved-CV provenance and
+the package's canonical fingerprint. Existing bounded DOCX checks run before the
+paragraph parser. No preview or download regenerates a document, fetches a URL or
+uses current Profile content. HTML shows escaped stored paragraph text/order;
+downloaded DOCX remains the layout reference. Unexpected tables or oversized
+previews fail closed rather than silently omitting content. GET/HEAD and errors
+are private/no-store, with owner-scoped lookups and safe download labels.
+
+Explicit document approval binds a saved package UUID, latest revision and exact
+fingerprint to the owner, server time and application-documents-v1 wording. A
+conditional Application write serializes approvals with package saves on SQLite;
+files/provenance are checked again under that claim. Identical current approval
+is idempotent. New revisions receive no approval automatically: prior approvals
+remain historical. Missing/changed files, stale state/revision/hash or delivery
+blockers prevent approval. Later filesystem changes cannot be made atomic with SQL,
+so every download and repeated approval checks the actual bytes again.
+
+Working edits reset the client preview/checkbox. An uncertain approval is reconciled
+by a fresh GET, never an automatic POST retry. Saved packages remain privately
+readable for sent/dismissed applications, without permitting a fresh approval.
+This is document approval only: no email/submission permission, provider call,
+delivery-ledger write, attachment activation or legacy sender enablement follows.
+
+## application-send-authorization-design
+
+Sending authorization is a separate proposed decision after document approval:
+it binds one recipient, exact package/email/attachments, verified Reply-To and
+policy version. Creating it must not dispatch mail. The proposed atomic dispatch
+handoff defines when withdrawal can no longer guarantee cancellation. This is
+design only; see ../../docs/APPLICATION_SEND_AUTHORIZATION_DESIGN.md for pending
+schema, attachment, privacy and pilot decisions. P3 still blocks application email.
+
+## application-send-authorization-schema
+
+P4a adds dormant authorization and attempt-link tables. SQL enforces one active
+authorization per application, unique reconciliation keys, valid state/closed-time
+combinations, expiry after authorization, one attempt per authorization, and no
+forked or self-referential retry edge. Existing tables and ledger rules do not change.
+No existing rows become authorized and no migration creates plans, files or messages.
+
+These constraints are not the complete permission system. P4b must validate owner,
+package proof, exact plan/hash, expiry policy, forward-only lifecycle, linked channel,
+retry limits and byte integrity transactionally before any API writer or dispatch.
+Ordinary ORM save does not run every model validator; JSON structure and cross-table
+ownership cannot be guaranteed by a foreign key. PROTECT retains referenced evidence
+and needs review in AJ-25 erasure work. Routine rollback keeps populated tables and
+newer writes; reversing their creation drops evidence and is not a routine rollback.
+No P4a endpoint, admin registration, background task or real sender uses these rows.
+
+## application-send-authorization
+
+Document approval and permission to email are separate actions. The private send
+plan freezes the actual recipient, verified Reply-To, configured From, exact saved
+email text and two verified DOCX attachments. Authorizing records permission for
+24 hours without spending quota or sending. A changed plan requires fresh review.
+New package saves supersede active permission in their existing transaction.
+
+Withdrawal, saving and dispatch use the same SQLite writer ordering. The shared
+budget transaction rechecks current identity, job, proof, files and the complete
+prepared payload, then atomically reserves capacity, creates the receipt/link and
+closes permission as dispatch_started. Network I/O happens once after commit.
+After that cutoff cancellation cannot be promised. Replays read the linked receipt
+before checking changed files/configuration; they never spend again or resend.
+Unknown/reserved/accepted outcomes block new attempts. One explicitly authorized
+retry of an initial definite failure is allowed; failures still consume quota.
+
+The account pilot is unchanged. A separate application-only boundary checks an exact
+owner/recipient, synthetic subject, two attachments, a reviewed serialized ceiling,
+one application/Nairobi day and five shared messages. It has no live factory here.
+The public dispatch endpoint is deliberately disconnected even if a setting is
+enabled: final release/pilot approval and a reviewed adapter connection are still
+needed. There is no console/SMTP fallback, copy, broad sender or automatic retry.
+
+The client opens this plan only after document approval and an explicit review
+click. Its permission checkbox starts off; recording permission never dispatches.
+A separate send action respects the server's disabled state. Lost replies use
+owner-scoped reconciliation keys/receipts via GET, without mutation retries. A
+working edit or different revision resets the session; accepted means provider
+acceptance, not confirmed inbox delivery. Withdrawal requires a fresh plan review
+before another permission action. Browser state is never authoritative consent.
