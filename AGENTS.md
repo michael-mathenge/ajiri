@@ -4,17 +4,12 @@
 
 ## 1. Mission
 
-Deliver Checkpoint 4 Phase C on integration/checkpoint-4, pinned to
-4b6e99bac4995fd3e36e6fbe1c7e3176383b6214. Michael's 19 October Phase C prompt
-supersedes historical mission/package numbering and integration branch references.
-Build C1 acceptance journey, C2 CV layout verification, C3 UI polish and C4 status
-housekeeping, then document D1 alert defaults, D2 certificate decisions and D3
-application/alert sending. Branch packages from integration and locally merge
---no-ff after section 7 gates; Michael explicitly approved these local merges.
-No pushes, PRs, remote merges, connector writes, production actions, migrations or
-new dependencies. Do not change auth/JWT/cookies/CSRF, CORS, ingestion, hosting or
-CI. Stop affected work for a migration/auth requirement; continue independent
-packages under section 8. All sending/consent/certificate designs remain proposals.
+Development backlog: [Ajiri Jira board 34](https://michaelmathenge.atlassian.net/jira/software/projects/AJ/boards/34/backlog).
+Follow the current Jira acceptance criteria and sprint order; reconcile existing implementation and deployment evidence before rebuilding completed features.
+
+Michael authorized the remaining roadmap on 20 October 2026, including implementation, tests, documentation, pushes, pull requests, merges after required checks and production deployment. Presented designs, review notes and decisions are approved; do not request repeated intermediate approvals. This authorization supersedes historical checkpoint-only/no-push/no-production restrictions below for this roadmap. Provisional issues still need concrete requirements; never invent credentials, legal approval, user consent or production verification.
+
+Automate routine backups where supported, verify completion/checksums and isolated restoration, and retain private off-server recovery copies. Manual backups are the fallback when platform access or a consistent paused-writer window requires them. Retention remains report-only until a concrete deletion policy is authorized. Housekeeping must preserve user work, private data, backups, Git configuration and stash; remove only files whose redundancy or lack of use is verified.
 
 ## 2. Product
 
@@ -33,31 +28,23 @@ Users are mostly on phones with limited data. **Mobile-first, lightweight, acces
 - Production: PythonAnywhere free tier, a committed `frontend_build`, and a GitHub Actions workflow that posts jobs to `POST /api/jobs/ingest/` and `/api/jobs/sweep/` (header `X-Ingest-Key`)
 - CI exists (`.github/workflows/ci.yml`: backend checks, migrations, tests, frontend lint/build, committed-build consistency; Python matrix 3.12-3.14). Local dev and PythonAnywhere use Python 3.12.
 
-## 4. Current state as of 19 October 2026
+## 4. Verified state (20 October 2026)
 
-Pinned merged main is 4b6e99bac4995fd3e36e6fbe1c7e3176383b6214, including PRs
-21-24. Last recorded production is 641cdfb; no production inspection/deployment
-occurs in Phase C. The pinned main must not be described as deployed. Since the
-recorded deployment: CV date/save feedback and registration journey coverage,
-frontend dependency/build updates, checkout updates and draft concurrency test
-repair. No requirements or migration changes occur in that release delta.
+Recorded deployed source is `647449851c98f5b22e0419db673f2500c86d1e86` (PR #26).
+Account email verification/reset has an owner-only Brevo pilot. Reviewed application
+packages and explicit authorization exist; broader application sending remains disabled
+until its gated integration and pilot pass. Never treat console output/provider
+acceptance as inbox delivery.
 
-Repository code includes 3A hardening, Phase A CSRF/health/logging/backup tools,
-account verification/reset and owner-only email pilot, CV builder approval and
-approved-CV application snapshots. Michael reported receiving and verifying his
-pilot email and successful registration/profile/CV download. These are historical
-owner reports, not a current production audit. Broader application/alert real
-sending remains gated; existing console paths do not prove inbox delivery.
-Redirect=False/HSTS=0 was last reported pending proxy scheme verification; current
-settings are UNVERIFIED here. Renewal expiry must be rechecked by Michael.
+AJ-12 is verified in production: native WSGI HTTPS, proxy SSL header None, redirect
+True, HSTS 300 seconds, subdomains/preload False; host Force HTTPS remains enabled.
+See docs/HTTPS_ACTIVATION_20261020.md. Free-account expiry is recorded as 19 November
+2026; recheck on renewal. The daily verified-backup desktop automation is active;
+its first scheduled run is not yet verified. See docs/BACKUP_AUTOMATION.md.
 
-C1-C3 local gates are recorded in package reviews: 216 Django tests run at C3,
-one Windows symlink skip; 71 component tests; Node 24.19 locked install/lint/build.
-Future approvals use cv-v2; Word synthetic rendering was inspected (six pages and
-one page). Google Docs/phone/browser visual checks remain UNVERIFIED. The full
-checkpoint results and limits belong in CHECKPOINT4_PHASE_C_REVIEW.md. New alert
-email defaults/consent, certificate uploads and broad sending are NOT implemented.
-Preserve original checkout changes, coverage, stash and Git configuration.
+Use docs/JIRA_ROADMAP_PROGRESS.md for local package/CI/deployment evidence. Do not
+infer that local commits or merged source have been deployed. Preserve the original
+checkout, Docker lesson, uncommitted lockfile, coverage, stash and Git configuration.
 
 ## 5. Known gotchas
 
@@ -69,22 +56,22 @@ Preserve original checkout changes, coverage, stash and Git configuration.
 - Windows/PowerShell: use `curl.exe`, not `curl`. `-replace` is case-insensitive; use `-creplace` with `[regex]::Escape()`.
 - Integrate new code alongside existing imports. Never overwrite file tops.
 
-## 6. Checkpoint 4 Phase C packages
+## 6. Roadmap workflow
 
-| Package | Branch | Acceptance |
-|---|---|---|
-| C1 | feature/acceptance-journey | Real API registration through approved-CV application review, exact bytes, no send/budget consumption; client transition tests |
-| C2 | feature/cv-layout-verification | DOCX structure, installed Word rendering, manual cross-viewer checks; immutable old approvals |
-| C3 | feature/ui-polish | Empty-skills prompt, readable complete form errors, safe readable download headers; snapshots unchanged |
-| C4 | docs/housekeeping | Only sections 1/4/6/12 rewritten; ancestry-grounded banners preserve historical text |
-| D1 | docs/alert-defaults-design | New-user email OFF and existing-user confirmation design; no code/migration |
-| D2 | docs/certificates-decisions | Options/recommendations/defaults and explicit pending approvals; no uploads/schema |
-| D3 | docs/application-alert-sending-design | Ledger/consent/truthful states and owner-only pilot design; no sending/schema |
+Use the linked Jira backlog, current sprint acceptance and verified implementation
+as the source of work. Complete defined AJ-17 and AJ-24–AJ-41 in tested packages;
+reconcile completed work rather than duplicating it. Michael chose concrete
+requirements and test integrations first for provisional AJ-42–AJ-52. Designs,
+provider stubs and spikes must not be represented as live services.
 
-Use section 7 gates for every package, including full Django and component tests.
-Use Node 24.19 explicitly. Refresh frontend_build as the last frontend package
-commit; verification-only builds must match. No dependency/migration is authorized.
+Work in isolated `codex/` branches based on fetched reviewed main. Preserve dirty
+original checkouts. Pass section 7 gates for each package, keep focused commits,
+then push, open a PR and merge only after required CI passes. The current task
+explicitly authorizes this release workflow and production verification.
+
 Document concepts in ajiri-backend/docs/CONCEPTS.md with backend-relative references.
+Use Node 24.19 explicitly and locked installation; commit generated frontend_build
+last in each frontend package. Never replace production storage with development data.
 
 ## 7. Quality gates (every package, no exceptions)
 
@@ -96,51 +83,62 @@ Document concepts in ajiri-backend/docs/CONCEPTS.md with backend-relative refere
 6. No secrets, `.env` files, or personal data in commits
 7. New concepts documented in `docs/CONCEPTS.md` (`## slug`, plain-language explanation) and referenced from code as `# see docs/CONCEPTS.md#slug`
 
+
 If a gate cannot run in your environment, say so explicitly and mark the package **unverified**; do not claim done.
 
-## 8. Autonomy and stop conditions
+## 8. Autonomy and boundaries
 
-Proceed package by package without asking for approval. **Stop and ask** only if:
-- A change requires a new migration that alters or removes existing data, or touches `AUTH_USER_MODEL`
-- You need to change auth, CORS, the ingestion flow, or deployment config
-- A package would exceed its scope or need a new dependency not already listed here (ask before adding)
-- Tests fail and you cannot fix the cause after two focused attempts
-- Requirements are ambiguous in a way that changes the design
-- Anything looks destructive or irreversible
+Proceed without repeated package/design approvals within the authorized backlog.
+Continue independent work when one item is blocked, recording the exact limitation.
+Do not invent acceptance criteria for provisional work; refine it and use test
+integrations first as Michael selected. Report failed gates honestly and fix causes.
 
-When blocked on one package, record it in the report and continue to the next independent package where possible.
+Preserve AUTH_USER_MODEL and migration history. Use additive, reviewed migrations
+and data-preserving rollback. Actual erasure requires a verified account-owner
+request, not merely approval to implement an erasure feature. Do not buy services,
+accept legal agreements, enter new credentials or make irreversible user-data
+changes on the strength of a broad implementation request. Michael enters secrets
+privately. Ask only for genuinely missing requirements/access or consequential
+choices outside this scope, explaining the specific reason; do not stop the rest.
 
 ## 9. Git workflow
 
-- Create `integration/checkpoint-1` from up-to-date `main`. Branch every package from it and merge back with `--no-ff` after the gates pass.
-- **Never commit to `main`. Never push.** Michael reviews and pushes.
-- Small, focused commits with clear messages.
-- Never merge PRs, push, or use GitHub/connector write actions unless Michael asks for that exact action in that session.
+- Never commit directly to main; use focused feature branches and required-check PRs.
+- The current roadmap task authorizes pushes, PR creation, merges after checks,
+  Jira updates and PythonAnywhere production deployment, including private backups.
+- Do not bypass required checks, rewrite published history or modify Git configuration.
+- Check the branch before every commit and verify new author/committer identities
+  use Michael's configured noreply address. Preserve stash and unrelated changes.
 
 ## 10. Do not touch without asking
 
 `AUTH_USER_MODEL` and migration history; the SimpleJWT cookie/rotation logic; `src/api/client.js` interceptor behaviour (extend, do not rewrite); CORS settings; ingestion endpoints and `X-Ingest-Key` handling; CI workflow (propose changes in the report); hosting config.
 
-- Never touch production. Server instructions are for Michael to perform manually.
+- Production work follows the explicit current-task authorization and verified rollback; never infer it from historical reports.
 - Never ask for or write secrets (keys, passwords, SMTP credentials or tokens) in chat, files or commits. Michael enters credentials privately himself.
 - Changes must support the documented deployment order: backup, migrations, then activation of new code. Migration source may be staged first; new code must not handle requests before its migrations complete.
 
 ## 11. Working with Michael
 
+- All designs, review notes and decisions presented to Michael as of 20 October 2026 are approved. Continue the agreed roadmap without intermediate approval pauses; Michael will review the final product. Future design changes and actions outside the agreed scope require separate authorization. Push, merge, deployment and real email sending remain subject to the current task's explicit authorization.
 - Michael is a Senior Scrum Master and solo developer, learning React. Explain the *why* of non-obvious choices in short code comments and in the report.
 - Be direct. Push back when something is risky or wrong, and explain why.
 - Give exact PowerShell commands for anything he needs to run, plus the expected result.
-- Michael tracks work in Monday.com himself. Give completed items and honest story-point suggestions per package; do not assume any Monday.com access.
+- Michael tracks work in Jira. Jira edits are authorized for this roadmap; note material acceptance changes and record honest story-point suggestions.
 
-## 12. Checkpoint 4 Phase C handback
+## 12. Handback and guidelines
 
-Write docs/CHECKPOINT4_PHASE_C_REVIEW.md in the Checkpoint 3B format: package
-status/branches/ranges/points, actual commands/counts, manual verification script,
-decisions, unresolved risks and Jira-ready title/acceptance criteria per package.
-Include ALERT_DEFAULTS_DESIGN.md, CERTIFICATES_DECISIONS.md and
-APPLICATION_ALERT_SENDING_DESIGN.md as proposals only. Preserve historical reviews
-and distinguish merged source, local work, owner reports and verified deployment.
-Check branch before every commit. Run a non-empty git log identity range from
-4b6e99bac4995fd3e36e6fbe1c7e3176383b6214 to HEAD and verify configured noreply
-author/committer identities. No push, remote merge, connector write or deployment
-unless Michael asks for that exact action. Stop and wait for review.
+Keep docs/JIRA_ROADMAP_PROGRESS.md current with branches/ranges, actual commands,
+results, skipped/unverified checks, migrations, CI, source and deployed revisions,
+rollback and remaining work. Update Jira from evidence; local implementation alone
+is not deployed acceptance. Retain historical reviews without using them as current
+setup instructions. README/SETUP and docs/USER_GUIDE.md are the onboarding entry points.
+
+Automated backups must verify completion, integrity, private off-server copy and
+isolated restore, and report failures. Manual backup is a fallback, not the default;
+never claim an unavailable scheduler ran. Retention is report-only until a concrete
+pruning policy is approved. Housekeeping requires demonstrated lack of use and
+recoverable tracked removal; never indiscriminately delete untracked files or backups.
+
+Complete the approved roadmap through tested push/merge/deployment; report real
+external blockers and unfinished items explicitly rather than claiming completion.

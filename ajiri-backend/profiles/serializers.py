@@ -31,8 +31,9 @@ class ProfileSerializer(serializers.ModelSerializer):
             'skills', 'skill_names', 'cv_file', 'updated_at', 'email',
             'full_name', 'phone_number',
             'notify_email', 'notify_in_app',
+            'privacy_consented_at', 'privacy_policy_version',
         )
-        read_only_fields = ('updated_at',)
+        read_only_fields = ('updated_at', 'privacy_consented_at', 'privacy_policy_version')
 
     def to_representation(self, instance):
         """

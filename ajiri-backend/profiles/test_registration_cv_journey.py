@@ -46,7 +46,7 @@ class RegistrationCVJourneyTests(TransactionTestCase):
         self.assertEqual(self.client.get('/api/profiles/me/', secure=True).status_code, 401)
         self.csrf()
         account = {'email': 'journey@example.invalid', 'full_name': 'Synthetic Applicant',
-                   'password': 'Forest!River-82-Clouds', 'phone_number': '0700000000'}
+                   'password': 'Forest!River-82-Clouds', 'phone_number': '0700000000', 'privacy_consent': True, 'privacy_policy_version': 'privacy-draft-v1'}
         weak = self.client.post('/api/accounts/register/', {**account, 'password': '123'}, format='json', secure=True)
         self.assertEqual(weak.status_code, 400)
         self.assertIn('password', weak.data)

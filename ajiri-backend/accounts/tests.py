@@ -12,7 +12,7 @@ class AuthFlowTests(TestCase):
     def setUp(self):
         cache.clear()
         self.client = APIClient()
-        self.payload = {'email': 'auth@example.com', 'password': 'test-password', 'full_name': 'Test User', 'phone_number': '0700000000'}
+        self.payload = {'email': 'auth@example.com', 'password': 'test-password', 'full_name': 'Test User', 'phone_number': '0700000000', 'privacy_consent': True, 'privacy_policy_version': 'privacy-draft-v1'}
 
     def register_and_login(self):
         self.assertEqual(self.client.post('/api/accounts/register/', self.payload).status_code, 201)

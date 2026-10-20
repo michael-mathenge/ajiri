@@ -24,7 +24,7 @@ from profiles.models import CVApproval
 from profiles.cv_builder import CVUnavailable
 from profiles.cv_validation import StrictSerializer
 from rest_framework import serializers
-from django.db import OperationalError
+from django.db import OperationalError, transaction
 from .application_drafting import prepare_application
 
 
@@ -207,6 +207,42 @@ class DismissApplicationView(generics.GenericAPIView):
             if application.status == Application.Status.SENT:
                 return Response({'detail': 'Sent applications cannot be dismissed.'}, status=400)
         return Response(ApplicationSerializer(application, context={'request': request}).data)
+
+
+class RestoreApplicationView(generics.GenericAPIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    throttle_classes = (EndpointThrottle,)
+    throttle_scope = 'apply'
+
+    def post(self, request, pk):
+        # A write first serializes SQLite restore against dismissal and dispatch.
+        # see docs/CONCEPTS.md#restore-application-snapshot
+        from .models import ApplicationSendAuthorization, DeliveryAttempt
+        with transaction.atomic():
+            restored_at = timezone.now()
+            changed = Application.objects.filter(
+                pk=pk, user=request.user, status=Application.Status.DISMISSED,
+            ).update(status=Application.Status.READY_FOR_REVIEW, updated_at=restored_at)
+            application = get_object_or_404(Application, pk=pk, user=request.user)
+            if not changed:
+                if application.status == Application.Status.READY_FOR_REVIEW:
+                    return Response(ApplicationSerializer(application, context={'request': request}).data)
+                return Response({'detail': 'Only dismissed applications can be restored.'}, status=409)
+            blocked = application.delivery_attempts.filter(
+                channel='application', state__in=[DeliveryAttempt.State.RESERVED,
+                    DeliveryAttempt.State.UNKNOWN, DeliveryAttempt.State.ACCEPTED],
+            ).exists()
+            documents = (application.generated_cv, application.generated_cover_letter)
+            if blocked or not all(document and document.storage.exists(document.name) for document in documents):
+                transaction.set_rollback(True)
+                return Response({'detail': 'The saved application cannot be restored. Its documents or delivery state need review.'}, status=409)
+            # Restoring documents never revives permission to send them.
+            ApplicationSendAuthorization.objects.filter(application=application,
+                state=ApplicationSendAuthorization.State.AUTHORIZED).update(
+                    state=ApplicationSendAuthorization.State.SUPERSEDED, closed_at=restored_at)
+            response = Response(ApplicationSerializer(application, context={'request': request}).data)
+            response['Cache-Control'] = 'private, no-store'
+            return response
 
 
 class NotificationListView(generics.ListAPIView):

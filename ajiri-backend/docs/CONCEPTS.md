@@ -996,3 +996,20 @@ owner-scoped reconciliation keys/receipts via GET, without mutation retries. A
 working edit or different revision resets the session; accepted means provider
 acceptance, not confirmed inbox delivery. Withdrawal requires a fresh plan review
 before another permission action. Browser state is never authoritative consent.
+
+## restore-application-snapshot
+
+A dismissed application can return to review using its original private documents,
+email text and job snapshot. No document is regenerated, no email is sent and no
+old sending authorization is revived. Missing original files or an unresolved or
+accepted provider attempt block restoration. Sent applications cannot be restored.
+
+## privacy-notice-acknowledgement
+
+New public registrations explicitly agree to the displayed draft privacy policy.
+The server records its version and server time atomically with account creation.
+Profile responses expose only the owner's evidence and cannot overwrite it. Existing
+accounts and administrative creation acquire no inferred historical agreement.
+This record does not authorize email alerts or individual application sending, and
+the draft notice does not represent completed legal review. Old registration tabs
+must reload to include the current policy version before submitting.
