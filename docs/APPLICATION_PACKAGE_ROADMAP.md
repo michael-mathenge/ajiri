@@ -1,5 +1,10 @@
 # Application package roadmap and schema handback
 
+> P4 design update, 20 October 2026: Michael reviewed P3 `9f08327` and instructed
+> proceeding to P4's separate authorization design review. The design-only proposal
+> is APPLICATION_SEND_AUTHORIZATION_DESIGN.md; defaults/schema/attachment policy
+> await review. No sending implementation, pilot, push or deployment is authorized.
+
 > P3 approval update, 20 October 2026: Michael reviewed P2 through `ae8d05f` and
 > instructed proceeding with saved-package review, downloads and document approval.
 > P3 is local and awaits its own review. P4-P5 delivery authorization, sending and

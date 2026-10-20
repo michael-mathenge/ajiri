@@ -938,3 +938,12 @@ by a fresh GET, never an automatic POST retry. Saved packages remain privately
 readable for sent/dismissed applications, without permitting a fresh approval.
 This is document approval only: no email/submission permission, provider call,
 delivery-ledger write, attachment activation or legacy sender enablement follows.
+
+## application-send-authorization-design
+
+Sending authorization is a separate proposed decision after document approval:
+it binds one recipient, exact package/email/attachments, verified Reply-To and
+policy version. Creating it must not dispatch mail. The proposed atomic dispatch
+handoff defines when withdrawal can no longer guarantee cancellation. This is
+design only; see ../../docs/APPLICATION_SEND_AUTHORIZATION_DESIGN.md for pending
+schema, attachment, privacy and pilot decisions. P3 still blocks application email.
