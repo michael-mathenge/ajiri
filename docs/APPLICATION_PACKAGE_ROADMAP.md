@@ -1,5 +1,10 @@
 # Application package roadmap and schema handback
 
+> P2 approval update, 20 October 2026: Michael reviewed and approved P1 commit
+> `e1e8f94`. P2 editing is now implemented locally for its own review. P3 approval
+> controls and P4-P5 sending/pilot remain later work. See
+> APPLICATION_PACKAGE_EDITOR_REVIEW.md; no push or deployment is authorized.
+
 > P1 approval update, 19 October 2026: Michael reviewed this schema and instructed
 > implementation of the additive migration package with tests, followed by a stop
 > for review. P2-P5, real sending, pushes and deployment are not authorized by that

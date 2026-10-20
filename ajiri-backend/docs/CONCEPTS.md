@@ -885,3 +885,30 @@ FormErrors preserves field association IDs while rendering human-readable labels
 and one spaced list item per server message. Nested DRF messages remain complete;
 errors never discard input. Empty skills offer a profile prompt; unavailable
 profile data is unknown and never implies an empty skills list.
+
+## application-package-editor
+
+My applications can save a new, private document-package revision without changing
+the original application files or older revisions. The owner explicitly selects
+an approved CV. A neutral deterministic letter uses only that approved CV's name,
+summary and skills, with the displayed job title/company; it does not infer
+qualifications or a suitability score. The user can edit it or copy an older
+letter from this application's revision history. Job text is bounded reference
+material, rendered as text, never executable instructions. Saving copies the exact
+approved CV bytes and renders the edited letter once under UUID private paths.
+
+The server checks owner, editable state, delivery blockers, expected latest revision
+and a fingerprint of the displayed job context. A conditional Application write
+starts the transaction before reads so SQLite serializes concurrent saves. A loser
+gets 409 and cleans only its own staged files. Profile changes do not regenerate
+saved packages. Read/list/draft/save never create approval, mail or budget records.
+The package list is paginated (20); the existing approved-CV chooser exposes the
+latest 20 approved versions, plus a package's previously selected version.
+
+After an uncertain save, reload the saved revisions before explicitly trying
+another mutation; there is no automatic mutation retry. Unsaved edits warn on
+page unload and same-window link navigation. Browser history navigation remains a
+manual-verification limit. Exact saved-package preview/download and approval are
+P3, not implied by the working letter editor. Managed application email is disabled
+at both page and legacy send endpoint, before state claims, with no runtime bypass.
+External website submission confirmation remains a user report, not email delivery.
