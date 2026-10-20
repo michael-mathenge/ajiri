@@ -142,8 +142,40 @@ class ApplicationLifecycleTests(TestCase):
         app = self.prepare()
         self.client.force_authenticate(self.other)
         self.assertEqual(self.client.get('/api/jobs/applications/').data['count'], 0)
-        for action in ['send', 'dismiss']:
+        for action in ['send', 'dismiss', 'restore']:
             self.assertEqual(self.client.post(f'/api/jobs/applications/{app.pk}/{action}/').status_code, 404)
+
+    def test_restore_preserves_exact_snapshot_and_sends_nothing(self):
+        app = self.prepare()
+        with app.generated_cv.open('rb') as stream:
+            cv = stream.read()
+        before = (app.generated_cv.name, app.generated_cover_letter.name,
+                  app.email_subject, app.email_body, app.created_at)
+        self.client.post(f'/api/jobs/applications/{app.pk}/dismiss/')
+        self.user.full_name = 'Changed after preparation'
+        self.user.save()
+        response = self.client.post(f'/api/jobs/applications/{app.pk}/restore/')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Cache-Control'], 'private, no-store')
+        app.refresh_from_db()
+        self.assertEqual(app.status, 'ready_for_review')
+        self.assertEqual(before, (app.generated_cv.name, app.generated_cover_letter.name,
+                         app.email_subject, app.email_body, app.created_at))
+        with app.generated_cv.open('rb') as stream:
+            self.assertEqual(stream.read(), cv)
+        self.assertEqual(self.client.post(f'/api/jobs/applications/{app.pk}/restore/').status_code, 200)
+        self.assertEqual(len(mail.outbox), 0)
+
+    def test_restore_rejects_missing_documents_and_sent_status(self):
+        app = self.prepare()
+        self.client.post(f'/api/jobs/applications/{app.pk}/dismiss/')
+        app.generated_cv.storage.delete(app.generated_cv.name)
+        self.assertEqual(self.client.post(f'/api/jobs/applications/{app.pk}/restore/').status_code, 409)
+        app.refresh_from_db()
+        self.assertEqual(app.status, 'dismissed')
+        app.status = 'sent'
+        app.save()
+        self.assertEqual(self.client.post(f'/api/jobs/applications/{app.pk}/restore/').status_code, 409)
 
     def test_inactive_flagged_and_anonymous_applications_are_blocked(self):
         for active, flagged in [(False, False), (True, True)]:

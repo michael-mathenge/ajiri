@@ -163,9 +163,12 @@ export function ApplicationRow({ application: app, onUpdate }) {
         </p>
       )}
       {app.status === 'dismissed' && (
-        <p className="status-text">
-          Dismissed. No further actions will be sent from this application.
-        </p>
+        <div className="stack">
+          <p className="status-text">Dismissed. Restore the saved documents to review them again. Restoring does not send an application or renew sending permission.</p>
+          <Button disabled={busy} onClick={() => act('restore')}>
+            {busy ? 'Restoring…' : 'Restore for review'}
+          </Button>
+        </div>
       )}
       {dismissible && (
         <Dialog

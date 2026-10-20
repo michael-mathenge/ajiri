@@ -107,6 +107,33 @@ class SendAuthorizationTests(TransactionTestCase):
         self.assertEqual(Authorization.objects.count(), 1)
         self.assertFalse(Budget.objects.exists())
 
+    def test_restoration_supersedes_old_permission_without_regenerating_package(self):
+        app = self.application()
+        from django.core.files.base import ContentFile
+        package = app.packages.get()
+        for target, source in ((app.generated_cv, package.cv_document),
+                               (app.generated_cover_letter, package.letter_document)):
+            with source.open('rb') as stream:
+                target.save('synthetic.docx', ContentFile(stream.read()), save=False)
+        app.save(update_fields=['generated_cv', 'generated_cover_letter'])
+        client = self.client_for()
+        self.assertEqual(client.post(self.base(app)+'dismiss/').status_code, 200)
+        self.assertEqual(client.post(self.base(app)+'restore/').status_code, 200)
+        app.test_authorization.refresh_from_db()
+        self.assertEqual(app.test_authorization.state, 'superseded')
+        self.assertEqual(app.packages.count(), 1)
+        self.assertFalse(DeliveryAttempt.objects.exists())
+
+    def test_restoration_blocks_an_ambiguous_provider_receipt(self):
+        app = self.application()
+        object.__setattr__(self.transport, 'result', Result('unknown', failure_category='timeout'))
+        self.dispatch(app)
+        # Even inconsistent legacy state cannot permit a resend through restoration.
+        type(app).objects.filter(pk=app.pk).update(status='dismissed')
+        self.assertEqual(self.client_for().post(self.base(app)+'restore/').status_code, 409)
+        app.refresh_from_db()
+        self.assertEqual(app.status, 'dismissed')
+
     def test_get_expiry_has_no_write_and_replacement_closes_old_evidence(self):
         app = self.application()
         auth = app.test_authorization

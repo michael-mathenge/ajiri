@@ -996,3 +996,10 @@ owner-scoped reconciliation keys/receipts via GET, without mutation retries. A
 working edit or different revision resets the session; accepted means provider
 acceptance, not confirmed inbox delivery. Withdrawal requires a fresh plan review
 before another permission action. Browser state is never authoritative consent.
+
+## restore-application-snapshot
+
+A dismissed application can return to review using its original private documents,
+email text and job snapshot. No document is regenerated, no email is sent and no
+old sending authorization is revived. Missing original files or an unresolved or
+accepted provider attempt block restoration. Sent applications cannot be restored.

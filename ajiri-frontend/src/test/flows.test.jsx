@@ -189,3 +189,14 @@ describe('Notifications', () => {
     expect(await screen.findByText('You’re all caught up')).toBeVisible()
   })
 })
+
+it('restores a dismissed application only after an explicit click', async () => {
+  const onUpdate = vi.fn()
+  const restored = { ...app, status: 'ready_for_review' }
+  apiClient.post.mockResolvedValue({ data: restored })
+  renderPage(<ApplicationRow application={{ ...app, status: 'dismissed' }} onUpdate={onUpdate} />)
+  expect(apiClient.post).not.toHaveBeenCalled()
+  fireEvent.click(screen.getByRole('button', { name: 'Restore for review' }))
+  await waitFor(() => expect(onUpdate).toHaveBeenCalledWith(restored))
+  expect(apiClient.post).toHaveBeenCalledExactlyOnceWith('/jobs/applications/1/restore/')
+})
