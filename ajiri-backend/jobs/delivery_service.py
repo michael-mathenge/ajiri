@@ -15,6 +15,7 @@ from django.http import Http404
 from django.db import IntegrityError, OperationalError, transaction
 from django.db.models import F
 from django.utils import timezone
+from rest_framework.exceptions import APIException
 
 from profiles.models import Profile
 from .brevo_transport import Result
@@ -67,7 +68,7 @@ class DeliveryService:
                 authorization, existing = linked_attempt(user_id, application_id, authorization_id, idempotency_key)
                 if existing is not None:
                     return existing  # Reconcile before eligibility/config/file checks; never repeat network I/O.
-            except (PackageConflict, Http404) as error:
+            except (APIException, Http404) as error:
                 raise DeliveryError(str(error)) from None
         if not self.enabled:
             raise DeliveryError('Real delivery is disabled.')
@@ -105,7 +106,15 @@ class DeliveryService:
             reply_to=user.email if channel == 'application' else None,
             attachments=attachments, max_attachment_bytes=max_attachment_bytes)
         if authorization:
-            self._validate_authorization(user, authorization, payload, retry_of)
+            try:
+                self._validate_authorization(user, authorization, payload, retry_of)
+            except DeliveryError:
+                # Another identical request may commit its handoff during preflight.
+                # Reconcile that link instead of treating its durable blocker as new failure.
+                _, existing = linked_attempt(user_id, application_id, authorization_id, idempotency_key)
+                if existing is not None:
+                    return existing
+                raise
         day = timezone.now().astimezone(ZoneInfo('Africa/Nairobi')).date()
         for number in range(3):
             try:
@@ -161,9 +170,11 @@ class DeliveryService:
         try:
             if authorization.retry_of_id != retry_of:
                 raise PackageConflict('Retry does not match the exact authorization.')
-            current_user = get_user_model().objects.get(pk=user.pk, is_active=True)
+            current_user = get_user_model().objects.filter(pk=user.pk, is_active=True).first()
+            if current_user is None:
+                raise DeliveryError('Inactive delivery owner.')
             validate_payload(current_user, authorization, payload)
-        except PackageConflict as error:
+        except APIException as error:
             raise DeliveryError(str(error)) from None
 
     def _reserve(self, user, channel, digest, key, day, application, notification, retry_of,

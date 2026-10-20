@@ -1,5 +1,12 @@
 # P4 application-email authorization — design for review
 
+> Implementation update,20 October2026: Michael approved the existing design and
+> remaining local P4b/P4c/P5 readiness batch with a single final review. P4a=d6b7b1e,
+> P4b=711872a; see APPLICATION_PACKAGE_FINAL_REVIEW.md for current results. Original
+> proposal/intermediate-stop language is preserved below as historical context.
+> Approval does not activate the hard-disabled public sender or authorize a live
+> pilot, push, merge or deployment before final review.
+
 > P4a approval update, 20 October 2026: Michael reviewed this design and approved
 > proceeding with the additive schema and migration tests only. Implementation
 > evidence is in APPLICATION_SEND_SCHEMA_REVIEW.md. P4b/P4c services/client and P5

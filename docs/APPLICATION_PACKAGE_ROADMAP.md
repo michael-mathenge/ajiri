@@ -1,5 +1,12 @@
 # Application package roadmap and schema handback
 
+> Batch update,20 October2026: Michael approved completing the remaining local
+> P4b/P4c/P5 readiness work without intermediate review pauses, followed by final
+> product review. P4b is implemented at711872a; current client/readiness results are
+> in APPLICATION_SEND_CLIENT_REVIEW.md and APPLICATION_PACKAGE_FINAL_REVIEW.md.
+> Earlier stop/proposal wording below is historical. No live pilot, push, merge or
+> deployment has occurred in this batch. P5 live sending remains unexecuted.
+
 > P4a update, 20 October 2026: the P4 design was reviewed and approved for schema
 > implementation. New authorization/link tables and migration tests are local for
 > review; see APPLICATION_SEND_SCHEMA_REVIEW.md. No service/API/dispatch activation,

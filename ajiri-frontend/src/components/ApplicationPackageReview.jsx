@@ -4,6 +4,7 @@ import { apiErrors } from '../lib/errors'
 import DownloadButton from './DownloadButton'
 import FormErrors from './FormErrors'
 import { Button } from './ui'
+import ApplicationSendPanel from './ApplicationSendPanel'
 
 function StoredDocument({ title, paragraphs }) {
   return <section className="stack" aria-label={title}>
@@ -92,7 +93,7 @@ function ReviewSession({ applicationId, packageId, revision, disabled }) {
         <p className="job-copy">{review.email_body || '(empty email draft)'}</p>
       </div>}
       {review.approval ? <p role="status">Document approval recorded for revision {review.revision}.
-        {!review.is_latest && ' A newer revision exists; this approval is historical.'} No sending or submission authorized.</p>
+        {!review.is_latest && ' A newer revision exists; this approval is historical.'} Document approval alone grants no sending or submission permission.</p>
         : review.approvable ? <>
           <label className="check-field" htmlFor={`${id}-approve`}>
             <input id={`${id}-approve`} type="checkbox" checked={checked} disabled={busy || uncertain}
@@ -102,6 +103,8 @@ function ReviewSession({ applicationId, packageId, revision, disabled }) {
           <Button disabled={!checked || busy || uncertain} onClick={approve}>Approve saved documents</Button>
         </> : <p>This revision cannot be approved now. Reload the latest saved revision; historical packages stay readable.</p>}
       <p>Managed sending remains disabled. Document approval does not apply to another revision or authorize email delivery.</p>
+      {review.approval && review.is_latest && review.job_context.application_method === 'email'
+        && <ApplicationSendPanel applicationId={applicationId} packageId={packageId} />}
     </>}
   </section>
 }

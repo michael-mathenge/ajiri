@@ -151,6 +151,7 @@ class SendAuthorizationTests(TransactionTestCase):
         inputs = dispatch_inputs(self.user, auth)
         attempt = self.dispatch(app)
         self.assertEqual(attempt.state, 'accepted')
+        self.assertEqual(authorization_data(auth)['state'], 'dispatch_started')
         frozen = json.loads(self.transport.calls[0])
         for item, (_, expected) in zip(frozen['attachment'], inputs['attachments']):
             self.assertEqual(base64.b64decode(item['content']), expected)
@@ -356,6 +357,60 @@ class SendAuthorizationTests(TransactionTestCase):
             with self.assertRaises(DeliveryError):
                 self.dispatch(app)
         self.assertFalse(Budget.objects.exists())
+        self.assertEqual(self.transport.calls, [])
+
+    def test_identical_handoff_during_preflight_reconciles_existing_receipt(self):
+        app = self.application()
+        auth = app.test_authorization
+        args = dispatch_inputs(self.user, auth)
+        args.update(user_id=self.user.pk, channel='application', application_id=app.pk,
+                    authorization_id=auth.pk, idempotency_key=auth.pk)
+        other = DeliveryService(self.transport, digest_key=b'x'*32, enabled=True)
+        original = self.service._validate_authorization
+        receipts = []
+        def handoff_first(*values):
+            receipts.append(other.deliver(**args))
+            return original(*values)
+        with patch.object(self.service, '_validate_authorization', side_effect=handoff_first):
+            result = self.service.deliver(**args)
+        self.assertEqual(result.pk, receipts[0].pk)
+        self.assertEqual(len(self.transport.calls), 1)
+        self.assertEqual(Budget.objects.get(scope='global').application_reserved, 1)
+
+    def test_corrupt_receipt_link_is_not_exposed_as_owned_delivery(self):
+        app = self.application()
+        auth = app.test_authorization
+        attempt = self.dispatch(app)
+        DeliveryAttempt.objects.filter(pk=attempt.pk).update(idempotency_key=uuid.uuid4())
+        response = self.client_for().get(self.base(app)+f'send-authorizations/{auth.pk}/')
+        self.assertEqual(response.status_code, 503)
+        self.assertNotIn('attempt', response.data)
+        with self.assertRaises(DeliveryError):
+            self.service.deliver(user_id=self.user.pk, channel='application', application_id=app.pk,
+                authorization_id=auth.pk, idempotency_key=auth.pk, recipient='', subject='', text='')
+        self.assertEqual(len(self.transport.calls), 1)
+
+    def test_corrupt_private_file_blocks_plan_and_dispatch_before_quota(self):
+        app = self.application()
+        package = app.packages.get()
+        with package.letter_document.open('wb') as stream:
+            stream.write(b'private malicious exception-like text')
+        response = self.client_for().get(self.base(app)+'send-plan/')
+        self.assertEqual(response.status_code, 503)
+        self.assertNotIn('malicious', str(response.data))
+        self.assertFalse(Budget.objects.exists())
+        self.assertEqual(self.transport.calls, [])
+
+    def test_shared_five_message_pilot_cap_counts_prior_account_failures(self):
+        app = self.application()
+        self.service.pilot = ApplicationPilot(self.user.pk, 'employer@example.invalid', self.user.email,
+            'platform@example.invalid', 6000000, 'Synthetic test review only')
+        day = timezone.now().astimezone(__import__('zoneinfo').ZoneInfo('Africa/Nairobi')).date()
+        Budget.objects.create(scope='global', day=day, account_reserved=5)
+        with self.assertRaises(QuotaExceeded):
+            self.dispatch(app)
+        self.assertEqual(Budget.objects.get(scope='global').application_reserved, 0)
+        self.assertEqual(Authorization.objects.get().state, 'authorized')
         self.assertEqual(self.transport.calls, [])
 
 

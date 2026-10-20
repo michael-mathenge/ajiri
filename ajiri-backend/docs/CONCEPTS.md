@@ -988,3 +988,11 @@ one application/Nairobi day and five shared messages. It has no live factory her
 The public dispatch endpoint is deliberately disconnected even if a setting is
 enabled: final release/pilot approval and a reviewed adapter connection are still
 needed. There is no console/SMTP fallback, copy, broad sender or automatic retry.
+
+The client opens this plan only after document approval and an explicit review
+click. Its permission checkbox starts off; recording permission never dispatches.
+A separate send action respects the server's disabled state. Lost replies use
+owner-scoped reconciliation keys/receipts via GET, without mutation retries. A
+working edit or different revision resets the session; accepted means provider
+acceptance, not confirmed inbox delivery. Withdrawal requires a fresh plan review
+before another permission action. Browser state is never authoritative consent.

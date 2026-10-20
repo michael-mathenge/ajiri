@@ -21,7 +21,7 @@ from .application_packages import context, require_editable, PackageConflict
 from .brevo_transport import BrevoTransport
 from .models import (Application, ApplicationSendAuthorization as Authorization,
                      ApplicationSendAttemptLink as Link, DeliveryAttempt)
-from .package_review import approval_data, verified_documents
+from .package_review import approval_data, verified_documents, PackageUnavailable
 
 POLICY = 'application-send-v1'
 ATTACHMENTS = 'application-docx-v1'
@@ -93,7 +93,7 @@ def build_plan(user, application, *, retry_of=None):
                                     ('cover-letter', 'Cover_Letter', package.letter_sha256, package.letter_size)]:
         descriptors.append({'role': role, 'mime': MIME, 'filename': f'{name}_{label}_{company}.docx',
                             'size': size, 'sha256': digest})
-    plan = {'schema_version': 1, 'application_id': application.pk, 'owner_id': user.pk,
+    plan = {'schema_version': 1, 'application_id': application.pk, 'job_id': application.job_id, 'owner_id': user.pk,
         'package_id': str(package.pk), 'revision': package.revision, 'content_sha256': package.content_sha256,
         'document_approval_id': package.approval.pk, 'document_policy': package.approval.policy_version,
         'recipient': address(application.application_email), 'reply_to': address(user.email),
@@ -122,8 +122,24 @@ def receipt_data(attempt):
             'failure_category': attempt.failure_category, 'created_at': attempt.created_at}
 
 
+def checked_link(authorization):
+    # Read receipt and cutoff in ONE SQL snapshot; an earlier authorization object
+    # can predate another request's committed handoff.
+    link = Link.objects.select_related('attempt', 'authorization').filter(authorization=authorization).first()
+    if link:
+        attempt = link.attempt
+        if (link.authorization.state != 'dispatch_started' or attempt.user_id != authorization.owner_id
+            or attempt.application_id != authorization.application_id or attempt.notification_id is not None
+            or attempt.channel != 'application' or attempt.idempotency_key != authorization.pk
+            or link.previous_attempt_id != authorization.retry_of_id):
+            raise PackageUnavailable('Delivery evidence needs private operator reconciliation.')
+    return link
+
+
 def authorization_data(authorization):
-    link = Link.objects.select_related('attempt').filter(authorization=authorization).first()
+    link = checked_link(authorization)
+    if link:
+        authorization = link.authorization
     effective = ('expired' if authorization.state == 'authorized'
                  and authorization.expires_at <= timezone.now() else authorization.state)
     return {'id': str(authorization.pk), 'request_key': str(authorization.request_key),
@@ -211,5 +227,5 @@ def linked_attempt(user_id, application_id, authorization_id, key):
                                      application_id=application_id, application__user_id=user_id)
     if str(authorization.pk) != str(key):
         raise PackageConflict('Dispatch identity does not match authorization.')
-    link = Link.objects.select_related('attempt').filter(authorization=authorization).first()
+    link = checked_link(authorization)
     return authorization, link.attempt if link else None

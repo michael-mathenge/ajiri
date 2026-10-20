@@ -28,16 +28,16 @@ Recorded production is `894d1eb`; it was not inspected or changed in this batch.
 - One explicit retry of the initial definite failure; no chain/fork, unknown retry,
   quota refund, copy or accepted resend. Existing account and alert policy unchanged.
 - Separate injectable application-pilot boundary, exact owner/actual recipient,
-  synthetic subject, exactly two attachments,2MiB each/4MiB raw, nonzero reviewed
+  synthetic subject, exactly two attachments, 2 MiB each/4 MiB raw, nonzero reviewed
   serialized ceiling, one application/Nairobi day and five total shared messages.
   No live factory exists and the endpoint remains disconnected even if global or
   application flags are set. Tests use fake transport only. No credentials read.
 
 ## Gates and evidence
 
-Commands/environment match APPLICATION_SEND_SCHEMA_REVIEW.md, using Python3.12,
+Commands/environment match APPLICATION_SEND_SCHEMA_REVIEW.md, using Python 3.12,
 PYTHON_DOTENV_DISABLED=1, DEBUG=True, REAL_EMAIL_ENABLED=False and explicit
-Node24.19.0. Actual results are recorded below after completion.
+Node 24.19.0. Actual results are recorded below after completion.
 
 Final backend gates: `manage.py check` no issues;
 `manage.py makemigrations --check --dry-run` no changes;
@@ -51,7 +51,7 @@ Initial fixture replay errors were fixed by refreshing the authorization fixture
 state; unsafe-name normalization now collapses redundant underscores. Core replay
 and owner conflict are explicitly tested; no failed run is counted as passing.
 
-Node24.19: `npm ci`180 installed/181 audited, zero reported vulnerabilities;
+Node 24.19: `npm ci`180 installed/181 audited, zero reported vulnerabilities;
 `npm run lint` passed; `npm test -- --run`86 tests/14 files passed in21.04s;
 `npm run build` passed in4.41s. All21 generated files match committed frontend_build
 after index.html CRLF normalization. No frontend source/assets changed in P4b.
@@ -59,7 +59,7 @@ after index.html CRLF normalization. No frontend source/assets changed in P4b.
 No new dependency or migration. Historical migrations, auth/CORS, ingestion, CI,
 hosting, original checkout/Docker files, stash/config and existing coverage preserved.
 Only disposable test databases were migrated. Windows-only verification does not
-claim Linux or Python3.13/3.14 results; existing Windows symlink skip is recorded.
+claim Linux or Python 3.13/3.14 results; existing Windows symlink skip is recorded.
 
 ## Remaining manual/release checks
 
@@ -78,6 +78,6 @@ server procedure is in APPLICATION_OWNER_PILOT_RUNBOOK.md (P5).
 
 Suggested5 points, AJ-17 slice. Jira-ready title/acceptance:
 **Bind application dispatch to exact revocable authorization | AC: private plan,
-explicit24h permission, atomic withdrawal/dispatch cutoff, exact saved bytes,
+explicit 24-hour permission, atomic withdrawal/dispatch cutoff, exact saved bytes,
 one explicit retry, shared budgets/replay safety, fake-only tests and disabled
 production endpoint pass all gates.**
