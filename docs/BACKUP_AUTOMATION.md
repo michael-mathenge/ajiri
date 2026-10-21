@@ -45,15 +45,24 @@ executed, verified backup. Existing November readiness/renewal reminders remain.
    writers paused during local download, and do not activate previously disabled
    services. A partial resume failure is urgent and must be reported.
 6. Bundle only the completed `manifest.json`, `db.sqlite3` and
-   `private-media.tar.gz` into a ZIP in its private backup directory. Set mode 0600,
+   `private-media.tar.gz` into a ZIP in its private backup directory. When the
+   deployed manifest explicitly has erasure_ledger_included=true, also include the
+   checksum-listed `erasure-ledger.zip`. Never include arbitrary manifest paths.
+   The enhanced command signs/checks source journals and refuses unresolved cleanup
+   or unknown ledger entries. Set mode 0600,
    compute its SHA-256, and download using the authorized Files UI. This binary
    bundle avoids the browser's inline-JSON download ambiguity. Never include `.env`,
    WSGI configuration, keys, logs or unrelated backups.
-7. Independently compare the downloaded ZIP hash, exact member set, manifest
+7. Independently compare the downloaded ZIP hash, exact conditional member set, manifest
    completion and individual hashes. Extract into a new private isolated directory;
    integrity-check the copied database and safely extract only regular media files
    and directories under that directory. Compare file count/bytes with the manifest.
    Never restore over the live database or existing local developer data.
+   If included, verify the bounded erasure ZIP inventory and per-journal hashes and
+   retain it in the isolated restore. Independent hash verification needs no signing
+   key; actual replay always requires the current private signature/identity checks.
+   Never perform erasure/replay as part of this backup automation. The latest
+   independent ledger must survive any restoration of an older snapshot.
 8. Retain the verified off-server backup under the owner's local backup directory
    and a sanitized receipt with UTC time, source revision, hashes, counts and
    verification results. This local copy is not a public artifact or Git content.
@@ -70,6 +79,13 @@ remain quiet. No purchase, account renewal, deployment or email is part of this 
 **not yet verified**. The existing backup command and earlier off-server restore
 rehearsal are verified separately; those do not prove that this new schedule ran.
 Current release recovery evidence remains in the private 20 October backup folder.
+
+21 October2026: scheduled run found an already verified snapshot from00:31 Nairobi
+and skipped without a production pause. Source/archive hashes, both SQLite checks
+and all12 restored files were independently rechecked. This proves the skip path,
+not a new unattended snapshot. A later pre-release snapshot0857UTC was also verified
+off server. The automation preserves optional erasure-ledger bundles where the
+enhanced command is deployed; that new path is tested synthetically until used.
 
 For unattended reliability when this desktop is off, provision an eligible
 always-on scheduler with narrowly scoped private access; until then retain this

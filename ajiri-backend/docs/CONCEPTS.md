@@ -1061,3 +1061,12 @@ dated choice for the current mailbox and recheck it when reserving delivery budg
 New profiles start with email off. Unsubscribe is an explicit confirmed action;
 link previews cannot change preferences. In-app alerts remain independent. Old
 decision retries cannot overwrite a newer choice. Console output is not delivery.
+## recoverable-account-erasure
+
+Erasure needs a specific verified owner request. A private signed journal is copied
+off server before account rows are removed; file cleanup resumes from that journal
+if interrupted. Completed minimal journals prevent an old restored backup from
+silently recreating deleted accounts. Shared jobs and global quotas remain, while
+owned session and JWT rows are explicitly removed. Backups include the configured
+journal ledger without copying credentials. Hash checks alone never authorize an
+erasure, and routine backup verification never replays deletion requests.
