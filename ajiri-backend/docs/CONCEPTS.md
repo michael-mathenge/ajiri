@@ -1136,3 +1136,13 @@ for recorded consent, and incomplete CV drafts remain saveable before approval.
 Account links and passwords stay in component memory. No sending or approval is
 triggered by validation. Dialog code loads with job/application pages and toast controls load on demand to preserve
 the public mobile download budget.
+
+## api-version-contract
+
+An API version is a stable agreement about URLs, inputs and outputs. Version-one
+aliases reuse the legacy views so permissions and explicit sending safeguards
+remain identical. Old clients keep working; no deprecation deadline is implied.
+OpenAPI is a source contract, generated offline with pinned drf-spectacular and
+served as reviewed JSON. It is not permission to bypass CSRF, owner checks or
+consent, and it contains no live user records. Operational ingestion paths are
+kept separate. Custom response objects marked extensible are not fully typed yet.

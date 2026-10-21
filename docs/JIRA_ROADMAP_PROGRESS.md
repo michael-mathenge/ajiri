@@ -518,3 +518,31 @@ passes. Final three Chromium/axe/performance tests pass; login/register medians:
 79/77performance,4005.551/4029.118ms LCP,137/185.5ms TBT,CLS0,483000/480088bytes,
 zero trace retries. Subsequent build matches exact committed-target bytes.
 No schema migrations, server dependencies, auth-interceptor, ingestion or CI edits.
+
+## AJ-34 API contract — local implementation
+
+Separate branch codex/jira-api-schema from46c7ea7 while PR36 runs CI. Additive
+/api/v1 aliases reuse exact existing callbacks; ingestion/sweep stay legacy-only.
+Reviewed static JSON is published at /api/schema; drf-spectacular0.30.0 and pinned
+support libraries are offline-only extras, not production dependencies. Strict
+generation first exposed six annotation warnings; offline model/field/operation
+annotations resolved all without runtime view edits. Generation uses an isolated
+in-memory database and fails on warnings/drift. Four focused compatibility tests
+pass, including real-CSRF cross-version login/refresh and anonymous denial.
+An initial full-suite command from the repository root discovered zero tests;
+that is not a passing full suite. Correct backend-directory run is in progress.
+CI edit was separately approved by Michael and adds strict generation/drift checking
+to the existing quality job; all six check names remain unchanged.
+
+AJ-34 base fast-forwarded to the CI-verified PR36 merge925cff9; no history rewrite.
+Saved API documentation additions were retained while Git restored native line
+endings for the fast-forward. No stash or original-checkout changes. Full Django
+suite336 tests passed/one known Windows skip in296.448s. System/migration-drift
+checks pass. Strict schema generation and independent byte-drift check pass against
+an empty in-memory database. Four new compatibility tests passed; aliases reuse
+every legacy callback and protect private data. Node24.19 lockednpmci364 audited
+packages/zero vulnerabilities, lint,123 component tests and build pass. Canonical
+source hashes match the isolated runner; generated build matches committed bytes.
+No frontend changes in this package. Ruff and hook configuration validation pass.
+No migrations or production dependency changes. Source-only contract contains no
+user records; custom response-object typing limits are explicitly documented.
