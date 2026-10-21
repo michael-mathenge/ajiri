@@ -1078,3 +1078,11 @@ verified-address consent. A stable receipt key and shared budget prevent duplica
 handoffs; the final transport boundary checks consent again. Email includes an
 explicit-confirmation unsubscribe link. Provider acceptance requires separate
 inbox verification, and disabled mode never falls back to console mail.
+## browser-acceptance
+
+A real browser talks to a disposable local Django test server using the built React
+app. The test proves the client/server journey together, including explicit review
+and private document bytes. It cannot prove production email delivery. Temporary
+storage and a test database isolate synthetic data; network restrictions and provider
+patches prevent real sending. Run the optional suite explicitly as documented in
+../../docs/BROWSER_ACCEPTANCE.md. Never replace production data with test fixtures.

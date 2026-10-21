@@ -30,12 +30,14 @@ Users are mostly on phones with limited data. **Mobile-first, lightweight, acces
 
 ## 4. Verified state (21 October 2026)
 
-Recorded deployed source is `9efd1f0fb99b7d8b66180c1e4b6ed6ac8705501b` (PR #30):
+Recorded deployed source is `40c1ea0507b8c39fff604dc2601eb8fd48ea9b0e` (PR #31):
 verified-request erasure with signed recovery journals, resumable private-file cleanup
 and restore replay. Production verification used dry runs only; no account was erased.
 This follows PR #29 export and explicit alert consent/unsubscribe; existing values
-were preserved, and no consent inferred. Real alert transport remains disconnected
-pending its owner pilot. Retain the latest independent erasure ledger on old restores.
+were preserved, and no consent inferred. The owner personally opted into the bounded
+synthetic alert pilot, confirmed inbox receipt and unsubscribed. Production confirmed
+the unsubscribe event and email eligibility false. The pilot flag is off; normal
+alert transport remains disconnected. Retain the independent erasure ledger on restores.
 Account email verification/reset has an owner-only Brevo pilot. Reviewed application
 packages and explicit authorization exist; broader application sending remains disabled
 until its gated integration and pilot pass. Never treat console output/provider
@@ -45,7 +47,9 @@ AJ-12 is verified in production: native WSGI HTTPS, proxy SSL header None, redir
 True, HSTS 300 seconds, subdomains/preload False; host Force HTTPS remains enabled.
 See docs/HTTPS_ACTIVATION_20261020.md. Free-account expiry is recorded as 19 November
 2026; recheck on renewal. The daily verified-backup desktop automation is active;
-its first scheduled run is not yet verified. See docs/BACKUP_AUTOMATION.md.
+the 21 October run verified an existing same-Nairobi-day copy/restore receipt and
+skipped a duplicate snapshot. A fresh scheduled snapshot is not yet verified.
+See docs/BACKUP_AUTOMATION.md.
 
 Use docs/JIRA_ROADMAP_PROGRESS.md for local package/CI/deployment evidence. Do not
 infer that local commits or merged source have been deployed. Preserve the original

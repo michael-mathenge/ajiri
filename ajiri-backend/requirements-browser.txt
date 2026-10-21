@@ -1,0 +1,3 @@
+# Optional browser acceptance runner; never installed on production.
+-r requirements.txt
+playwright==1.64.0
