@@ -318,3 +318,47 @@ the displayed approved version and submits explicitly. Product behavior is uncha
 The corrected browser job passed on Linux at b02d2b7 in run39599872379. AJ-27 stays
 In Progress because successful managed sending is not implemented/covered. Local
 Windows browser execution remains UNVERIFIED; CI evidence is recorded separately.
+
+## PR32 merged — browser acceptance
+
+Merged0fa07d58b59069881903c9e160cdb6accf122fe8 after all five checks passed on
+final head a6ae1ac. Post-merge run39600606759 also passed all five checks. This
+test/documentation-only package needs no production reload; production source
+remains40c1ea0 pending a functional release. AJ-27 stays In Progress for managed
+sending coverage. The first failed browser notification was superseded by the
+corrected green runs, not ignored or bypassed.
+
+## AJ-28/AJ-30 quality baseline — in progress locally
+
+Branch codex/jira-quality-baseline from0fa07d5. Adds optional pinned development
+requirements, Ruff correctness scope, ESLint, changed-file Prettier hooks (opt-in,
+no Git hook/config installation), branch coverage and an explicitly nonblocking
+legacy mypy report. Unexpected checker failure still fails; three wrapper regression
+tests passed. One Node hook-safety test passed (bad syntax/formatting/outside path,
+no automatic file rewriting). Node24.19 locked install/Oxlint/ESLint/106 component
+tests/build passed; build bytes and runtime lock versions are unchanged. Ruff
+passed across backend and tooling. CI quality job separately approved by Michael.
+
+First full native coverage run:328 tests, one failure and one Windows skip in268.778s.
+The failing concurrency test used mutable helper preflight during concurrent dispatch
+and wrongly required immediate success despite the service's documented bounded
+SQLite no-send busy response. Workers now use the same frozen service request;
+only the exact busy response is permitted, only with one durable receipt/provider
+call/quota reservation. Reconciliation after workers finish must read that same
+receipt without another handoff. Both concurrency regressions passed in five
+independent coverage runs. Full coverage rerun/report pending. DeliveryService,
+auth, sending eligibility, runtime dependencies and production were not changed.
+The full rerun passed328 tests in252.999s with one Windows symlink skip; report/XML
+were generated in the ignored verification directory. Initial combined coverage
+was88.85%; final reporting excludes the synthetic cv_test_helpers fixture and is88.82%.
+No production code was excluded to raise the result. Native mypy/pre-commit remain
+UNVERIFIED while their large tool downloads finish; the approved CI job must verify
+them and retain reports before merge. New author/committer identity will be checked.
+
+Subsequent verification: native pre-commit config validation passed; mypy ran and
+reported199 legacy findings (nonblocking, not clean). All six PR33 jobs passed at
+ab48abc in run39614901653, including the new quality job. Linux coverage88.96%,
+197 legacy type findings. API verified the finalized quality-reports artifact
+ID12351314400,14469 bytes, expiry28 October2026. Ruff/ESLint/changed-file hooks and
+all safety regressions passed in CI. No hook installation/Git configuration mutation.
+The temporary Linux download helper was stopped; Docker lesson/user data preserved.

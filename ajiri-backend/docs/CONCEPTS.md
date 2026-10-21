@@ -1086,3 +1086,21 @@ and private document bytes. It cannot prove production email delivery. Temporary
 storage and a test database isolate synthetic data; network restrictions and provider
 patches prevent real sending. Run the optional suite explicitly as documented in
 ../../docs/BROWSER_ACCEPTANCE.md. Never replace production data with test fixtures.
+
+## incremental-quality
+
+Correctness linters catch common code defects before application tests run. Local
+hooks are opt-in and check explicitly changed files without automatically rewriting
+them. Coverage measures executed lines/branches; a type baseline records existing
+findings without pretending old code is fully typed. These development tools do
+not belong on production. See ../../docs/QUALITY_GUIDE.md for exact commands,
+scope and the separate CI-approval requirement.
+
+## delivery-concurrency-fixtures
+
+Concurrent delivery tests must pass the same frozen authorization and message to
+the service, without a shared convenience helper lazily changing authorization
+state. SQLite can return the documented bounded no-send busy response. Tests accept
+only that exact outcome, first prove one durable receipt/quota/provider handoff,
+then reconcile the same request key without a second provider call. Arbitrary
+errors, missing receipts, duplicate sends and extra quota reservations still fail.
