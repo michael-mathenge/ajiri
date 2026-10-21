@@ -69,3 +69,14 @@ Keep its current Python/Chromium installation; run both explicit test modules ab
 Retain sanitized reports even on failures. Preserve all six existing check names,
 quality gates and production boundaries. No provider credentials or real sending.
 The optional local Python browser tools are now installed. The complete local browser suite passed two tests in 20.841 seconds, including 14 axe scans. Linux CI results remain a separate merge gate.
+
+## Trace-recording failure handling
+
+A later Windows run reported `NO_NAVSTART`, a missing browser trace event also
+tracked in [Lighthouse issue15382](https://github.com/GoogleChrome/lighthouse/issues/15382).
+The runner allows one fresh-process retry total per suite for that exact nonzero
+execution result. It records a numeric trace_retries count in the summary and logs
+the retry explicitly. Other failures, malformed audits and exceeded metrics never
+trigger a retry. Three successful measurements per page are still required; a
+second recording failure fails the gate. This does not establish the cause of the
+initial Linux execution failure, whose unsaved diagnostics remain unavailable.

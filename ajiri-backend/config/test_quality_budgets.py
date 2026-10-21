@@ -1,6 +1,6 @@
 from copy import deepcopy
 from django.test import SimpleTestCase
-from browser_tests.performance import metrics, budget_failures, runner_diagnostic
+from browser_tests.performance import metrics, budget_failures, runner_diagnostic, trace_retry_allowed
 
 
 class LighthouseGuardTests(SimpleTestCase):
@@ -9,6 +9,10 @@ class LighthouseGuardTests(SimpleTestCase):
         self.assertNotIn('token', message)
         self.assertNotIn('/home', message)
         self.assertIn('Error at', message)
+        self.assertTrue(trace_retry_allowed(1, 'NO_NAVSTART', 0))
+        self.assertFalse(trace_retry_allowed(1, 'NO_NAVSTART', 1))
+        self.assertFalse(trace_retry_allowed(1, 'NO_FCP', 0))
+        self.assertFalse(trace_retry_allowed(0, 'NO_NAVSTART', 0))
 
     def report(self):
         return {'configSettings': {'formFactor': 'mobile'},

@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import apiClient from '../api/client'
 import DownloadButton from '../components/DownloadButton'
 import ApplicationPackageEditor from '../components/ApplicationPackageEditor'
-import { useApiResource } from '../hooks/useApiResource'
+import { useApiQuery, useApiInvalidation } from '../hooks/useApiQuery'
 import {
   ApplicationStatus,
   Button,
@@ -17,6 +17,7 @@ import {
 } from '../components/ui'
 
 export function ApplicationRow({ application: app, onUpdate }) {
+  const invalidate = useApiInvalidation()
   const heading = useRef(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
@@ -39,6 +40,7 @@ export function ApplicationRow({ application: app, onUpdate }) {
       const { data } = await apiClient.post(
         `/jobs/applications/${app.id}/${action}/`
       )
+      invalidate()
       onUpdate(data)
       setDismissOpen(false)
       // Sending or dismissing removes the focused action; return to its application.
@@ -46,7 +48,9 @@ export function ApplicationRow({ application: app, onUpdate }) {
       requestAnimationFrame(() => heading.current?.focus())
     } catch (error) {
       setError(
-        (error.response?.status === 429 ? rateLimitMessage(error) : error.response?.data?.detail) ||
+        (error.response?.status === 429
+          ? rateLimitMessage(error)
+          : error.response?.data?.detail) ||
           'Could not update this application. Please try again.'
       )
     } finally {
@@ -67,8 +71,14 @@ export function ApplicationRow({ application: app, onUpdate }) {
       <details className="review-details">
         <summary>Review application</summary>
         <div className="stack mt-4">
-          <ApplicationPackageEditor applicationId={app.id} readOnly={!dismissible} />
-          <p>Original application documents (saving a new package does not replace these):</p>
+          <ApplicationPackageEditor
+            applicationId={app.id}
+            readOnly={!dismissible}
+          />
+          <p>
+            Original application documents (saving a new package does not
+            replace these):
+          </p>
           <div className="action-group">
             {app.generated_cv && (
               <DownloadButton
@@ -100,7 +110,12 @@ export function ApplicationRow({ application: app, onUpdate }) {
               </p>
             </div>
           )}
-          {ready && email && <p>Managed application sending is awaiting activation. No email will be sent from this page.</p>}
+          {ready && email && (
+            <p>
+              Managed application sending is awaiting activation. No email will
+              be sent from this page.
+            </p>
+          )}
           {ready && !email && (
             <>
               {!email && (
@@ -164,7 +179,10 @@ export function ApplicationRow({ application: app, onUpdate }) {
       )}
       {app.status === 'dismissed' && (
         <div className="stack">
-          <p className="status-text">Dismissed. Restore the saved documents to review them again. Restoring does not send an application or renew sending permission.</p>
+          <p className="status-text">
+            Dismissed. Restore the saved documents to review them again.
+            Restoring does not send an application or renew sending permission.
+          </p>
           <Button disabled={busy} onClick={() => act('restore')}>
             {busy ? 'Restoring…' : 'Restore for review'}
           </Button>
@@ -208,7 +226,7 @@ export function ApplicationRow({ application: app, onUpdate }) {
 
 export default function Applications() {
   const [page, setPage] = useState(1)
-  const { data, loading, error, retry } = useApiResource(
+  const { data, loading, error, retry } = useApiQuery(
     `/jobs/applications/?page=${page}`
   )
   const [updates, setUpdates] = useState({})

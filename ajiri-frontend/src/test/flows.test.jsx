@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from './test-utils'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import apiClient from '../api/client'
 import Register from '../pages/Register'
@@ -43,12 +43,23 @@ describe('Register', () => {
   it('starts privacy agreement unchecked and submits the displayed policy only after agreement', async () => {
     apiClient.post.mockResolvedValue({ data: {} })
     renderPage(<Register />)
-    expect(screen.getByRole('checkbox', { name: /I have read the/ })).not.toBeChecked()
-    expect(screen.getByRole('link', { name: /privacy notice/ })).toHaveAttribute('href', '/privacy')
+    expect(
+      screen.getByRole('checkbox', { name: /I have read the/ })
+    ).not.toBeChecked()
+    expect(
+      screen.getByRole('link', { name: /privacy notice/ })
+    ).toHaveAttribute('href', '/privacy')
     fillRegister()
     fireEvent.click(screen.getByRole('button', { name: 'Register' }))
-    await waitFor(() => expect(apiClient.post).toHaveBeenCalledWith('/accounts/register/',
-      expect.objectContaining({ privacy_consent: true, privacy_policy_version: 'privacy-draft-v1' })))
+    await waitFor(() =>
+      expect(apiClient.post).toHaveBeenCalledWith(
+        '/accounts/register/',
+        expect.objectContaining({
+          privacy_consent: true,
+          privacy_policy_version: 'privacy-draft-v1',
+        })
+      )
+    )
   })
   it('shows all field errors and complete messages', async () => {
     apiClient.post.mockRejectedValue({
@@ -77,15 +88,24 @@ describe('Register', () => {
       'true'
     )
     expect(screen.getByRole('alert')).toHaveClass('form-error-summary')
-    expect(screen.getByLabelText('Password')).toHaveAttribute('aria-describedby', 'register-password-error')
-    expect(document.getElementById('register-password-error')).toHaveTextContent('Too short. Too common. Entirely numeric.')
+    expect(screen.getByLabelText('Password')).toHaveAttribute(
+      'aria-describedby',
+      'register-password-error'
+    )
+    expect(
+      document.getElementById('register-password-error')
+    ).toHaveTextContent('Too short. Too common. Entirely numeric.')
   })
   it('explains rate limits without retrying registration', async () => {
-    apiClient.post.mockRejectedValue({ response: { status: 429, headers: { 'retry-after': '60' }, data: {} } })
+    apiClient.post.mockRejectedValue({
+      response: { status: 429, headers: { 'retry-after': '60' }, data: {} },
+    })
     renderPage(<Register />)
     fillRegister()
     fireEvent.click(screen.getByRole('button', { name: 'Register' }))
-    expect(await screen.findByRole('alert')).toHaveTextContent('wait 60 seconds')
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'wait 60 seconds'
+    )
     expect(apiClient.post).toHaveBeenCalledTimes(1)
   })
   it('navigates to login after successful registration', async () => {
@@ -110,8 +130,12 @@ describe('Applications', () => {
     renderPage(<Applications />)
     await screen.findByText('Developer, Example')
     fireEvent.click(screen.getByText('Review application'))
-    expect(screen.getByText(/Managed application sending is awaiting activation/)).toBeVisible()
-    expect(screen.queryByRole('button', { name: 'Send application' })).not.toBeInTheDocument()
+    expect(
+      screen.getByText(/Managed application sending is awaiting activation/)
+    ).toBeVisible()
+    expect(
+      screen.queryByRole('button', { name: 'Send application' })
+    ).not.toBeInTheDocument()
     expect(screen.queryByRole('checkbox')).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Download CV' })).toBeVisible()
     expect(apiClient.post).not.toHaveBeenCalled()
@@ -155,11 +179,18 @@ describe('Applications', () => {
         data: { detail: 'Cannot send an application with status sent.' },
       },
     })
-    renderPage(<ApplicationRow application={{ ...app, application_method: 'external_link' }} onUpdate={vi.fn()} />)
+    renderPage(
+      <ApplicationRow
+        application={{ ...app, application_method: 'external_link' }}
+        onUpdate={vi.fn()}
+      />
+    )
     fireEvent.click(screen.getByText('Review application'))
     fireEvent.click(screen.getByRole('link', { name: /Open employer listing/ }))
     fireEvent.click(screen.getByRole('checkbox'))
-    fireEvent.click(screen.getByRole('button', { name: 'Confirm external submission' }))
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Confirm external submission' })
+    )
     expect(await screen.findByRole('alert')).toHaveTextContent('Cannot send')
     expect(screen.getByText('Developer, Example')).toBeVisible()
   })
@@ -205,9 +236,16 @@ it('restores a dismissed application only after an explicit click', async () => 
   const onUpdate = vi.fn()
   const restored = { ...app, status: 'ready_for_review' }
   apiClient.post.mockResolvedValue({ data: restored })
-  renderPage(<ApplicationRow application={{ ...app, status: 'dismissed' }} onUpdate={onUpdate} />)
+  renderPage(
+    <ApplicationRow
+      application={{ ...app, status: 'dismissed' }}
+      onUpdate={onUpdate}
+    />
+  )
   expect(apiClient.post).not.toHaveBeenCalled()
   fireEvent.click(screen.getByRole('button', { name: 'Restore for review' }))
   await waitFor(() => expect(onUpdate).toHaveBeenCalledWith(restored))
-  expect(apiClient.post).toHaveBeenCalledExactlyOnceWith('/jobs/applications/1/restore/')
+  expect(apiClient.post).toHaveBeenCalledExactlyOnceWith(
+    '/jobs/applications/1/restore/'
+  )
 })
