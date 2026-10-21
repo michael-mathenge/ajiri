@@ -300,6 +300,9 @@ it('chooses readable months and typed years, clears dates and handles current em
   )
   fireEvent.change(month, { target: { value: '09' } })
   fireEvent.click(screen.getByRole('button', { name: 'Save and preview CV' }))
+  expect(await screen.findByRole('alert')).toHaveTextContent(
+    'Choose both a month'
+  )
   expect(apiClient.patch).not.toHaveBeenCalled() // A partial date cannot be silently saved as empty.
   fireEvent.change(
     screen.getByLabelText('Start month (work experience 1) — year'),

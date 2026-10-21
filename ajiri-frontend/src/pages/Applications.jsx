@@ -1,3 +1,4 @@
+import Dialog from '../components/Dialog'
 import { rateLimitMessage } from '../lib/errors'
 import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -9,7 +10,6 @@ import {
   ApplicationStatus,
   Button,
   Card,
-  Dialog,
   EmptyState,
   ErrorState,
   LoadingState,

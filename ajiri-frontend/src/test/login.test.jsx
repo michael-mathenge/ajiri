@@ -59,12 +59,14 @@ it('shows invalid credentials without storing a token', async () => {
   )
   expect(localStorage.getItem('access_token')).toBeNull()
 })
-it('disables repeated login while the first request is pending', () => {
+it('disables repeated login while the first request is pending', async () => {
   apiClient.post.mockReturnValue(new Promise(() => {}))
   renderLogin('/')
   fill()
   fireEvent.click(screen.getByRole('button', { name: 'Log in', exact: true }))
-  expect(screen.getByRole('button', { name: 'Logging in…' })).toBeDisabled()
+  expect(
+    await screen.findByRole('button', { name: 'Logging in…' })
+  ).toBeDisabled()
   expect(apiClient.post).toHaveBeenCalledTimes(1)
 })
 it('shows a useful connection error', async () => {
