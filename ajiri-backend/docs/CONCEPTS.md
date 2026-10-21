@@ -1146,3 +1146,13 @@ OpenAPI is a source contract, generated offline with pinned drf-spectacular and
 served as reviewed JSON. It is not permission to bypass CSRF, owner checks or
 consent, and it contains no live user records. Operational ingestion paths are
 kept separate. Custom response objects marked extensible are not fully typed yet.
+
+## job-full-text-search
+
+SQLite FTS5 is a derived word index over job text, with database triggers keeping
+it in sync even for bulk updates. The original jobs remain authoritative. Quoted
+literal terms and SQL parameters prevent user search text becoming executable
+query syntax. Weighted BM25 ranks keyword relevance; skill-match scores remain
+separate. The additive index can be rebuilt or removed without discarding jobs.
+Performance and known-title relevance must be measured on actual listings before
+claiming production acceptance. No profile/private-document data is indexed.

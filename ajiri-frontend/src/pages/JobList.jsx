@@ -31,11 +31,11 @@ function Filters({ register }) {
   return (
     <>
       <div className="field">
-        <label htmlFor="search-title">Job title</label>
+        <label htmlFor="search-title">Job keywords</label>
         <Input
           id="search-title"
           name="title"
-          placeholder="e.g. Software developer"
+          placeholder="e.g. Software developer or Python"
           {...register('title')}
         />
       </div>
@@ -65,7 +65,7 @@ export default function JobList() {
   // URL state makes filters shareable and preserves them with browser Back.
   // see docs/CONCEPTS.md#url-search-state
   const [params, setParams] = useSearchParams()
-  const title = params.get('title') || ''
+  const title = params.get('q') || params.get('title') || ''
   const location = params.get('location') || ''
   const type = params.get('job_type') || ''
   const {
@@ -81,7 +81,7 @@ export default function JobList() {
   const page =
     Number.isSafeInteger(requestedPage) && requestedPage > 0 ? requestedPage : 1
   const query = new URLSearchParams({ page: String(page) })
-  if (title) query.set('title', title)
+  if (title) query.set(params.has('q') ? 'q' : 'title', title)
   if (location) query.set('location', location)
   if (type) query.set('job_type', type)
   const { data, loading, error, retry } = useApiQuery(`/jobs/?${query}`)
@@ -96,7 +96,7 @@ export default function JobList() {
   const submit = (values) => {
     const next = new URLSearchParams()
     for (const [key, value] of Object.entries(values))
-      if (value.trim()) next.set(key, value.trim())
+      if (value.trim()) next.set(key === 'title' ? 'q' : key, value.trim())
     setParams(next)
   }
   const changePage = (next) => {

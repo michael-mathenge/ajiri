@@ -68,7 +68,12 @@ export const uploadSchema = z.object({
 })
 export const alertSchema = z.object({ enabled: z.boolean() })
 export const searchSchema = z.object({
-  title: text(255),
+  title: text(255).check(
+    z.refine((value) => {
+      const words = value.normalize('NFKC').match(/[\p{L}\p{N}]+/gu) || []
+      return words.length <= 12 && words.every((word) => word.length <= 64)
+    }, 'Use at most 12 words, each at most 64 characters.')
+  ),
   location: text(255),
   job_type: z.string(),
 })
