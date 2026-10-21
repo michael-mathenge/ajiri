@@ -1104,3 +1104,12 @@ state. SQLite can return the documented bounded no-send busy response. Tests acc
 only that exact outcome, first prove one durable receipt/quota/provider handoff,
 then reconcile the same request key without a second provider call. Arbitrary
 errors, missing receipts, duplicate sends and extra quota reservations still fail.
+
+## accessibility-performance-budgets
+
+Automated accessibility scans detect specific failures; incomplete checks still
+need human review. Mobile performance budgets compare three-run medians from an
+isolated test server against explicit limits. Missing/invalid audits must fail,
+and a lab budget pass is not field performance or full accessibility compliance.
+Only synthetic/public test pages are measured; no production cookies or documents
+are exported. See ../../docs/ACCESSIBILITY_PERFORMANCE.md for scope and measured limits.

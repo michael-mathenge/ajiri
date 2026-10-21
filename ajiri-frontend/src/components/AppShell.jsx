@@ -94,13 +94,13 @@ export default function AppShell() {
           <Link
             to="/"
             className="brand"
-            aria-label="Ajiri home"
+            aria-label="Ajiri Kenya home"
             onClick={() => setMenuPath(null)}
           >
             <span className="brand-mark">
               <BriefcaseBusiness size={21} aria-hidden="true" />
             </span>
-            ajiri<span className="brand-country">KENYA</span>
+            ajiri <span className="brand-country">KENYA</span>
           </Link>
           <nav
             id="primary-navigation"

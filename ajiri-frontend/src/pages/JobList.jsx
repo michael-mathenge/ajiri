@@ -65,7 +65,8 @@ export default function JobList() {
   const location = params.get('location') || ''
   const type = params.get('job_type') || ''
   const requestedPage = Number(params.get('page'))
-  const page = Number.isSafeInteger(requestedPage) && requestedPage > 0 ? requestedPage : 1
+  const page =
+    Number.isSafeInteger(requestedPage) && requestedPage > 0 ? requestedPage : 1
   const query = new URLSearchParams({ page: String(page) })
   if (title) query.set('title', title)
   if (location) query.set('location', location)
@@ -74,7 +75,9 @@ export default function JobList() {
   const { data: profile } = useApiResource('/profiles/me/')
   // Missing profile data is unknown, not evidence of an empty skills list.
   // see docs/CONCEPTS.md#ui-feedback
-  const hasSkills = Array.isArray(profile?.skills) ? profile.skills.length > 0 : null
+  const hasSkills = Array.isArray(profile?.skills)
+    ? profile.skills.length > 0
+    : null
   const [showFilters, setShowFilters] = useState(false)
   const filtered = Boolean(title || location || type)
   const submit = (event) => {
@@ -186,8 +189,12 @@ export default function JobList() {
                     {job.company_name.slice(0, 2).toUpperCase()}
                   </span>
                   {hasSkills === false ? (
-                    <Link to="/profile" className="inline-link text-sm">Add skills to see matches</Link>
-                  ) : hasSkills === true ? <MatchScore score={job.match_score} /> : null}
+                    <Link to="/profile" className="inline-link text-sm">
+                      Add skills to see matches
+                    </Link>
+                  ) : hasSkills === true ? (
+                    <MatchScore score={job.match_score} />
+                  ) : null}
                 </div>
                 <p className="company-name">{job.company_name}</p>
                 <h3>
@@ -208,7 +215,7 @@ export default function JobList() {
                   <Link
                     to={`/jobs/${job.id}`}
                     className="inline-link"
-                    aria-label={`View ${job.title} at ${job.company_name}`}
+                    aria-label={`View job: ${job.title} at ${job.company_name}`}
                   >
                     View job
                     <ArrowRight size={16} aria-hidden="true" />
