@@ -58,6 +58,9 @@ Stop Vite before npm ci if Windows locks a native dependency. Test counts change
 read actual output instead of relying on old checkpoint counts. Use curl.exe in
 PowerShell. Never publish console account-security links.
 
+Optional developer tooling: [quality checks](docs/QUALITY_GUIDE.md). Hooks are opt-in;
+installing development dependencies does not change your Git hooks or configuration.
+
 ## 4. Release
 
 Clear development VITE_API_BASE_URL overrides and run

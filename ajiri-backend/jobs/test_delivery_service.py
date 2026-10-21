@@ -293,16 +293,24 @@ class DeliveryServiceTests(TransactionTestCase):
         self.assertFalse(Attempt.objects.exists())
 
     def test_concurrent_same_request_produces_one_provider_call(self):
-        app, key = self.application(), uuid.uuid4()
+        app = self.application()
+        authorization = app.test_authorization
+        # Freeze the actual request BEFORE starting workers. The convenience
+        # helper lazily checks authorization state and mutates self.keys, which
+        # can race the first handoff before DeliveryService is even called.
+        # see docs/CONCEPTS.md#delivery-concurrency-fixtures
+        args = dict(user_id=self.user.pk, channel='application', application_id=app.pk,
+            authorization_id=authorization.pk, idempotency_key=authorization.pk,
+            **dispatch_inputs(self.user, authorization))
         gate = threading.Barrier(2)
         results, errors = [], []
         def worker():
             close_old_connections()
             try:
                 gate.wait(timeout=10)
-                results.append(self.deliver(app, idempotency_key=key).pk)
+                results.append(self.service.deliver(**args).pk)
             except Exception as error:
-                errors.append(type(error).__name__)
+                errors.append((type(error).__name__, str(error)))
             finally:
                 close_old_connections()
         threads = [threading.Thread(target=worker) for _ in range(2)]
@@ -311,7 +319,16 @@ class DeliveryServiceTests(TransactionTestCase):
         for thread in threads:
             thread.join(timeout=15)
         self.assertFalse(any(thread.is_alive() for thread in threads))
-        self.assertEqual(errors, [])
+        # A bounded SQLite lock response is a documented no-send outcome. Only
+        # that exact error is allowed, and only with one durable winning receipt.
+        self.assertTrue(all(error == ('DeliveryError',
+            'Delivery accounting is busy; no email was attempted.') for error in errors), errors)
+        self.assertEqual(Attempt.objects.count(), 1)
+        self.assertEqual(len(self.transport.calls), 1)
+        self.assertEqual(Budget.objects.get(scope='global').application_reserved, 1)
+        for _ in errors:
+            results.append(self.service.deliver(**args).pk)
+        self.assertEqual(len(results), 2)
         self.assertEqual(len(set(results)), 1)
         self.assertEqual(len(self.transport.calls), 1)
         self.assertEqual(Budget.objects.get(scope='global').application_reserved, 1)

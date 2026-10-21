@@ -1,0 +1,22 @@
+[run]
+branch = True
+relative_files = True
+source = accounts,config,jobs,profiles
+omit =
+    */migrations/*
+    */test*.py
+    */upload_fixtures.py
+    */cv_test_helpers.py
+
+[report]
+omit =
+    */migrations/*
+    */test*.py
+    */upload_fixtures.py
+    */cv_test_helpers.py
+show_missing = True
+precision = 2
+skip_empty = True
+
+[xml]
+output = ../.verification/quality/coverage.xml

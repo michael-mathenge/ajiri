@@ -17,5 +17,9 @@ MANIFEST.sha256
 .verification/
 .worktrees/
 
+# Generated Python caches, including repository-level developer tooling.
+__pycache__/
+*.py[cod]
+
 # Everything else (venvs, node_modules, databases, .env, build output) is ignored by
 # the .gitignore inside ajiri-backend/ and ajiri-frontend/.

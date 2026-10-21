@@ -1,0 +1,22 @@
+# Opt-in: do not install hooks or change Git configuration automatically.
+repos:
+  - repo: local
+    hooks:
+      - id: ruff-critical
+        name: Ruff correctness checks
+        entry: python -m ruff check --no-cache
+        language: system
+        types: [python]
+        files: ^ajiri-backend/
+      - id: eslint
+        name: ESLint correctness checks
+        entry: node ajiri-frontend/scripts/check-files.mjs lint
+        language: system
+        files: ^ajiri-frontend/.*\.[cm]?jsx?$
+        exclude: ^ajiri-frontend/(dist|node_modules)/
+      - id: prettier
+        name: Prettier changed-file check
+        entry: node ajiri-frontend/scripts/check-files.mjs format
+        language: system
+        files: ^ajiri-frontend/.*\.(jsx?|mjs|css|json)$
+        exclude: ^ajiri-frontend/(dist|node_modules)/|package-lock\.json$
