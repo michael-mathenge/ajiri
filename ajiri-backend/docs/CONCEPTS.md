@@ -1113,3 +1113,14 @@ isolated test server against explicit limits. Missing/invalid audits must fail,
 and a lab budget pass is not field performance or full accessibility compliance.
 Only synthetic/public test pages are measured; no production cookies or documents
 are exported. See ../../docs/ACCESSIBILITY_PERFORMANCE.md for scope and measured limits.
+
+## query-data-layer
+
+TanStack Query owns page-read caching, shared requests and cancellation. The cache
+is memory-only, fresh for30 seconds and cleared on same-tab login/logout or a
+cross-tab session storage change. Query keys contain API paths, never credentials.
+Failed reads retry once only for network/server errors; auth, validation and rate
+limits do not retry. Writes remain explicit and are never automatically retried.
+Successful writes invalidate page reads, including matches/CV choices/application
+lists. Form editor state remains local so background refresh cannot erase unsaved
+edits. Server revision checks and explicit document/send approvals remain authoritative.

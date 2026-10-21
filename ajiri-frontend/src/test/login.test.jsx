@@ -1,5 +1,5 @@
 import { beforeEach, expect, it, vi } from 'vitest'
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from './test-utils'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import apiClient from '../api/client'
 import Login from '../pages/Login'

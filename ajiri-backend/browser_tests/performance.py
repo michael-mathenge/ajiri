@@ -42,6 +42,10 @@ def runner_diagnostic(stderr):
     return message[-1500:]
 
 
+def trace_retry_allowed(returncode, stderr, used):
+    return returncode != 0 and 'NO_NAVSTART' in stderr and used == 0
+
+
 @override_settings(DEBUG=False, ALLOWED_HOSTS=['localhost', '127.0.0.1'],
     SECURE_SSL_REDIRECT=False, SECURE_HSTS_SECONDS=0, REFRESH_COOKIE_SECURE=False,
     CSRF_COOKIE_SECURE=False, SESSION_COOKIE_SECURE=False,
@@ -66,20 +70,31 @@ class MobilePerformance(LiveServerTestCase):
         output = settings.BASE_DIR.parent / '.verification' / 'performance'
         output.mkdir(parents=True, exist_ok=True)
         summary = {}
+        trace_retries = 0
         for route in ('login', 'register'):
+            retries_before = trace_retries
             runs = []
             for number in range(3):
                 report = output / f'{route}-{number}.json'
-                result = subprocess.run([node, str(cli), self.live_server_url + '/' + route,
+                command = [node, str(cli), self.live_server_url + '/' + route,
                     '--chrome-flags=--headless --no-sandbox --disable-dev-shm-usage',
-                    '--only-categories=performance', '--output=json', '--output-path=' + str(report), '--quiet'],
+                    '--only-categories=performance', '--output=json', '--output-path=' + str(report), '--quiet']
+                result = subprocess.run(command,
                     env=env, capture_output=True, text=True, timeout=100)
+                # Chromium can lose its navigation trace (upstream lighthouse#15382).
+                # One fresh-process retry TOTAL; never retry a metric/budget failure.
+                if trace_retry_allowed(result.returncode, result.stderr, trace_retries):
+                    trace_retries += 1
+                    print('Lighthouse NO_NAVSTART: one fresh-browser trace retry.')
+                    result = subprocess.run(command,
+                        env=env, capture_output=True, text=True, timeout=100)
                 if result.returncode:
                     (output / 'runner-errors.txt').write_text((result.stdout + result.stderr)[-10000:], encoding='utf-8')
                 self.assertEqual(result.returncode, 0,
                     'Lighthouse execution failed: ' + runner_diagnostic(result.stderr))
                 runs.append(metrics(json.loads(report.read_text(encoding='utf-8'))))
             summary[route] = {key: statistics.median(row[key] for row in runs) for key in runs[0]}
+            summary[route]['trace_retries'] = trace_retries - retries_before
         (output / 'summary.json').write_text(json.dumps(summary, indent=2) + '\n', encoding='utf-8')
         if os.environ.get('AJIRI_LIGHTHOUSE_MEASURE_ONLY') == '1':
             self.skipTest('Measurement only: no performance budget asserted.')

@@ -414,3 +414,45 @@ Final frontend rerun passed108 component tests, Oxlint, ESLint and the hook-safe
 test. System check/migration drift and Ruff passed after the fixes. The frontend
 build now changes for the demonstrated accessibility repairs and will be committed
 last, replacing only verified generated assets. No runtime library versions changed.
+
+## AJ-29 merged and CI acceptance complete
+
+PR34 merged8d84a2e85caea3d032f88bd860be9e43f6e2906a after all six checks
+passed on f623f05. Post-merge all six also passed. Linux browser suite:three tests
+OK in80.821s; sanitized artifact12354702670,1004 bytes, SHA256
+34beca13d94528fe029b118c5edd158cbbbedb64e5281559b1e94d27dd8b75e8,
+expiry28 October2026. Initial Lighthouse launch failure did not recur on final or
+post-merge runs; its cause is unknown. No budget was relaxed. Local enforcing
+Lighthouse after the UI repairs also passed in101.407s. AJ-29 is Done for its CI
+acceptance; accompanying label/link fixes await production release. Production
+remains40c1ea0. Rebuilt final client bytes were independently reproduced exactly.
+
+## AJ-32 query data layer — local verification in progress
+
+Branch codex/jira-query-data-layer from8d84a2e. TanStack Query5.104.5 replaces the
+custom read hook on six existing page types. API paths key shared/cancelable reads;
+cache is memory-only,30s fresh/five-minute inactive expiry. Writes invalidate reads;
+no automatic mutation retry. Same/cross-tab account changes discard cached private
+data. Axios auth interceptors/cookies and sending authorization semantics unchanged.
+On-demand document review/reconciliation remains explicitly fresh.
+
+Locked Node24.19 npm ci passed362 packages/audit zero. Oxlint/ESLint,113 component
+tests (including five cache isolation/retry regressions), hook safety and build
+passed. Added a further user-facing skill-save/match refresh regression; final
+component rerun pending. An initial component run caught invalidation hooks in the
+wrong review/send wrapper scope; corrected in the actual session components and
+all existing review/send regressions then passed. Backend system check/migration
+drift passed; full suite and real-browser/axe/Lighthouse gates are running.
+Full backend suite passed332 tests in272.260s with one known Windows skip.
+Final component suite passed114 tests, including actual skill-save/match refresh.
+The browser journey's two tests/14 axe scans passed, but its combined run failed
+on Lighthouse NO_NAVSTART trace recording (not a budget result). Added one explicitly
+recorded fresh-browser retry for that upstream recording error only, bounded once
+per suite. Regression assertions reject further retries, successful results and
+other error codes; no performance limits or app-mutation retry rules changed.
+The focused guards and enforcing performance rerun are in progress.
+Focused report/trace guards plus enforcing mobile performance passed five tests
+in104.908s. Exactly one NO_NAVSTART trace retry occurred and was recorded; all
+three valid measurements per page still met unchanged budgets. No other errors
+or metric failures are retried. The complete browser journey/axe portion had
+already passed in the combined attempt; its performance failure was explicit.

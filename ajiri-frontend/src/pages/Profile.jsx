@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import apiClient from '../api/client'
-import { useApiResource } from '../hooks/useApiResource'
+import { useApiQuery, useApiInvalidation } from '../hooks/useApiQuery'
 import {
   Button,
   Card,
@@ -17,6 +17,7 @@ import { apiErrors } from '../lib/errors'
 import { validateCV } from '../lib/cv'
 
 export function ProfileEditor({ profile }) {
+  const invalidate = useApiInvalidation()
   const [values, setValues] = useState({
     full_name: profile.full_name || '',
     phone_number: profile.phone_number || '',
@@ -64,6 +65,7 @@ export function ProfileEditor({ profile }) {
           ),
         ],
       })
+      invalidate()
       setMessage('Profile saved.')
     } catch (error) {
       setErrors(apiErrors(error))
@@ -83,6 +85,7 @@ export function ProfileEditor({ profile }) {
     form.append('cv_file', file)
     try {
       await apiClient.patch('/profiles/me/', form)
+      invalidate()
       setHasCV(true)
       setFile(null)
       fileInput.current.value = ''
@@ -109,9 +112,13 @@ export function ProfileEditor({ profile }) {
       <Card>
         <h2>Your profile</h2>
         <p className="muted">Account email: {profile.email}</p>
-        <p>Privacy notice: {profile.privacy_consented_at
-          ? `Agreed ${new Date(profile.privacy_consented_at).toLocaleString('en-KE')} (${profile.privacy_policy_version})`
-          : 'No registration agreement recorded for this existing account.'} <Link to="/privacy">Read notice</Link></p>
+        <p>
+          Privacy notice:{' '}
+          {profile.privacy_consented_at
+            ? `Agreed ${new Date(profile.privacy_consented_at).toLocaleString('en-KE')} (${profile.privacy_policy_version})`
+            : 'No registration agreement recorded for this existing account.'}{' '}
+          <Link to="/privacy">Read notice</Link>
+        </p>
         <form onSubmit={save} className="stack" aria-busy={saving}>
           <FormErrors errors={errors} prefix="profile" />
           <div className="profile-grid">
@@ -217,14 +224,16 @@ export function ProfileEditor({ profile }) {
               Download uploaded CV
             </DownloadButton>
           )}
-          <Button asChild><Link to="/cv-builder">Build and review my CV</Link></Button>
+          <Button asChild>
+            <Link to="/cv-builder">Build and review my CV</Link>
+          </Button>
         </div>
       </Card>
     </div>
   )
 }
 export default function Profile() {
-  const { data, loading, error, retry } = useApiResource('/profiles/me/')
+  const { data, loading, error, retry } = useApiQuery('/profiles/me/')
   if (loading) return <LoadingState label="Loading profile" />
   if (error) return <ErrorState onRetry={retry}>{error}</ErrorState>
   return (

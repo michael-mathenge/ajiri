@@ -12,7 +12,7 @@ import {
 } from 'lucide-react'
 import apiClient from '../api/client'
 import DownloadButton from '../components/DownloadButton'
-import { useApiResource } from '../hooks/useApiResource'
+import { useApiQuery, useApiInvalidation } from '../hooks/useApiQuery'
 import {
   Badge,
   Button,
@@ -26,9 +26,15 @@ import { useToast } from '../hooks/useToast'
 import { dateLabel, jobType, salaryLabel } from '../lib/utils'
 
 export default function JobDetail() {
+  const invalidate = useApiInvalidation()
   const { id } = useParams()
-  const { data: job, loading, error, retry } = useApiResource(`/jobs/${id}/`)
-  const { data: cv, loading: cvLoading, error: cvError, retry: retryCV } = useApiResource('/profiles/me/cv-versions/')
+  const { data: job, loading, error, retry } = useApiQuery(`/jobs/${id}/`)
+  const {
+    data: cv,
+    loading: cvLoading,
+    error: cvError,
+    retry: retryCV,
+  } = useApiQuery('/profiles/me/cv-versions/')
   const [selection, setSelection] = useState(null)
   const cvVersion = selection ?? cv?.approval_id ?? ''
   const [applying, setApplying] = useState(false)
@@ -40,7 +46,10 @@ export default function JobDetail() {
     setApplying(true)
     setApplyError({})
     try {
-      const response = await apiClient.post(`/jobs/${id}/apply/`, { cv_version: cvVersion })
+      const response = await apiClient.post(`/jobs/${id}/apply/`, {
+        cv_version: cvVersion,
+      })
+      invalidate()
       toast(
         response.status === 201
           ? 'Your application is ready to review'
@@ -49,7 +58,12 @@ export default function JobDetail() {
       )
       navigate('/applications')
     } catch (error) {
-      setApplyError(apiErrors(error, 'Preparation could not be confirmed. Check My applications before retrying; no automatic retry was made.'))
+      setApplyError(
+        apiErrors(
+          error,
+          'Preparation could not be confirmed. Check My applications before retrying; no automatic retry was made.'
+        )
+      )
     } finally {
       setApplying(false)
     }
@@ -111,20 +125,58 @@ export default function JobDetail() {
             <span className="eyebrow">YOUR NEXT STEP</span>
             <h2>Interested in this role?</h2>
             <p className="muted mb-6">
-              Choose an approved CV. We copy it exactly and draft a separate cover letter from your current profile. Review both before confirming.
+              Choose an approved CV. We copy it exactly and draft a separate
+              cover letter from your current profile. Review both before
+              confirming.
             </p>
             <p className="salary mb-6">{salaryLabel(job)}</p>
-            {cvLoading ? <p role="status">Loading approved CV versions…</p> : cvError ? <ErrorState onRetry={retryCV}>{cvError}</ErrorState> :
-              cv?.versions?.length ? <div className="field mb-6">
+            {cvLoading ? (
+              <p role="status">Loading approved CV versions…</p>
+            ) : cvError ? (
+              <ErrorState onRetry={retryCV}>{cvError}</ErrorState>
+            ) : cv?.versions?.length ? (
+              <div className="field mb-6">
                 <label htmlFor="application-cv">Approved CV version</label>
-                <Select id="application-cv" value={cvVersion} disabled={applying} onChange={event => setSelection(event.target.value)}>
+                <Select
+                  id="application-cv"
+                  value={cvVersion}
+                  disabled={applying}
+                  onChange={(event) => setSelection(event.target.value)}
+                >
                   <option value="">Choose an approved version</option>
-                  {cv.versions.map(version => <option key={version.id} value={version.id}>Revision {version.revision}{version.revision === cv.revision ? ' (current)' : ' (earlier approved version)'}</option>)}
+                  {cv.versions.map((version) => (
+                    <option key={version.id} value={version.id}>
+                      Revision {version.revision}
+                      {version.revision === cv.revision
+                        ? ' (current)'
+                        : ' (earlier approved version)'}
+                    </option>
+                  ))}
                 </Select>
-                <p className="muted text-sm">An existing application keeps its original documents, even if you select another CV.</p>
-                {cvVersion && <DownloadButton path={`/profiles/me/cv-versions/${cvVersion}/download/`} filename="Selected_CV.docx">Review selected CV</DownloadButton>}
-              </div> : <p>No approved CV yet. <Link to="/cv-builder">Build and approve your CV</Link> to prepare a new application.</p>}
-            <p><Link to="/applications">Open My applications</Link> to review an existing draft without replacing its documents.</p>
+                <p className="muted text-sm">
+                  An existing application keeps its original documents, even if
+                  you select another CV.
+                </p>
+                {cvVersion && (
+                  <DownloadButton
+                    path={`/profiles/me/cv-versions/${cvVersion}/download/`}
+                    filename="Selected_CV.docx"
+                  >
+                    Review selected CV
+                  </DownloadButton>
+                )}
+              </div>
+            ) : (
+              <p>
+                No approved CV yet.{' '}
+                <Link to="/cv-builder">Build and approve your CV</Link> to
+                prepare a new application.
+              </p>
+            )}
+            <p>
+              <Link to="/applications">Open My applications</Link> to review an
+              existing draft without replacing its documents.
+            </p>
             <Button
               className="w-full"
               disabled={applying || cvLoading || Boolean(cvError) || !cvVersion}
@@ -142,7 +194,8 @@ export default function JobDetail() {
           <Card>
             <h2>Review your documents</h2>
             <p className="muted">
-              Your approved CV stays unchanged. The cover letter uses your current profile and needs a separate review.
+              Your approved CV stays unchanged. The cover letter uses your
+              current profile and needs a separate review.
             </p>
             <div className="stack">
               <Link to="/cv-builder">Edit and approve my CV</Link>

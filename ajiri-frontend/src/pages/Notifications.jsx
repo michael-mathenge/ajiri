@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import apiClient from '../api/client'
-import { useApiResource } from '../hooks/useApiResource'
+import { useApiQuery, useApiInvalidation } from '../hooks/useApiQuery'
 import {
   Button,
   Badge,
@@ -13,6 +13,7 @@ import {
 } from '../components/ui'
 
 function Notifications() {
+  const invalidate = useApiInvalidation()
   const rows = useRef({})
   const [page, setPage] = useState(1)
   const {
@@ -20,7 +21,7 @@ function Notifications() {
     loading,
     error: loadError,
     retry,
-  } = useApiResource(`/jobs/notifications/?page=${page}`)
+  } = useApiQuery(`/jobs/notifications/?page=${page}`)
   const [updates, setUpdates] = useState({})
   const notifications =
     data?.results.map((item) => updates[item.id] || item) || []
@@ -35,6 +36,7 @@ function Notifications() {
       const response = await apiClient.post(
         `/jobs/notifications/${notificationId}/mark-read/`
       )
+      invalidate()
       setUpdates((current) => ({ ...current, [notificationId]: response.data }))
       // Mark-read removes its button, so retain a useful keyboard position.
       // see docs/CONCEPTS.md#focus-after-mutations

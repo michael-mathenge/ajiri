@@ -7,7 +7,7 @@ import {
   Search,
   SlidersHorizontal,
 } from 'lucide-react'
-import { useApiResource } from '../hooks/useApiResource'
+import { useApiQuery } from '../hooks/useApiQuery'
 import {
   Badge,
   Button,
@@ -71,8 +71,8 @@ export default function JobList() {
   if (title) query.set('title', title)
   if (location) query.set('location', location)
   if (type) query.set('job_type', type)
-  const { data, loading, error, retry } = useApiResource(`/jobs/?${query}`)
-  const { data: profile } = useApiResource('/profiles/me/')
+  const { data, loading, error, retry } = useApiQuery(`/jobs/?${query}`)
+  const { data: profile } = useApiQuery('/profiles/me/')
   // Missing profile data is unknown, not evidence of an empty skills list.
   // see docs/CONCEPTS.md#ui-feedback
   const hasSkills = Array.isArray(profile?.skills)

@@ -1,4 +1,6 @@
 import { Suspense, useEffect, useState } from 'react'
+import { QueryClientProvider } from '@tanstack/react-query'
+import { createApiQueryClient } from '../api/queryClient'
 import {
   Link,
   Navigate,
@@ -22,15 +24,37 @@ import { useToast } from '../hooks/useToast'
 import { AuthContext, useAuth } from '../hooks/useAuth'
 
 export function AuthProvider({ children }) {
+  const [queryClient, setQueryClient] = useState(createApiQueryClient)
   const [signedIn, setSignedIn] = useState(() =>
     Boolean(localStorage.getItem('access_token'))
   )
+  useEffect(() => {
+    const changedAccount = (event) => {
+      if (event.key !== null && event.key !== 'access_token') return
+      queryClient.clear()
+      setQueryClient(createApiQueryClient())
+      setSignedIn(event.key !== null && Boolean(event.newValue))
+    }
+    window.addEventListener('storage', changedAccount)
+    return () => window.removeEventListener('storage', changedAccount)
+  }, [queryClient])
   // The API still validates tokens. This state only keeps navigation in sync.
   // see docs/CONCEPTS.md#protected-routes
   return (
-    <AuthContext.Provider value={{ signedIn, setSignedIn }}>
-      {children}
-    </AuthContext.Provider>
+    <QueryClientProvider client={queryClient}>
+      <AuthContext.Provider
+        value={{
+          signedIn,
+          setSignedIn: (value) => {
+            queryClient.clear()
+            setQueryClient(createApiQueryClient())
+            setSignedIn(value)
+          },
+        }}
+      >
+        {children}
+      </AuthContext.Provider>
+    </QueryClientProvider>
   )
 }
 export function ProtectedRoute() {
