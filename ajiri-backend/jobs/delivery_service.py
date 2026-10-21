@@ -92,7 +92,8 @@ class DeliveryService:
             expected_recipient = application.application_email
         elif channel == 'alert':
             notification = Notification.objects.get(pk=notification_id, user=user)
-            if application_id or not alert_consent_confirmed or not Profile.objects.get(user=user).notify_email:
+            from profiles.alert_consent import eligible
+            if application_id or not alert_consent_confirmed or not eligible(Profile.objects.select_related('user').get(user=user)):
                 raise DeliveryError('Confirmed alert consent required.')
             expected_recipient = user.email
         else:
@@ -210,7 +211,8 @@ class DeliveryService:
                     or current_email != user.email):
                     raise DeliveryError('Application or verification changed before reservation.')
             elif notification:
-                if not Profile.objects.filter(user=user, notify_email=True).exists():
+                from profiles.alert_consent import eligible
+                if not eligible(Profile.objects.select_related('user').get(user=user)):
                     raise DeliveryError('Alert preference changed before reservation.')
             elif get_user_model().objects.get(pk=user.pk).email != user.email:
                 raise DeliveryError('Account email changed before reservation.')

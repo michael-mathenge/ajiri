@@ -17,11 +17,11 @@ class ProfilePreferencesTests(TestCase):
     def test_preferences_can_be_read_and_updated_independently(self):
         self.client.force_authenticate(self.user)
         data = self.client.get('/api/profiles/me/').data
-        self.assertTrue(data['notify_email'])
+        self.assertFalse(data['notify_email'])
         self.assertTrue(data['notify_in_app'])
         response = self.client.patch('/api/profiles/me/', {'notify_email': False}, format='json')
-        self.assertFalse(response.data['notify_email'])
-        self.assertTrue(response.data['notify_in_app'])
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('notify_email', response.data)
         response = self.client.patch('/api/profiles/me/', {'notify_in_app': False}, format='json')
         self.assertFalse(response.data['notify_in_app'])
         self.user.profile.refresh_from_db()

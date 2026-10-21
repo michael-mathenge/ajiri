@@ -243,11 +243,31 @@ class DeliveryServiceTests(TransactionTestCase):
         args = dict(channel='alert', application_id=None, recipient=self.user.email, notification_id=notification.pk)
         with self.assertRaises(DeliveryError):
             self.deliver(**args)
+        with self.assertRaises(DeliveryError):
+            self.deliver(**args, alert_consent_confirmed=True)
+        self.assertEqual(len(self.transport.calls), 0)
+        from profiles.alert_consent import record_choice
+        record_choice(self.user, True, uuid.uuid4())
         object.__setattr__(self.transport, 'result', Result('definite_failure', failure_category='provider_rejected'))
         first = self.deliver(**args, alert_consent_confirmed=True)
         with self.assertRaises(DeliveryError):
             self.deliver(**args, alert_consent_confirmed=True, retry_of=first.pk)
         self.assertEqual(len(self.transport.calls), 1)
+
+    def test_alert_revocation_during_prepare_blocks_reservation(self):
+        from profiles.alert_consent import record_choice
+        record_choice(self.user, True, uuid.uuid4())
+        notification = Notification.objects.create(user=self.user, job=self.application().job, match_score=90)
+        original = self.transport.prepare
+        def prepare(**kwargs):
+            record_choice(self.user, False, uuid.uuid4())
+            return original(**kwargs)
+        with patch.object(type(self.transport), 'prepare', side_effect=prepare):
+            with self.assertRaises(DeliveryError):
+                self.deliver(channel='alert', recipient=self.user.email, application_id=None,
+                    notification_id=notification.pk, alert_consent_confirmed=True)
+        self.assertFalse(Attempt.objects.exists())
+        self.assertEqual(len(self.transport.calls), 0)
 
     def test_nairobi_rollover(self):
         for moment in (datetime(2026, 10, 16, 20, 59, tzinfo=dt_timezone.utc),

@@ -33,7 +33,7 @@ class ProfileSerializer(serializers.ModelSerializer):
             'notify_email', 'notify_in_app',
             'privacy_consented_at', 'privacy_policy_version',
         )
-        read_only_fields = ('updated_at', 'privacy_consented_at', 'privacy_policy_version')
+        read_only_fields = ('updated_at', 'privacy_consented_at', 'privacy_policy_version', 'notify_email')
 
     def to_representation(self, instance):
         """
@@ -49,6 +49,12 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     def validate_cv_file(self, value):
         return validate_cv_upload(value) if value else value
+
+    def validate(self, attrs):
+        if 'notify_email' in self.initial_data:
+            raise serializers.ValidationError({'notify_email':
+                ['Reload and use Save email choice to update email job alerts.']})
+        return attrs
 
     def update(self, instance, validated_data):
         skill_names = validated_data.pop('skill_names', None)

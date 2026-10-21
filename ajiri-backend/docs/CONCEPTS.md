@@ -1046,3 +1046,18 @@ The release planner reads a clean checkout and exact reviewed commit identifiers
 checks migration changes against the explicit list, and verifies committed asset
 references remain inside frontend_build. It prints the backup/stage/migration/
 activation order, performs no external writes and does not replace runtime checks.
+## verified-account-export
+
+An operator verifies who requested their account information, inspects a no-write
+inventory, then pauses writers before copying consistent records and owned private
+documents into a new private folder. A manifest is written only after verified
+copies complete. Credentials and other owners' data are excluded. Export is not
+erasure, consent to email or permission to disclose data through a public URL.
+
+## explicit-alert-consent
+
+An enabled preference is not proof that someone agreed to email. Store an explicit,
+dated choice for the current mailbox and recheck it when reserving delivery budget.
+New profiles start with email off. Unsubscribe is an explicit confirmed action;
+link previews cannot change preferences. In-app alerts remain independent. Old
+decision retries cannot overwrite a newer choice. Console output is not delivery.

@@ -138,7 +138,22 @@ page observed before that reload has a regression/recovery boundary in the next 
 Jira AJ-12/24/37/31/38/41 are Done and statuses were reread. AJ-31/38/41 are decision
 spikes, not claims of live public SEO or Swahili. Remaining defined features stay open.
 
-## Operations batch in progress
+## Operations batch deployed — 21 October 2026
+
+PR #28 passed all four required checks and merged as
+`93da1161f4a955ab0d3a3f9d5468e24a2bf5d31a`. Production is verified at that
+revision. Fresh paused-writer backup `backup-20261020T213134403490Z-4c4cdc48`
+passed server and independent private off-server restoration:12 files/212184 bytes.
+No requirements delta, pip install or migrations. System check, migration drift
+and empty migration plan passed before activation. Live health/login/register/privacy
+returned200/HSTS300; served index/assets match pinned bytes; authenticated profile,
+jobs and applications reads200. App and both previously active workflows resumed.
+Rollback: stage cc731976 and reload, retaining current database/media/configuration.
+No database restoration is required for this code-only rollback.
+
+Read-only release planner passed on the clean c2d5b48 checkout: no pending source
+migrations or production requirements change. The final generated build was committed
+last. The following records describe the package's actual verification.
 
 Branch codex/jira-operations starts at deployed cc731976. Isolated staging image
 builds, fresh-volume migrations and localhost:8001 health passed. UID10001,
@@ -166,7 +181,42 @@ No fetch/install/migration/activation is performed by that planner.
 
 Frontend locked install/lint/102 tests/build passed in the isolated Node24.19 runner.
 New render boundary offers explicit reload for obsolete lazy chunks, without echoing
-exception text, clearing authentication or retrying mutations. New build awaits its
-last package commit. Historical Checkpoint2 checklist is archived, not deleted.
+exception text, clearing authentication or retrying mutations. The final build is committed
+as the last package commit (c2d5b48). Historical Checkpoint2 checklist is archived, not deleted.
 Provisional AJ-42–AJ-52 requirements prepared; test integrations and live services are
 not claimed complete. Daily backup scheduling is active; first scheduled run pending.
+
+## Account export package — local, 21 October 2026
+
+Branch codex/jira-account-privacy from93da116 adds the operator-only
+export_account_data command, not a public endpoint or account erasure. Six focused
+tests pass; full native Django suite302 OK with one Windows symlink skip (173.220s).
+System check and migration drift passed. Explicit Node24.19 locked installation,
+lint,102 component tests and verification build passed; no frontend source changed.
+No production user export, deletion or real email was performed. See
+ACCOUNT_DATA_OPERATIONS.md. AJ-25 remains unfinished until erasure, partial-file
+failure/retry and restore-ledger replay are implemented/tested.
+
+PR28 post-merge CI and normal ingestion both succeeded. Ingestion evidence:
+https://github.com/michael-mathenge/ajiri/actions/runs/39501474386
+AJ-35 and AJ-36 were marked Done and reread after deployed evidence.
+
+
+## Alert consent package — local, 21 October 2026
+
+Continues codex/jira-account-privacy. Adds explicit choice evidence and confirmation
+UI, a purpose-bound30-day confirmed unsubscribe, authoritative ledger reservation
+checks and new-profile email-OFF default. Existing values are not backfilled.
+Legacy profile email payloads fail with an actionable field400 instead of silently
+claiming consent. In-app remains independent. Console matching no longer marks
+emails sent; live alert transport stays disconnected pending its owner pilot.
+See ALERT_CONSENT_OPERATIONS.md for server order and rollback constraints.
+
+Focused backend45 tests passed before final migration/late-revocation additions.
+Initial frontend regressions exposed obsolete profile fixtures; corrected mocks and
+separate-choice assertions then passed11 focused tests. Final locked Node24.19
+install/lint/all105 component tests/build passed. Final Linux suite310 tests passed
+in80.766s, no skips. System check and migration drift passed again. The earlier
+native308-test run failed the obsolete profile-preference journey payload; the
+updated fixture and all new tests are included in the successful Linux310 run.
+No production consent was inferred or recorded and no real alert email sent.
