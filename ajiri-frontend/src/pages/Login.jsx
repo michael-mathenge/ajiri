@@ -1,4 +1,7 @@
-import { rateLimitMessage } from '../lib/errors'
+import { useSchemaForm } from '../hooks/useSchemaForm'
+import { loginSchema } from '../lib/formSchemas'
+import FormErrors from '../components/FormErrors'
+import { apiErrors, rateLimitMessage } from '../lib/errors'
 import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { ArrowRight, Check, Eye, EyeOff, ShieldCheck } from 'lucide-react'
@@ -7,18 +10,19 @@ import { useAuth } from '../hooks/useAuth'
 import { Button, Card, Input } from '../components/ui'
 
 export default function Login() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const { values, setValues, errors, setErrors, submit } = useSchemaForm(
+    loginSchema,
+    { email: '', password: '' }
+  )
+  const { email, password } = values
   const [visible, setVisible] = useState(false)
-  const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const { setSignedIn } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
-  const handleSubmit = async (event) => {
-    event.preventDefault()
+  const handleSubmit = async () => {
     if (submitting) return
-    setError('')
+    setErrors({})
     setSubmitting(true)
     try {
       const { data } = await apiClient.post('/accounts/login/', {
@@ -38,12 +42,17 @@ export default function Login() {
         { replace: true }
       )
     } catch (error) {
-      setError(
-        error.response?.status === 429
-          ? rateLimitMessage(error)
-          : error.response?.status === 401
-          ? 'The email or password is incorrect. Please try again.'
-          : 'We could not log you in. Check your connection and try again.'
+      setErrors(
+        error.response?.status === 401
+          ? {
+              detail: ['The email or password is incorrect. Please try again.'],
+            }
+          : error.response?.status === 429
+            ? { detail: [rateLimitMessage(error)] }
+            : apiErrors(
+                error,
+                'We could not log you in. Check your connection and try again.'
+              )
       )
     } finally {
       setSubmitting(false)
@@ -89,20 +98,23 @@ export default function Login() {
         )}
         <p className="muted">Your next opportunity could be waiting.</p>
         <form
-          onSubmit={handleSubmit}
+          noValidate
+          onSubmit={(event) => submit(handleSubmit)(event)}
           className="stack mt-8"
           aria-busy={submitting}
         >
           <div className="field">
             <label htmlFor="email">Email address</label>
             <Input
+              aria-invalid={Boolean(errors.email)}
+              aria-describedby={errors.email ? 'login-email-error' : undefined}
               id="email"
               name="email"
               type="email"
               autoComplete="username"
               placeholder="you@example.com"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => setValues({ ...values, email: e.target.value })}
               required
             />
           </div>
@@ -110,12 +122,18 @@ export default function Login() {
             <label htmlFor="password">Password</label>
             <div className="password-field">
               <Input
+                aria-invalid={Boolean(errors.password)}
+                aria-describedby={
+                  errors.password ? 'login-password-error' : undefined
+                }
                 id="password"
                 name="password"
                 type={visible ? 'text' : 'password'}
                 autoComplete="current-password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) =>
+                  setValues({ ...values, password: e.target.value })
+                }
                 required
               />
               <Button
@@ -128,11 +146,7 @@ export default function Login() {
               </Button>
             </div>
           </div>
-          {error && (
-            <p role="alert" className="error-text">
-              {error}
-            </p>
-          )}
+          <FormErrors errors={errors} prefix="login" />
           <Button type="submit" className="w-full" disabled={submitting}>
             {submitting ? 'Logging in…' : 'Log in'}
             <ArrowRight size={18} aria-hidden="true" />

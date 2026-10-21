@@ -456,3 +456,65 @@ in104.908s. Exactly one NO_NAVSTART trace retry occurred and was recorded; all
 three valid measurements per page still met unchanged budgets. No other errors
 or metric failures are retried. The complete browser journey/axe portion had
 already passed in the combined attempt; its performance failure was explicit.
+
+## PR35 deployed â€” 21 October 2026
+
+Merged46c7ea7c41ddad6831d5399af289385bc7d38da8 after all six checks passed
+on2d36957; all six post-merge checks also passed. GitHub's required Python3.12
+status briefly lagged successful job completion; one rerun was requested and the
+actual required status became green before merge. Official GitHub status reported
+a concurrent pull-request/webhook delay incident; no gate was bypassed.
+
+Private snapshot backup-20261021T152829703338Z-5ad371d9 from40c1ea0 completed with
+writers paused; both workflow states and the enabled web app were promptly restored
+before download. Server and independent local verification checked hashes, SQLite
+integrity, safe archive inventory and isolated restoration:13 media files/224960bytes.
+The off-server copy and sanitized receipt are retained under the owner's private
+AjiriBackups directory. Bundle SHA256:
+6766aa886e20dbce7c2ab8a2597fa6b35a5069f897bcbc60c9f69d56be369895.
+No retained data was pruned; erasure ledger was not present in this snapshot.
+
+A second short writer pause staged exactly46c7ea7 after source-clean/ancestor guards.
+The first staging attempt safely stopped outside the Git repository; explicit cd
+and workon corrected the console context before any checkout. release_preflight:
+no expected migrations, pip_install_required=false. Production system check passed,
+no migration drift, no planned operations. Native HTTPS/proxy-header-None/HSTS300/
+subdomains-off/preload-off and alert flag OFF were asserted. Reloaded web app;
+live health returned200, and login HTML plus referenced assets matched release
+bytes exactly. Original enabled web app and active ingest/sweep workflows restored.
+
+Public browser smoke shows the new Ajiri Kenya accessible home label and login
+screen. After the owner signed in, jobs, profile, CV builder and applications
+loaded successfully. Uploaded and approved CV downloads were nonempty valid DOCX
+archives. No profile edits, approvals or sending actions were performed. Ingest
+and sweep workflows were independently confirmed active. AJ-32 moved to Done.
+No password was requested in chat. Rollback: pause writers, return source to40c1ea0, check/reload and
+restore prior writer states; retain live data and existing private configuration.
+No migration reversal or routine old-database restoration is needed.
+
+## AJ-33 forms — local verification in progress
+
+Branch codex/jira-forms-validation from deployed/fetched46c7ea7. All nine form
+elements now use React Hook Form7.90.0 and Zod4.6.7 Mini through a shared resolver.
+Incomplete CV drafts, explicit approvals, alert choice replay and all server
+messages are retained. Native-validation replacement exposed a partial-date gap;
+schema date validation and its regression corrected it. Async validation exposed
+a cooldown timing race; an immediate recovery guard plus shared duplicate-submit
+lock prevents delayed/duplicate requests. Login pending-state test now awaits
+validation before asserting its disabled state. Initial full component run failed
+three tests, then a second caught the date issue; focused CV/schema19 tests pass.
+Final full gates running. Backend check and migration drift pass; no migrations.
+Dialog primitives moved into private screen chunks to retain unchanged mobile
+performance budgets. No production activation or live email for this package yet.
+
+AJ-33 final gates: system check passed; no migration drift; full Django332 tests
+OK/one known Windows skip,275.562s. Explicit Node24.19 locked npmci364 audited
+packages/zero vulnerabilities. Oxlint against real source, ESLint, hook safety,
+Prettier changed-file checks and123 component tests pass. Ruff and hook config
+validation pass. Public bundle first failed transfer budget at516410/513498bytes;
+dialog splitting alone was insufficient. On-demand toast primitives corrected the
+actual cause without changing limits; notification display/dismissal regression
+passes. Final three Chromium/axe/performance tests pass; login/register medians:
+79/77performance,4005.551/4029.118ms LCP,137/185.5ms TBT,CLS0,483000/480088bytes,
+zero trace retries. Subsequent build matches exact committed-target bytes.
+No schema migrations, server dependencies, auth-interceptor, ingestion or CI edits.

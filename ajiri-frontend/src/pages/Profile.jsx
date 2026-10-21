@@ -1,3 +1,5 @@
+import { useSchemaForm } from '../hooks/useSchemaForm'
+import { profileSchema, uploadSchema } from '../lib/formSchemas'
 import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import apiClient from '../api/client'
@@ -18,20 +20,24 @@ import { validateCV } from '../lib/cv'
 
 export function ProfileEditor({ profile }) {
   const invalidate = useApiInvalidation()
-  const [values, setValues] = useState({
-    full_name: profile.full_name || '',
-    phone_number: profile.phone_number || '',
-    headline: profile.headline || '',
-    location: profile.location || '',
-    bio: profile.bio || '',
-    years_of_experience: profile.years_of_experience || 0,
-    skill_names: profile.skills.map((skill) => skill.name).join(', '),
-    notify_in_app: profile.notify_in_app,
-  })
-  const [errors, setErrors] = useState({})
+  const { values, setValues, errors, setErrors, submit } = useSchemaForm(
+    profileSchema,
+    {
+      full_name: profile.full_name || '',
+      phone_number: profile.phone_number || '',
+      headline: profile.headline || '',
+      location: profile.location || '',
+      bio: profile.bio || '',
+      years_of_experience: profile.years_of_experience || 0,
+      skill_names: profile.skills.map((skill) => skill.name).join(', '),
+      notify_in_app: Boolean(profile.notify_in_app),
+    }
+  )
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState('')
-  const [file, setFile] = useState(null)
+  const fileForm = useSchemaForm(uploadSchema, { cv_file: null })
+  const file = fileForm.values.cv_file
+  const setFile = (value) => fileForm.setValues({ cv_file: value })
   const [fileError, setFileError] = useState('')
   const [uploading, setUploading] = useState(false)
   const [hasCV, setHasCV] = useState(Boolean(profile.cv_file))
@@ -44,8 +50,7 @@ export function ProfileEditor({ profile }) {
           ? event.target.checked
           : event.target.value,
     }))
-  const save = async (event) => {
-    event.preventDefault()
+  const save = async () => {
     if (saving) return
     setErrors({})
     setMessage('')
@@ -73,8 +78,7 @@ export function ProfileEditor({ profile }) {
       setSaving(false)
     }
   }
-  const upload = async (event) => {
-    event.preventDefault()
+  const upload = async () => {
     if (uploading) return
     const error = validateCV(file)
     setFileError(error)
@@ -119,7 +123,12 @@ export function ProfileEditor({ profile }) {
             : 'No registration agreement recorded for this existing account.'}{' '}
           <Link to="/privacy">Read notice</Link>
         </p>
-        <form onSubmit={save} className="stack" aria-busy={saving}>
+        <form
+          noValidate
+          onSubmit={(event) => submit(save)(event)}
+          className="stack"
+          aria-busy={saving}
+        >
           <FormErrors errors={errors} prefix="profile" />
           <div className="profile-grid">
             {fields.map(([name, label, type, autoComplete, maxLength]) => (
@@ -187,7 +196,13 @@ export function ProfileEditor({ profile }) {
           Upload a PDF, DOC or DOCX, up to 5 MB. Generated documents use your
           profile fields; uploaded CV text is not extracted.
         </p>
-        <form onSubmit={upload} className="stack" aria-busy={uploading}>
+        <form
+          noValidate
+          onSubmit={(event) => fileForm.submit(upload)(event)}
+          className="stack"
+          aria-busy={uploading}
+        >
+          <FormErrors errors={fileForm.errors} prefix="upload" />
           <div className="field">
             <label htmlFor="cv-file">Choose CV file</label>
             <Input
@@ -195,7 +210,7 @@ export function ProfileEditor({ profile }) {
               id="cv-file"
               type="file"
               accept=".pdf,.doc,.docx"
-              aria-describedby="cv-file-help cv-file-error"
+              aria-describedby="cv-file-help cv-file-error upload-cv_file-error"
               aria-invalid={Boolean(fileError)}
               onChange={(event) => {
                 const next = event.target.files?.[0] || null

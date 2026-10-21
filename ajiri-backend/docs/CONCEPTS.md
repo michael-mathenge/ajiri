@@ -1124,3 +1124,15 @@ limits do not retry. Writes remain explicit and are never automatically retried.
 Successful writes invalidate page reads, including matches/CV choices/application
 lists. Form editor state remains local so background refresh cannot erase unsaved
 edits. Server revision checks and explicit document/send approvals remain authoritative.
+
+## schema-forms
+
+React Hook Form owns browser-only form values; Zod Mini validates on explicit
+submit. The shared resolver groups every issue by its field path and keeps
+existing server error IDs. A synchronous guard prevents duplicate submits while
+validation or a request is pending. Server validation is still authoritative:
+file metadata is not content verification, client agreement is not a substitute
+for recorded consent, and incomplete CV drafts remain saveable before approval.
+Account links and passwords stay in component memory. No sending or approval is
+triggered by validation. Dialog code loads with job/application pages and toast controls load on demand to preserve
+the public mobile download budget.

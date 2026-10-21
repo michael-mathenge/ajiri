@@ -1,10 +1,8 @@
-import { useState } from 'react'
+import { lazy, Suspense, useState } from 'react'
 import { ToastContext } from '../hooks/useToast'
 import { Slot } from '@radix-ui/react-slot'
-import * as DialogPrimitive from '@radix-ui/react-dialog'
-import * as ToastPrimitive from '@radix-ui/react-toast'
 import { cva } from 'class-variance-authority'
-import { ArrowLeft, ArrowRight, SearchX, X } from 'lucide-react'
+import { ArrowLeft, ArrowRight, SearchX } from 'lucide-react'
 import { cn } from '../lib/utils'
 
 const buttonVariants = cva('btn', {
@@ -137,41 +135,9 @@ export function Pagination({ page, hasNext, hasPrevious, onChange }) {
     </nav>
   )
 }
-export function Dialog({
-  trigger,
-  title,
-  description,
-  children,
-  open,
-  onOpenChange,
-}) {
-  return (
-    <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
-      <DialogPrimitive.Trigger asChild>{trigger}</DialogPrimitive.Trigger>
-      <DialogPrimitive.Portal>
-        <DialogPrimitive.Overlay className="dialog-overlay" />
-        <DialogPrimitive.Content className="dialog-content">
-          <DialogPrimitive.Title className="text-xl font-semibold">
-            {title}
-          </DialogPrimitive.Title>
-          <DialogPrimitive.Description className="muted mt-2 mb-6">
-            {description}
-          </DialogPrimitive.Description>
-          {children}
-          <DialogPrimitive.Close asChild>
-            <Button
-              variant="ghost"
-              className="dialog-close"
-              aria-label="Close dialog"
-            >
-              <X size={20} />
-            </Button>
-          </DialogPrimitive.Close>
-        </DialogPrimitive.Content>
-      </DialogPrimitive.Portal>
-    </DialogPrimitive.Root>
-  )
-}
+// Notifications need their primitives only after an action produces a toast.
+// see docs/CONCEPTS.md#schema-forms
+const ToastMessage = lazy(() => import('./ToastMessage'))
 
 export function ToastProvider({ children }) {
   const [toast, setToast] = useState(null)
@@ -181,27 +147,12 @@ export function ToastProvider({ children }) {
         setToast({ title, description, key: Date.now() })
       }
     >
-      <ToastPrimitive.Provider swipeDirection="right">
-        {children}
-        {toast && (
-          <ToastPrimitive.Root key={toast.key} className="toast" defaultOpen>
-            <ToastPrimitive.Title className="font-semibold">
-              {toast.title}
-            </ToastPrimitive.Title>
-            {toast.description && (
-              <ToastPrimitive.Description className="muted">
-                {toast.description}
-              </ToastPrimitive.Description>
-            )}
-            <ToastPrimitive.Close asChild>
-              <Button variant="ghost" aria-label="Dismiss notification">
-                <X size={18} />
-              </Button>
-            </ToastPrimitive.Close>
-          </ToastPrimitive.Root>
-        )}
-        <ToastPrimitive.Viewport className="toast-viewport" />
-      </ToastPrimitive.Provider>
+      {children}
+      {toast && (
+        <Suspense fallback={null}>
+          <ToastMessage toast={toast} />
+        </Suspense>
+      )}
     </ToastContext.Provider>
   )
 }

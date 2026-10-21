@@ -1,3 +1,8 @@
+import Dialog from '../components/Dialog'
+import { useEffect } from 'react'
+import { useSchemaForm } from '../hooks/useSchemaForm'
+import { searchSchema } from '../lib/formSchemas'
+import FormErrors from '../components/FormErrors'
 import { useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import {
@@ -12,7 +17,6 @@ import {
   Badge,
   Button,
   Card,
-  Dialog,
   EmptyState,
   ErrorState,
   Input,
@@ -23,7 +27,7 @@ import {
 } from '../components/ui'
 import { dateLabel, jobType, salaryLabel } from '../lib/utils'
 
-function Filters({ title, location, type }) {
+function Filters({ register }) {
   return (
     <>
       <div className="field">
@@ -32,7 +36,7 @@ function Filters({ title, location, type }) {
           id="search-title"
           name="title"
           placeholder="e.g. Software developer"
-          defaultValue={title}
+          {...register('title')}
         />
       </div>
       <div className="field">
@@ -41,12 +45,12 @@ function Filters({ title, location, type }) {
           id="search-location"
           name="location"
           placeholder="e.g. Nairobi"
-          defaultValue={location}
+          {...register('location')}
         />
       </div>
       <div className="field">
         <label htmlFor="search-type">Job type</label>
-        <Select id="search-type" name="job_type" defaultValue={type}>
+        <Select id="search-type" {...register('job_type')}>
           <option value="">All job types</option>
           <option value="full_time">Full time</option>
           <option value="part_time">Part time</option>
@@ -64,6 +68,15 @@ export default function JobList() {
   const title = params.get('title') || ''
   const location = params.get('location') || ''
   const type = params.get('job_type') || ''
+  const {
+    form,
+    errors: filterErrors,
+    submit: validateSubmit,
+  } = useSchemaForm(searchSchema, { title, location, job_type: type })
+  const { reset } = form
+  useEffect(() => {
+    reset({ title, location, job_type: type })
+  }, [title, location, type, reset])
   const requestedPage = Number(params.get('page'))
   const page =
     Number.isSafeInteger(requestedPage) && requestedPage > 0 ? requestedPage : 1
@@ -80,11 +93,9 @@ export default function JobList() {
     : null
   const [showFilters, setShowFilters] = useState(false)
   const filtered = Boolean(title || location || type)
-  const submit = (event) => {
-    event.preventDefault()
-    const form = new FormData(event.currentTarget)
+  const submit = (values) => {
     const next = new URLSearchParams()
-    for (const [key, value] of form)
+    for (const [key, value] of Object.entries(values))
       if (value.trim()) next.set(key, value.trim())
     setParams(next)
   }
@@ -109,14 +120,19 @@ export default function JobList() {
         </span>
       </section>
       <Card className="search-card">
-        <form onSubmit={submit} key={`${title}|${location}|${type}`}>
+        <form
+          noValidate
+          onSubmit={validateSubmit(submit)}
+          key={`${title}|${location}|${type}`}
+        >
           <div className={`search-fields ${showFilters ? 'filters-open' : ''}`}>
-            <Filters title={title} location={location} type={type} />
+            <Filters register={form.register} />
             <Button type="submit">
               <Search size={18} aria-hidden="true" />
               Search jobs
             </Button>
           </div>
+          <FormErrors errors={filterErrors} prefix="filters" />
           <div className="filter-tools">
             <Button
               variant="ghost"

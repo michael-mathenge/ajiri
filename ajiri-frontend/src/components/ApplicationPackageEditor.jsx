@@ -1,3 +1,5 @@
+import { useSchemaForm } from '../hooks/useSchemaForm'
+import { packageSchema } from '../lib/formSchemas'
 import { useEffect, useId, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import apiClient from '../api/client'
@@ -21,14 +23,32 @@ export default function ApplicationPackageEditor({
   const [data, setData] = useState(null)
   const [versions, setVersions] = useState([])
   const [page, setPage] = useState(1)
-  const [cv, setCV] = useState('')
-  const [letter, setLetter] = useState('')
-  const [subject, setSubject] = useState('')
-  const [body, setBody] = useState('')
+  const { values, setValues, errors, setErrors, submit } = useSchemaForm(
+    packageSchema,
+    {
+      cv_version: '',
+      letter_text: '',
+      email_subject: '',
+      email_body: '',
+    }
+  )
+  const {
+    cv_version: cv,
+    letter_text: letter,
+    email_subject: subject,
+    email_body: body,
+  } = values
+  const setCV = (value) =>
+    setValues((current) => ({ ...current, cv_version: value }))
+  const setLetter = (value) =>
+    setValues((current) => ({ ...current, letter_text: value }))
+  const setSubject = (value) =>
+    setValues((current) => ({ ...current, email_subject: value }))
+  const setBody = (value) =>
+    setValues((current) => ({ ...current, email_body: value }))
   const [dirty, setDirty] = useState(false)
   const [busy, setBusy] = useState(false)
   const [uncertain, setUncertain] = useState(false)
-  const [errors, setErrors] = useState({})
   const [notice, setNotice] = useState('')
   const base = `/jobs/applications/${applicationId}`
   useEffect(() => {
@@ -127,8 +147,7 @@ export default function ApplicationPackageEditor({
       setBusy(false)
     }
   }
-  const save = async (event) => {
-    event.preventDefault()
+  const save = async () => {
     if (inFlight.current || uncertain) return
     inFlight.current = true
     setBusy(true)
@@ -261,7 +280,11 @@ export default function ApplicationPackageEditor({
               {!data.editable ? (
                 <p>This application cannot be edited in its current state.</p>
               ) : (
-                <form className="stack" onSubmit={save}>
+                <form
+                  className="stack"
+                  noValidate
+                  onSubmit={(event) => submit(save)(event)}
+                >
                   <p>
                     <Link to="/cv-builder">Build or approve a CV</Link>. Only
                     owner-approved CVs can be selected.

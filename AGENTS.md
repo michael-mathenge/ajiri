@@ -30,7 +30,12 @@ Users are mostly on phones with limited data. **Mobile-first, lightweight, acces
 
 ## 4. Verified state (21 October 2026)
 
-Recorded deployed source is `40c1ea0507b8c39fff604dc2601eb8fd48ea9b0e` (PR #31):
+Recorded deployed source is `46c7ea7c41ddad6831d5399af289385bc7d38da8` (PR #35).
+It includes browser acceptance, quality/axe/mobile budgets and isolated cached page
+reads. Production checks, empty migration plan, HTTPS health and exact HTML/assets
+are verified. Owner-authenticated jobs, profile, CV builder and applications load;
+uploaded and approved private CV downloads passed on 21 October.
+Earlier PR #30/#31 functionality remains:
 verified-request erasure with signed recovery journals, resumable private-file cleanup
 and restore replay. Production verification used dry runs only; no account was erased.
 This follows PR #29 export and explicit alert consent/unsubscribe; existing values

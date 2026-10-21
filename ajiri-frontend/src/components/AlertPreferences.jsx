@@ -1,4 +1,8 @@
-import { useEffect, useRef, useState } from 'react'
+import { useSchemaForm } from '../hooks/useSchemaForm'
+import { apiErrors } from '../lib/errors'
+import { alertSchema } from '../lib/formSchemas'
+import FormErrors from './FormErrors'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import apiClient from '../api/client'
 import { useApiInvalidation } from '../hooks/useApiQuery'
 import { Button, Card } from './ui'
@@ -6,7 +10,17 @@ import { Button, Card } from './ui'
 export default function AlertPreferences() {
   const invalidate = useApiInvalidation()
   const [state, setState] = useState(null)
-  const [enabled, setEnabled] = useState(false)
+  const { values, setValues, errors, setErrors, submit } = useSchemaForm(
+    alertSchema,
+    {
+      enabled: false,
+    }
+  )
+  const enabled = values.enabled
+  const setEnabled = useCallback(
+    (value) => setValues({ enabled: value }),
+    [setValues]
+  )
   const [busy, setBusy] = useState(false)
   const [message, setMessage] = useState('')
   const key = useRef(null)
@@ -29,9 +43,8 @@ export default function AlertPreferences() {
     return () => {
       active = false
     }
-  }, [])
-  async function save(event) {
-    event.preventDefault()
+  }, [setEnabled])
+  async function save() {
     if (busy || !state) return
     setBusy(true)
     key.current ||= crypto.randomUUID()
@@ -52,7 +65,8 @@ export default function AlertPreferences() {
             : 'Email choice recorded. Delivery is currently disabled for this account.'
           : 'Email job alerts are off.'
       )
-    } catch {
+    } catch (error) {
+      setErrors(apiErrors(error))
       setMessage(
         'Your choice could not be confirmed. Retry this same choice or reload to check its status.'
       )
@@ -81,7 +95,13 @@ export default function AlertPreferences() {
             : 'Email delivery is currently disabled for this account. You can still record or withdraw your choice.'}
         </p>
       )}
-      <form onSubmit={save} className="stack" aria-busy={busy}>
+      <form
+        noValidate
+        onSubmit={(event) => submit(save)(event)}
+        className="stack"
+        aria-busy={busy}
+      >
+        <FormErrors errors={errors} prefix="alerts" />
         <label className="check-field">
           <input
             type="checkbox"

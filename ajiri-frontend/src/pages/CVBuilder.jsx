@@ -1,3 +1,5 @@
+import { useSchemaForm } from '../hooks/useSchemaForm'
+import { cvSchema } from '../lib/formSchemas'
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import apiClient from '../api/client'
@@ -114,6 +116,8 @@ function Field({
   onChange,
   maxLength = 255,
   disabled = false,
+  errorKey,
+  errors = {},
 }) {
   if (type === 'month')
     return (
@@ -123,6 +127,7 @@ function Field({
         value={value || ''}
         onChange={onChange}
         disabled={disabled}
+        errorId={errors[errorKey] ? `cv-${errorKey}-error` : undefined}
       />
     )
   const Component = type === 'textarea' || type === 'bullets' ? Textarea : Input
@@ -131,6 +136,8 @@ function Field({
       <label htmlFor={id}>{label}</label>
       <Component
         id={id}
+        aria-invalid={Boolean(errors[errorKey])}
+        aria-describedby={errors[errorKey] ? `cv-${errorKey}-error` : undefined}
         type={type === 'textarea' || type === 'bullets' ? undefined : type}
         maxLength={type === 'bullets' ? 5010 : maxLength}
         {...(type === 'checkbox'
@@ -177,11 +184,13 @@ export function CVPreview({ preview }) {
 export function CVEditor({ initial }) {
   const invalidate = useApiInvalidation()
   const [saved, setSaved] = useState(initial)
-  const [values, setValues] = useState(initial.content)
+  const { values, setValues, errors, setErrors, submit } = useSchemaForm(
+    cvSchema,
+    initial.content
+  )
   const [skills, setSkills] = useState(initial.content.skills.join(', '))
   const [bullets, setBullets] = useState({})
   const [busy, setBusy] = useState(false)
-  const [errors, setErrors] = useState({})
   const [message, setMessage] = useState('')
   const [review, setReview] = useState(false)
   const [approved, setApproved] = useState(false)
@@ -267,8 +276,7 @@ export function CVEditor({ initial }) {
           : row
       )
     )
-  const save = async (event) => {
-    event.preventDefault()
+  const save = async () => {
     if (busy || conflict) return
     setBusy(true)
     setErrors({})
@@ -367,7 +375,12 @@ export function CVEditor({ initial }) {
           version.
         </p>
       )}
-      <form onSubmit={save} className="stack" aria-busy={busy}>
+      <form
+        noValidate
+        onSubmit={(event) => submit(save)(event)}
+        className="stack"
+        aria-busy={busy}
+      >
         <fieldset disabled={busy} className="stack">
           <Card>
             <h2>Contact details</h2>
@@ -383,6 +396,8 @@ export function CVEditor({ initial }) {
                   id={`cv-${key}`}
                   label={label}
                   type={type}
+                  errorKey={`contact.${key}`}
+                  errors={errors}
                   value={values.contact[key]}
                   maxLength={key === 'phone' ? 20 : key === 'email' ? 254 : 255}
                   onChange={(value) =>
@@ -395,12 +410,16 @@ export function CVEditor({ initial }) {
           <Card className="stack">
             <h2>Summary and skills</h2>
             <Field
+              errorKey="headline"
+              errors={errors}
               id="cv-headline"
               label="Professional headline"
               value={values.headline}
               onChange={(value) => change('headline', value)}
             />
             <Field
+              errorKey="summary"
+              errors={errors}
               id="cv-summary"
               label="Summary (optional)"
               type="textarea"
@@ -435,6 +454,8 @@ export function CVEditor({ initial }) {
                     {fields.map(([key, label, type]) => (
                       <Field
                         key={key}
+                        errorKey={`${section}.${index}.${key}`}
+                        errors={errors}
                         id={`cv-${row.id}-${key}`}
                         label={`${label} (${title.toLowerCase()} ${index + 1})`}
                         type={type}
