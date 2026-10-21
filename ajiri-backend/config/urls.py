@@ -2,8 +2,11 @@ from django.contrib import admin
 from django.urls import path, re_path, include
 
 from .views import frontend, HealthView
+from .schema_view import schema_document
 
 urlpatterns = [
+    path('api/schema/', schema_document, name='openapi-schema'),
+    path('api/v1/', include(('config.v1_urls', 'v1'))),
     path('api/health/', HealthView.as_view(), name='health'),
     path('admin/', admin.site.urls),
     path('api/accounts/', include('accounts.urls')),

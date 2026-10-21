@@ -41,6 +41,9 @@ jobs:
           cache: npm
           cache-dependency-path: ajiri-frontend/package-lock.json
       - run: python -m pip install -r ajiri-backend/requirements-quality.txt
+      - run: python -m pip install -r ajiri-backend/requirements-schema.txt
+      - name: Validate reviewed OpenAPI contract
+        run: python scripts/check_api_schema.py
       - run: npm --prefix ajiri-frontend ci
       - run: python -m ruff check --no-cache ajiri-backend scripts
       - run: python -m pre_commit validate-config
