@@ -15,7 +15,10 @@ const profile = {
   notify_in_app: true,
   cv_file: null,
 }
-beforeEach(() => vi.resetAllMocks())
+beforeEach(() => {
+  vi.resetAllMocks()
+  apiClient.get.mockResolvedValue({ data: { enabled: false, confirmed: false, policy_version: 'job-alert-email-v1' } })
+})
 it('loads and saves contact, skills and independent alert preferences', async () => {
   apiClient.get.mockResolvedValue({ data: profile })
   apiClient.patch.mockResolvedValue({ data: profile })
@@ -27,7 +30,6 @@ it('loads and saves contact, skills and independent alert preferences', async ()
   fireEvent.change(screen.getByLabelText('Skills (comma separated)'), {
     target: { value: 'Python, React, Python' },
   })
-  fireEvent.click(screen.getByLabelText('Email me about strong matches'))
   fireEvent.click(screen.getByRole('button', { name: 'Save profile' }))
   await waitFor(() =>
     expect(apiClient.patch).toHaveBeenCalledWith(
@@ -35,11 +37,11 @@ it('loads and saves contact, skills and independent alert preferences', async ()
       expect.objectContaining({
         full_name: 'Updated User',
         skill_names: ['Python', 'React'],
-        notify_email: false,
         notify_in_app: true,
       })
     )
   )
+  expect(apiClient.patch.mock.calls[0][1]).not.toHaveProperty('notify_email')
   expect(await screen.findByText('Profile saved.')).toBeVisible()
 })
 it('clears skills explicitly with an empty array', async () => {

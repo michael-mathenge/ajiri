@@ -18,6 +18,7 @@ const CVBuilder = lazy(() => import('./pages/CVBuilder'))
 const Subscriptions = lazy(() => import('./pages/Subscriptions'))
 const AccountRecovery = lazy(() => import('./pages/AccountRecovery'))
 const Privacy = lazy(() => import('./pages/Privacy'))
+const AlertUnsubscribe = lazy(() => import('./pages/AlertUnsubscribe'))
 
 export default function App() {
   return (
@@ -38,6 +39,7 @@ export default function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/privacy" element={<Privacy />} />
+            <Route path="/unsubscribe" element={<AlertUnsubscribe />} />
             <Route path="/forgot-password" element={<AccountRecovery key="request" mode="request-reset" />} />
             <Route path="/reset-password" element={<AccountRecovery key="reset" mode="reset" />} />
             <Route path="/verify-email" element={<AccountRecovery key="verify" mode="verify" />} />

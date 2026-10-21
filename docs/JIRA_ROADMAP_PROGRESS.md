@@ -181,8 +181,8 @@ No fetch/install/migration/activation is performed by that planner.
 
 Frontend locked install/lint/102 tests/build passed in the isolated Node24.19 runner.
 New render boundary offers explicit reload for obsolete lazy chunks, without echoing
-exception text, clearing authentication or retrying mutations. New build awaits its
-last package commit (c2d5b48). Historical Checkpoint2 checklist is archived, not deleted.
+exception text, clearing authentication or retrying mutations. The final build is committed
+as the last package commit (c2d5b48). Historical Checkpoint2 checklist is archived, not deleted.
 Provisional AJ-42–AJ-52 requirements prepared; test integrations and live services are
 not claimed complete. Daily backup scheduling is active; first scheduled run pending.
 
@@ -200,3 +200,23 @@ failure/retry and restore-ledger replay are implemented/tested.
 PR28 post-merge CI and normal ingestion both succeeded. Ingestion evidence:
 https://github.com/michael-mathenge/ajiri/actions/runs/39501474386
 AJ-35 and AJ-36 were marked Done and reread after deployed evidence.
+
+
+## Alert consent package — local, 21 October 2026
+
+Continues codex/jira-account-privacy. Adds explicit choice evidence and confirmation
+UI, a purpose-bound30-day confirmed unsubscribe, authoritative ledger reservation
+checks and new-profile email-OFF default. Existing values are not backfilled.
+Legacy profile email payloads fail with an actionable field400 instead of silently
+claiming consent. In-app remains independent. Console matching no longer marks
+emails sent; live alert transport stays disconnected pending its owner pilot.
+See ALERT_CONSENT_OPERATIONS.md for server order and rollback constraints.
+
+Focused backend45 tests passed before final migration/late-revocation additions.
+Initial frontend regressions exposed obsolete profile fixtures; corrected mocks and
+separate-choice assertions then passed11 focused tests. Final locked Node24.19
+install/lint/all105 component tests/build passed. Final Linux suite310 tests passed
+in80.766s, no skips. System check and migration drift passed again. The earlier
+native308-test run failed the obsolete profile-preference journey payload; the
+updated fixture and all new tests are included in the successful Linux310 run.
+No production consent was inferred or recorded and no real alert email sent.

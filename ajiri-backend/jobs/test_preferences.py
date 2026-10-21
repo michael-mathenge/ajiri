@@ -1,3 +1,6 @@
+import uuid
+from django.utils import timezone
+from profiles.alert_consent import record_choice
 from django.core.cache import cache
 from unittest.mock import patch
 
@@ -30,7 +33,11 @@ class NotificationChannelTests(TestCase):
                 send.reset_mock()
                 profile = self.user.profile
                 profile.notify_email, profile.notify_in_app = email, in_app
+                profile.email_verified_at = timezone.now()
+                profile.verified_email = self.user.email
                 profile.save()
+                record_choice(self.user, email, uuid.uuid4())
+                send.return_value = True
                 self.assertEqual(notify_matching_profiles(self.job), int(email or in_app))
                 self.assertEqual(notify_matching_profiles(self.job), 0)
                 self.assertEqual(send.call_count, int(email))

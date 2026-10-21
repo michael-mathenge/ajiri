@@ -25,10 +25,9 @@ class Profile(models.Model):
     cv_file = models.FileField(upload_to='cvs/', blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    # Job Alerts preferences — let a user opt out of a channel without
-    # touching code. Both default True so alerts work out of the box.
+    # New users must explicitly choose email; in-app remains independent.
     # See docs/CONCEPTS.md#job-alerts
-    notify_email = models.BooleanField(default=True)
+    notify_email = models.BooleanField(default=False)
     notify_in_app = models.BooleanField(default=True)
 
     # Proof belongs to the exact address, never inferred from login/preferences.
@@ -55,6 +54,24 @@ class CVWorkspace(models.Model):
 
     class Meta:
         constraints = [models.CheckConstraint(condition=models.Q(revision__gte=1), name='cv_workspace_revision_positive')]
+
+
+class AlertConsentEvent(models.Model):
+    # see docs/CONCEPTS.md#explicit-alert-consent
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='alert_consent_events')
+    decision_id = models.UUIDField(unique=True)
+    enabled = models.BooleanField()
+    channel = models.CharField(max_length=8, default='email')
+    policy_version = models.CharField(max_length=40)
+    recipient_digest = models.CharField(max_length=64)
+    source = models.CharField(max_length=16, choices=[('in_app', 'In app'), ('unsubscribe', 'Unsubscribe')])
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(condition=models.Q(channel='email'), name='alert_consent_email_channel'),
+            models.CheckConstraint(condition=models.Q(source__in=['in_app', 'unsubscribe']), name='alert_consent_source_valid'),
+        ]
 
 
 def approved_cv_path(instance, filename):

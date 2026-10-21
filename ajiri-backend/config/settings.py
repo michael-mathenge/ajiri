@@ -234,6 +234,8 @@ REST_FRAMEWORK = {
     # see docs/CONCEPTS.md#endpoint-throttling
     'NUM_PROXIES': int(os.environ.get('DRF_NUM_PROXIES', '0')),
     'DEFAULT_THROTTLE_RATES': {
+        'alert_preference': os.environ.get('THROTTLE_ALERT_PREFERENCE_RATE', '60/min'),
+        'alert_unsubscribe': os.environ.get('THROTTLE_ALERT_UNSUBSCRIBE_RATE', '30/hour'),
         'account_email': os.environ.get('THROTTLE_ACCOUNT_EMAIL_RATE', '5/hour'),
         'account_target': os.environ.get('THROTTLE_ACCOUNT_TARGET_RATE', '3/hour'),
         'account_confirm': os.environ.get('THROTTLE_ACCOUNT_CONFIRM_RATE', '10/hour'),

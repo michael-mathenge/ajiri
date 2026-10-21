@@ -11,6 +11,7 @@ import {
   Textarea,
 } from '../components/ui'
 import DownloadButton from '../components/DownloadButton'
+import AlertPreferences from '../components/AlertPreferences'
 import FormErrors from '../components/FormErrors'
 import { apiErrors } from '../lib/errors'
 import { validateCV } from '../lib/cv'
@@ -24,7 +25,6 @@ export function ProfileEditor({ profile }) {
     bio: profile.bio || '',
     years_of_experience: profile.years_of_experience || 0,
     skill_names: profile.skills.map((skill) => skill.name).join(', '),
-    notify_email: profile.notify_email,
     notify_in_app: profile.notify_in_app,
   })
   const [errors, setErrors] = useState({})
@@ -157,15 +157,6 @@ export function ProfileEditor({ profile }) {
             <label className="check-field">
               <input
                 type="checkbox"
-                name="notify_email"
-                checked={values.notify_email}
-                onChange={change}
-              />
-              Email me about strong matches
-            </label>
-            <label className="check-field">
-              <input
-                type="checkbox"
                 name="notify_in_app"
                 checked={values.notify_in_app}
                 onChange={change}
@@ -182,6 +173,7 @@ export function ProfileEditor({ profile }) {
           </Button>
         </form>
       </Card>
+      <AlertPreferences />
       <Card>
         <h2>Your CV</h2>
         <p className="muted">

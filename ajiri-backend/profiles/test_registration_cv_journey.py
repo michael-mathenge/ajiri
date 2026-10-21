@@ -74,7 +74,7 @@ class RegistrationCVJourneyTests(TransactionTestCase):
         # Building a CV requires no uploaded CV, job selection or application.
         profile = self.client.patch('/api/profiles/me/', {'headline': 'Software developer',
             'bio': 'Builds reliable tools.', 'location': 'Nairobi', 'skill_names': ['Python', 'Testing'],
-            'notify_email': False, 'notify_in_app': False},
+            'notify_in_app': False},
             format='json', secure=True)
         self.assertEqual(profile.status_code, 200)
         self.assertFalse(profile.data['notify_email'])

@@ -17,7 +17,7 @@ from jobs.management.commands.backup_private_data import no_links
 from jobs.models import (Application, ApplicationPackage, ApplicationPackageApproval,
                          ApplicationSendAuthorization, ApplicationSendAttemptLink,
                          DeliveryAttempt, DeliveryDailyBudget, Job, Notification)
-from profiles.models import Profile, CVWorkspace, CVApproval
+from profiles.models import Profile, CVWorkspace, CVApproval, AlertConsentEvent
 
 
 class Command(BaseCommand):
@@ -71,6 +71,7 @@ class Command(BaseCommand):
             ('profile', Profile.objects.filter(user=user)),
             ('cv_workspace', CVWorkspace.objects.filter(profile__user=user)),
             ('cv_approval', CVApproval.objects.filter(profile__user=user)),
+            ('alert_consent', AlertConsentEvent.objects.filter(profile__user=user)),
             ('application', applications), ('application_package', packages),
             ('package_approval', ApplicationPackageApproval.objects.filter(package__application__user=user)),
             ('send_authorization', authorizations),
@@ -88,7 +89,8 @@ class Command(BaseCommand):
             for row in rows:
                 record = {}
                 for field in row._meta.concrete_fields:
-                    if isinstance(row, DeliveryAttempt) and field.name in ('recipient_digest', 'idempotency_key'):
+                    if ((isinstance(row, DeliveryAttempt) and field.name in ('recipient_digest', 'idempotency_key'))
+                            or (isinstance(row, AlertConsentEvent) and field.name == 'recipient_digest')):
                         continue  # Internal accounting fingerprints/keys are not portable account content.
                     value = getattr(row, field.attname)
                     if isinstance(field, FileField):

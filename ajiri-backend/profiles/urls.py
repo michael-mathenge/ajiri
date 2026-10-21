@@ -1,8 +1,11 @@
 from django.urls import path
 from .views import MyProfileView, DownloadUploadedCVView
+from .alert_views import AlertPreferenceView, UnsubscribeView
 from .cv_views import CVDraftView, CVApproveView, CVVersionDownloadView, CurrentCVDownloadView, CVVersionListView
 
 urlpatterns = [
+    path('me/alert-preferences/', AlertPreferenceView.as_view(), name='alert-preferences'),
+    path('alert-unsubscribe/', UnsubscribeView.as_view(), name='alert-unsubscribe'),
     path('me/', MyProfileView.as_view(), name='my-profile'),
     path('me/generate-cv/', CurrentCVDownloadView.as_view(), name='generate-cv'),
     path('me/cv/', DownloadUploadedCVView.as_view(), name='download-uploaded-cv'),

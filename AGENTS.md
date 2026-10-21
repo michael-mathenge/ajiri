@@ -30,9 +30,10 @@ Users are mostly on phones with limited data. **Mobile-first, lightweight, acces
 
 ## 4. Verified state (21 October 2026)
 
-Recorded deployed source is `cc731976de13a5b5d561739def8dd93a26f70bff` (PR #27):
-dismissed snapshot restoration, explicit draft privacy agreement and updated guides.
-Only profiles.0006_privacy_notice was applied; existing row values were preserved.
+Recorded deployed source is `93da1161f4a955ab0d3a3f9d5468e24a2bf5d31a` (PR #28):
+verified backup restoration, isolated local staging and explicit stale-page recovery,
+following PR #27 snapshot restoration and privacy agreement. PR #28 required no
+migrations or pip install; existing data was preserved.
 Account email verification/reset has an owner-only Brevo pilot. Reviewed application
 packages and explicit authorization exist; broader application sending remains disabled
 until its gated integration and pilot pass. Never treat console output/provider

@@ -1,5 +1,4 @@
-from django.conf import settings
-from django.core.mail import send_mail
+from profiles.alert_consent import eligible
 from .models import Job, Notification
 
 # A job scoring at or above this against a profile is considered a strong
@@ -31,26 +30,9 @@ def calculate_match_score(profile, job):
 
 
 def send_match_email(user, job, score):
-    """
-    Sends a plain-text job-match alert email. fail_silently=True because a
-    delivery hiccup here shouldn't ever break the ingestion/sweep flow that
-    calls this — worst case, the user still sees the in-app Notification.
-    """
-    subject = f"New job match: {job.title} at {job.company_name}"
-    message = (
-        f"Hi {user.full_name or user.email},\n\n"
-        f"We found a job that matches your profile at {score}%:\n\n"
-        f"{job.title} at {job.company_name}\n"
-        f"Location: {job.location or 'Not specified'}\n\n"
-        f"Log in to Ajiri to view the listing and apply."
-    )
-    send_mail(
-        subject=subject,
-        message=message,
-        from_email=settings.DEFAULT_FROM_EMAIL,
-        recipient_list=[user.email],
-        fail_silently=True,
-    )
+    # Real alert delivery will use the shared ledger, not console-mail success.
+    # see docs/CONCEPTS.md#explicit-alert-consent
+    return False  # Safe default until the separately tested owner pilot is connected.
 
 
 def notify_matching_profiles(job):
@@ -78,7 +60,8 @@ def notify_matching_profiles(job):
     notified_count = 0
 
     for profile in Profile.objects.select_related('user'):
-        if not profile.notify_in_app and not profile.notify_email:
+        email_eligible = eligible(profile)
+        if not profile.notify_in_app and not email_eligible:
             continue
         score = calculate_match_score(profile, job)
         if score < MATCH_ALERT_THRESHOLD:
@@ -95,9 +78,8 @@ def notify_matching_profiles(job):
             # here avoids relying on catching an IntegrityError.
             continue
 
-        if profile.notify_email:
-            send_match_email(profile.user, job, score)
-            notification.sent_email = True
+        if email_eligible:
+            notification.sent_email = bool(send_match_email(profile.user, job, score))
             notification.save(update_fields=['sent_email'])
 
         notified_count += 1
