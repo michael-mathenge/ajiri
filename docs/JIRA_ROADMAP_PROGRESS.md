@@ -315,3 +315,6 @@ First Linux browser run reached the job selection step and exposed an incorrect
 test assumption: the approved current CV is intentionally displayed by default.
 The test now clears that selection, verifies preparation is disabled, then selects
 the displayed approved version and submits explicitly. Product behavior is unchanged.
+The corrected browser job passed on Linux at b02d2b7 in run39599872379. AJ-27 stays
+In Progress because successful managed sending is not implemented/covered. Local
+Windows browser execution remains UNVERIFIED; CI evidence is recorded separately.

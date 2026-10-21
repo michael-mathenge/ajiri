@@ -29,7 +29,7 @@ no mail or delivery-ledger reservation. This does **not** yet cover successful
 managed application sending; that remains disabled pending its gated integration.
 No claim of full AJ-27 completion until that path and CI run are verified.
 
-## CI job (approved 21 October 2026; result pending)
+## CI job (approved and browser-verified 21 October 2026)
 
 Michael explicitly approved the additive job required by AGENTS.md section10:
 Ubuntu, Python3.12, install requirements-browser.txt, install Chromium with system
@@ -42,3 +42,9 @@ Browser failure fails the job; do not mask failures with `continue-on-error`.
 
 The remaining quality-tool proposals (AJ-28–30) are separate packages, not silently
 bundled into this job. Existing backend/frontend required checks are unchanged.
+
+The corrected browser suite passed on Linux at b02d2b7 in
+[CI run39599872379](https://github.com/michael-mathenge/ajiri/actions/runs/39599872379).
+The initial test wrongly assumed the current approved CV was not displayed by
+default; it now explicitly clears and reselects that version. Windows installation
+of the optional dependency stalled and was stopped; no local browser pass is claimed.
