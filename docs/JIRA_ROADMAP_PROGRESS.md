@@ -310,3 +310,8 @@ run is UNVERIFIED locally until installation succeeds. The ordinary suite delibe
 does not discover the optional module. Michael separately approved the additive
 isolated browser CI job; existing four required checks remain unchanged. CI result
 must be recorded before merge. No runtime dependency, migration or sending change.
+
+First Linux browser run reached the job selection step and exposed an incorrect
+test assumption: the approved current CV is intentionally displayed by default.
+The test now clears that selection, verifies preparation is disabled, then selects
+the displayed approved version and submits explicitly. Product behavior is unchanged.

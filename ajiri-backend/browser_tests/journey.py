@@ -101,8 +101,12 @@ class BrowserJourney(LiveServerTestCase):
             self.cv_bytes = Path(downloaded.value.path()).read_bytes()
             page.goto(self.live_server_url + f'/jobs/{self.job.pk}')
             prepare = page.get_by_role('button', name='Prepare application', exact=True)
+            selection = page.get_by_label('Approved CV version', exact=True)
+            # Current approved CV is displayed by default. Clearing it must
+            # disable preparation; no request is made until explicit submission.
+            selection.select_option('')
             expect(prepare).to_be_disabled()
-            page.get_by_label('Approved CV version', exact=True).select_option(label='Revision 1 (current)')
+            selection.select_option(label='Revision 1 (current)')
             with page.expect_response(lambda response: response.url ==
                     self.live_server_url + f'/api/jobs/{self.job.pk}/apply/'
                     and response.request.method == 'POST') as prepared:
