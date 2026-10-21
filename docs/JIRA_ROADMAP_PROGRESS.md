@@ -279,3 +279,42 @@ Focused13 tests passed before the final late-revocation regression. Final Node24
 locked install/lint/106 component tests/build passed. Full Linux328 tests passed
 (115.572s), no skips; system check and migration drift passed. No new dependencies
 or migrations. Owner consent and actual inbox/unsubscribe evidence remain pending.
+
+## PR31 deployed and owner alert pilot — 21 October 2026
+
+Deployed40c1ea0507b8c39fff604dc2601eb8fd48ea9b0e after four required PR checks
+passed. Snapshot094933Z-aee31c01 passed server/off-server isolated restore,
+12 media files/212184 bytes. No migration or dependency install. The owner personally
+saved current verified-address consent. One hidden synthetic notification was
+handed to Brevo once; provider acceptance and subsequent owner inbox confirmation
+were recorded separately. Owner confirmed successful unsubscribe; production
+read-only checks verified the unsubscribe event, preference/eligibility false and
+ALERT_EMAIL_ENABLED=False. No real job/employer message was sent. Link-preview
+no-effect behavior has automated coverage but no independent live observation.
+AJ-17/AJ-26 remain In Progress: normal alert/application sending is disconnected.
+
+## AJ-27 browser acceptance package — in progress
+
+Branch codex/jira-browser-journey from40c1ea0. Optional pinned Playwright runner
+drives the committed React client and disposable Django live server at a mobile
+viewport. Covers registration/login, profile, explicit CV approval/selection,
+private downloads, application preparation/review and no provider/ledger effects.
+Managed sending remains untested/unavailable; AJ-27 is not complete.
+
+21 October commands: native `manage.py check` and `makemigrations --check --dry-run`
+passed; `manage.py test --noinput`:328 tests OK in221.061s, one Windows symlink skip.
+Node24.19 `npm ci --offline`, lint,106 component tests and build passed; hash comparison
+found zero committed-build mismatches. No frontend bytes changed. Browser dependency
+installation stalled downloading the official38.7MB Windows wheel; explicit browser
+run is UNVERIFIED locally until installation succeeds. The ordinary suite deliberately
+does not discover the optional module. Michael separately approved the additive
+isolated browser CI job; existing four required checks remain unchanged. CI result
+must be recorded before merge. No runtime dependency, migration or sending change.
+
+First Linux browser run reached the job selection step and exposed an incorrect
+test assumption: the approved current CV is intentionally displayed by default.
+The test now clears that selection, verifies preparation is disabled, then selects
+the displayed approved version and submits explicitly. Product behavior is unchanged.
+The corrected browser job passed on Linux at b02d2b7 in run39599872379. AJ-27 stays
+In Progress because successful managed sending is not implemented/covered. Local
+Windows browser execution remains UNVERIFIED; CI evidence is recorded separately.

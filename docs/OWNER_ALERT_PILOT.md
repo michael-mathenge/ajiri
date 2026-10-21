@@ -1,6 +1,12 @@
 # Owner alert delivery pilot
 
-Status: implemented locally; not activated or inbox-verified. Normal job-alert
+Status (21 October 2026): PR31 deployed at40c1ea0. One owner-only synthetic alert
+was accepted by Brevo and the owner confirmed inbox receipt and successful
+unsubscribe. A read-only production check confirmed the latest event came from
+unsubscribe, email preference/eligibility were false and the pilot flag was off.
+Opening the link without confirming was not independently reported; automated
+coverage checks that no-effect preview separately. No broader delivery is verified.
+Normal job-alert
 sending and employer-facing application sending remain disabled. AJ-17/AJ-26 are
 not complete merely because a synthetic transport test passes.
 
