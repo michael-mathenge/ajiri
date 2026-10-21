@@ -1,9 +1,15 @@
 from copy import deepcopy
 from django.test import SimpleTestCase
-from browser_tests.performance import metrics, budget_failures
+from browser_tests.performance import metrics, budget_failures, runner_diagnostic
 
 
 class LighthouseGuardTests(SimpleTestCase):
+    def test_runner_diagnostics_strip_urls_and_filesystem_paths(self):
+        message = runner_diagnostic('Error at https://example.invalid/private?token=synthetic /home/test/report.json')
+        self.assertNotIn('token', message)
+        self.assertNotIn('/home', message)
+        self.assertIn('Error at', message)
+
     def report(self):
         return {'configSettings': {'formFactor': 'mobile'},
             'categories': {'performance': {'score': 0.99}},

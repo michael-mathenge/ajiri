@@ -394,3 +394,23 @@ suite is rerunning with normal filesystem access. No runtime dependencies,
 production configuration, database migrations or sending activation are changed.
 Full backend rerun passed331 tests in259.710s, one known Windows symlink skip.
 Pre-commit configuration and changed package JSON formatting also passed.
+
+## First browser CI findings and local repairs
+
+Run39619837635 correctly failed on brand/job-link accessible names that omitted
+visible words and inline links distinguishable only by colour. Accessible names
+now include those visible words, the brand text has an actual word separator,
+and ordinary inline links are underlined. Axe rules are unchanged. The complete
+local browser suite subsequently passed (two tests,20.841s), including14 axe scans
+and the full synthetic register/CV/application review journey. This supersedes the
+earlier unavailable local-browser result. No sending occurred.
+
+The same Linux run failed to execute Lighthouse before reporting a measurement;
+it is NOT a budget pass. Sanitized execution diagnostics now strip URLs and paths
+before logs; a regression verifies that stripping. Raw reports remain local.
+The backend rerun passed332 tests in262.432s, one known Windows skip. Linux
+Lighthouse execution remains unresolved until the next CI result.
+Final frontend rerun passed108 component tests, Oxlint, ESLint and the hook-safety
+test. System check/migration drift and Ruff passed after the fixes. The frontend
+build now changes for the demonstrated accessibility repairs and will be committed
+last, replacing only verified generated assets. No runtime library versions changed.

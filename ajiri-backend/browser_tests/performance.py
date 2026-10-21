@@ -2,6 +2,7 @@
 import json
 import math
 import os
+import re
 from pathlib import Path
 import shutil
 import statistics
@@ -33,6 +34,12 @@ def budget_failures(measured, budgets):
     failed = ['performance'] if measured['performance'] < budgets['minimum_performance'] else []
     failed.extend(key for key, limit in budgets['maximum'].items() if measured[key] > limit)
     return failed
+
+
+def runner_diagnostic(stderr):
+    # Only synthetic local pages run here; still strip URLs/paths before CI logs.
+    message = re.sub(r'https?://\S+|(?:[A-Za-z]:)?[/\\][^\s]+', '<redacted>', stderr)
+    return message[-1500:]
 
 
 @override_settings(DEBUG=False, ALLOWED_HOSTS=['localhost', '127.0.0.1'],
@@ -69,7 +76,8 @@ class MobilePerformance(LiveServerTestCase):
                     env=env, capture_output=True, text=True, timeout=100)
                 if result.returncode:
                     (output / 'runner-errors.txt').write_text((result.stdout + result.stderr)[-10000:], encoding='utf-8')
-                self.assertEqual(result.returncode, 0, 'Lighthouse execution failed; inspect local runner output.')
+                self.assertEqual(result.returncode, 0,
+                    'Lighthouse execution failed: ' + runner_diagnostic(result.stderr))
                 runs.append(metrics(json.loads(report.read_text(encoding='utf-8'))))
             summary[route] = {key: statistics.median(row[key] for row in runs) for key in runs[0]}
         (output / 'summary.json').write_text(json.dumps(summary, indent=2) + '\n', encoding='utf-8')

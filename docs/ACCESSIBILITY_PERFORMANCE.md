@@ -68,5 +68,4 @@ Michael approved extending the existing browser job with Node 24.19 and `npm --p
 Keep its current Python/Chromium installation; run both explicit test modules above.
 Retain sanitized reports even on failures. Preserve all six existing check names,
 quality gates and production boundaries. No provider credentials or real sending.
-The local axe run is UNVERIFIED until the optional Python browser dependency is
-available or Linux CI executes it; no accessibility pass is claimed in advance.
+The optional local Python browser tools are now installed. The complete local browser suite passed two tests in 20.841 seconds, including 14 axe scans. Linux CI results remain a separate merge gate.
