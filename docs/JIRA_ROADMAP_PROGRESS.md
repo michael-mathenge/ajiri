@@ -354,3 +354,11 @@ was88.85%; final reporting excludes the synthetic cv_test_helpers fixture and is
 No production code was excluded to raise the result. Native mypy/pre-commit remain
 UNVERIFIED while their large tool downloads finish; the approved CI job must verify
 them and retain reports before merge. New author/committer identity will be checked.
+
+Subsequent verification: native pre-commit config validation passed; mypy ran and
+reported199 legacy findings (nonblocking, not clean). All six PR33 jobs passed at
+ab48abc in run39614901653, including the new quality job. Linux coverage88.96%,
+197 legacy type findings. API verified the finalized quality-reports artifact
+ID12351314400,14469 bytes, expiry28 October2026. Ruff/ESLint/changed-file hooks and
+all safety regressions passed in CI. No hook installation/Git configuration mutation.
+The temporary Linux download helper was stopped; Docker lesson/user data preserved.

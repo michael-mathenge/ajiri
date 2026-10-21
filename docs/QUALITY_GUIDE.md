@@ -80,3 +80,17 @@ email, private file or coverage database from a developer checkout is uploaded.
 AJ-29 axe/Lighthouse will be a separate measured accessibility/performance package;
 this tooling does not claim those checks exist. The new job's actual result must
 be recorded before claiming either AJ-28 or AJ-30 complete.
+
+## Measured baseline — 21 October 2026
+
+At ab48abc, [CI run39614901653](https://github.com/michael-mathenge/ajiri/actions/runs/39614901653)
+passed all six jobs. Linux coverage is88.96% combined line/branch (4007 statements,
+337 missed;1138 branches,191 partially covered). The type report records197 legacy
+findings, explicitly nonblocking. The quality-reports artifact was finalized and
+listed by the API (ID12351314400,14469 bytes), expiring28 October2026.
+
+Windows full suite:328 tests OK in252.999s, one symlink skip;88.82% combined coverage
+and199 type findings. Native pre-commit configuration validation passed after the
+slow tool download completed. Platform-specific results are distinct, not rounded
+into a single claimed type pass. Existing tests and real browser CI passed as well.
+No runtime dependency version or frontend_build byte changed.
