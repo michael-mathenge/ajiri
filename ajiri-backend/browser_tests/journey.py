@@ -16,6 +16,7 @@ from playwright.sync_api import sync_playwright, expect
 
 from jobs.models import Application, DeliveryAttempt, DeliveryDailyBudget, Job
 from profiles.models import CVApproval
+from .accessibility import audit
 
 
 @override_settings(DEBUG=False, ALLOWED_HOSTS=['localhost', '127.0.0.1'],
@@ -63,7 +64,7 @@ class BrowserJourney(LiveServerTestCase):
     def browser_journey(self):
         with sync_playwright() as playwright:
             browser = playwright.chromium.launch()
-            context = browser.new_context(viewport={'width': 390, 'height': 844}, accept_downloads=True)
+            context = browser.new_context(viewport={'width': 390, 'height': 844}, accept_downloads=True, color_scheme='light')
             # Fail closed on any external browser request; fixture source links
             # are not followed. API traffic is real and is never mocked.
             context.route('**/*', lambda route: route.continue_()
@@ -72,26 +73,32 @@ class BrowserJourney(LiveServerTestCase):
             failures = []
             page.on('pageerror', lambda error: failures.append(str(error)))
             page.goto(self.live_server_url + '/register')
+            expect(page.get_by_role('button', name='Register', exact=True)).to_be_visible()
+            audit(self, page, 'register-light')
             page.get_by_label('Full name', exact=True).fill('Synthetic Browser Applicant')
             page.get_by_label('Email', exact=True).fill('browser@example.invalid')
             page.get_by_label('Password', exact=True).fill('Synthetic!Forest-82-Clouds')
             page.locator('[name=privacy_consent]').check()
             page.get_by_role('button', name='Register', exact=True).click()
             expect(page.get_by_text('Account created. Log in to continue.')).to_be_visible()
+            audit(self, page, 'login-light')
             page.get_by_label('Email address', exact=True).fill('browser@example.invalid')
             page.get_by_label('Password', exact=True).fill('Synthetic!Forest-82-Clouds')
             page.get_by_role('button', name='Log in', exact=True).click()
             expect(page.get_by_role('heading', name='Find your next chapter.')).to_be_visible()
+            audit(self, page, 'jobs-light')
             page.goto(self.live_server_url + '/profile')
             page.get_by_label('Professional headline', exact=True).fill('Synthetic developer')
             page.get_by_label('Skills (comma separated)', exact=True).fill('Python, Testing')
             page.get_by_label('About you', exact=True).fill('Builds tested synthetic tools.')
             page.get_by_role('button', name='Save profile', exact=True).click()
             expect(page.get_by_text('Profile saved.', exact=True)).to_be_visible()
+            audit(self, page, 'profile-light')
             page.goto(self.live_server_url + '/cv-builder')
             page.get_by_role('button', name='Start my CV', exact=True).click()
             page.get_by_role('button', name='Save and preview CV', exact=True).click()
             expect(page.get_by_role('article', name='Saved CV preview')).to_contain_text('Synthetic Browser Applicant')
+            audit(self, page, 'cv-preview-light')
             approve = page.get_by_role('button', name='Approve this CV version', exact=True)
             expect(approve).to_be_disabled()
             page.get_by_label('I have reviewed this CV and approve this version.').check()
@@ -119,6 +126,7 @@ class BrowserJourney(LiveServerTestCase):
                 page.get_by_role('button', name='Download CV', exact=True).click()
             assert Path(application_download.value.path()).read_bytes() == self.cv_bytes
             expect(page.get_by_text('Ready for review', exact=True)).to_be_visible()
+            audit(self, page, 'application-review-light')
             # A separate logged-out context must not fetch the private original.
             guest = browser.new_context()
             denied = guest.request.get(self.live_server_url + f'/api/jobs/applications/{application_id}/documents/cv/')
@@ -127,3 +135,24 @@ class BrowserJourney(LiveServerTestCase):
             assert not failures, 'Browser JavaScript errors occurred.'
             context.close()
             browser.close()
+
+    def test_public_accessibility_light_and_dark(self):
+        def check():
+            with sync_playwright() as playwright:
+                browser = playwright.chromium.launch()
+                try:
+                    for theme in ('light', 'dark'):
+                        context = browser.new_context(viewport={'width': 390, 'height': 844}, color_scheme=theme)
+                        context.route('**/*', lambda route: route.continue_()
+                            if route.request.url.startswith(self.live_server_url + '/') else route.abort())
+                        page = context.new_page()
+                        for route in ('register', 'login', 'privacy', 'forgot-password'):
+                            page.goto(self.live_server_url + '/' + route)
+                            expect(page.get_by_role('heading').first).to_be_visible()
+                            expect(page.locator('html')).to_have_attribute('data-theme', theme)
+                            audit(self, page, route + '-' + theme)
+                        context.close()
+                finally:
+                    browser.close()
+        with ThreadPoolExecutor(max_workers=1) as worker:
+            worker.submit(check).result(timeout=120)

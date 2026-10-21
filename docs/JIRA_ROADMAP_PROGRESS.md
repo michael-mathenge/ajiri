@@ -362,3 +362,35 @@ ab48abc in run39614901653, including the new quality job. Linux coverage88.96%,
 ID12351314400,14469 bytes, expiry28 October2026. Ruff/ESLint/changed-file hooks and
 all safety regressions passed in CI. No hook installation/Git configuration mutation.
 The temporary Linux download helper was stopped; Docker lesson/user data preserved.
+
+## PR33 post-merge verification
+
+Merged20939e35f9d9a47494868056b728027318bd7fed. All six post-merge checks
+passed; AJ-28 and AJ-30 updated to Done from this evidence. Development tooling
+only; recorded production remains40c1ea0, with no unnecessary reload.
+
+## AJ-29 accessibility and performance — in progress
+
+Branch codex/jira-accessibility-budgets from20939e3. Michael explicitly approved
+extending the existing browser CI job, locked Node test tools and sanitized
+seven-day reports. Adds axe rules on the synthetic application journey and public
+light/dark pages; no production account, mail or private document audit. Lighthouse
+uses three mobile runs per public page and checks each median against measured
+initial budgets. Raw Lighthouse reports stay local; only numeric summaries upload.
+
+Actual local commands: system check and makemigrations --check --dry-run passed.
+Node24.19 npm ci passed (360 packages, audit zero vulnerabilities); Oxlint, ESLint,
+one hook-safety test,106 component tests and build passed. Rebuilt bytes match
+committed frontend_build; no generated change exists to commit. Ruff passed.
+Three malformed-report/budget regressions passed. Measurement-only Lighthouse
+reported a skip; the subsequent enforcing test passed in91.159 seconds. Login and
+register median performance81/81, LCP3673/3714ms; this is a regression baseline,
+not a good-vitals claim. Local axe remains UNVERIFIED without its optional Python
+browser SDK; approved Linux CI must execute it before merge.
+
+The first full backend attempt hit Windows sandbox temp-directory permission
+errors (confirmed with a focused export test); it was stopped. The full synthetic
+suite is rerunning with normal filesystem access. No runtime dependencies,
+production configuration, database migrations or sending activation are changed.
+Full backend rerun passed331 tests in259.710s, one known Windows symlink skip.
+Pre-commit configuration and changed package JSON formatting also passed.

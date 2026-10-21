@@ -1,0 +1,9 @@
+{
+  "minimum_performance": 75,
+  "maximum": {
+    "lcp_ms": 4500,
+    "tbt_ms": 250,
+    "cls": 0.1,
+    "transfer_bytes": 500000
+  }
+}
