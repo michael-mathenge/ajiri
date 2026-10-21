@@ -1070,3 +1070,11 @@ silently recreating deleted accounts. Shared jobs and global quotas remain, whil
 owned session and JWT rows are explicitly removed. Backups include the configured
 journal ledger without copying credentials. Hash checks alone never authorize an
 erasure, and routine backup verification never replays deletion requests.
+## owner-alert-pilot
+
+An explicit hidden synthetic notification can test email without opening employer
+or normal ingestion sending. The allowlisted owner must already have current
+verified-address consent. A stable receipt key and shared budget prevent duplicate
+handoffs; the final transport boundary checks consent again. Email includes an
+explicit-confirmation unsubscribe link. Provider acceptance requires separate
+inbox verification, and disabled mode never falls back to console mail.
