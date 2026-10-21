@@ -156,6 +156,11 @@ class DeliveryService:
             raise DeliveryError('Delivery outcome needs reconciliation; do not retry.') from None
 
     def _check_pilot(self, user, channel, recipient):
+        if self.pilot is not None and getattr(self.pilot, 'alert_only', False):
+            if (channel != 'alert' or user.pk != self.pilot.owner_id or recipient.casefold() != self.pilot.recipient
+                    or user.email.casefold() != self.pilot.recipient):
+                raise DeliveryError('Alert pilot delivery is not allowed.')
+            return
         if self.pilot is not None and getattr(self.pilot, 'application_only', False):
             if channel != 'application' or user.pk != self.pilot.owner_id or recipient.casefold() != self.pilot.recipient:
                 raise DeliveryError('Application pilot delivery is not allowed.')

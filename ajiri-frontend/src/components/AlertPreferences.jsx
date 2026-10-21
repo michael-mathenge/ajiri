@@ -25,7 +25,11 @@ export default function AlertPreferences() {
         enabled, decision_id: key.current, policy_version: state.policy_version,
       })
       setState(data); setEnabled(data.enabled && data.confirmed); key.current = null
-      setMessage(data.enabled ? 'Email choice recorded. A verified email is required before delivery.' : 'Email job alerts are off.')
+      setMessage(data.enabled
+        ? (data.delivery_status === 'owner_pilot'
+          ? 'Email choice recorded. A verified email is required; only an explicit synthetic owner pilot can send.'
+          : 'Email choice recorded. Delivery is currently disabled for this account.')
+        : 'Email job alerts are off.')
     } catch {
       setMessage('Your choice could not be confirmed. Retry this same choice or reload to check its status.')
     } finally { setBusy(false) }
@@ -34,6 +38,9 @@ export default function AlertPreferences() {
     <h2>Email job alerts</h2>
     <p>Choose whether Ajiri may email strong job matches to your current account address. You can unsubscribe at any time. This is separate from account security emails and in-app alerts.</p>
     {state?.enabled && !state.confirmed && <p>Your earlier preference has no recorded consent. Email alerts remain ineligible until you make a choice.</p>}
+    {state && <p className="muted">{state.delivery_status === 'owner_pilot'
+      ? 'Delivery is limited to an explicit synthetic owner pilot. Normal job emails are not active.'
+      : 'Email delivery is currently disabled for this account. You can still record or withdraw your choice.'}</p>}
     <form onSubmit={save} className="stack" aria-busy={busy}>
       <label className="check-field"><input type="checkbox" checked={enabled} disabled={!state || busy}
         onChange={(event) => { setEnabled(event.target.checked); key.current = null }} />

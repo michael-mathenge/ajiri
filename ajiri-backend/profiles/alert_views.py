@@ -12,6 +12,7 @@ class ChoiceSerializer(serializers.Serializer):
 
 
 def preference_response(user):
+    from jobs.alert_delivery import availability
     profile = user.profile
     profile.refresh_from_db()
     event = profile.alert_consent_events.order_by('-pk').first()
@@ -19,7 +20,7 @@ def preference_response(user):
                      and event.recipient_digest == alert_consent.recipient_digest(user.email))
     response = Response({'enabled': profile.notify_email,
         'confirmed': confirmed, 'eligible': alert_consent.eligible(profile),
-        'policy_version': alert_consent.POLICY})
+        'policy_version': alert_consent.POLICY, 'delivery_status': availability(user)})
     response['Cache-Control'] = 'no-store, private'
     return response
 

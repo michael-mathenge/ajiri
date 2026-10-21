@@ -27,6 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See docs/CONCEPTS.md#environment-variables
 load_dotenv(BASE_DIR / '.env')
 ERASURE_LEDGER_DIR = os.environ.get('ERASURE_LEDGER_DIR', str(Path.home() / 'ajiri-erasure-ledger'))
+ALERT_EMAIL_ENABLED = os.environ.get('ALERT_EMAIL_ENABLED', 'False') == 'True'
 
 
 def env_bool(name, default=False):

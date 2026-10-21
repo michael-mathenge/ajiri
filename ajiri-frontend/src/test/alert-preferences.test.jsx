@@ -40,3 +40,14 @@ test('opening unsubscribe fragment never submits before explicit confirmation', 
   expect(api.post).toHaveBeenCalledTimes(1)
   expect(api.post).toHaveBeenCalledWith('/profiles/alert-unsubscribe/', { token: 'synthetic-token', confirm: true })
 })
+
+test('saving consent never claims that disabled delivery sent an email', async () => {
+  api.get.mockResolvedValue({ data: { enabled: false, confirmed: false, policy_version: 'job-alert-email-v1', delivery_status: 'disabled' } })
+  api.post.mockResolvedValue({ data: { enabled: true, confirmed: true, delivery_status: 'disabled' } })
+  render(<AlertPreferences />)
+  await waitFor(() => expect(screen.getByRole('checkbox')).toBeEnabled())
+  fireEvent.click(screen.getByRole('checkbox'))
+  fireEvent.click(screen.getByRole('button', { name: 'Save email choice' }))
+  await screen.findByText('Email choice recorded. Delivery is currently disabled for this account.')
+  expect(screen.getByText(/Email delivery is currently disabled/)).toBeVisible()
+})

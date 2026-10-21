@@ -30,11 +30,12 @@ Users are mostly on phones with limited data. **Mobile-first, lightweight, acces
 
 ## 4. Verified state (21 October 2026)
 
-Recorded deployed source is `4fa75b5541b6998767b90d97e5e6dfe659840280` (PR #29):
-operator-assisted account export, explicit email-alert choice and confirmed
-unsubscribe. Only profiles.0007_alert_consent was applied; historical values were
-verified by column name and existing preferences were preserved. No consent was
-inferred. Real alert transport remains disconnected pending its owner pilot.
+Recorded deployed source is `9efd1f0fb99b7d8b66180c1e4b6ed6ac8705501b` (PR #30):
+verified-request erasure with signed recovery journals, resumable private-file cleanup
+and restore replay. Production verification used dry runs only; no account was erased.
+This follows PR #29 export and explicit alert consent/unsubscribe; existing values
+were preserved, and no consent inferred. Real alert transport remains disconnected
+pending its owner pilot. Retain the latest independent erasure ledger on old restores.
 Account email verification/reset has an owner-only Brevo pilot. Reviewed application
 packages and explicit authorization exist; broader application sending remains disabled
 until its gated integration and pilot pass. Never treat console output/provider
