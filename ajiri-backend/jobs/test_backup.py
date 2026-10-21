@@ -13,6 +13,7 @@ from django.conf import settings
 from django.core.management import call_command, CommandError
 from django.test import SimpleTestCase
 from .management.commands.backup_private_data import digest
+from accounts.erasure import write_journal
 
 
 class BackupTests(SimpleTestCase):
@@ -30,7 +31,8 @@ class BackupTests(SimpleTestCase):
         self.media.mkdir()
         (self.media / 'synthetic.pdf').write_bytes(b'%PDF-synthetic')
         self.destination = self.root / 'backups'
-        self.options = self.settings(DATABASES={'default': {'ENGINE': 'django.db.backends.sqlite3', 'NAME': self.db}}, MEDIA_ROOT=self.media)
+        self.options = self.settings(DATABASES={'default': {'ENGINE': 'django.db.backends.sqlite3', 'NAME': self.db}}, MEDIA_ROOT=self.media,
+                                     ERASURE_LEDGER_DIR=str(self.root/'ledger'))
         self.options.enable()
         self.addCleanup(self.options.disable)
 
@@ -48,6 +50,32 @@ class BackupTests(SimpleTestCase):
         self.assertIn('no writes', result)
         self.assertFalse(self.destination.exists())
         self.assertEqual(digest(self.db), before)
+
+    def test_erasure_journal_is_included_verified_and_restored_without_credentials(self):
+        import uuid
+        root = self.root/'ledger'; root.mkdir(mode=0o700)
+        request = str(uuid.uuid4())
+        write_journal(root/(request+'.signed'), {'format':1,'state':'complete','request_id':request,
+            'user_id':123,'identity':'a'*64,'files':[]})
+        self.run_backup('--include-media','--writers-paused')
+        backup=self.completed()[0]
+        manifest=json.loads((backup/'manifest.json').read_text())
+        self.assertTrue(manifest['erasure_ledger_included']);self.assertEqual(manifest['erasure_journals'],1)
+        target=self.root/'isolated-ledger-restore'
+        call_command('verify_private_backup',backup=str(backup),restore_to=str(target),stdout=StringIO())
+        self.assertEqual((target/'erasure-ledger'/(request+'.signed')).read_bytes(),(root/(request+'.signed')).read_bytes())
+        self.assertFalse((target/'.env').exists())
+
+    def test_unresolved_cleanup_or_unknown_ledger_files_never_publish_complete_backup(self):
+        import uuid
+        root=self.root/'ledger';root.mkdir(mode=0o700);request=str(uuid.uuid4())
+        path=root/(request+'.signed')
+        write_journal(path,{'format':1,'state':'db_erased','request_id':request,'files':['private.pdf']})
+        with self.assertRaises(CommandError):self.run_backup()
+        self.assertEqual(self.completed(),[])
+        path.unlink();(root/'.env').write_text('synthetic-not-a-credential')
+        with self.assertRaises(CommandError):self.run_backup()
+        self.assertEqual(self.completed(),[])
 
     def test_packaged_app_without_git_can_back_up_with_explicit_unverified_revision(self):
         app = self.root / 'container-app'

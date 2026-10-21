@@ -26,6 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # your laptop and on the server. Real environment variables win over `.env`.
 # See docs/CONCEPTS.md#environment-variables
 load_dotenv(BASE_DIR / '.env')
+ERASURE_LEDGER_DIR = os.environ.get('ERASURE_LEDGER_DIR', str(Path.home() / 'ajiri-erasure-ledger'))
 
 
 def env_bool(name, default=False):

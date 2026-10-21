@@ -8,6 +8,7 @@ from pathlib import Path
 import shutil
 import sqlite3
 import tarfile
+import zipfile
 from django.core.management.base import BaseCommand, CommandError
 from config.paths import application_tree
 from django.conf import settings
@@ -28,7 +29,7 @@ class Command(BaseCommand):
             self.verify(options)
         except CommandError:
             raise
-        except (OSError, ValueError, KeyError, TypeError, sqlite3.Error, tarfile.TarError):
+        except (OSError, ValueError, KeyError, TypeError, RuntimeError, sqlite3.Error, tarfile.TarError, zipfile.BadZipFile):
             raise CommandError('Backup verification failed; no live data was restored.') from None
 
     def verify(self, options):
@@ -44,7 +45,10 @@ class Command(BaseCommand):
         if data.get('format') != 1 or data.get('complete') is not True:
             raise CommandError('A completed format-1 backup is required.')
         media = data.get('media_included') is True
+        ledger = data.get('erasure_ledger_included') is True
         names = {'db.sqlite3'} | ({'private-media.tar.gz', 'media_uncompressed'} if media else set())
+        if ledger:
+            names.add('erasure-ledger.zip')
         if set(data['sha256']) != names:
             raise CommandError('Backup manifest members are invalid.')
         for name in names - {'media_uncompressed'}:
@@ -54,6 +58,10 @@ class Command(BaseCommand):
         with closing(sqlite3.connect((root/'db.sqlite3').as_uri()+'?mode=ro', uri=True)) as db:
             if db.execute('PRAGMA integrity_check').fetchall() != [('ok',)]:
                 raise CommandError('Backup database integrity failed.')
+        if ledger:
+            from accounts.erasure_ledger import verify
+            if verify(root/'erasure-ledger.zip') != data['erasure_journals']:
+                raise CommandError('Erasure ledger count mismatch.')
         count, total = 0, 0
         if media:
             with gzip.open(root/'private-media.tar.gz', 'rb') as stream:
@@ -109,9 +117,12 @@ class Command(BaseCommand):
                     raise CommandError('Restored media inventory mismatch.')
                 if digest(root/'private-media.tar.gz') != data['sha256']['private-media.tar.gz']:
                     raise CommandError('Archive changed during restoration.')
+            if ledger:
+                verify(root/'erasure-ledger.zip', target/'erasure-ledger')
             (target/'restore-verification.json').write_text(json.dumps({
                 'complete': True, 'source_revision': data['revision'],
                 'media_files': count, 'media_bytes': total, 'sha256': data['sha256'],
+                'erasure_ledger_included': ledger, 'erasure_journals': data.get('erasure_journals', 0),
             }, indent=2)+'\n', encoding='utf-8')
         self.stdout.write(f'Backup hashes/database/media verified: {count} files; {total} bytes; '
                           + ('isolated restore complete.' if destination else 'no restore requested; no writes.'))

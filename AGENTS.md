@@ -30,10 +30,11 @@ Users are mostly on phones with limited data. **Mobile-first, lightweight, acces
 
 ## 4. Verified state (21 October 2026)
 
-Recorded deployed source is `93da1161f4a955ab0d3a3f9d5468e24a2bf5d31a` (PR #28):
-verified backup restoration, isolated local staging and explicit stale-page recovery,
-following PR #27 snapshot restoration and privacy agreement. PR #28 required no
-migrations or pip install; existing data was preserved.
+Recorded deployed source is `4fa75b5541b6998767b90d97e5e6dfe659840280` (PR #29):
+operator-assisted account export, explicit email-alert choice and confirmed
+unsubscribe. Only profiles.0007_alert_consent was applied; historical values were
+verified by column name and existing preferences were preserved. No consent was
+inferred. Real alert transport remains disconnected pending its owner pilot.
 Account email verification/reset has an owner-only Brevo pilot. Reviewed application
 packages and explicit authorization exist; broader application sending remains disabled
 until its gated integration and pilot pass. Never treat console output/provider

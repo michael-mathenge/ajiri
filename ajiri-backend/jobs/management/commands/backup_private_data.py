@@ -162,10 +162,20 @@ class Command(BaseCommand):
                 with gzip.open(archive, 'rb') as stream:
                     hashes['media_uncompressed'] = hashlib.file_digest(stream, 'sha256').hexdigest()
             revision = source_revision()
+            ledger_count = 0
+            ledger_root = Path(settings.ERASURE_LEDGER_DIR)
+            no_links(ledger_root)
+            if not ledger_root.is_absolute():
+                raise CommandError('Erasure ledger must be an absolute private directory.')
+            if ledger_root.exists():
+                from accounts.erasure_ledger import snapshot
+                ledger_count = snapshot(ledger_root, partial / 'erasure-ledger.zip')
+                hashes['erasure-ledger.zip'] = digest(partial / 'erasure-ledger.zip')
             manifest = {'format': 1, 'complete': True, 'created_at': datetime.now(timezone.utc).isoformat(),
                         'revision': revision, 'sha256': hashes, 'media_included': options['include_media'],
                         'media_files': len(inventory), 'media_bytes': sum(v[0] for v in inventory.values()),
-                        'retention_days_draft': options['retention_days']}
+                        'retention_days_draft': options['retention_days'],
+                        'erasure_ledger_included': ledger_root.exists(), 'erasure_journals': ledger_count}
             marker = partial / 'manifest.json'
             marker.write_text(json.dumps(manifest, indent=2) + '\n', encoding='utf-8')
             marker.chmod(0o600)
