@@ -1114,6 +1114,8 @@ and a lab budget pass is not field performance or full accessibility compliance.
 Only synthetic/public test pages are measured; no production cookies or documents
 are exported. See ../../docs/ACCESSIBILITY_PERFORMANCE.md for scope and measured limits.
 
+A missing navigation trace is unavailable measurement, not a slow or fast page. Bounded diagnostics retain only counts of fixed event names and public browser version; raw trace arguments can contain page data and must stay out of uploaded reports.
+
 ## query-data-layer
 
 TanStack Query owns page-read caching, shared requests and cancellation. The cache

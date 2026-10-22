@@ -1,6 +1,9 @@
 from copy import deepcopy
+import json
+from pathlib import Path
+import tempfile
 from django.test import SimpleTestCase
-from browser_tests.performance import metrics, budget_failures, runner_diagnostic, trace_retry_allowed
+from browser_tests.performance import metrics, budget_failures, runner_diagnostic, trace_retry_allowed, trace_diagnostic
 
 
 class LighthouseGuardTests(SimpleTestCase):
@@ -43,3 +46,19 @@ class LighthouseGuardTests(SimpleTestCase):
             report['audits']['total-blocking-time']['numericValue'] = value
             with self.assertRaises(ValueError):
                 metrics(report)
+
+    def test_trace_diagnostic_retains_only_allowlisted_counts(self):
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / 'synthetic.trace.json'
+            path.write_text(json.dumps({'traceEvents': [
+                {'name': 'navigationStart', 'args': {'url': 'https://example.invalid/private?token=secret'}},
+                {'name': 'thread_name', 'pid': 'private-id'},
+                {'name': 'private event name', 'args': {'content': 'private content'}}]}))
+            report = trace_diagnostic([path], 'Chromium 156.0.0.0')
+            self.assertTrue(report['trace_found'])
+            self.assertEqual(report['events']['navigationStart'], 1)
+            self.assertEqual(report['events']['thread_name'], 1)
+            self.assertNotIn('private', json.dumps(report))
+            self.assertNotIn('secret', json.dumps(report))
+            path.write_text('invalid')
+            self.assertFalse(trace_diagnostic([path], 'Chromium 156.0.0.0')['trace_found'])

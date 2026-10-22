@@ -80,3 +80,13 @@ the retry explicitly. Other failures, malformed audits and exceeded metrics neve
 trigger a retry. Three successful measurements per page are still required; a
 second recording failure fails the gate. This does not establish the cause of the
 initial Linux execution failure, whose unsaved diagnostics remain unavailable.
+
+## Missing navigation traces
+
+A NO_NAVSTART run has no usable navigation measurement and fails the gate. The
+single bounded fresh-process retry does not apply to budget failures. Local
+synthetic-only trace assets help diagnose browser instrumentation; CI retains
+only fixed event-name counts and the browser version parsed from Lighthouse's
+report in summary.json. Trace URLs/args/IDs/page source are never uploaded. This
+is separate from real mobile metric acceptance. Repeated failures require
+investigation; successful PR checks do not erase failed main-run evidence.
