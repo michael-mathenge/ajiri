@@ -9,5 +9,20 @@ createRoot(document.getElementById('root')).render(
     <BrowserRouter>
       <App />
     </BrowserRouter>
-  </StrictMode>,
+  </StrictMode>
 )
+// The worker provides a public offline message, never cached private screens.
+// see docs/CONCEPTS.md#private-safe-pwa
+if (
+  import.meta.env.PROD &&
+  window.isSecureContext &&
+  'serviceWorker' in navigator
+) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker
+      .register('/sw.js', { scope: '/', updateViaCache: 'none' })
+      .catch(() => {
+        /* Online use remains available if offline installation fails. */
+      })
+  })
+}

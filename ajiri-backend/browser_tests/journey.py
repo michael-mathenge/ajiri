@@ -19,7 +19,24 @@ from profiles.models import CVApproval
 from .accessibility import audit
 
 
-@override_settings(DEBUG=False, ALLOWED_HOSTS=['localhost', '127.0.0.1'],
+class WorkerRollbackFixture:
+    """Local-only static response swap simulates a reloaded rollback deployment."""
+    retirement = None
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        if request.path == '/sw.js' and self.retirement is not None:
+            from django.http import HttpResponse
+            response = HttpResponse(self.retirement, content_type='application/javascript')
+            response['Cache-Control'] = 'no-store'
+            return response
+        return self.get_response(request)
+
+
+@override_settings(MIDDLEWARE=['browser_tests.journey.WorkerRollbackFixture', *settings.MIDDLEWARE],
+    DEBUG=False, ALLOWED_HOSTS=['localhost', '127.0.0.1'],
     SECURE_SSL_REDIRECT=False, SECURE_HSTS_SECONDS=0, REFRESH_COOKIE_SECURE=False,
     CSRF_COOKIE_SECURE=False, SESSION_COOKIE_SECURE=False,
     EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend',
@@ -29,6 +46,7 @@ class BrowserJourney(LiveServerTestCase):
     host = '127.0.0.1'
 
     def setUp(self):
+        WorkerRollbackFixture.retirement = None
         self.assertTrue((settings.FRONTEND_BUILD_DIR / 'index.html').is_file(),
             'Build the React client before running browser acceptance.')
         self.private = tempfile.TemporaryDirectory(prefix='ajiri-browser-')
@@ -156,3 +174,79 @@ class BrowserJourney(LiveServerTestCase):
                     browser.close()
         with ThreadPoolExecutor(max_workers=1) as worker:
             worker.submit(check).result(timeout=120)
+
+    def test_pwa_installability_offline_fallback_and_private_cache_exclusion(self):
+        from accounts.models import User
+        from rest_framework_simplejwt.tokens import RefreshToken
+        user = User.objects.create_user(email='pwa@example.invalid', full_name='Synthetic Private PWA Owner')
+        access = str(RefreshToken.for_user(user).access_token)
+        with ThreadPoolExecutor(max_workers=1) as worker:
+            worker.submit(self.pwa_journey, access).result(timeout=120)
+
+    def pwa_journey(self, access):
+        with sync_playwright() as playwright:
+            browser = playwright.chromium.launch()
+            context = browser.new_context(viewport={'width': 390, 'height': 844})
+            page = context.new_page()
+            page.goto(self.live_server_url + '/login')
+            expect(page.get_by_role('button', name='Log in', exact=True)).to_be_visible()
+            page.evaluate("""async () => {
+                await navigator.serviceWorker.ready;
+                if (!navigator.serviceWorker.controller) await new Promise(resolve =>
+                    navigator.serviceWorker.addEventListener('controllerchange', resolve, {once:true}));
+            }""")
+            session = context.new_cdp_session(page)
+            installability = session.send('Page.getInstallabilityErrors')
+            self.assertEqual(installability['installabilityErrors'], [])
+            manifest = page.evaluate("async () => (await fetch('/manifest.webmanifest')).json()")
+            self.assertEqual(manifest['display'], 'standalone')
+            self.assertEqual(manifest['start_url'], '/login')
+            for size in (192, 512):
+                actual = page.evaluate("""async size => {
+                    const image = new Image(); image.src = `/icons/icon-${size}.png`;
+                    await image.decode(); return [image.naturalWidth, image.naturalHeight];
+                }""", size)
+                self.assertEqual(actual, [size, size])
+            profile = page.evaluate("""async access => {
+                const response = await fetch('/api/profiles/me/', {headers:{Authorization:`Bearer ${access}`}});
+                return {status:response.status, body:await response.json()};
+            }""", access)
+            self.assertEqual(profile['status'], 200)
+            self.assertEqual(profile['body']['full_name'], 'Synthetic Private PWA Owner')
+            cached = page.evaluate("""async () => {
+                const result = [];
+                for (const key of await caches.keys()) {
+                    for (const request of await (await caches.open(key)).keys()) result.push(new URL(request.url).pathname);
+                } return result.sort();
+            }""")
+            self.assertEqual(cached, ['/icons/icon-192.png', '/icons/icon-512.png', '/manifest.webmanifest', '/offline.html'])
+            context.set_offline(True)
+            api_result = page.evaluate("async () => { try { return (await fetch('/api/profiles/me/')).status; } catch { return 'unavailable'; } }")
+            self.assertEqual(api_result, 'unavailable')
+            page.goto(self.live_server_url + '/profile')
+            expect(page.get_by_role('heading', name="You're offline")).to_be_visible()
+            expect(page.get_by_text('Synthetic Private PWA Owner')).to_have_count(0)
+            audit(self, page, 'pwa-offline')
+            context.set_offline(False)
+            page.get_by_role('link', name='Try Ajiri again').click()
+            expect(page.get_by_role('button', name='Log in', exact=True)).to_be_visible()
+            page.wait_for_load_state('load')
+            page.evaluate("async () => { await navigator.serviceWorker.register('/sw.js', {scope:'/', updateViaCache:'none'}); }")
+            # Swap the same URL for every browser update request, as after reload.
+            # Playwright routing alone misses browser-internal worker soft updates.
+            WorkerRollbackFixture.retirement = (settings.FRONTEND_BUILD_DIR / 'sw-retire.js').read_bytes()
+            page.evaluate("async () => { await caches.open('unrelated-cache'); const registration = await navigator.serviceWorker.getRegistration('/'); await registration.update(); }")
+            # Await asynchronous browser state explicitly; a promise itself is
+            # truthy to wait_for_function and must not stand in for its verdict.
+            retired = page.evaluate("""async () => {
+                const deadline = performance.now() + 10000;
+                while (performance.now() < deadline) {
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    const keys = await caches.keys();
+                    if (!registrations.length && !keys.some(key => key.startsWith('ajiri-public-'))) return keys.sort();
+                    await new Promise(resolve => setTimeout(resolve, 25));
+                }
+                return {registrations: (await navigator.serviceWorker.getRegistrations()).length, caches: await caches.keys()};
+            }""")
+            self.assertEqual(retired, ['unrelated-cache'])
+            browser.close()
