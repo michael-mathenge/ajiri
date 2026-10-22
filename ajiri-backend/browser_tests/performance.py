@@ -42,6 +42,31 @@ def runner_diagnostic(stderr):
     return message[-1500:]
 
 
+
+def trace_diagnostic(paths, browser_version):
+    """Only counts of fixed event names; never trace args, URLs, IDs or source."""
+    names = ('navigationStart', 'TracingStartedInPage', 'TracingStartedInBrowser',
+             'thread_name', 'process_name', 'firstContentfulPaint', 'largestContentfulPaint::Candidate')
+    result = {'browser': browser_version, 'trace_found': False,
+              'events': {name: 0 for name in names}}
+    for path in paths:
+        if path.stat().st_size > 100 * 1024 * 1024:
+            continue
+        try:
+            data = json.loads(path.read_text(encoding='utf-8'))
+            events = data.get('traceEvents', [])
+            if not isinstance(events, list):
+                continue
+            result['trace_found'] = True
+            for event in events:
+                name = event.get('name') if isinstance(event, dict) else None
+                if name in result['events']:
+                    result['events'][name] += 1
+        except (OSError, ValueError, AttributeError):
+            continue
+    return result
+
+
 def trace_retry_allowed(returncode, stderr, used):
     return returncode != 0 and 'NO_NAVSTART' in stderr and used == 0
 
@@ -67,6 +92,7 @@ class MobilePerformance(LiveServerTestCase):
             with sync_playwright() as playwright:
                 env['CHROME_PATH'] = playwright.chromium.executable_path
         self.assertTrue(Path(env['CHROME_PATH']).is_file(), 'Install the supported test Chromium.')
+        browser_version = 'unavailable'
         output = settings.BASE_DIR.parent / '.verification' / 'performance'
         output.mkdir(parents=True, exist_ok=True)
         summary = {}
@@ -78,7 +104,7 @@ class MobilePerformance(LiveServerTestCase):
                 report = output / f'{route}-{number}.json'
                 command = [node, str(cli), self.live_server_url + '/' + route,
                     '--chrome-flags=--headless --no-sandbox --disable-dev-shm-usage',
-                    '--only-categories=performance', '--output=json', '--output-path=' + str(report), '--quiet']
+                    '--save-assets', '--only-categories=performance', '--output=json', '--output-path=' + str(report), '--quiet']
                 result = subprocess.run(command,
                     env=env, capture_output=True, text=True, timeout=100)
                 # Chromium can lose its navigation trace (upstream lighthouse#15382).
@@ -88,7 +114,19 @@ class MobilePerformance(LiveServerTestCase):
                     print('Lighthouse NO_NAVSTART: one fresh-browser trace retry.')
                     result = subprocess.run(command,
                         env=env, capture_output=True, text=True, timeout=100)
+                if report.is_file():
+                    try:
+                        user_agent = json.loads(report.read_text(encoding='utf-8')).get('environment', {}).get('hostUserAgent', '')
+                        version_match = re.search(r'(?:HeadlessChrome|Chrome)/[0-9.]+', user_agent)
+                        browser_version = version_match.group(0) if version_match else 'unavailable'
+                    except (OSError, ValueError, AttributeError):
+                        browser_version = 'unavailable'
                 if result.returncode:
+                    # Existing CI uploads summary.json only. Keep raw trace/assets local
+                    # and emit fixed-name counts, never URLs, trace args or page source.
+                    diagnostic = trace_diagnostic(output.glob(f'{route}-{number}*.trace.json'), browser_version)
+                    (output / 'summary.json').write_text(json.dumps({'runner_failure': diagnostic}, indent=2) + '\n', encoding='utf-8')
+                    print('Lighthouse trace diagnostic:', json.dumps(diagnostic, sort_keys=True))
                     (output / 'runner-errors.txt').write_text((result.stdout + result.stderr)[-10000:], encoding='utf-8')
                 self.assertEqual(result.returncode, 0,
                     'Lighthouse execution failed: ' + runner_diagnostic(result.stderr))

@@ -646,3 +646,37 @@ For this package, Node24.19 locked npmci364 audit/zero vulnerabilities, lint,
 Strict schema/drift and Ruff pass. Full Django result pending.
 
 Search-tuning final local gates: full Django344 tests OK/one known Windows skip in261.554s; system check and migration drift pass. Node24.19 locked npmci/lint/126 components/build pass, all32 generated files unchanged. Strict schema drift, Ruff, pre-commit configuration and three release-script unit tests pass. No migration, dependency, frontend or hosting change.
+
+## Search tuning activation and Lighthouse tracing follow-up —22 October
+
+PR40 head5355b268de11539761519ef3a283134fc396b423 passed all six required checks;
+merged/deployed0678f404008ccb5c989ee7175f44b86c5a390b3f. Fresh consistent snapshot
+backup-20261022T004104447568Z-eb8b978a independently verified off-server, including
+SQLite integrity and isolated13-file/224960-byte media restoration. ZIP3226588
+bytes/SHA2566ad06d3189844e6be8cdb1eb0ddae61085a413a9fd4b6da658e340206d7155de;
+private receipt outsideGit. Writers resumed during download and restored again
+after activation. Preflight: no migrations/pip install; check/drift/plan pass.
+Deployed20-run median/p95ms:2.172/2.624,2.850/3.618,23.104/26.591,2.369/2.623.
+All below200ms; sampled-title recall12/12 on877 jobs. HTTPS/HSTS300/v1 health,
+unchanged HTML and authenticated python14-results smoke pass. AJ39 markedDone.
+Normal ingestion run39700541409 succeeded after the original index migration.
+
+Post-merge main browser run39699269065 failed NO_NAVSTART; one job rerun also
+failed. Main run39701044424 failed the same trace error. Five other main checks
+passed; both reviewed PR heads had all six checks green. These are not metric
+passes. Upstream issue https://github.com/GoogleChrome/lighthouse/issues/15382
+records missing main-thread trace events, but the cause here is not yet proven.
+Follow-up codex/jira-lighthouse-tracing captures local synthetic trace assets and
+uploads only allowlisted event counts plus parsed public browser version through
+the existing summary artifact. No raw trace, URLs, event args or source uploaded;
+no workflow edits, budget relaxation or additional retry. A unit regression checks
+that private synthetic args/event names/IDs cannot enter diagnostics. Diagnostics
+are evidence collection, not a claimed root-cause fix. Managed sending remains off.
+
+Tracing diagnostics local gates: five focused guard tests pass; full Django345
+tests OK/one known Windows skip in267.008s, check/drift/schema/Ruff pass. Real
+Chromium journey plus unchanged performance budgets: four tests pass128.565s,
+zero trace retries. Login/register medians:score77/77,LCP4145.900/4192.518ms,
+TBT157/154.5ms,CLS0/0,transfer483521/481677bytes. Node24.19 lockednpmci364/zero
+vulnerabilities,lint,126components/build pass. This native run did not reproduce
+NO_NAVSTART; diagnostics remain collection capability, not a proven repair.

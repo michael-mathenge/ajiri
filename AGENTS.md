@@ -30,14 +30,17 @@ Users are mostly on phones with limited data. **Mobile-first, lightweight, acces
 
 ## 4. Verified state (22 October 2026)
 
-Recorded deployed source is `084e4e3a97dccf5941ccdf40a3ee7d65812b2df8` (PR #39),
+Recorded deployed source is `0678f404008ccb5c989ee7175f44b86c5a390b3f` (PR #40),
 including forms, version-one API aliases/schema, keyword search and private-safe PWA.
 Only additive jobs.0011_job_full_text_search was applied; no runtime pip install.
 Verified backup/off-server copy/isolated restore preceded activation. Production
 checks, empty migration plan, HTTPS/HSTS300 and exact HTML/assets/schema/PWA files
 passed. Authenticated jobs/search/profile and private uploaded-CV download passed.
-Search sampled-title recall was 12/12; one broad query p95 243.216ms exceeded the
-200ms working target, so AJ-39 performance acceptance remains open pending tuning.
+Search sampled-title recall was 12/12. The single-scan query fix reduced the
+worst measured production p95 from 243.216ms to 26.591ms (877 jobs,20 runs/query).
+AJ-39 performance acceptance passed. Separate post-merge Lighthouse runs have
+intermittent NO_NAVSTART trace failures; retain failed evidence and diagnose them
+without relaxing budgets or treating unavailable measurements as passes.
 Manual Android/iOS installation remains unverified; real Chromium installability,
 offline privacy, retirement, accessibility and performance tests passed locally/CI.
 Earlier PR #30/#31 functionality remains:
