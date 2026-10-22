@@ -13,7 +13,7 @@ from django.shortcuts import get_object_or_404
 from profiles.cv_builder import content_hash, CVUnavailable
 from profiles.cv_validation import MAX_DOCUMENT_BYTES
 from profiles.upload_validation import _docx
-from .application_packages import package_data, package_fingerprint, require_editable, blocked, PackageConflict
+from .application_packages import package_data, package_fingerprint, require_editable, is_editable, PackageConflict
 from .models import Application, ApplicationPackage, ApplicationPackageApproval
 
 POLICY_VERSION = 'application-documents-v1'
@@ -96,8 +96,7 @@ def review_data(package):
     latest = app.packages.order_by('-revision').values_list('revision', flat=True).first()
     return {**package_data(package), 'previews': previews,
         'approval': approval_data(package), 'is_latest': package.revision == latest,
-        'approvable': package.revision == latest and not blocked(app)
-            and app.job.is_active and not app.job.is_flagged_scam,
+        'approvable': package.revision == latest and is_editable(app),
         'approval_statement': APPROVAL_STATEMENT, 'policy_version': POLICY_VERSION}
 
 

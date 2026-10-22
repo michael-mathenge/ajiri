@@ -680,3 +680,41 @@ zero trace retries. Login/register medians:score77/77,LCP4145.900/4192.518ms,
 TBT157/154.5ms,CLS0/0,transfer483521/481677bytes. Node24.19 lockednpmci364/zero
 vulnerabilities,lint,126components/build pass. This native run did not reproduce
 NO_NAVSTART; diagnostics remain collection capability, not a proven repair.
+
+## AJ17/AJ27 synthetic managed sending integration — local preparation
+
+Branch codex/jira-managed-send-pilot, base034f2a70562d9fe2a5620d39013b866ad4ac74c3
+(PR41 diagnostics merged after six green checks; no production activation needed
+for test-only diagnostics). Production remains0678f40. New route is off by default
+and reuses account owner configuration/shared ledger; only inactive synthetic jobs,
+exact verified owner recipient/Reply-To, two approved DOCX bytes, no copies/redirects.
+Preparation command defaults to dry-run, creates an idempotent blank hidden draft
+only with --create, never document approval/authorization/mail. Public job/matching
+rules remain unchanged. Narrow inactive-job editing is permitted only for the
+configured verified owner pilot; ordinary closed jobs remain blocked.
+
+Initial fixture failures exposed the normal active-job edit gate and a cached
+Profile verification relation. The narrow pilot gate preserves inactive public
+exclusion, and eligibility now reads current Profile evidence. All eight focused
+HTTP tests passed3.630s, including pending concurrent replay/one provider call,
+unknown outcome, off-mode/no credential reads, final owner revocation, shared
+budget exhaustion and non-owner/real-job rejection. Additional preparation/browser
+checks and full final gates remain pending. Two component wording assertions were
+updated after removing false unconditional 'no email from this page' wording;
+all126 then passed, with default-off behavior assertions retained.
+No real provider call, production flag, migration, push or pilot activation yet.
+
+Managed-pilot final gates: nine focused HTTP/command regressions pass3.213s.
+Full final Django354 tests OK/one known Windows skip237.099s; system/migration
+drift and strict offline schema byte check pass. Explicit Node24.19 lockednpmci
+364 audit/zero vulnerabilities,Oxlint/ESLint,126components,hook-safety,Prettier,
+build pass. Ruff/pre-commit configuration/three release-script unit tests pass.
+Real new send journey passes8.503s with fake provider only. Combined five browser
+journey/performance tests passed140.515s, but logged one unexpected CV-list500.
+Strengthened both authenticated journeys to assert no500 responses and settle
+pending requests before context teardown. Repeated combined suite passed132.826s
+with no server-error responses; no production defect is inferred from that earlier
+unexplained log. Mobile medians login/register:score77/77,LCP4172.948/4186.079ms,
+TBT146.5/154.5ms,CLS0/0,transfer484589/481677bytes,zero trace retries; budgets unchanged.
+Source/isolated-runner and32 generated files match; subsequent build matches bytes.
+Generated frontend is final package commit. No real inbox delivery claimed.

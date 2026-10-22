@@ -108,8 +108,9 @@ def build_plan(user, application, *, retry_of=None):
 
 def plan_response(user, application, retry_of=None):
     plan, _ = build_plan(user, application, retry_of=retry_of)
+    from .application_dispatch import dispatch_status
     return {'plan': plan, 'plan_sha256': content_hash(plan), 'expires_after_hours': 24,
-            'dispatch_enabled': False, 'disabled_reason': DISABLED}
+            **dispatch_status(user, application, plan)}
 
 
 def owner_authorization(user, application_id, authorization_id):
@@ -147,7 +148,14 @@ def authorization_data(authorization):
         'state': effective, 'authorized_at': authorization.authorized_at,
         'expires_at': authorization.expires_at, 'closed_at': authorization.closed_at,
         'attempt': receipt_data(link.attempt) if link else None,
-        'dispatch_enabled': False, 'disabled_reason': DISABLED}
+        **_authorization_dispatch_status(authorization)}
+
+
+def _authorization_dispatch_status(authorization):
+    if authorization.state != 'authorized' or authorization.expires_at <= timezone.now():
+        return {'dispatch_enabled': False, 'disabled_reason': 'This authorization is closed or expired.'}
+    from .application_dispatch import dispatch_status
+    return dispatch_status(authorization.owner, authorization.application, authorization.plan)
 
 
 def claim_application(user, application_id):

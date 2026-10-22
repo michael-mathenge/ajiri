@@ -227,8 +227,8 @@ function ReviewSession({ applicationId, packageId, revision, disabled }) {
             </p>
           )}
           <p>
-            Managed sending remains disabled. Document approval does not apply
-            to another revision or authorize email delivery.
+            Document approval does not apply to another revision or authorize
+            email delivery. Review the separate email permission controls.
           </p>
           {review.approval &&
             review.is_latest &&

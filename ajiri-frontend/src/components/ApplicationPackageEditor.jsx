@@ -380,8 +380,8 @@ export default function ApplicationPackageEditor({
                   </Button>
                   <p>
                     Saving preserves a draft only. Review its saved package
-                    below before approving documents. Managed sending is
-                    awaiting activation.
+                    below before approving documents. Email delivery needs
+                    separate explicit permission and an enabled sending route.
                   </p>
                 </form>
               )}

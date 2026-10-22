@@ -90,6 +90,8 @@ class BrowserJourney(LiveServerTestCase):
             page = context.new_page()
             failures = []
             page.on('pageerror', lambda error: failures.append(str(error)))
+            context.on('response', lambda response: failures.append('Server error response')
+                if response.status >= 500 else None)
             page.goto(self.live_server_url + '/register')
             expect(page.get_by_role('button', name='Register', exact=True)).to_be_visible()
             audit(self, page, 'register-light')
@@ -150,7 +152,8 @@ class BrowserJourney(LiveServerTestCase):
             denied = guest.request.get(self.live_server_url + f'/api/jobs/applications/{application_id}/documents/cv/')
             assert denied.status == 401, 'Anonymous document access must be denied.'
             guest.close()
-            assert not failures, 'Browser JavaScript errors occurred.'
+            page.wait_for_load_state('networkidle')
+            assert not failures, 'Browser JavaScript or server response errors occurred.'
             context.close()
             browser.close()
 
@@ -249,4 +252,71 @@ class BrowserJourney(LiveServerTestCase):
                 return {registrations: (await navigator.serviceWorker.getRegistrations()).length, caches: await caches.keys()};
             }""")
             self.assertEqual(retired, ['unrelated-cache'])
+            browser.close()
+
+    def test_managed_pilot_authorization_dispatch_and_receipt_replay(self):
+        from accounts.models import User
+        from profiles.models import Profile
+        from django.utils import timezone
+        from jobs.pilot_test_helpers import prepared_pilot, pilot_settings
+        from jobs.brevo_transport import Result
+        user = User.objects.create_user(email='managed@example.invalid', full_name='Synthetic Managed Applicant',
+            password='Synthetic!Forest-82-Clouds')
+        Profile.objects.filter(user=user).update(email_verified_at=timezone.now(), verified_email=user.email)
+        with override_settings(**pilot_settings(user)), patch('jobs.brevo_transport.BrevoTransport.send',
+                return_value=Result('accepted', '<synthetic@invalid>')) as provider:
+            app, package = prepared_pilot(user)
+            self.assertEqual(DeliveryAttempt.objects.count(), 0)
+            provider.assert_not_called()
+            with ThreadPoolExecutor(max_workers=1) as worker:
+                worker.submit(self.managed_pilot_journey, user.email).result(timeout=120)
+            provider.assert_called_once()
+            self.assertEqual(DeliveryAttempt.objects.get(application=app).state, 'accepted')
+            self.assertEqual(DeliveryDailyBudget.objects.get(scope='global').application_reserved, 1)
+
+    def managed_pilot_journey(self, email):
+        import re
+        with sync_playwright() as playwright:
+            browser = playwright.chromium.launch()
+            context = browser.new_context(viewport={'width': 390, 'height': 844})
+            context.route('**/*', lambda route: route.continue_()
+                if route.request.url.startswith(self.live_server_url + '/') else route.abort())
+            failures = []
+            context.on('response', lambda response: failures.append('Server error response')
+                if response.status >= 500 else None)
+            page = context.new_page()
+            page.on('pageerror', lambda error: failures.append(str(error)))
+            page.goto(self.live_server_url + '/login')
+            page.get_by_label('Email address', exact=True).fill(email)
+            page.get_by_label('Password', exact=True).fill('Synthetic!Forest-82-Clouds')
+            page.get_by_role('button', name='Log in', exact=True).click()
+            expect(page.get_by_role('heading', name='Find your next chapter.', exact=True)).to_be_visible()
+            page.goto(self.live_server_url + '/applications')
+
+            def review():
+                page.get_by_text('Review application', exact=True).click()
+                page.get_by_role('button', name=re.compile('Choose CV and edit cover letter|View saved package revisions')).click()
+                page.get_by_role('button', name='Review saved package revision 1', exact=True).click()
+                page.get_by_role('button', name='Review email plan / check authorization status', exact=True).click()
+
+            review()
+            record = page.get_by_role('button', name='Record authorization (does not send)', exact=True)
+            expect(record).to_be_disabled()
+            expect(page.get_by_role('button', name='Send this authorized application', exact=True)).to_have_count(0)
+            audit(self, page, 'application-email-plan')
+            page.get_by_label(re.compile('I authorize Ajiri to email this exact application')).check()
+            record.click()
+            send = page.get_by_role('button', name='Send this authorized application', exact=True)
+            expect(send).to_be_enabled()
+            send.click()
+            receipt = page.get_by_text('Accepted by the email provider. Inbox delivery is not confirmed.', exact=True)
+            expect(receipt).to_be_visible()
+            expect(send).to_have_count(0)
+            page.reload()
+            review()
+            expect(receipt).to_be_visible()
+            expect(page.get_by_role('button', name='Send this authorized application', exact=True)).to_have_count(0)
+            page.wait_for_load_state('networkidle')
+            self.assertEqual(failures, [], 'Browser or server errors occurred during managed review.')
+            context.close()
             browser.close()
