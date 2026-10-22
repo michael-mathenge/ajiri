@@ -1,0 +1,26 @@
+{
+  "id": "/",
+  "name": "Ajiri Kenya",
+  "short_name": "Ajiri",
+  "description": "Find jobs, prepare your CV and review applications. Internet is needed for account actions.",
+  "start_url": "/login",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0f231d",
+  "theme_color": "#0f231d",
+  "lang": "en-KE",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1156,3 +1156,14 @@ query syntax. Weighted BM25 ranks keyword relevance; skill-match scores remain
 separate. The additive index can be rebuilt or removed without discarding jobs.
 Performance and known-title relevance must be measured on actual listings before
 claiming production acceptance. No profile/private-document data is indexed.
+
+## private-safe-pwa
+
+A web app manifest lets compatible browsers offer standalone installation. A
+service worker supplies a generic offline navigation message after an online
+visit. Its cache is an explicit allowlist of public fallback assets, never APIs,
+credentials, profiles or private documents. Offline actions are not queued.
+Worker updates remove only earlier Ajiri public caches; a retirement worker must
+be served at the original URL to unregister safely during rollback. Browser tests
+check installability, offline privacy and completion of asynchronous retirement.
+Phone installation remains a separate manual check, not a Lighthouse PWA badge.

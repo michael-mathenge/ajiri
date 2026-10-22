@@ -569,3 +569,39 @@ Mobile medians (login/register):
 {"login": {"cls": 0.0621810541848939, "lcp_ms": 3948.4527999999996, "performance": 80.0, "tbt_ms": 102.5, "trace_retries": 0, "transfer_bytes": 483169}, "register": {"cls": 0, "lcp_ms": 3941.0499999999997, "performance": 79.0, "tbt_ms": 112.5, "trace_retries": 0, "transfer_bytes": 480257}}
 
 No production0011 migration or real-data benchmark yet; release acceptance remains pending.
+
+## AJ-40 installability/offline — local implementation
+
+Branch codex/jira-pwa-basics fast-forwarded from5ad44a1 to reviewed PR38 merge
+5f1fcc33f40fd18335becc29bbfdf07648fb40dd. Only byte-verified generated build extras
+were removed before the fast-forward; public source, original checkouts, Git
+configuration/stash and verification builds retained. AJ-40 acceptance was updated
+under existing Jira authorization because Chrome removed Lighthouse's PWA category.
+A timeout was reconciled by reading Jira; the edit had saved and was not repeated.
+
+Manifest,192/512 PNG briefcase icons, secure production-only registration and
+a generic public offline fallback added without dependencies/hosting changes.
+Only four explicit public assets are cached; API/media/admin/static/non-GET and
+other-origin traffic bypasses the worker. No account data or job payload cache.
+Focused assets/native Chromium installability/offline/private-cache/axe/retirement
+tests pass: three tests in3.813s. Earlier retirement assertions ran before
+asynchronous browser cleanup completed; explicit awaited state polling corrected
+the test without weakening cache assertions. A local-only middleware fixture
+models retirement bytes at the original SW URL for browser-internal updates.
+An unrelated synthetic cache survives. Full combined-main gates are next.
+Manual Android/iOS installation is UNVERIFIED; no production worker activation yet.
+
+22 October verification: the four browser journey/performance tests passed (112.907s). API contract drift after Windows checkout was line endings only: normalized bytes and parsed JSON matched. Added an explicit LF artifact rule; strict byte comparison remains unchanged. Native phone installation remains unverified.
+
+AJ-40 final local gates (22 October): strict offline schema validation/byte drift,
+Django system check and migration drift pass. Full Django suite: 344 tests in
+244.390s, OK with one known Windows skip. Node 24.19 locked installation (364
+audited, zero vulnerabilities), Oxlint/ESLint, hook-safety, 126 component tests,
+Prettier and build pass. Ruff across backend/scripts, pre-commit configuration
+and three release-script unit tests pass. Isolated runner/source correspondence
+and all 32 generated build files match. Four real browser/performance tests pass
+in 112.907s, including offline axe and worker retirement; no trace retries.
+Lighthouse login/register medians: score 78/78, LCP 4158.259/4152.536ms,
+TBT 134/128.5ms, CLS 0/0.03643, transfer 484615/481703 bytes; unchanged budgets.
+No new runtime dependency or migration. Generated frontend is committed last.
+Production remains 46c7ea7 until the separately verified batch activation.

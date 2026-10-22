@@ -4,3 +4,6 @@
 /ajiri-frontend/public/** text=auto eol=lf
 /ajiri-backend/frontend_build/** text=auto eol=lf
 /ajiri-backend/frontend_build/*.html text eol=lf
+
+# Keep the reviewed API contract byte-identical to offline generation.
+/ajiri-backend/config/openapi.json text eol=lf
