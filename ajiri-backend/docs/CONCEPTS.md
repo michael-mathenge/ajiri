@@ -1157,6 +1157,8 @@ separate. The additive index can be rebuilt or removed without discarding jobs.
 Performance and known-title relevance must be measured on actual listings before
 claiming production acceptance. No profile/private-document data is indexed.
 
+Job full-text search uses one parameterized FTS join for the result set. Repeating a MATCH subquery for each matching job causes broad searches to rescan the same index; the query-plan regression guards against that without changing relevance weights.
+
 ## private-safe-pwa
 
 A web app manifest lets compatible browsers offer standalone installation. A

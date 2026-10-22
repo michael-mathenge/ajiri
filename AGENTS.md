@@ -28,13 +28,18 @@ Users are mostly on phones with limited data. **Mobile-first, lightweight, acces
 - Production: PythonAnywhere free tier, a committed `frontend_build`, and a GitHub Actions workflow that posts jobs to `POST /api/jobs/ingest/` and `/api/jobs/sweep/` (header `X-Ingest-Key`)
 - CI exists (`.github/workflows/ci.yml`: backend checks, migrations, tests, frontend lint/build, committed-build consistency; Python matrix 3.12-3.14). Local dev and PythonAnywhere use Python 3.12.
 
-## 4. Verified state (21 October 2026)
+## 4. Verified state (22 October 2026)
 
-Recorded deployed source is `46c7ea7c41ddad6831d5399af289385bc7d38da8` (PR #35).
-It includes browser acceptance, quality/axe/mobile budgets and isolated cached page
-reads. Production checks, empty migration plan, HTTPS health and exact HTML/assets
-are verified. Owner-authenticated jobs, profile, CV builder and applications load;
-uploaded and approved private CV downloads passed on 21 October.
+Recorded deployed source is `084e4e3a97dccf5941ccdf40a3ee7d65812b2df8` (PR #39),
+including forms, version-one API aliases/schema, keyword search and private-safe PWA.
+Only additive jobs.0011_job_full_text_search was applied; no runtime pip install.
+Verified backup/off-server copy/isolated restore preceded activation. Production
+checks, empty migration plan, HTTPS/HSTS300 and exact HTML/assets/schema/PWA files
+passed. Authenticated jobs/search/profile and private uploaded-CV download passed.
+Search sampled-title recall was 12/12; one broad query p95 243.216ms exceeded the
+200ms working target, so AJ-39 performance acceptance remains open pending tuning.
+Manual Android/iOS installation remains unverified; real Chromium installability,
+offline privacy, retirement, accessibility and performance tests passed locally/CI.
 Earlier PR #30/#31 functionality remains:
 verified-request erasure with signed recovery journals, resumable private-file cleanup
 and restore replay. Production verification used dry runs only; no account was erased.
