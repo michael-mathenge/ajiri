@@ -1171,3 +1171,13 @@ Worker updates remove only earlier Ajiri public caches; a retirement worker must
 be served at the original URL to unregister safely during rollback. Browser tests
 check installability, offline privacy and completion of asynchronous retirement.
 Phone installation remains a separate manual check, not a Lighthouse PWA badge.
+
+## managed-application-pilot
+
+Account security email being enabled does not authorize sending an application.
+A separate disabled-by-default route permits only one verified owner and an exact
+inactive synthetic job/recipient. Document approval, per-application permission and
+dispatch are separate actions. The existing shared ledger freezes one handoff and
+receipt; duplicate requests read it rather than sending twice. The final boundary
+rechecks owner/configuration eligibility. Inactive pilot jobs stay out of normal
+browsing and matching, while only their allowlisted owner may prepare/review them.

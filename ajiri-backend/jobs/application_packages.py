@@ -46,8 +46,22 @@ def context(application):
 
 
 def require_editable(application):
-    if blocked(application) or not application.job.is_active or application.job.is_flagged_scam:
+    if blocked(application) or application.job.is_flagged_scam:
         raise PackageConflict()
+    if not application.job.is_active:
+        # Only the separately enabled, exact owner synthetic pilot can prepare an
+        # inactive job. Keeping it inactive excludes it from browsing/match sweeps.
+        from .application_dispatch import editable_pilot
+        if not editable_pilot(application):
+            raise PackageConflict()
+
+
+def is_editable(application):
+    try:
+        require_editable(application)
+        return True
+    except PackageConflict:
+        return False
 
 
 def selected_cv(user, version):

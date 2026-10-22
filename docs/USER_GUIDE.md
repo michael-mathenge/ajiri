@@ -34,3 +34,17 @@ Keep downloaded CVs private. Direct `/media/` URLs are intentionally blocked; us
 authenticated download buttons. For privacy/export/deletion requests, consult
 the notice linked at registration/Profile. Draft policy wording is awaiting legal
 review, and backup retention means deletion is not an immediate purge of every copy.
+
+Search with job keywords, then narrow location/type if needed. Search relevance
+and your skill-match percentage are different: a low match does not prevent an
+application. Always read the employer's requirements yourself.
+
+You can optionally install Ajiri from a compatible browser's menu. Offline mode
+shows a generic connection message; reconnect for jobs, CVs and account actions.
+It does not store private screens/documents or queue submissions. If a connection
+fails during an action, check its current receipt/status online before retrying.
+Phone installation varies by browser; see [installation guide](PWA_GUIDE.md).
+
+The [managed application pilot](MANAGED_APPLICATION_PILOT.md) is a bounded synthetic
+owner test, not general employer email delivery. Other users keep the reviewed
+download/external-submission journey while broader sending remains closed.

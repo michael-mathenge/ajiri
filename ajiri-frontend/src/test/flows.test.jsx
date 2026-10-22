@@ -131,7 +131,7 @@ describe('Applications', () => {
     await screen.findByText('Developer, Example')
     fireEvent.click(screen.getByText('Review application'))
     expect(
-      screen.getByText(/Managed application sending is awaiting activation/)
+      screen.getByText(/Document approval alone never sends an email/)
     ).toBeVisible()
     expect(
       screen.queryByRole('button', { name: 'Send application' })

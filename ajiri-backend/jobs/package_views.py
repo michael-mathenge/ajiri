@@ -1,4 +1,4 @@
-"""Private drafting and document approval endpoints; managed sending stays disabled."""
+"""Private drafting and document approval; dispatch requires separate permission."""
 from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
@@ -13,7 +13,7 @@ from profiles.cv_validation import StrictSerializer, StrictText, SchemaVersion, 
 from profiles.download_names import document_name
 from profiles.cv_views import PrivateCVView
 from .models import Application
-from .application_packages import (context, blocked, require_editable, selected_cv,
+from .application_packages import (context, is_editable, require_editable, selected_cv,
     draft_letter, package_data, save_package, PackageConflict)
 from .package_review import owner_package, review_data, verified_documents, approve_package
 
@@ -53,7 +53,7 @@ class PackageListView(PrivateCVView):
         current = context(app)
         result.data.update(latest_revision=packages.values_list('revision', flat=True).first() or 0,
             job_context=current, context_sha256=content_hash(current),
-            editable=not blocked(app) and app.job.is_active and not app.job.is_flagged_scam)
+            editable=is_editable(app))
         return result
 
     def post(self, request, pk):

@@ -128,7 +128,7 @@ it('prepares a selected approval then opens real application review without send
     screen.queryByRole('button', { name: 'Send application' })
   ).not.toBeInTheDocument()
   expect(
-    screen.getByText(/Managed application sending is awaiting activation/)
+    screen.getByText(/Document approval alone never sends an email/)
   ).toBeVisible()
   expect(screen.getByRole('button', { name: 'Download CV' })).toBeVisible()
   expect(apiClient.post.mock.calls).toEqual([

@@ -112,8 +112,8 @@ export function ApplicationRow({ application: app, onUpdate }) {
           )}
           {ready && email && (
             <p>
-              Managed application sending is awaiting activation. No email will
-              be sent from this page.
+              Document approval alone never sends an email. Review the separate
+              email permission controls in the approved package.
             </p>
           )}
           {ready && !email && (

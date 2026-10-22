@@ -198,8 +198,8 @@ if DEBUG:
 # Console backend prints emails to the terminal instead of sending them —
 # free, zero setup, perfect for local dev. Swap to a real SMTP/API backend
 # (e.g. Django Anymail + a provider) before going to production.
-# Defaults to the console backend. To send real mail set EMAIL_BACKEND to
-# 'django.core.mail.backends.smtp.EmailBackend' plus the EMAIL_HOST* variables.
+# Development defaults to console mail. Managed delivery uses the separate
+# gated Brevo services; selecting an SMTP backend does not activate those routes.
 EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')
 EMAIL_HOST = os.environ.get('EMAIL_HOST', '')
 EMAIL_PORT = int(os.environ.get('EMAIL_PORT', '587'))
@@ -210,6 +210,9 @@ DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'Ajiri <noreply@ajiri.
 
 # see docs/CONCEPTS.md#owner-email-pilot
 REAL_EMAIL_ENABLED = env_bool('REAL_EMAIL_ENABLED', False)
+# Separate opt-in; default remains disabled even when account security mail is on.
+APPLICATION_EMAIL_ENABLED = env_bool('APPLICATION_EMAIL_ENABLED', False)
+APPLICATION_PILOT_LIMIT_REVIEW = os.environ.get('APPLICATION_PILOT_LIMIT_REVIEW', '')
 EMAIL_DELIVERY_MODE = os.environ.get('EMAIL_DELIVERY_MODE', '')
 EMAIL_PILOT_OWNER_ID = os.environ.get('EMAIL_PILOT_OWNER_ID', '')
 EMAIL_PILOT_RECIPIENT = os.environ.get('EMAIL_PILOT_RECIPIENT', '')

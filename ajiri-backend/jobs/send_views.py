@@ -1,4 +1,4 @@
-"""Owner-only evidence and reconciliation. Real application dispatch is deliberately disconnected."""
+"""Owner-only evidence and opt-in synthetic pilot dispatch; employers stay blocked."""
 from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
@@ -11,7 +11,7 @@ from .application_packages import PackageConflict
 from .models import ApplicationSendAuthorization as Authorization
 from .package_views import owner_application
 from .send_authorization import (plan_response, authorize, authorization_data,
-    owner_authorization, withdraw, DISABLED)
+    owner_authorization, withdraw)
 
 
 class RetryQuery(StrictSerializer):
@@ -90,5 +90,14 @@ class DispatchAuthorizationView(PrivateCVView):
         data = authorization_data(authorization)
         if data['attempt'] is not None:
             return Response(data)  # Receipt remains readable even after file/mailbox edits.
-        # No transport factory, credentials read, quota claim or alternate email backend here.
-        return Response({'detail': DISABLED, 'code': 'application_sending_disabled'}, status=409)
+        if not data['dispatch_enabled']:
+            return Response({'detail': data['disabled_reason'], 'code': 'application_sending_disabled'}, status=409)
+        from .application_dispatch import dispatch
+        from .delivery_service import DeliveryError
+        try:
+            dispatch(request.user, authorization)
+        except DeliveryError:
+            return Response({'detail': 'Sending could not be confirmed. Check the authorization receipt before any further action.',
+                             'code': 'application_dispatch_unavailable'}, status=409)
+        authorization.refresh_from_db()
+        return Response(authorization_data(authorization))
