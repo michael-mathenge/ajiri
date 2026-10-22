@@ -20,7 +20,9 @@ def search_jobs(queryset, value):
     query = expression(value.strip())
     if not query:
         return queryset.none() if value.strip() else queryset
-    matches = RawSQL('SELECT rowid FROM jobs_job_search WHERE jobs_job_search MATCH %s', [query])
-    relevance = RawSQL("""(SELECT bm25(jobs_job_search, 8.0, 3.0, 1.0, 1.0, 2.0)
-        FROM jobs_job_search WHERE rowid = jobs_job.id AND jobs_job_search MATCH %s)""", [query])
-    return queryset.filter(pk__in=matches).alias(search_rank=relevance).order_by('search_rank', '-posted_at', '-pk')
+    # Join the matching FTS rows once. A correlated MATCH subquery per job
+    # repeatedly scans broad matches and made production p95 exceed the budget.
+    matches = queryset.extra(tables=['jobs_job_search'], where=[
+        'jobs_job.id = jobs_job_search.rowid', 'jobs_job_search MATCH %s'], params=[query])
+    relevance = RawSQL('bm25(jobs_job_search, 8.0, 3.0, 1.0, 1.0, 2.0)', [])
+    return matches.alias(search_rank=relevance).order_by('search_rank', '-posted_at', '-pk')

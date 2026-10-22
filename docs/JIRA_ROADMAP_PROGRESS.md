@@ -605,3 +605,44 @@ Lighthouse login/register medians: score 78/78, LCP 4158.259/4152.536ms,
 TBT 134/128.5ms, CLS 0/0.03643, transfer 484615/481703 bytes; unchanged budgets.
 No new runtime dependency or migration. Generated frontend is committed last.
 Production remains 46c7ea7 until the separately verified batch activation.
+
+## 22 October batch activation and search follow-up
+
+PR #39 merged at 084e4e3a97dccf5941ccdf40a3ee7d65812b2df8 after all six
+checks passed for 9c95f69990d37abf2785c82a7b3380a0e8716a77. PRs #36–#39
+are now deployed. Preflight identified only jobs.0011_job_full_text_search and
+pip_install_required=false. Actual check/drift passed; migrate jobs 0011 applied
+successfully and subsequent plan was empty. HTTPS health/HSTS300, v1 health,
+exact released HTML/assets/schema and all six PWA resources passed. A transient
+502 during worker startup cleared after the normal reload; health then passed.
+Authenticated jobs (877), keyword python (14 results), profile and owner uploaded
+CV download passed; downloaded DOCX checked structurally without content inspection.
+Security and alert-off flags preserved. Both writer workflows were restored active.
+
+Actual account quota was 326.1/512 MB before backup. Fresh complete snapshot
+backup-20261022T002304830379Z-8c22008e was verified on-server and independently
+off-server with SQLite integrity and safe isolated restoration:13 files/224960 bytes.
+Bundle971905 bytes, SHA256
+0ecd0664654822d837bd5d7a44c7212d6b1315240ae3014f114210761aa2bc6f.
+Sanitized receipt/private copy retained outside Git. Writers resumed before download.
+No retained backup was deleted. Rollback keeps additive index/newer writes; retire
+PWA at original /sw.js as documented rather than simply deleting the worker.
+
+Production read-only benchmark (20 runs/query): active877; sampled-title top5 recall
+12/12. Median/p95 ms:15.473/27.267,33.215/84.179,120.579/243.216,3.040/3.695.
+The third broad query exceeded the working200ms p95 target; AJ-39 stays open.
+Follow-up branch codex/jira-search-tuning replaces correlated per-row MATCH with
+one parameterized FTS join, preserving BM25 weights and stable tie-breakers.
+All six focused tests pass (0.440s). The 1001-row regression now checks the actual
+ORM plan has one virtual-table scan, no correlated scan and no duplicate rows.
+Full gates and repeated production measurement are pending for this follow-up.
+
+Read-only candidate-join production measurement (no files/config/data changed,
+20 runs per fixed query) returned the same14/20/20/20 rows. Median/p95ms:
+1.921/2.250,2.404/2.723,20.425/24.546,2.226/2.503. This supports the focused
+query fix but is not a claim that the candidate source is already deployed.
+For this package, Node24.19 locked npmci364 audit/zero vulnerabilities, lint,
+126 components and build pass; all32 generated files remain byte-identical.
+Strict schema/drift and Ruff pass. Full Django result pending.
+
+Search-tuning final local gates: full Django344 tests OK/one known Windows skip in261.554s; system check and migration drift pass. Node24.19 locked npmci/lint/126 components/build pass, all32 generated files unchanged. Strict schema drift, Ruff, pre-commit configuration and three release-script unit tests pass. No migration, dependency, frontend or hosting change.

@@ -66,6 +66,12 @@ class JobSearchTests(TestCase):
         self.assertEqual(first[0], target.pk)
         self.assertFalse(set(first) & set(second))
         self.assertEqual(first, list(matches.values_list('pk', flat=True)[:20]))
+        # Verify the real ORM query plan, not an unrelated hand-written example:
+        # broad searches must scan FTS once, without per-row correlated MATCH.
+        plan = matches.explain().upper()
+        self.assertEqual(plan.count('VIRTUAL TABLE INDEX'), 1)
+        self.assertNotIn('CORRELATED', plan)
+        self.assertEqual(len(set(matches.values_list('pk', flat=True))), 1001)
 
     def test_index_is_used_and_benchmark_is_read_only(self):
         self.job('Project manager', description='Planning')
