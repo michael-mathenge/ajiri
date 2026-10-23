@@ -390,6 +390,10 @@ X_FRAME_OPTIONS = os.environ.get('X_FRAME_OPTIONS', 'DENY')
 # route in config/urls.py serves index.html for client-side routes.
 # See docs/CONCEPTS.md#spa-fallback-route
 FRONTEND_BUILD_DIR = BASE_DIR / 'frontend_build'
+# Publication is an explicit opt-in; private APIs retain their existing guards.
+# see docs/CONCEPTS.md#public-job-contract
+PUBLIC_JOBS_ENABLED = os.environ.get('PUBLIC_JOBS_ENABLED', 'False').lower() == 'true'
+PUBLIC_JOB_ORIGIN = os.environ.get('PUBLIC_JOB_ORIGIN', '')
 if FRONTEND_BUILD_DIR.is_dir():
     WHITENOISE_ROOT = FRONTEND_BUILD_DIR
 

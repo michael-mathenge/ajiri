@@ -718,3 +718,30 @@ unexplained log. Mobile medians login/register:score77/77,LCP4172.948/4186.079ms
 TBT146.5/154.5ms,CLS0/0,transfer484589/481677bytes,zero trace retries; budgets unchanged.
 Source/isolated-runner and32 generated files match; subsequent build matches bytes.
 Generated frontend is final package commit. No real inbox delivery claimed.
+
+
+## Resumption - 23 October 2026
+
+Remote main remains8d0b276 (PR42). Read-only PythonAnywhere console confirms
+clean deployed0678f40; PR42 is not deployed. Actual account quota360.9/512MB.
+Ingestion and sweep were found disabled from the interrupted release; both were
+restored to their recorded prior active states and independently confirmed active.
+No code/database activation or real application email occurred during recovery.
+
+AJ42 continues on codex/jira-public-jobs, base8d0b276. Seven focused synthetic
+public-page/sitemap/privacy tests pass0.304s; system check and migration drift
+pass. An initial template encoding defect was fixed. Publication remains off.
+Node24.19 retained runtime: locked npmci364 audit/zero vulnerabilities,126 component
+tests and build pass; explicit source lint, ESLint and hook-safety test pass.
+Initial sandboxed backend run produced storage errors and stalled; interrupted,
+not counted as a pass. Full suite restarted with ordinary temporary permissions.
+No new commit, push or deployment yet. See docs/PUBLIC_JOBS.md.
+
+AJ42 final local gate: full Django361 tests OK/one known Windows skip265.815s
+with ordinary temporary-folder permissions. Strict offline schema bytes pass.
+Frontend source matches the verification copy after CRLF normalization and all32
+build files match byte-for-byte. No frontend changes or generated-build commit
+needed for this backend-only package. Public rollout remains disabled pending
+the newly approved shared freshness and employer-review implementation.
+Michael approved hiding unverified RSS jobs, mandatory employer deadlines/staff
+review and no seeker application charges; see docs/JOB_TRUST_AND_FRESHNESS.md.
