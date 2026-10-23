@@ -28,21 +28,37 @@ Users are mostly on phones with limited data. **Mobile-first, lightweight, acces
 - Production: PythonAnywhere free tier, a committed `frontend_build`, and a GitHub Actions workflow that posts jobs to `POST /api/jobs/ingest/` and `/api/jobs/sweep/` (header `X-Ingest-Key`)
 - CI exists (`.github/workflows/ci.yml`: backend checks, migrations, tests, frontend lint/build, committed-build consistency; Python matrix 3.12-3.14). Local dev and PythonAnywhere use Python 3.12.
 
-## 4. Verified state (22 October 2026)
+## 4. Verified state (23 October 2026)
 
-Recorded deployed source is `0678f404008ccb5c989ee7175f44b86c5a390b3f` (PR #40),
-including forms, version-one API aliases/schema, keyword search and private-safe PWA.
-Only additive jobs.0011_job_full_text_search was applied; no runtime pip install.
-Verified backup/off-server copy/isolated restore preceded activation. Production
-checks, empty migration plan, HTTPS/HSTS300 and exact HTML/assets/schema/PWA files
-passed. Authenticated jobs/search/profile and private uploaded-CV download passed.
-Search sampled-title recall was 12/12. The single-scan query fix reduced the
-worst measured production p95 from 243.216ms to 26.591ms (877 jobs,20 runs/query).
-AJ-39 performance acceptance passed. Separate post-merge Lighthouse runs have
-intermittent NO_NAVSTART trace failures; retain failed evidence and diagnose them
-without relaxing budgets or treating unavailable measurements as passes.
-Manual Android/iOS installation remains unverified; real Chromium installability,
-offline privacy, retirement, accessibility and performance tests passed locally/CI.
+Recorded deployed source is `2a301f049cdcb66920cd71abd0b00a4fea24c35a` (PR #44),
+including reviewed employer posting and shared vacancy freshness checks. PR #42's
+managed application transport remains gated; deployment does not enable sending.
+Additive jobs.0012/0013 applied; system/drift checks and an empty migration plan
+passed. The optional application URL preserves all three SQLite search triggers.
+
+JOB_FRESHNESS_ENFORCED and EMPLOYER_POSTING_ENABLED are true. Anonymous
+PUBLIC_JOBS_ENABLED remains false. 979 jobs were retained; 977 active historical
+listings without reliable evidence were archived as unverified, not proven expired.
+No currently eligible vacancies remained at activation. Do not disable freshness
+on rollback; independently disable posting/publication and preserve new records.
+Independent staff review and a future closing date are required for employer jobs.
+General employer email onboarding remains constrained by the owner-only mail pilot.
+
+A fresh consistent backup, exact private off-server copy and isolated restore
+passed (13 media files); writers were restored before download. This was a release
+fallback, not proof of a fresh unattended daily snapshot. Production HTTPS health,
+HSTS300, exact live HTML/employer bundles, clean source and authenticated jobs/
+employer-page reads passed. The signed-in account had no historical applications,
+so an additional real document download was unavailable; automated ownership and
+unchanged-document regressions passed. No real employer or application was sent.
+
+All six required checks passed on c7a00bc (CI40011465224), including eight Linux
+browser/performance tests in 96.909s. Locally: 378 Django tests (one platform skip),
+132 components and seven browser journeys passed. Local Lighthouse NO_NAVSTART
+remains failed evidence; a valid Linux pass does not erase that local limitation.
+Manual Android/iOS installation remains unverified. Earlier search measurements
+(877-job sample) remain historical evidence in docs/JIRA_ROADMAP_PROGRESS.md.
+
 Earlier PR #30/#31 functionality remains:
 verified-request erasure with signed recovery journals, resumable private-file cleanup
 and restore replay. Production verification used dry runs only; no account was erased.
