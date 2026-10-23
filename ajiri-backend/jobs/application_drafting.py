@@ -9,9 +9,16 @@ from profiles.cv_builder import document_bytes, CVUnavailable
 from profiles.cv_validation import MAX_DOCUMENT_BYTES
 from .cover_letter_generator import generate_cover_letter_docx
 from .models import Application, Job
+from .freshness import job_is_eligible
+from django.conf import settings
+from rest_framework.exceptions import ValidationError
 
 
 def prepare_application(user, job, approval):
+    def require_current():
+        if settings.JOB_FRESHNESS_ENFORCED and not job_is_eligible(job):
+            raise ValidationError('This job is closed or its current availability is not verified.')
+    require_current()
     cv = document_bytes(approval)
     letter = generate_cover_letter_docx(user.profile, job).getvalue()
     if len(letter) > MAX_DOCUMENT_BYTES:
@@ -35,6 +42,7 @@ def prepare_application(user, job, approval):
             written.append((field.storage, field.name))
         try:
             with transaction.atomic():
+                require_current()
                 application.save(force_insert=True)
         except IntegrityError:
             # Another request may have won the user/job uniqueness constraint.

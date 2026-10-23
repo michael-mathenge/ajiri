@@ -1,5 +1,6 @@
 from profiles.alert_consent import eligible
 from .models import Job, Notification
+from .freshness import eligible_jobs, job_is_eligible, archive_expired
 
 # A job scoring at or above this against a profile is considered a strong
 # enough match to interrupt the user with an alert. See docs/CONCEPTS.md#job-alerts
@@ -54,7 +55,7 @@ def notify_matching_profiles(job):
     # work fine today — kept local here mainly so this function's
     # dependencies are obvious at a glance.
 
-    if not job.is_active or job.is_flagged_scam:
+    if not job_is_eligible(job):
         return 0
 
     notified_count = 0
@@ -99,6 +100,7 @@ def sweep_all_active_jobs_for_matches():
     thinking applied to Auto-Apply applies here too.
     """
     total_notified = 0
-    for job in Job.objects.filter(is_active=True, is_flagged_scam=False):
+    archive_expired()
+    for job in eligible_jobs():
         total_notified += notify_matching_profiles(job)
     return total_notified

@@ -132,6 +132,8 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
 
+TEST_RUNNER = 'browser_tests.runner.DisposableBrowserRunner'
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -251,6 +253,7 @@ REST_FRAMEWORK = {
         'register': os.environ.get('THROTTLE_REGISTER_RATE', '5/hour'),
         'refresh': os.environ.get('THROTTLE_REFRESH_RATE', '60/min'),
         'apply': os.environ.get('THROTTLE_APPLY_RATE', '20/hour'),
+        'employer_mutation': '60/hour',
         'send': os.environ.get('THROTTLE_SEND_RATE', '10/hour'),
     },
 }
@@ -394,6 +397,10 @@ FRONTEND_BUILD_DIR = BASE_DIR / 'frontend_build'
 # see docs/CONCEPTS.md#public-job-contract
 PUBLIC_JOBS_ENABLED = os.environ.get('PUBLIC_JOBS_ENABLED', 'False').lower() == 'true'
 PUBLIC_JOB_ORIGIN = os.environ.get('PUBLIC_JOB_ORIGIN', '')
+# Enable only after the additive publication-evidence migration is installed.
+JOB_FRESHNESS_ENFORCED = env_bool('JOB_FRESHNESS_ENFORCED', False)
+EMPLOYER_POSTING_ENABLED = env_bool('EMPLOYER_POSTING_ENABLED', False)
+RSS_AVAILABILITY_MAX_AGE_SECONDS = 86400
 if FRONTEND_BUILD_DIR.is_dir():
     WHITENOISE_ROOT = FRONTEND_BUILD_DIR
 

@@ -11,6 +11,7 @@ const job = {
   id: 1,
   title: 'Developer',
   company_name: 'Test',
+  publication: { status: 'published', closes_at: '2099-01-01T00:00:00Z' },
   description: 'Test role',
 }
 const cv = {

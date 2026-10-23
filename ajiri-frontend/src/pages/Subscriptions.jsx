@@ -27,6 +27,10 @@ export default function Subscriptions() {
       <section>
         <span className="eyebrow">PLAN YOUR NEXT CHAPTER</span>
         <h1>Simple plans. Clear prices.</h1>
+        <p>
+          Browsing vacancies and applying for jobs are free. Ajiri does not
+          charge an application fee or silently subscribe you when you apply.
+        </p>
         <p className="lead">
           A preview of what’s planned for Ajiri. Subscriptions are not available
           to purchase yet.

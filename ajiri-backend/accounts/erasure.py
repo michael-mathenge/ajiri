@@ -87,6 +87,12 @@ def document_path(name):
 
 
 def inventory(user):
+    # Employer ownership and moderation can affect other applicants' records.
+    # Fail before any writes until a scoped, legally reviewed removal is prepared.
+    from jobs.models import EmployerOrganisation, EmployerReview
+    if (EmployerOrganisation.objects.filter(Q(owner=user) | Q(reviewed_by=user)).exists()
+            or EmployerReview.objects.filter(actor=user).exists()):
+        raise CommandError('Employer or moderation records require a reviewed erasure plan before account removal.')
     if (ApplicationPackage.objects.filter(cv_approval__profile__user=user).exclude(application__user=user).exists()
             or ApplicationPackage.objects.filter(application__user=user).exclude(cv_approval__profile__user=user).exists()
             or ApplicationSendAuthorization.objects.filter(application__user=user).exclude(owner=user).exists()

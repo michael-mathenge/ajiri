@@ -48,3 +48,19 @@ Phone installation varies by browser; see [installation guide](PWA_GUIDE.md).
 The [managed application pilot](MANAGED_APPLICATION_PILOT.md) is a bounded synthetic
 owner test, not general employer email delivery. Other users keep the reviewed
 download/external-submission journey while broader sending remains closed.
+
+## Employer vacancies and availability
+
+The employer workflow is available only after the release is activated. Open
+**Post a job**, submit your organisation, then enter the vacancy, official
+application URL and closing date/time. Your current account email must be verified.
+A separate staff reviewer checks the organisation and vacancy before publication.
+Submitting a form does not publish a job. Refresh review status to see a decision;
+use Withdraw when recruitment ends early. Staff use `/employers/review` and record
+a reason for each decision. Review does not guarantee an employer's authenticity.
+
+Job seekers pay nothing to browse or apply. A listing shows its source, closing
+date and evidence time where available. RSS jobs without reliable availability
+evidence are hidden; older evidence is archived even if the link still works.
+A temporarily empty list is preferable to presenting unverified jobs as open.
+Existing application documents remain available privately after a vacancy closes.

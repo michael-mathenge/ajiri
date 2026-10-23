@@ -19,6 +19,7 @@ from profiles.cv_builder import content_hash, document_bytes, CVUnavailable
 from profiles.cv_validation import MAX_DOCUMENT_BYTES
 from profiles.models import CVApproval
 from .models import Application, ApplicationPackage, ApplicationSendAuthorization
+from .freshness import job_is_eligible
 
 TEMPLATE_VERSION = 'application-letter-v1'
 
@@ -48,7 +49,7 @@ def context(application):
 def require_editable(application):
     if blocked(application) or application.job.is_flagged_scam:
         raise PackageConflict()
-    if not application.job.is_active:
+    if not job_is_eligible(application.job):
         # Only the separately enabled, exact owner synthetic pilot can prepare an
         # inactive job. Keeping it inactive excludes it from browsing/match sweeps.
         from .application_dispatch import editable_pilot

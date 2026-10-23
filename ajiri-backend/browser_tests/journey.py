@@ -6,6 +6,7 @@ see docs/CONCEPTS.md#browser-acceptance
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 import tempfile
+import logging
 from unittest.mock import patch
 
 from django.conf import settings
@@ -22,6 +23,7 @@ from .accessibility import audit
 class WorkerRollbackFixture:
     """Local-only static response swap simulates a reloaded rollback deployment."""
     retirement = None
+    server_failures = []
 
     def __init__(self, get_response):
         self.get_response = get_response
@@ -34,6 +36,39 @@ class WorkerRollbackFixture:
             return response
         return self.get_response(request)
 
+    def process_exception(self, request, exception):
+        self.capture_exception(exception)
+
+    @staticmethod
+    def capture_exception(exception):
+        # Synthetic test diagnostics only: no message, URL, query or user data.
+        allowed = {'OperationalError', 'IntegrityError', 'DatabaseError', 'ValueError',
+                   'AttributeError', 'RuntimeError', 'KeyError', 'RelatedObjectDoesNotExist'}
+        kind = type(exception).__name__
+        frames = []
+        trace = exception.__traceback__
+        while trace:
+            file = Path(trace.tb_frame.f_code.co_filename)
+            if file.is_relative_to(settings.BASE_DIR):
+                frames.append({'file': file.relative_to(settings.BASE_DIR).as_posix(), 'line': trace.tb_lineno})
+            trace = trace.tb_next
+        data = {
+            'exception_type': kind if kind in allowed else 'other',
+            'sqlite_code': getattr(exception.__cause__, 'sqlite_errorcode', None),
+            'frames': frames[-3:],
+        }
+        if type(data['sqlite_code']) is not int:
+            data['sqlite_code'] = None
+        if data not in WorkerRollbackFixture.server_failures:
+            WorkerRollbackFixture.server_failures.append(data)
+            print('Synthetic server exception:', data)
+
+
+class SyntheticExceptionHandler(logging.Handler):
+    def emit(self, record):
+        if record.exc_info and record.exc_info[1]:
+            WorkerRollbackFixture.capture_exception(record.exc_info[1])
+
 
 @override_settings(MIDDLEWARE=['browser_tests.journey.WorkerRollbackFixture', *settings.MIDDLEWARE],
     DEBUG=False, ALLOWED_HOSTS=['localhost', '127.0.0.1'],
@@ -41,12 +76,20 @@ class WorkerRollbackFixture:
     CSRF_COOKIE_SECURE=False, SESSION_COOKIE_SECURE=False,
     EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend',
     ACCOUNT_EMAIL_TEST_CAPTURE=True, REAL_EMAIL_ENABLED=False, ALERT_EMAIL_ENABLED=False,
-    BREVO_API_KEY='', INGEST_API_KEY='')
+    BREVO_API_KEY='', INGEST_API_KEY='', JOB_FRESHNESS_ENFORCED=True)
 class BrowserJourney(LiveServerTestCase):
     host = '127.0.0.1'
 
     def setUp(self):
+        from django.db import connection
+        if connection.vendor == "sqlite":
+            self.assertFalse(connection.is_in_memory_db(), "Browser HTTP tests require a disposable file database.")
         WorkerRollbackFixture.retirement = None
+        WorkerRollbackFixture.server_failures = []
+        handler = SyntheticExceptionHandler()
+        logger = logging.getLogger('django.request')
+        logger.addHandler(handler)
+        self.addCleanup(logger.removeHandler, handler)
         self.assertTrue((settings.FRONTEND_BUILD_DIR / 'index.html').is_file(),
             'Build the React client before running browser acceptance.')
         self.private = tempfile.TemporaryDirectory(prefix='ajiri-browser-')
@@ -62,6 +105,11 @@ class BrowserJourney(LiveServerTestCase):
             description='Synthetic test vacancy. No employer contact.', source_name='browser-test',
             source_url='https://example.invalid/browser-test', application_method='email',
             application_email='synthetic-employer@example.invalid')
+        from jobs.models import JobPublication
+        from django.utils import timezone
+        from datetime import timedelta
+        JobPublication.objects.create(job=self.job, origin='rss', status='published',
+            closes_at=timezone.now()+timedelta(days=2), confirmed_at=timezone.now())
 
     def test_register_cv_approve_prepare_review_never_sends(self):
         # Playwright's sync event loop lives in a worker: ORM stays on Django's
@@ -78,6 +126,116 @@ class BrowserJourney(LiveServerTestCase):
         self.assertEqual(DeliveryAttempt.objects.count(), 0)
         self.assertEqual(DeliveryDailyBudget.objects.count(), 0)
         self.assertEqual(mail.outbox, [])
+
+    @override_settings(JOB_FRESHNESS_ENFORCED=True, EMPLOYER_POSTING_ENABLED=True, PUBLIC_JOB_ORIGIN='https://example.invalid')
+    def test_employer_submission_staff_review_and_withdrawal(self):
+        from accounts.models import User
+        from jobs.models import EmployerJobDraft
+        from django.utils import timezone
+        owner = User.objects.create_user(email='employer-browser@example.invalid', password='Synthetic-Employer-982!')
+        owner.profile.email_verified_at = timezone.now()
+        owner.profile.verified_email = owner.email
+        owner.profile.save()
+        User.objects.create_user(email='reviewer-browser@example.invalid', password='Synthetic-Reviewer-982!', is_staff=True)
+        def journey():
+            with sync_playwright() as playwright:
+                browser = playwright.chromium.launch()
+                failures = []
+                def login(email, password):
+                    context = browser.new_context(viewport={'width':390,'height':844})
+                    context.on('response', lambda response: failures.append(response.status) if response.status >= 500 else None)
+                    context.route('**/*', lambda route: route.continue_() if route.request.url.startswith(self.live_server_url+'/') else route.abort())
+                    page = context.new_page()
+                    page.goto(self.live_server_url+'/login')
+                    page.get_by_label('Email address', exact=True).fill(email)
+                    page.get_by_label('Password', exact=True).fill(password)
+                    page.get_by_role('button',name='Log in',exact=True).click()
+                    page.wait_for_url(self.live_server_url+'/')
+                    return context,page
+                employer, page = login('employer-browser@example.invalid','Synthetic-Employer-982!')
+                page.goto(self.live_server_url+'/employers')
+                page.get_by_label('Organisation name',exact=True).fill('Synthetic Browser Employer')
+                page.get_by_label('Official website',exact=True).fill('https://example.invalid')
+                page.get_by_role('button',name='Submit organisation for review',exact=True).click()
+                expect(page.get_by_text('Synthetic Browser Employer: pending',exact=True)).to_be_visible()
+                page.get_by_label('Job title',exact=True).fill('Synthetic reviewed opportunity')
+                page.get_by_label('Location (include country)',exact=True).fill('Nairobi, Kenya')
+                page.get_by_label('Description',exact=True).fill('Synthetic detailed responsibilities and application requirements. '*8)
+                page.get_by_label('Official application URL',exact=True).fill('https://example.invalid/careers/browser')
+                from datetime import timedelta
+                page.get_by_label('Closing date and time (your local time)',exact=True).fill((timezone.now()+timedelta(days=2)).strftime('%Y-%m-%dT%H:%M'))
+                page.get_by_role('button',name='Submit vacancy for review',exact=True).click()
+                expect(page.get_by_role('heading',name='Synthetic reviewed opportunity',exact=True)).to_be_visible()
+                staff, review = login('reviewer-browser@example.invalid','Synthetic-Reviewer-982!')
+                review.goto(self.live_server_url+'/employers/review')
+                organisation_form=review.locator('form').filter(has=review.get_by_role('heading',name='Synthetic Browser Employer',exact=True))
+                organisation_form.get_by_role('combobox').select_option('approve')
+                organisation_form.get_by_label('Review reason and evidence',exact=True).fill('Synthetic independent organisation verification.')
+                organisation_form.get_by_role('button').click()
+                expect(review.get_by_role('heading',name='Synthetic Browser Employer',exact=True)).not_to_be_visible()
+                job_form=review.locator('form').filter(has=review.get_by_role('heading',name='Synthetic reviewed opportunity',exact=True))
+                job_form.get_by_role('combobox').select_option('approve')
+                job_form.get_by_label('Review reason and evidence',exact=True).fill('Synthetic job source, deadline and absence of applicant fees checked.')
+                job_form.get_by_role('button').click()
+                expect(review.get_by_role('heading',name='Synthetic reviewed opportunity',exact=True)).not_to_be_visible()
+                with page.expect_response(lambda response: '/api/jobs/employers/drafts/' in response.url and response.request.method == 'GET') as own_drafts:
+                    page.reload()
+                expect(page.get_by_text('published',exact=False).first).to_be_visible()
+                published_id = own_drafts.value.json()['results'][0]['job']
+                page.goto(self.live_server_url+f'/jobs/{published_id}')
+                expect(page.get_by_role('heading',name='Synthetic reviewed opportunity',exact=True)).to_be_visible()
+                expect(page.get_by_role('link',name='Open employer application page (opens in a new tab)',exact=True)).to_have_attribute('href','https://example.invalid/careers/browser')
+                page.goto(self.live_server_url+'/employers')
+                expect(page.get_by_text('published',exact=False).first).to_be_visible()
+                audit(self,page,'employer-dashboard-light')
+                page.get_by_role('button',name='Withdraw Synthetic reviewed opportunity',exact=True).click()
+                expect(page.get_by_text('withdrawn',exact=False).first).to_be_visible()
+                page.wait_for_load_state('networkidle')
+                review.wait_for_load_state('networkidle')
+                assert not failures, f'Unexpected server responses: {WorkerRollbackFixture.server_failures}'
+                employer.close(); staff.close(); browser.close()
+        with patch('jobs.brevo_transport.BrevoTransport.send') as provider:
+            with ThreadPoolExecutor(max_workers=1) as worker:
+                worker.submit(journey).result(timeout=120)
+            provider.assert_not_called()
+        draft = EmployerJobDraft.objects.get()
+        self.assertEqual(draft.status, 'withdrawn')
+        self.assertEqual(draft.job.publication.status, 'archived')
+        self.assertEqual(mail.outbox, [])
+
+    def test_parallel_authenticated_reads_use_independent_connections(self):
+        from django.contrib.auth import get_user_model
+        from rest_framework_simplejwt.tokens import RefreshToken
+        from urllib.request import Request, urlopen
+
+        user = get_user_model().objects.create_user(
+            email='parallel-browser@example.invalid', password='Synthetic!Read-82-Clouds')
+        access = str(RefreshToken.for_user(user).access_token)
+
+        def read(index):
+            path = ['/api/profiles/me/', '/api/jobs/'][index % 2]
+            request = Request(self.live_server_url + path,
+                              headers={'Authorization': 'Bearer ' + access})
+            with urlopen(request, timeout=20) as response:
+                response.read()
+                return response.status
+
+        with ThreadPoolExecutor(max_workers=4) as workers:
+            self.assertEqual(list(workers.map(read, range(48))), [200] * 48)
+        self.assertEqual(WorkerRollbackFixture.server_failures, [])
+
+    def test_exception_diagnostics_omit_messages_and_absolute_paths(self):
+        from contextlib import redirect_stdout
+        from io import StringIO
+        output = StringIO()
+        with redirect_stdout(output):
+            try:
+                raise ValueError('synthetic-do-not-log')
+            except ValueError as exception:
+                WorkerRollbackFixture.capture_exception(exception)
+        self.assertIn('ValueError', output.getvalue())
+        self.assertNotIn('synthetic-do-not-log', output.getvalue())
+        self.assertNotIn(str(settings.BASE_DIR), output.getvalue())
 
     def browser_journey(self):
         with sync_playwright() as playwright:
@@ -153,7 +311,8 @@ class BrowserJourney(LiveServerTestCase):
             assert denied.status == 401, 'Anonymous document access must be denied.'
             guest.close()
             page.wait_for_load_state('networkidle')
-            assert not failures, 'Browser JavaScript or server response errors occurred.'
+            assert not failures, ('Browser JavaScript or server response errors occurred. '
+                f'Server diagnostics: {WorkerRollbackFixture.server_failures}')
             context.close()
             browser.close()
 

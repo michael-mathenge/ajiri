@@ -13,6 +13,7 @@ from profiles.alert_views import ChoiceSerializer
 from jobs.views import ApplicationCVInput
 from jobs.package_views import DraftInput, PackageInput, ApprovalInput
 from jobs.send_views import AuthorizationInput
+from jobs.employer_views import ReviewInput
 
 
 class LoginInput(serializers.Serializer):
@@ -30,6 +31,8 @@ class ErrorOutput(serializers.Serializer):
 
 
 INPUTS = {
+    ('OrganisationReview', 'POST'): ReviewInput,
+    ('DraftReview', 'POST'): ReviewInput,
     ('RegisterView', 'POST'): RegisterSerializer,
     ('LoginView', 'POST'): LoginInput,
     ('PasswordResetRequest', 'POST'): EmailInput,

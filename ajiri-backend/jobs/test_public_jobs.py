@@ -52,7 +52,7 @@ class PublicJobTests(TestCase):
         self.assertNotIn("validThrough", data)
         self.assertNotIn("baseSalary", data)
         self.assertNotIn("directApply", data)
-        self.assertEqual(response["Cache-Control"], "public, max-age=300")
+        self.assertEqual(response["Cache-Control"], "no-store")
         self.assertNotIn("csrftoken", response.cookies)
         self.assertLess(len(response.content), 12000)
         self.assertEqual(self.client.get("/api/jobs/").status_code, 401)

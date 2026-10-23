@@ -1,4 +1,5 @@
 from django.urls import path
+from .employer_views import OrganisationList, DraftList, DraftWithdraw, OrganisationReview, DraftReview, ReviewQueue
 from .send_views import (SendPlanView, SendAuthorizationListView, SendAuthorizationView,
                          WithdrawAuthorizationView, DispatchAuthorizationView)
 from .package_views import (PackageListView, PackageDraftView, PackageReviewView,
@@ -20,6 +21,12 @@ from .views import (
 )
 
 urlpatterns = [
+    path('employers/review-queue/', ReviewQueue.as_view(), name='employer-review-queue'),
+    path('employers/organisations/', OrganisationList.as_view(), name='employer-organisations'),
+    path('employers/drafts/', DraftList.as_view(), name='employer-drafts'),
+    path('employers/drafts/<int:pk>/withdraw/', DraftWithdraw.as_view(), name='employer-withdraw'),
+    path('employers/organisations/<int:pk>/review/', OrganisationReview.as_view(), name='employer-organisation-review'),
+    path('employers/drafts/<int:pk>/review/', DraftReview.as_view(), name='employer-draft-review'),
     path('applications/<int:pk>/send-plan/', SendPlanView.as_view(), name='application-send-plan'),
     path('applications/<int:pk>/send-authorizations/', SendAuthorizationListView.as_view(), name='application-authorizations'),
     path('applications/<int:pk>/send-authorizations/<uuid:authorization_id>/', SendAuthorizationView.as_view(), name='application-authorization'),

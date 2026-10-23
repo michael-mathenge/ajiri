@@ -1189,3 +1189,21 @@ Fixed-origin canonical links prevent request-host poisoning. Missing source fact
 omit structured metadata instead of inventing dates, salary, location or expiry.
 Sitemaps are stable and paginated; robots instructions do not replace authentication.
 See `../../docs/PUBLIC_JOBS.md` for the test integration and rollout conditions.
+## job-freshness-evidence
+
+A feed retrieval is not proof a vacancy is still open. Publication evidence keeps
+an explicit future closing date or time-limited source confirmation. The same
+read-time rule protects browsing, alerts and application preparation, so a delayed
+archive task cannot expose expired vacancies. Scheduled ingestion and match sweeps
+also archive expired evidence without deleting jobs or historical applications.
+Employer email verification is separate from staff review of the organisation and
+listing. Staff must record a reason and review the current revision; employers
+cannot approve themselves. New schema is additive; old rows gain no inferred proof.
+See `../../docs/JOB_TRUST_AND_FRESHNESS.md` for rollout and the approved scope.
+
+## browser-database-isolation
+
+Browser acceptance uses a private temporary SQLite file. This gives threaded HTTP
+requests independent connections, rather than sharing one in-memory connection.
+The test runner removes the database afterwards; normal unit-test discovery keeps
+Django's default setup. Development and production databases are never copied.

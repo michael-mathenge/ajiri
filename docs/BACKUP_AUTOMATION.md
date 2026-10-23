@@ -105,3 +105,16 @@ traversal, links, oversized expansion, mismatched inventory and partial manifest
 are rejected. The same command works on a private downloaded backup in development
 configuration. It never writes the live database. A source revision of unverified
 in a Git-free packaged backup is explicit missing provenance, not a verified release.
+
+### Access check and verified fallback - 23 October 2026
+
+An empty browser-tab inventory does not establish that authentication expired.
+Open the known PythonAnywhere dashboard and inspect the actual signed-in state
+before deferring a backup. Never bypass a login challenge.
+
+The development-run fallback completed a consistent database/media snapshot from
+0678f404, restored the previously active web app and ingestion/sweep workflows,
+then downloaded and independently verified the exact bundle and isolated restore.
+The private receipt is outside Git under the owner's AjiriBackups directory.
+This is evidence for a verified fallback, not an unattended scheduler execution.
+Retention remains report-only; no retained backup was removed.

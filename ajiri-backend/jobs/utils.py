@@ -42,3 +42,17 @@ def fix_mojibake(text: str) -> str:
         return text.encode('cp1252').decode('utf-8')
     except (UnicodeDecodeError, UnicodeEncodeError):
         return text
+def safe_http_url(value):
+    """Accept link destinations without fetching them or trusting their contents."""
+    from urllib.parse import urlsplit
+    if not isinstance(value, str):
+        return ''
+    try:
+        parsed = urlsplit(value)
+        if (parsed.scheme in ('http', 'https') and parsed.hostname
+            and not parsed.username and not parsed.password and value == value.strip()
+            and not any(ord(char) < 32 for char in value)):
+            return value
+    except (ValueError, TypeError):
+        pass
+    return ''
