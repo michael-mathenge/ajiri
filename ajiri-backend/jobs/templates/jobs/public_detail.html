@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ title }} — {{ company }} | Ajiri</title><meta name="description" content="{{ description|truncatechars:160 }}">
+<link rel="canonical" href="{{ canonical }}">
+{% if structured %}<script type="application/ld+json">{{ structured|safe }}</script>{% endif %}
+<style>body{font:1rem/1.65 system-ui,sans-serif;background:#f7faf8;color:#142d24;margin:0}main,header{max-width:48rem;margin:auto;padding:1.25rem}a{color:#15533e;text-underline-offset:.2em}a:focus-visible{outline:3px solid #15533e;outline-offset:4px}h1{line-height:1.25;overflow-wrap:anywhere}article{background:white;border:1px solid #b4cec1;border-radius:.7rem;padding:1.25rem}section{margin:1.5rem 0}.action{display:inline-block;padding:.7rem 1rem;border:2px solid currentColor;border-radius:.5rem}</style>
+</head><body><a href="#main">Skip to job</a><header><a href="/">Ajiri Kenya</a></header>
+<main id="main"><article><h1>{{ title }}</h1><p>{{ company }}</p>
+<p>{{ location|default:'Location not supplied' }} · {{ job_type }}</p>
+{% if posted %}<p>Posted {{ posted|date:'j M Y' }}</p>{% else %}<p>Publication date not supplied.</p>{% endif %}
+<section aria-label="Job description"><h2>Job description</h2><p>{{ description|linebreaksbr|default:'Description not supplied.' }}</p></section>
+{% if requirements %}<section aria-label="Requirements"><h2>Requirements</h2><p>{{ requirements|linebreaksbr }}</p></section>{% endif %}
+{% if truncated %}<p>Description shortened for this page. Read the full original listing.</p>{% endif %}
+<p>Salary and expiry are not confirmed here. Check the employer's original listing.</p>
+{% if source %}<p><a href="{{ source }}" target="_blank" rel="noopener noreferrer nofollow">Read the original listing (opens in a new tab)</a></p>{% endif %}
+<p><a class="action" href="{{ application_path }}">Open in Ajiri to prepare an application</a></p>
+<p>Opening a listing does not submit an application. Never pay to apply; verify the employer before sharing personal information.</p>
+</article></main></body></html>

@@ -1181,3 +1181,18 @@ dispatch are separate actions. The existing shared ledger freezes one handoff an
 receipt; duplicate requests read it rather than sending twice. The final boundary
 rechecks owner/configuration eligibility. Inactive pilot jobs stay out of normal
 browsing and matching, while only their allowlisted owner may prepare/review them.
+## public-job-contract
+
+Public job publication is an explicit, default-off feature. Anonymous pages contain
+only active, non-scam listing facts and never profile, match or application data.
+Fixed-origin canonical links prevent request-host poisoning. Missing source facts
+omit structured metadata instead of inventing dates, salary, location or expiry.
+Sitemaps are stable and paginated; robots instructions do not replace authentication.
+See `../../docs/PUBLIC_JOBS.md` for the test integration and rollout conditions.
+
+## browser-database-isolation
+
+Browser acceptance uses a private temporary SQLite file, created and removed by
+Django's test runner. Unlike a shared in-memory connection, this allows live HTTP
+threads to use independent database connections. Ordinary unit-test discovery
+retains Django's default database setup. No development database is copied.
