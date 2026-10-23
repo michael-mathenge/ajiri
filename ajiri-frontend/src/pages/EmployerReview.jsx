@@ -3,7 +3,13 @@ import apiClient from '../api/client'
 import FormErrors from '../components/FormErrors'
 import { apiErrors } from '../lib/errors'
 import { useApiQuery, useApiInvalidation } from '../hooks/useApiQuery'
-import { LoadingState, ErrorState, Select, Textarea, Button } from '../components/ui'
+import {
+  LoadingState,
+  ErrorState,
+  Select,
+  Textarea,
+  Button,
+} from '../components/ui'
 
 export default function EmployerReview() {
   const query = useApiQuery('/jobs/employers/review-queue/')
@@ -31,7 +37,8 @@ export default function EmployerReview() {
     }
   }
   if (query.loading) return <LoadingState label="Loading staff review queue" />
-  if (query.error) return <ErrorState onRetry={query.retry}>{query.error}</ErrorState>
+  if (query.error)
+    return <ErrorState onRetry={query.retry}>{query.error}</ErrorState>
   return (
     <section className="stack">
       <h1>Staff vacancy review</h1>

@@ -8,8 +8,13 @@ vi.mock('../api/client', () => ({ default: { get: vi.fn() } }))
 const jobs = {
   count: 1,
   results: [
-    { id: 1, title: 'Developer', company_name: 'Example', match_score: 0,
-      publication: { status: 'published', closes_at: '2099-01-01T00:00:00Z' } },
+    {
+      id: 1,
+      title: 'Developer',
+      company_name: 'Example',
+      match_score: 0,
+      publication: { status: 'published', closes_at: '2099-01-01T00:00:00Z' },
+    },
   ],
 }
 beforeEach(() => vi.resetAllMocks())

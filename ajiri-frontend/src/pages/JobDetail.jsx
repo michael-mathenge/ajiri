@@ -72,7 +72,13 @@ export default function JobDetail() {
   }
   if (loading) return <LoadingState label="Loading job details" />
   if (error) return <ErrorState onRetry={retry}>{error}</ErrorState>
-  if (job && !availableAt(job, vacancyNow)) return <ErrorState onRetry={retry}>This job is closed or its current availability is not verified. Existing application documents remain in My applications.</ErrorState>
+  if (job && !availableAt(job, vacancyNow))
+    return (
+      <ErrorState onRetry={retry}>
+        This job is closed or its current availability is not verified. Existing
+        application documents remain in My applications.
+      </ErrorState>
+    )
   return (
     <div className="stack page-stack">
       <Link to="/" className="inline-link">
@@ -235,7 +241,9 @@ export default function JobDetail() {
                 rel="noopener noreferrer"
                 className="inline-link"
               >
-                {job.publication?.origin === 'employer' ? 'Open employer application page' : 'View original listing'}
+                {job.publication?.origin === 'employer'
+                  ? 'Open employer application page'
+                  : 'View original listing'}
                 <span className="sr-only"> (opens in a new tab)</span>
                 <ArrowRight size={16} aria-hidden="true" />
               </a>

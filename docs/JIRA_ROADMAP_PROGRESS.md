@@ -825,3 +825,9 @@ no metric or budget pass is claimed. Sanitized local evidence remains under
 .verification/performance. Required Linux CI must produce valid passing results
 before merging/deployment. Integration with reviewed main changed only this
 evidence log; tested feature runtime source and browser harness are unchanged.
+
+PR44 initial quality job failed its changed-file Prettier check; corrected
+seven source files. The earlier CLI check ignored files beneath .verification;
+the corrected check targeted all 13 actual source files with an explicit empty
+ignore file. All matched files passed; rebuilding preserved all 34 generated
+bytes exactly. No functionality/assertion/CI changes. Required CI rerun pending.

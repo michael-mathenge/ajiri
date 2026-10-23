@@ -161,7 +161,8 @@ export default function JobList() {
             ? 'Finding opportunities…'
             : error
               ? 'Job opportunities'
-              : currentRows.length !== rows.length ? `${currentRows.length} current listings on this page`
+              : currentRows.length !== rows.length
+                ? `${currentRows.length} current listings on this page`
                 : `${data?.count ?? 0} ${(data?.count ?? 0) === 1 ? 'opportunity' : 'opportunities'}`}
         </h2>
         <Dialog
