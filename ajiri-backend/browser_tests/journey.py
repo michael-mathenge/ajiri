@@ -81,6 +81,9 @@ class BrowserJourney(LiveServerTestCase):
     host = '127.0.0.1'
 
     def setUp(self):
+        from django.db import connection
+        if connection.vendor == 'sqlite':
+            self.assertFalse(connection.is_in_memory_db(), 'Browser HTTP tests require a disposable file database.')
         WorkerRollbackFixture.retirement = None
         WorkerRollbackFixture.server_failures = []
         handler = SyntheticExceptionHandler()
@@ -118,6 +121,27 @@ class BrowserJourney(LiveServerTestCase):
         self.assertEqual(DeliveryAttempt.objects.count(), 0)
         self.assertEqual(DeliveryDailyBudget.objects.count(), 0)
         self.assertEqual(mail.outbox, [])
+
+    def test_parallel_authenticated_reads_use_independent_connections(self):
+        from django.contrib.auth import get_user_model
+        from rest_framework_simplejwt.tokens import RefreshToken
+        from urllib.request import Request, urlopen
+
+        user = get_user_model().objects.create_user(
+            email='parallel-browser@example.invalid', password='Synthetic!Read-82-Clouds')
+        access = str(RefreshToken.for_user(user).access_token)
+
+        def read(index):
+            path = ['/api/profiles/me/', '/api/jobs/'][index % 2]
+            request = Request(self.live_server_url + path,
+                              headers={'Authorization': 'Bearer ' + access})
+            with urlopen(request, timeout=20) as response:
+                response.read()
+                return response.status
+
+        with ThreadPoolExecutor(max_workers=4) as workers:
+            self.assertEqual(list(workers.map(read, range(48))), [200] * 48)
+        self.assertEqual(WorkerRollbackFixture.server_failures, [])
 
     def test_exception_diagnostics_omit_messages_and_absolute_paths(self):
         from contextlib import redirect_stdout

@@ -132,6 +132,8 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
 
+TEST_RUNNER = 'browser_tests.runner.DisposableBrowserRunner'
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',

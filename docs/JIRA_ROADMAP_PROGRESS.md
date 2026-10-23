@@ -766,3 +766,20 @@ privacy regression passes0.582s and verifies that exception messages and absolut
 paths never enter these synthetic diagnostics. Production logging is unchanged.
 Full backend361/one skip278.705s remains the package baseline; required CI will
 rerun the final harness. No merge on a failed browser check.
+
+
+### 23 October 2026 - browser database isolation (local, unreleased)
+
+PR #43 browser failures exposed SQLite error 21 under threaded HTTP.
+The browser-only runner now allocates a disposable file database, preserving
+normal unit-test discovery. Five existing browser journeys passed in 139.130s;
+a separate 48-request/four-worker authenticated-read regression passed in 2.419s.
+The initial local rerun lacked AJIRI_FRONTEND_TOOLS and failed accessibility
+setup; corrected to the existing locked tool directory before the passing run.
+No HTTP assertions, provider assertions, budgets or CI check names were relaxed.
+Full backend verification and remote CI remain pending for this revision.
+
+Final local runner gates: manage.py check and makemigrations --check --dry-run
+passed; full ordinary Django discovery passed 361 tests in 303.252s (one known
+platform skip). Ruff and git diff --check passed. No frontend source changed;
+the previously verified locked install/lint/components/build remain unchanged.

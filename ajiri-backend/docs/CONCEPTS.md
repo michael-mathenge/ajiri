@@ -1189,3 +1189,10 @@ Fixed-origin canonical links prevent request-host poisoning. Missing source fact
 omit structured metadata instead of inventing dates, salary, location or expiry.
 Sitemaps are stable and paginated; robots instructions do not replace authentication.
 See `../../docs/PUBLIC_JOBS.md` for the test integration and rollout conditions.
+
+## browser-database-isolation
+
+Browser acceptance uses a private temporary SQLite file, created and removed by
+Django's test runner. Unlike a shared in-memory connection, this allows live HTTP
+threads to use independent database connections. Ordinary unit-test discovery
+retains Django's default database setup. No development database is copied.
