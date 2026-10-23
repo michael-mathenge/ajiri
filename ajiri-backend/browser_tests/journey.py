@@ -37,13 +37,21 @@ class WorkerRollbackFixture:
 
     def process_exception(self, request, exception):
         # Synthetic test diagnostics only: no message, URL, query or user data.
-        from django.db import DatabaseError
-        if isinstance(exception, DatabaseError):
-            cause = exception.__cause__
-            WorkerRollbackFixture.database_failures.append({
-                'database_error': type(exception).__name__,
-                'sqlite_code': getattr(cause, 'sqlite_errorcode', None),
-            })
+        allowed = {'OperationalError', 'IntegrityError', 'DatabaseError', 'ValueError',
+                   'AttributeError', 'RuntimeError', 'KeyError', 'RelatedObjectDoesNotExist'}
+        kind = type(exception).__name__
+        frames = []
+        trace = exception.__traceback__
+        while trace:
+            file = Path(trace.tb_frame.f_code.co_filename)
+            if file.is_relative_to(settings.BASE_DIR):
+                frames.append({'file': file.relative_to(settings.BASE_DIR).as_posix(), 'line': trace.tb_lineno})
+            trace = trace.tb_next
+        WorkerRollbackFixture.database_failures.append({
+            'exception_type': kind if kind in allowed else 'other',
+            'sqlite_code': getattr(exception.__cause__, 'sqlite_errorcode', None),
+            'frames': frames[-3:],
+        })
 
 
 @override_settings(MIDDLEWARE=['browser_tests.journey.WorkerRollbackFixture', *settings.MIDDLEWARE],

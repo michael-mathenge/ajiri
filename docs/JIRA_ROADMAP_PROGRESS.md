@@ -752,3 +752,10 @@ synthetic-only database exception class/SQLite-code diagnostics without messages
 queries, URLs or personal data. Local focused browser journey passes36.250s; this
 did not reproduce the intermittent failure and is not a claimed root-cause fix.
 Full backend361 tests pass/one known Windows skip302.676s after this test change.
+
+Second PR43 browser run39941160882 failed cv-version-list500; database-only
+diagnostics were empty, so a database-lock cause is not established. Expanded
+synthetic diagnostics to allowlisted exception kinds and repository-relative
+source line references only; no exception messages or local variables. Local
+focused journey passes34.732s; full backend361 tests pass/one skip278.705s.
+Root cause remains unverified; merge stays gated on all checks.
