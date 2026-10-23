@@ -7,6 +7,18 @@ from django.db import models
 from profiles.models import Skill
 
 
+class EmployerOrganisation(models.Model):
+    """Staff review is evidence, never a guarantee of employer conduct."""
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name='employer_organisations')
+    name = models.CharField(max_length=255)
+    website = models.URLField()
+    status = models.CharField(max_length=20, default='pending', choices=[('pending', 'Pending review'), ('approved', 'Reviewed'), ('rejected', 'Rejected')])
+    reviewed_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.PROTECT, related_name='+')
+    reviewed_at = models.DateTimeField(null=True, blank=True)
+    review_reason = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
 class Job(models.Model):
     """
     A single job listing pulled in from an external job board.
@@ -48,6 +60,8 @@ class Job(models.Model):
     skills_required = models.ManyToManyField(Skill, blank=True, related_name='jobs')
 
     source_url = models.URLField(unique=True)
+    # A nullable added column avoids rebuilding SQLite's job table and losing FTS triggers.
+    external_application_url = models.URLField(blank=True, null=True, default=None)
     source_name = models.CharField(max_length=100)
 
     posted_at = models.DateTimeField(null=True, blank=True)
@@ -67,6 +81,49 @@ class Job(models.Model):
 
     def __str__(self):
         return f"{self.title} at {self.company_name}"
+
+    @property
+    def application_target(self):
+        return self.external_application_url or self.source_url
+
+
+class JobPublication(models.Model):
+    # see docs/CONCEPTS.md#job-freshness-evidence
+    job = models.OneToOneField(Job, on_delete=models.PROTECT, related_name='publication')
+    origin = models.CharField(max_length=20, choices=[('rss', 'RSS'), ('employer', 'Employer')])
+    status = models.CharField(max_length=20, default='unverified', choices=[('unverified', 'Unverified'), ('published', 'Published'), ('archived', 'Archived')])
+    closes_at = models.DateTimeField(null=True, blank=True)
+    confirmed_until = models.DateTimeField(null=True, blank=True)
+    confirmed_at = models.DateTimeField(null=True, blank=True)
+    evidence_url = models.URLField(blank=True)
+    archive_reason = models.CharField(max_length=100, blank=True)
+    archived_at = models.DateTimeField(null=True, blank=True)
+    organisation = models.ForeignKey(EmployerOrganisation, null=True, blank=True, on_delete=models.PROTECT)
+
+
+class EmployerJobDraft(models.Model):
+    organisation = models.ForeignKey(EmployerOrganisation, on_delete=models.PROTECT, related_name='job_drafts')
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    requirements = models.TextField(blank=True)
+    location = models.CharField(max_length=255)
+    job_type = models.CharField(max_length=20, choices=Job.JobType.choices, default=Job.JobType.FULL_TIME)
+    application_url = models.URLField()
+    closes_at = models.DateTimeField()
+    status = models.CharField(max_length=20, default='pending', choices=[('pending', 'Pending review'), ('published', 'Published'), ('rejected', 'Rejected'), ('withdrawn', 'Withdrawn')])
+    revision = models.PositiveIntegerField(default=1)
+    job = models.OneToOneField(Job, null=True, blank=True, on_delete=models.PROTECT)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
+class EmployerReview(models.Model):
+    draft = models.ForeignKey(EmployerJobDraft, on_delete=models.PROTECT, related_name='reviews')
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
+    revision = models.PositiveIntegerField()
+    decision = models.CharField(max_length=20)
+    reason = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
 
 
 class Application(models.Model):

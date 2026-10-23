@@ -141,6 +141,7 @@ export default function AppShell() {
               <>
                 <NavLink to="/applications">My applications</NavLink>
                 <NavLink to="/profile">Profile</NavLink>
+                <NavLink to="/employers">Post a job</NavLink>
                 <NavLink to="/notifications">
                   <Bell size={17} aria-hidden="true" />
                   Notifications

@@ -96,12 +96,13 @@ class SearchMigrationTests(TransactionTestCase):
         leaves = executor.loader.graph.leaf_nodes()
         self.addCleanup(lambda: MigrationExecutor(connection).migrate(leaves))
         executor.migrate([('jobs', '0010_application_send_authorization_schema')])
-        job = Job.objects.create(title='Preserved migration row', company_name='Synthetic',
+        historical = executor.loader.project_state([('jobs', '0010_application_send_authorization_schema')]).apps.get_model('jobs', 'Job')
+        job = historical.objects.create(title='Preserved migration row', company_name='Synthetic',
             description='Content', source_url='https://example.invalid/migration')
         MigrationExecutor(connection).migrate(leaves)
         self.assertTrue(search_jobs(Job.objects.all(), 'preserved').filter(pk=job.pk).exists())
         Job.objects.filter(pk=job.pk).update(description='Newer data')
         MigrationExecutor(connection).migrate([('jobs', '0010_application_send_authorization_schema')])
-        self.assertEqual(Job.objects.get(pk=job.pk).description, 'Newer data')
+        self.assertEqual(historical.objects.get(pk=job.pk).description, 'Newer data')
         MigrationExecutor(connection).migrate(leaves)
         self.assertTrue(search_jobs(Job.objects.all(), 'newer').exists())

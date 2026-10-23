@@ -159,6 +159,10 @@ it('refreshes skill matches after a successful profile save', async () => {
                     id: 1,
                     title: 'Synthetic job',
                     company_name: 'Synthetic team',
+                    publication: {
+                      status: 'published',
+                      closes_at: '2099-01-01T00:00:00Z',
+                    },
                     match_score: saved ? 75 : 0,
                   },
                 ],

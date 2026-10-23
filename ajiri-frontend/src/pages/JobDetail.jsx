@@ -24,11 +24,13 @@ import {
 } from '../components/ui'
 import { useToast } from '../hooks/useToast'
 import { dateLabel, jobType, salaryLabel } from '../lib/utils'
+import { useVacancyClock, availableAt } from '../hooks/useVacancyClock'
 
 export default function JobDetail() {
   const invalidate = useApiInvalidation()
   const { id } = useParams()
   const { data: job, loading, error, retry } = useApiQuery(`/jobs/${id}/`)
+  const vacancyNow = useVacancyClock(job ? [job] : [])
   const {
     data: cv,
     loading: cvLoading,
@@ -70,6 +72,13 @@ export default function JobDetail() {
   }
   if (loading) return <LoadingState label="Loading job details" />
   if (error) return <ErrorState onRetry={retry}>{error}</ErrorState>
+  if (job && !availableAt(job, vacancyNow))
+    return (
+      <ErrorState onRetry={retry}>
+        This job is closed or its current availability is not verified. Existing
+        application documents remain in My applications.
+      </ErrorState>
+    )
   return (
     <div className="stack page-stack">
       <Link to="/" className="inline-link">
@@ -85,6 +94,18 @@ export default function JobDetail() {
         </div>
         <p className="company-name">{job.company_name}</p>
         <h1>{job.title}</h1>
+        <p>Source: {job.source_name || 'Not supplied'}</p>
+        <p>
+          {job.publication?.closes_at
+            ? `Applications close: ${new Date(job.publication.closes_at).toLocaleString()}`
+            : 'Closing date not verified.'}
+        </p>
+        <p>
+          {job.publication?.origin === 'employer'
+            ? 'Employer submission reviewed by staff.'
+            : 'Aggregated listing; check the original employer source.'}{' '}
+          Review does not guarantee the employer’s conduct. Never pay to apply.
+        </p>
         <div className="job-tags">
           <span className="icon-text muted">
             <MapPin size={17} aria-hidden="true" />
@@ -220,7 +241,9 @@ export default function JobDetail() {
                 rel="noopener noreferrer"
                 className="inline-link"
               >
-                View original listing
+                {job.publication?.origin === 'employer'
+                  ? 'Open employer application page'
+                  : 'View original listing'}
                 <span className="sr-only"> (opens in a new tab)</span>
                 <ArrowRight size={16} aria-hidden="true" />
               </a>

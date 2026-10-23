@@ -76,14 +76,14 @@ class SyntheticExceptionHandler(logging.Handler):
     CSRF_COOKIE_SECURE=False, SESSION_COOKIE_SECURE=False,
     EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend',
     ACCOUNT_EMAIL_TEST_CAPTURE=True, REAL_EMAIL_ENABLED=False, ALERT_EMAIL_ENABLED=False,
-    BREVO_API_KEY='', INGEST_API_KEY='')
+    BREVO_API_KEY='', INGEST_API_KEY='', JOB_FRESHNESS_ENFORCED=True)
 class BrowserJourney(LiveServerTestCase):
     host = '127.0.0.1'
 
     def setUp(self):
         from django.db import connection
-        if connection.vendor == 'sqlite':
-            self.assertFalse(connection.is_in_memory_db(), 'Browser HTTP tests require a disposable file database.')
+        if connection.vendor == "sqlite":
+            self.assertFalse(connection.is_in_memory_db(), "Browser HTTP tests require a disposable file database.")
         WorkerRollbackFixture.retirement = None
         WorkerRollbackFixture.server_failures = []
         handler = SyntheticExceptionHandler()
@@ -105,6 +105,11 @@ class BrowserJourney(LiveServerTestCase):
             description='Synthetic test vacancy. No employer contact.', source_name='browser-test',
             source_url='https://example.invalid/browser-test', application_method='email',
             application_email='synthetic-employer@example.invalid')
+        from jobs.models import JobPublication
+        from django.utils import timezone
+        from datetime import timedelta
+        JobPublication.objects.create(job=self.job, origin='rss', status='published',
+            closes_at=timezone.now()+timedelta(days=2), confirmed_at=timezone.now())
 
     def test_register_cv_approve_prepare_review_never_sends(self):
         # Playwright's sync event loop lives in a worker: ORM stays on Django's
@@ -120,6 +125,82 @@ class BrowserJourney(LiveServerTestCase):
         self.assertIsNone(application.sent_at)
         self.assertEqual(DeliveryAttempt.objects.count(), 0)
         self.assertEqual(DeliveryDailyBudget.objects.count(), 0)
+        self.assertEqual(mail.outbox, [])
+
+    @override_settings(JOB_FRESHNESS_ENFORCED=True, EMPLOYER_POSTING_ENABLED=True, PUBLIC_JOB_ORIGIN='https://example.invalid')
+    def test_employer_submission_staff_review_and_withdrawal(self):
+        from accounts.models import User
+        from jobs.models import EmployerJobDraft
+        from django.utils import timezone
+        owner = User.objects.create_user(email='employer-browser@example.invalid', password='Synthetic-Employer-982!')
+        owner.profile.email_verified_at = timezone.now()
+        owner.profile.verified_email = owner.email
+        owner.profile.save()
+        User.objects.create_user(email='reviewer-browser@example.invalid', password='Synthetic-Reviewer-982!', is_staff=True)
+        def journey():
+            with sync_playwright() as playwright:
+                browser = playwright.chromium.launch()
+                failures = []
+                def login(email, password):
+                    context = browser.new_context(viewport={'width':390,'height':844})
+                    context.on('response', lambda response: failures.append(response.status) if response.status >= 500 else None)
+                    context.route('**/*', lambda route: route.continue_() if route.request.url.startswith(self.live_server_url+'/') else route.abort())
+                    page = context.new_page()
+                    page.goto(self.live_server_url+'/login')
+                    page.get_by_label('Email address', exact=True).fill(email)
+                    page.get_by_label('Password', exact=True).fill(password)
+                    page.get_by_role('button',name='Log in',exact=True).click()
+                    page.wait_for_url(self.live_server_url+'/')
+                    return context,page
+                employer, page = login('employer-browser@example.invalid','Synthetic-Employer-982!')
+                page.goto(self.live_server_url+'/employers')
+                page.get_by_label('Organisation name',exact=True).fill('Synthetic Browser Employer')
+                page.get_by_label('Official website',exact=True).fill('https://example.invalid')
+                page.get_by_role('button',name='Submit organisation for review',exact=True).click()
+                expect(page.get_by_text('Synthetic Browser Employer: pending',exact=True)).to_be_visible()
+                page.get_by_label('Job title',exact=True).fill('Synthetic reviewed opportunity')
+                page.get_by_label('Location (include country)',exact=True).fill('Nairobi, Kenya')
+                page.get_by_label('Description',exact=True).fill('Synthetic detailed responsibilities and application requirements. '*8)
+                page.get_by_label('Official application URL',exact=True).fill('https://example.invalid/careers/browser')
+                from datetime import timedelta
+                page.get_by_label('Closing date and time (your local time)',exact=True).fill((timezone.now()+timedelta(days=2)).strftime('%Y-%m-%dT%H:%M'))
+                page.get_by_role('button',name='Submit vacancy for review',exact=True).click()
+                expect(page.get_by_role('heading',name='Synthetic reviewed opportunity',exact=True)).to_be_visible()
+                staff, review = login('reviewer-browser@example.invalid','Synthetic-Reviewer-982!')
+                review.goto(self.live_server_url+'/employers/review')
+                organisation_form=review.locator('form').filter(has=review.get_by_role('heading',name='Synthetic Browser Employer',exact=True))
+                organisation_form.get_by_role('combobox').select_option('approve')
+                organisation_form.get_by_label('Review reason and evidence',exact=True).fill('Synthetic independent organisation verification.')
+                organisation_form.get_by_role('button').click()
+                expect(review.get_by_role('heading',name='Synthetic Browser Employer',exact=True)).not_to_be_visible()
+                job_form=review.locator('form').filter(has=review.get_by_role('heading',name='Synthetic reviewed opportunity',exact=True))
+                job_form.get_by_role('combobox').select_option('approve')
+                job_form.get_by_label('Review reason and evidence',exact=True).fill('Synthetic job source, deadline and absence of applicant fees checked.')
+                job_form.get_by_role('button').click()
+                expect(review.get_by_role('heading',name='Synthetic reviewed opportunity',exact=True)).not_to_be_visible()
+                with page.expect_response(lambda response: '/api/jobs/employers/drafts/' in response.url and response.request.method == 'GET') as own_drafts:
+                    page.reload()
+                expect(page.get_by_text('published',exact=False).first).to_be_visible()
+                published_id = own_drafts.value.json()['results'][0]['job']
+                page.goto(self.live_server_url+f'/jobs/{published_id}')
+                expect(page.get_by_role('heading',name='Synthetic reviewed opportunity',exact=True)).to_be_visible()
+                expect(page.get_by_role('link',name='Open employer application page (opens in a new tab)',exact=True)).to_have_attribute('href','https://example.invalid/careers/browser')
+                page.goto(self.live_server_url+'/employers')
+                expect(page.get_by_text('published',exact=False).first).to_be_visible()
+                audit(self,page,'employer-dashboard-light')
+                page.get_by_role('button',name='Withdraw Synthetic reviewed opportunity',exact=True).click()
+                expect(page.get_by_text('withdrawn',exact=False).first).to_be_visible()
+                page.wait_for_load_state('networkidle')
+                review.wait_for_load_state('networkidle')
+                assert not failures, f'Unexpected server responses: {WorkerRollbackFixture.server_failures}'
+                employer.close(); staff.close(); browser.close()
+        with patch('jobs.brevo_transport.BrevoTransport.send') as provider:
+            with ThreadPoolExecutor(max_workers=1) as worker:
+                worker.submit(journey).result(timeout=120)
+            provider.assert_not_called()
+        draft = EmployerJobDraft.objects.get()
+        self.assertEqual(draft.status, 'withdrawn')
+        self.assertEqual(draft.job.publication.status, 'archived')
         self.assertEqual(mail.outbox, [])
 
     def test_parallel_authenticated_reads_use_independent_connections(self):

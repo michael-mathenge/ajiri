@@ -17,7 +17,8 @@ from django.utils import timezone
 from django.utils.html import strip_tags, escape
 from django.utils.text import slugify
 from django.views.decorators.http import require_safe
-from .models import Job
+from .models import Job, JobPublication
+from .freshness import eligible_jobs
 
 PAGE_SIZE = 1000
 EMPLOYMENT = {
@@ -52,7 +53,7 @@ def origin():
 
 def listings():
     return (
-        Job.objects.filter(is_active=True, is_flagged_scam=False)
+        eligible_jobs()
         .annotate(public_title=Trim("title"), public_company=Trim("company_name"))
         .exclude(public_title="")
         .exclude(public_company="")
@@ -99,7 +100,7 @@ def structured_job(job, canonical):
         or not plain(job.description[:12000])
         or len(job.description) > 12000
         or len(job.requirements) > 6000
-        or not safe_source(job.source_url)
+        or not safe_source(job.application_target)
         or len(parts) < 2
         or parts[-1].casefold() not in ("kenya", "ke")
         or "remote" in plain(job.location).casefold()
@@ -130,13 +131,18 @@ def structured_job(job, canonical):
     }
     if job.job_type in EMPLOYMENT:
         result["employmentType"] = EMPLOYMENT[job.job_type]
+    try:
+        if job.publication.closes_at:
+            result['validThrough'] = job.publication.closes_at.isoformat()
+    except JobPublication.DoesNotExist:
+        pass
     return result
 
 
 def public_response(response, content_type=None):
     if not isinstance(response, HttpResponse):
         response = HttpResponse(response, content_type=content_type)
-    response["Cache-Control"] = "public, max-age=300"
+    response["Cache-Control"] = "no-store"
     response["X-Content-Type-Options"] = "nosniff"
     return response
 
@@ -153,6 +159,10 @@ def detail(request, pk, slug):
         return public_response(HttpResponsePermanentRedirect(base + path))
     canonical = base + path
     data = structured_job(job, canonical)
+    try:
+        evidence = job.publication
+    except JobPublication.DoesNotExist:
+        evidence = None
     structured = (
         json.dumps(data, ensure_ascii=True)
         .replace("<", "\\u003c")
@@ -163,6 +173,10 @@ def detail(request, pk, slug):
     )
     context = {
         "title": plain(job.title),
+        "source_name": plain(job.source_name),
+        "employer_posted": bool(evidence and evidence.origin == 'employer'),
+        "closes_at": evidence.closes_at if evidence else None,
+        "confirmed_at": evidence.confirmed_at if evidence else None,
         "company": plain(job.company_name),
         "location": plain(job.location),
         "description": plain(job.description[:12000]),
@@ -172,7 +186,7 @@ def detail(request, pk, slug):
         if job.posted_at and job.posted_at <= timezone.now()
         else None,
         "job_type": job.get_job_type_display(),
-        "source": safe_source(job.source_url),
+        "source": safe_source(job.application_target),
         "canonical": canonical,
         "structured": structured,
         "application_path": f"/jobs/{job.pk}",

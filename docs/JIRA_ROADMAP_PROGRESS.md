@@ -746,6 +746,40 @@ the newly approved shared freshness and employer-review implementation.
 Michael approved hiding unverified RSS jobs, mandatory employer deadlines/staff
 review and no seeker application charges; see docs/JOB_TRUST_AND_FRESHNESS.md.
 
+
+### 23 October 2026 - vacancy trust/employer package (local, unreleased)
+
+Approved policy: hide unverified RSS entries; independent staff review of employer
+and vacancy, mandatory closing date, no seeker application payment. Shared
+eligibility now protects listing/detail, matching, alerts and new preparation.
+Unknown old entries archive as unverified; RSS evidence has a 24-hour maximum age.
+Additive jobs.0012/0013 preserve records. A demonstrated SQLite table-rebuild
+search-trigger loss was fixed by making the optional application URL nullable;
+migration/search regressions passed. No historical migration was changed.
+
+Actual gates: manage.py check and makemigrations --check --dry-run passed;
+manage.py test --noinput passed 378 tests in 331.276s, one platform skip.
+Node 24.19 locked installation was retained; all 132 components passed in 68.63s.
+Oxlint/ESLint passed after removing an unused import. Vite build passed in 2.53s;
+34 generated files were checked against the isolated dist. Offline schema
+generation/validation with --fail-on-warn passed; Ruff and diff whitespace passed.
+The first employer browser run used the wrong login label; its locator was
+corrected to the actual accessible label. Final browser/CI/deployment pending.
+
+A fresh source-0678f404 private snapshot, exact off-server ZIP, member hashes and
+isolated SQLite/media restore were verified before release work; writers were
+restored before local download. Receipt is outside Git. This fallback is not
+evidence that the unattended daily automation executed a new snapshot.
+
+Final employer/browser gate: all seven journeys passed in 187.825s, including
+independent staff approval, correct application portal, owner withdrawal and
+48 concurrent authenticated reads. Source matches the tested frontend runner.
+PR43 merged at 31f445c after all six checks passed on ac0dfb1. The current
+feature branch will integrate that prerequisite before its own required-check PR.
+Mobile performance and remote deployment are still pending.
+
+
+
 PR43 browser CI39938811588 failed a job-detail500 during the registration/CV
 journey; the other five checks passed. No merge or deployment performed. Added
 synthetic-only database exception class/SQLite-code diagnostics without messages,
@@ -783,3 +817,17 @@ Final local runner gates: manage.py check and makemigrations --check --dry-run
 passed; full ordinary Django discovery passed 361 tests in 303.252s (one known
 platform skip). Ruff and git diff --check passed. No frontend source changed;
 the previously verified locked install/lint/components/build remain unchanged.
+
+Local performance gate is UNVERIFIED: browser_tests.performance failed after
+145.138s with NO_NAVSTART, including its one allowed fresh-process trace retry.
+A recorded trace contained navigationStart but Lighthouse rejected the capture;
+no metric or budget pass is claimed. Sanitized local evidence remains under
+.verification/performance. Required Linux CI must produce valid passing results
+before merging/deployment. Integration with reviewed main changed only this
+evidence log; tested feature runtime source and browser harness are unchanged.
+
+PR44 initial quality job failed its changed-file Prettier check; corrected
+seven source files. The earlier CLI check ignored files beneath .verification;
+the corrected check targeted all 13 actual source files with an explicit empty
+ignore file. All matched files passed; rebuilding preserved all 34 generated
+bytes exactly. No functionality/assertion/CI changes. Required CI rerun pending.

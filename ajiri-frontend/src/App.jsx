@@ -14,6 +14,8 @@ const JobDetail = lazy(() => import('./pages/JobDetail'))
 const Applications = lazy(() => import('./pages/Applications'))
 const Notifications = lazy(() => import('./pages/Notifications'))
 const Profile = lazy(() => import('./pages/Profile'))
+const Employers = lazy(() => import('./pages/Employers'))
+const EmployerReview = lazy(() => import('./pages/EmployerReview'))
 const CVBuilder = lazy(() => import('./pages/CVBuilder'))
 const Subscriptions = lazy(() => import('./pages/Subscriptions'))
 const AccountRecovery = lazy(() => import('./pages/AccountRecovery'))
@@ -23,47 +25,63 @@ const AlertUnsubscribe = lazy(() => import('./pages/AlertUnsubscribe'))
 export default function App() {
   return (
     <PageErrorBoundary>
-    <AuthProvider>
-      <ToastProvider>
-        <Routes>
-          <Route element={<AppShell />}>
-            <Route element={<ProtectedRoute />}>
-              <Route path="/" element={<JobList />} />
-              <Route path="/jobs/:id" element={<JobDetail />} />
-              <Route path="/applications" element={<Applications />} />
-              <Route path="/notifications" element={<Notifications />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/cv-builder" element={<CVBuilder />} />
-              <Route path="/email-verification" element={<AccountRecovery key="verification" mode="verification" />} />
-            </Route>
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/privacy" element={<Privacy />} />
-            <Route path="/unsubscribe" element={<AlertUnsubscribe />} />
-            <Route path="/forgot-password" element={<AccountRecovery key="request" mode="request-reset" />} />
-            <Route path="/reset-password" element={<AccountRecovery key="reset" mode="reset" />} />
-            <Route path="/verify-email" element={<AccountRecovery key="verify" mode="verify" />} />
-            <Route path="/plans" element={<Subscriptions />} />
-            <Route
-              path="*"
-              element={
-                <EmptyState
-                  title="Page not found"
-                  action={
-                    <Button asChild>
-                      <Link to="/">Browse jobs</Link>
-                    </Button>
+      <AuthProvider>
+        <ToastProvider>
+          <Routes>
+            <Route element={<AppShell />}>
+              <Route element={<ProtectedRoute />}>
+                <Route path="/" element={<JobList />} />
+                <Route path="/jobs/:id" element={<JobDetail />} />
+                <Route path="/applications" element={<Applications />} />
+                <Route path="/notifications" element={<Notifications />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/employers" element={<Employers />} />
+                <Route path="/employers/review" element={<EmployerReview />} />
+                <Route path="/cv-builder" element={<CVBuilder />} />
+                <Route
+                  path="/email-verification"
+                  element={
+                    <AccountRecovery key="verification" mode="verification" />
                   }
-                >
-                  This page may have moved. Find your next opportunity from the
-                  jobs page.
-                </EmptyState>
-              }
-            />
-          </Route>
-        </Routes>
-      </ToastProvider>
-    </AuthProvider>
+                />
+              </Route>
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/privacy" element={<Privacy />} />
+              <Route path="/unsubscribe" element={<AlertUnsubscribe />} />
+              <Route
+                path="/forgot-password"
+                element={<AccountRecovery key="request" mode="request-reset" />}
+              />
+              <Route
+                path="/reset-password"
+                element={<AccountRecovery key="reset" mode="reset" />}
+              />
+              <Route
+                path="/verify-email"
+                element={<AccountRecovery key="verify" mode="verify" />}
+              />
+              <Route path="/plans" element={<Subscriptions />} />
+              <Route
+                path="*"
+                element={
+                  <EmptyState
+                    title="Page not found"
+                    action={
+                      <Button asChild>
+                        <Link to="/">Browse jobs</Link>
+                      </Button>
+                    }
+                  >
+                    This page may have moved. Find your next opportunity from
+                    the jobs page.
+                  </EmptyState>
+                }
+              />
+            </Route>
+          </Routes>
+        </ToastProvider>
+      </AuthProvider>
     </PageErrorBoundary>
   )
 }

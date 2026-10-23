@@ -3,8 +3,10 @@ from datetime import datetime, timezone
 from django.utils.timezone import make_aware
 from .models import Job
 from .scam_filter import analyze_job_for_scam
-from .utils import detect_application_method, fix_mojibake
+from .utils import detect_application_method, fix_mojibake, safe_http_url
 from .matching import notify_matching_profiles
+from .feed_deadlines import record
+from .freshness import archive_expired
 
 MYJOBMAG_KENYA_FEED = "https://www.myjobmag.co.ke/jobsxml_by_categories.xml"
 
@@ -33,9 +35,10 @@ def ingest_feed(feed):
     skipped_count = 0
     flagged_count = 0
     notified_count = 0
+    archive_expired()
 
     for entry in feed.entries:
-        source_url = entry.get('link')
+        source_url = safe_http_url(entry.get('link'))
 
         if not source_url:
             skipped_count += 1
@@ -44,7 +47,19 @@ def ingest_feed(feed):
         # source_url is unique on the Job model — this is our natural
         # de-duplication check. If we've already ingested this exact
         # listing before, skip it rather than creating a duplicate.
-        if Job.objects.filter(source_url=source_url).exists():
+        existing = Job.objects.filter(source_url=source_url).first()
+        if existing:
+            same_content = all(getattr(existing, field) == fix_mojibake(value) for field, value in {
+                'title': entry.get('position') or entry.get('title', ''),
+                'company_name': entry.get('company', ''),
+                'description': entry.get('description', ''),
+            }.items())
+            if same_content:
+                record(existing, entry)
+            else:
+                # Reused URLs are not proof that the historical listing is open.
+                from .models import JobPublication
+                JobPublication.objects.filter(job=existing).exclude(status='archived').update(status='unverified')
             skipped_count += 1
             continue
 
@@ -80,6 +95,8 @@ def ingest_feed(feed):
             application_method=application_method,
             application_email=application_email,
         )
+
+        record(job, entry)
 
         # Run the job through the rule-based scam filter AFTER creation,
         # since analyze_job_for_scam() expects a real Job instance with

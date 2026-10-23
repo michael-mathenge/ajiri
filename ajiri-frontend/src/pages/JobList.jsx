@@ -26,6 +26,7 @@ import {
   Select,
 } from '../components/ui'
 import { dateLabel, jobType, salaryLabel } from '../lib/utils'
+import { useVacancyClock, availableAt } from '../hooks/useVacancyClock'
 
 function Filters({ register }) {
   return (
@@ -85,6 +86,9 @@ export default function JobList() {
   if (location) query.set('location', location)
   if (type) query.set('job_type', type)
   const { data, loading, error, retry } = useApiQuery(`/jobs/?${query}`)
+  const rows = data?.results ?? []
+  const vacancyNow = useVacancyClock(rows)
+  const currentRows = rows.filter((job) => availableAt(job, vacancyNow))
   const { data: profile } = useApiQuery('/profiles/me/')
   // Missing profile data is unknown, not evidence of an empty skills list.
   // see docs/CONCEPTS.md#ui-feedback
@@ -157,7 +161,9 @@ export default function JobList() {
             ? 'Finding opportunities…'
             : error
               ? 'Job opportunities'
-              : `${data?.count ?? 0} ${(data?.count ?? 0) === 1 ? 'opportunity' : 'opportunities'}`}
+              : currentRows.length !== rows.length
+                ? `${currentRows.length} current listings on this page`
+                : `${data?.count ?? 0} ${(data?.count ?? 0) === 1 ? 'opportunity' : 'opportunities'}`}
         </h2>
         <Dialog
           trigger={<Button variant="ghost">How matching works</Button>}
@@ -178,7 +184,7 @@ export default function JobList() {
         <LoadingState label="Loading jobs" />
       ) : error ? (
         <ErrorState onRetry={retry}>{error}</ErrorState>
-      ) : !data.results.length ? (
+      ) : !currentRows.length ? (
         <EmptyState
           title={
             filtered ? 'No jobs match those filters' : 'No opportunities yet'
@@ -198,7 +204,7 @@ export default function JobList() {
       ) : (
         <>
           <div className="job-grid">
-            {data.results.map((job) => (
+            {currentRows.map((job) => (
               <Card className="job-card" key={job.id}>
                 <div className="job-card-top">
                   <span className="company-avatar" aria-hidden="true">
@@ -224,6 +230,12 @@ export default function JobList() {
                   <Badge className="capitalize">{jobType(job.job_type)}</Badge>
                 </div>
                 <p className="salary">{salaryLabel(job)}</p>
+                <p className="muted text-sm">
+                  Source: {job.source_name || 'Not supplied'} ·{' '}
+                  {job.publication?.closes_at
+                    ? `Closes ${dateLabel(job.publication.closes_at)}`
+                    : 'Closing date not verified'}
+                </p>
                 <div className="job-card-bottom">
                   <span className="muted text-sm">
                     Posted {dateLabel(job.posted_at)}

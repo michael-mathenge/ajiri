@@ -26,22 +26,33 @@ from profiles.cv_validation import StrictSerializer
 from rest_framework import serializers
 from django.db import OperationalError, transaction
 from .application_drafting import prepare_application
+from .freshness import eligible_jobs
 
 
-class JobListView(generics.ListAPIView):
+class FreshJobsMixin:
+    def finalize_response(self, request, response, *args, **kwargs):
+        response = super().finalize_response(request, response, *args, **kwargs)
+        response['Cache-Control'] = 'private, no-store'
+        return response
+
+    def get_queryset(self):
+        return eligible_jobs(super().get_queryset()).select_related('publication')
+
+
+class JobListView(FreshJobsMixin, generics.ListAPIView):
     serializer_class = JobListSerializer
     permission_classes = (permissions.IsAuthenticated,)
     filterset_class = JobFilter
     queryset = Job.objects.filter(is_active=True, is_flagged_scam=False).order_by('-posted_at')
 
 
-class JobDetailView(generics.RetrieveAPIView):
+class JobDetailView(FreshJobsMixin, generics.RetrieveAPIView):
     serializer_class = JobDetailSerializer
     permission_classes = (permissions.IsAuthenticated,)
     queryset = Job.objects.filter(is_active=True, is_flagged_scam=False)
 
 
-class GenerateCoverLetterView(generics.GenericAPIView):
+class GenerateCoverLetterView(FreshJobsMixin, generics.GenericAPIView):
     permission_classes = (permissions.IsAuthenticated,)
     queryset = Job.objects.filter(is_active=True, is_flagged_scam=False)
 
@@ -60,7 +71,7 @@ class GenerateCoverLetterView(generics.GenericAPIView):
         return response
 
 
-class ApplyToJobView(generics.GenericAPIView):
+class ApplyToJobView(FreshJobsMixin, generics.GenericAPIView):
     """
     POST /jobs/<pk>/apply/ — the on-demand replacement for automatic
     Application drafting. Copies the selected approved CV + generates a letter ONCE and saves
