@@ -22,6 +22,7 @@ from .accessibility import audit
 class WorkerRollbackFixture:
     """Local-only static response swap simulates a reloaded rollback deployment."""
     retirement = None
+    database_failures = []
 
     def __init__(self, get_response):
         self.get_response = get_response
@@ -33,6 +34,16 @@ class WorkerRollbackFixture:
             response['Cache-Control'] = 'no-store'
             return response
         return self.get_response(request)
+
+    def process_exception(self, request, exception):
+        # Synthetic test diagnostics only: no message, URL, query or user data.
+        from django.db import DatabaseError
+        if isinstance(exception, DatabaseError):
+            cause = exception.__cause__
+            WorkerRollbackFixture.database_failures.append({
+                'database_error': type(exception).__name__,
+                'sqlite_code': getattr(cause, 'sqlite_errorcode', None),
+            })
 
 
 @override_settings(MIDDLEWARE=['browser_tests.journey.WorkerRollbackFixture', *settings.MIDDLEWARE],
@@ -47,6 +58,7 @@ class BrowserJourney(LiveServerTestCase):
 
     def setUp(self):
         WorkerRollbackFixture.retirement = None
+        WorkerRollbackFixture.database_failures = []
         self.assertTrue((settings.FRONTEND_BUILD_DIR / 'index.html').is_file(),
             'Build the React client before running browser acceptance.')
         self.private = tempfile.TemporaryDirectory(prefix='ajiri-browser-')
@@ -153,7 +165,8 @@ class BrowserJourney(LiveServerTestCase):
             assert denied.status == 401, 'Anonymous document access must be denied.'
             guest.close()
             page.wait_for_load_state('networkidle')
-            assert not failures, 'Browser JavaScript or server response errors occurred.'
+            assert not failures, ('Browser JavaScript or server response errors occurred. '
+                f'Database diagnostics: {WorkerRollbackFixture.database_failures}')
             context.close()
             browser.close()
 

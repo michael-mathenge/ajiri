@@ -745,3 +745,10 @@ needed for this backend-only package. Public rollout remains disabled pending
 the newly approved shared freshness and employer-review implementation.
 Michael approved hiding unverified RSS jobs, mandatory employer deadlines/staff
 review and no seeker application charges; see docs/JOB_TRUST_AND_FRESHNESS.md.
+
+PR43 browser CI39938811588 failed a job-detail500 during the registration/CV
+journey; the other five checks passed. No merge or deployment performed. Added
+synthetic-only database exception class/SQLite-code diagnostics without messages,
+queries, URLs or personal data. Local focused browser journey passes36.250s; this
+did not reproduce the intermittent failure and is not a claimed root-cause fix.
+Full backend361 tests pass/one known Windows skip302.676s after this test change.
