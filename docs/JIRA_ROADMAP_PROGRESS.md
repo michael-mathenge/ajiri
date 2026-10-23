@@ -817,3 +817,11 @@ Final local runner gates: manage.py check and makemigrations --check --dry-run
 passed; full ordinary Django discovery passed 361 tests in 303.252s (one known
 platform skip). Ruff and git diff --check passed. No frontend source changed;
 the previously verified locked install/lint/components/build remain unchanged.
+
+Local performance gate is UNVERIFIED: browser_tests.performance failed after
+145.138s with NO_NAVSTART, including its one allowed fresh-process trace retry.
+A recorded trace contained navigationStart but Lighthouse rejected the capture;
+no metric or budget pass is claimed. Sanitized local evidence remains under
+.verification/performance. Required Linux CI must produce valid passing results
+before merging/deployment. Integration with reviewed main changed only this
+evidence log; tested feature runtime source and browser harness are unchanged.
