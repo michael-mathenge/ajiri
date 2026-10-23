@@ -831,3 +831,30 @@ seven source files. The earlier CLI check ignored files beneath .verification;
 the corrected check targeted all 13 actual source files with an explicit empty
 ignore file. All matched files passed; rebuilding preserved all 34 generated
 bytes exactly. No functionality/assertion/CI changes. Required CI rerun pending.
+
+
+### 23 October 2026 - AJ53 production activation verified
+
+PR44 merged after all six checks passed at c7a00bc; source deployed is
+2a301f049cdcb66920cd71abd0b00a4fea24c35a. CI40011465224 browser/performance
+ran eight tests in 96.909s and passed. Local Lighthouse failure is retained.
+Fresh snapshot backup-20261023T193233766316Z-2688f170 was verified server-side,
+then exact-member ZIP SHA, private off-server copy and isolated restore passed
+(13 files,224960 media bytes). Private receipt retained outside Git. Writers
+restored before download; no retention deletion. Actual quota before pause was
+373.3/512 MB. Release ZIP SHA256:
+13117020fd8649203de7aa98d56b96313a6a9548e9eb17fe7f6f966006b9f2a9.
+
+Applied additive jobs.0012/0013 before re-enabling requests. Check, migration
+drift and empty migration plan passed; all three search triggers remain. Strict
+freshness and reviewed posting enabled; anonymous publication remains disabled.
+979 jobs retained; 977 historical active rows archived as availability_not_verified;
+zero eligible vacancies. No claim that these were individually proven expired.
+HTTPS health200/HSTS300, exact index and two employer chunks, clean deployed
+checkout, authenticated empty jobs list and employer form/review notice passed.
+The current signed-in account has no applications; extra real historical-document
+download could not be exercised. Automated document/ownership tests passed.
+Both workflow states restored active and web app enabled. No real employer review,
+application send or broadened email pilot occurred. Current work tracked as AJ53;
+AJ42 stays In Progress because anonymous publication remains gated. Other backlog
+items and general employer onboarding are not claimed complete.

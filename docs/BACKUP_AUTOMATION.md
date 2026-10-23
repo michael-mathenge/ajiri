@@ -118,3 +118,7 @@ then downloaded and independently verified the exact bundle and isolated restore
 The private receipt is outside Git under the owner's AjiriBackups directory.
 This is evidence for a verified fallback, not an unattended scheduler execution.
 Retention remains report-only; no retained backup was removed.
+
+A second release fallback at 19:32 UTC on 23 October captured the changed database.
+The exact off-server bundle and isolated restore passed before migrations; the
+private receipt is retained outside Git. This also does not prove unattended execution.

@@ -1,5 +1,7 @@
 # Job trust and freshness
 
+> Current status - 23 October 2026: PR #44 is merged and source `2a301f0` is deployed. Strict freshness and reviewed employer posting are enabled. Anonymous publication and general employer email onboarding remain gated. The dated local/pending notes below are historical evidence; see the final activation section.
+
 Michael approved these requirements on23 October2026:
 
 - Hide RSS listings without a reliable future closing date or current explicit
@@ -79,3 +81,27 @@ application portal, accessible employer dashboard and withdrawal. Synthetic mail
 provider remained uncalled. Earlier selector failures were corrected against the
 actual accessible labels; no application assertions were removed. All 378 backend
 and 132 component tests passed. Performance and remote release gates remain pending.
+
+
+## Verified production activation - 23 October 2026
+
+All six required checks passed before merge. Linux CI ran eight browser/performance
+tests successfully, including valid mobile budget measurements. The failed local
+Lighthouse trace remains recorded; it was not relabelled a local pass.
+
+A fresh consistent backup, exact private off-server bundle and isolated restore
+preceded additive migrations jobs.0012/0013. Health returned HTTP 200 with HSTS300;
+live HTML/employer chunks exactly matched source. All three search triggers remain.
+979 job records were preserved. 977 historical active entries lacked reliable
+availability evidence and are archived as unverified; zero eligible vacancies
+remained at activation. This is not evidence that every old job actually expired.
+
+Authenticated jobs and employer-form reads passed. The current signed-in account
+had no historical applications, so a further real private-document download was
+unavailable. Automated unchanged-document and ownership journeys passed. No real
+employer was approved and no application email sent. General employer verification
+onboarding and anonymous publication remain gated; AJ-53 tracks remaining acceptance.
+
+Rollback keeps freshness enforced and the additive records. Disable new employer
+posting independently if needed. Do not expose unknown jobs again, reverse migration
+history or restore an older database over subsequent writes.

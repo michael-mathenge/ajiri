@@ -51,8 +51,9 @@ download/external-submission journey while broader sending remains closed.
 
 ## Employer vacancies and availability
 
-The employer workflow is available only after the release is activated. Open
-**Post a job**, submit your organisation, then enter the vacancy, official
+The reviewed employer workflow is deployed. General employer onboarding still
+depends on expanding the owner-only account-email pilot. Open **Post a job**,
+submit your organisation, then enter the vacancy, official
 application URL and closing date/time. Your current account email must be verified.
 A separate staff reviewer checks the organisation and vacancy before publication.
 Submitting a form does not publish a job. Refresh review status to see a decision;
