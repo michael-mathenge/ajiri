@@ -6,6 +6,7 @@ see docs/CONCEPTS.md#browser-acceptance
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 import tempfile
+import logging
 from unittest.mock import patch
 
 from django.conf import settings
@@ -22,7 +23,7 @@ from .accessibility import audit
 class WorkerRollbackFixture:
     """Local-only static response swap simulates a reloaded rollback deployment."""
     retirement = None
-    database_failures = []
+    server_failures = []
 
     def __init__(self, get_response):
         self.get_response = get_response
@@ -36,6 +37,10 @@ class WorkerRollbackFixture:
         return self.get_response(request)
 
     def process_exception(self, request, exception):
+        self.capture_exception(exception)
+
+    @staticmethod
+    def capture_exception(exception):
         # Synthetic test diagnostics only: no message, URL, query or user data.
         allowed = {'OperationalError', 'IntegrityError', 'DatabaseError', 'ValueError',
                    'AttributeError', 'RuntimeError', 'KeyError', 'RelatedObjectDoesNotExist'}
@@ -47,11 +52,22 @@ class WorkerRollbackFixture:
             if file.is_relative_to(settings.BASE_DIR):
                 frames.append({'file': file.relative_to(settings.BASE_DIR).as_posix(), 'line': trace.tb_lineno})
             trace = trace.tb_next
-        WorkerRollbackFixture.database_failures.append({
+        data = {
             'exception_type': kind if kind in allowed else 'other',
             'sqlite_code': getattr(exception.__cause__, 'sqlite_errorcode', None),
             'frames': frames[-3:],
-        })
+        }
+        if type(data['sqlite_code']) is not int:
+            data['sqlite_code'] = None
+        if data not in WorkerRollbackFixture.server_failures:
+            WorkerRollbackFixture.server_failures.append(data)
+            print('Synthetic server exception:', data)
+
+
+class SyntheticExceptionHandler(logging.Handler):
+    def emit(self, record):
+        if record.exc_info and record.exc_info[1]:
+            WorkerRollbackFixture.capture_exception(record.exc_info[1])
 
 
 @override_settings(MIDDLEWARE=['browser_tests.journey.WorkerRollbackFixture', *settings.MIDDLEWARE],
@@ -66,7 +82,11 @@ class BrowserJourney(LiveServerTestCase):
 
     def setUp(self):
         WorkerRollbackFixture.retirement = None
-        WorkerRollbackFixture.database_failures = []
+        WorkerRollbackFixture.server_failures = []
+        handler = SyntheticExceptionHandler()
+        logger = logging.getLogger('django.request')
+        logger.addHandler(handler)
+        self.addCleanup(logger.removeHandler, handler)
         self.assertTrue((settings.FRONTEND_BUILD_DIR / 'index.html').is_file(),
             'Build the React client before running browser acceptance.')
         self.private = tempfile.TemporaryDirectory(prefix='ajiri-browser-')
@@ -98,6 +118,19 @@ class BrowserJourney(LiveServerTestCase):
         self.assertEqual(DeliveryAttempt.objects.count(), 0)
         self.assertEqual(DeliveryDailyBudget.objects.count(), 0)
         self.assertEqual(mail.outbox, [])
+
+    def test_exception_diagnostics_omit_messages_and_absolute_paths(self):
+        from contextlib import redirect_stdout
+        from io import StringIO
+        output = StringIO()
+        with redirect_stdout(output):
+            try:
+                raise ValueError('synthetic-do-not-log')
+            except ValueError as exception:
+                WorkerRollbackFixture.capture_exception(exception)
+        self.assertIn('ValueError', output.getvalue())
+        self.assertNotIn('synthetic-do-not-log', output.getvalue())
+        self.assertNotIn(str(settings.BASE_DIR), output.getvalue())
 
     def browser_journey(self):
         with sync_playwright() as playwright:
@@ -174,7 +207,7 @@ class BrowserJourney(LiveServerTestCase):
             guest.close()
             page.wait_for_load_state('networkidle')
             assert not failures, ('Browser JavaScript or server response errors occurred. '
-                f'Database diagnostics: {WorkerRollbackFixture.database_failures}')
+                f'Server diagnostics: {WorkerRollbackFixture.server_failures}')
             context.close()
             browser.close()
 

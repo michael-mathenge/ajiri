@@ -759,3 +759,10 @@ synthetic diagnostics to allowlisted exception kinds and repository-relative
 source line references only; no exception messages or local variables. Local
 focused journey passes34.732s; full backend361 tests pass/one skip278.705s.
 Root cause remains unverified; merge stays gated on all checks.
+
+All four local browser journeys pass126.183s. Added immediate sanitized logging
+capture so errors before a final browser assertion are still observable. A focused
+privacy regression passes0.582s and verifies that exception messages and absolute
+paths never enter these synthetic diagnostics. Production logging is unchanged.
+Full backend361/one skip278.705s remains the package baseline; required CI will
+rerun the final harness. No merge on a failed browser check.
