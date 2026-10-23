@@ -777,3 +777,43 @@ independent staff approval, correct application portal, owner withdrawal and
 PR43 merged at 31f445c after all six checks passed on ac0dfb1. The current
 feature branch will integrate that prerequisite before its own required-check PR.
 Mobile performance and remote deployment are still pending.
+
+
+
+PR43 browser CI39938811588 failed a job-detail500 during the registration/CV
+journey; the other five checks passed. No merge or deployment performed. Added
+synthetic-only database exception class/SQLite-code diagnostics without messages,
+queries, URLs or personal data. Local focused browser journey passes36.250s; this
+did not reproduce the intermittent failure and is not a claimed root-cause fix.
+Full backend361 tests pass/one known Windows skip302.676s after this test change.
+
+Second PR43 browser run39941160882 failed cv-version-list500; database-only
+diagnostics were empty, so a database-lock cause is not established. Expanded
+synthetic diagnostics to allowlisted exception kinds and repository-relative
+source line references only; no exception messages or local variables. Local
+focused journey passes34.732s; full backend361 tests pass/one skip278.705s.
+Root cause remains unverified; merge stays gated on all checks.
+
+All four local browser journeys pass126.183s. Added immediate sanitized logging
+capture so errors before a final browser assertion are still observable. A focused
+privacy regression passes0.582s and verifies that exception messages and absolute
+paths never enter these synthetic diagnostics. Production logging is unchanged.
+Full backend361/one skip278.705s remains the package baseline; required CI will
+rerun the final harness. No merge on a failed browser check.
+
+
+### 23 October 2026 - browser database isolation (local, unreleased)
+
+PR #43 browser failures exposed SQLite error 21 under threaded HTTP.
+The browser-only runner now allocates a disposable file database, preserving
+normal unit-test discovery. Five existing browser journeys passed in 139.130s;
+a separate 48-request/four-worker authenticated-read regression passed in 2.419s.
+The initial local rerun lacked AJIRI_FRONTEND_TOOLS and failed accessibility
+setup; corrected to the existing locked tool directory before the passing run.
+No HTTP assertions, provider assertions, budgets or CI check names were relaxed.
+Full backend verification and remote CI remain pending for this revision.
+
+Final local runner gates: manage.py check and makemigrations --check --dry-run
+passed; full ordinary Django discovery passed 361 tests in 303.252s (one known
+platform skip). Ruff and git diff --check passed. No frontend source changed;
+the previously verified locked install/lint/components/build remain unchanged.
