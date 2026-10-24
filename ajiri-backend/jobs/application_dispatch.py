@@ -25,6 +25,18 @@ def configuration():
     # Do not inspect provider configuration/credentials while this route is off.
     if not getattr(settings, 'APPLICATION_EMAIL_ENABLED', False):
         return None
+    return _policy_configuration()
+
+
+def preparation_configuration():
+    # see docs/CONCEPTS.md#prepare-before-sending-activation
+    if not (getattr(settings, 'APPLICATION_PILOT_PREPARATION_ENABLED', False)
+            or getattr(settings, 'APPLICATION_EMAIL_ENABLED', False)):
+        return None
+    return _policy_configuration()
+
+
+def _policy_configuration():
     if getattr(settings, 'APPLICATION_PILOT_LIMIT_REVIEW', '') != LIMIT_REVIEW:
         return None
     try:
@@ -58,7 +70,7 @@ def owner_job(user, application, policy):
 
 
 def editable_pilot(application):
-    configured = configuration()
+    configured = preparation_configuration()
     return bool(configured and owner_job(application.user, application, configured[0]))
 
 

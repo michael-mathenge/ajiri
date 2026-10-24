@@ -12,7 +12,8 @@ Saving, previews, document approval and recording permission never send mail.
 
 The existing account pilot must be valid, with one exact current owner mailbox,
 verified sender, HTTPS origin and shared daily limit5. Additional nonsecret flags:
-`APPLICATION_EMAIL_ENABLED=False` by default, and
+`APPLICATION_PILOT_PREPARATION_ENABLED=False` and `APPLICATION_EMAIL_ENABLED=False`
+by default, and
 `APPLICATION_PILOT_LIMIT_REVIEW=brevo-api-attachments-2026-10-22` only after the
 operator has checked this dated limit review. Do not create/copy credentials.
 Activation requires the reviewed source, required checks, verified recovery copy,
@@ -32,7 +33,13 @@ check is not malware scanning; this pilot sends only Ajiri-generated reviewed fi
 
 ## Operator preparation
 
-After approved activation, in the existing PythonAnywhere virtualenv:
+Preparation and provider activation are separate steps. After required checks and
+release recovery verification, enable only
+`APPLICATION_PILOT_PREPARATION_ENABLED=True`, retaining
+`APPLICATION_EMAIL_ENABLED=False`. Reload this preparation-only configuration.
+The same owner mailbox, verification and synthetic-job restrictions still apply.
+This permits document review and exact authorization without opening transport.
+In the existing PythonAnywhere virtualenv:
 
 ```bash
 cd /home/Mathenge/ajiri/ajiri-backend
@@ -59,7 +66,11 @@ an existing changed job, reset a receipt or resurrect a dismissed application.
 5. If you want this one test email, check its exact authorization statement and
    Record authorization. This still does not send. Withdraw before dispatch if
    you change your mind; permission expires after24 hours.
-6. Click Send this authorized application once. Provider acceptance is not inbox
+6. Sending remains disabled throughout preparation. After the owner has personally
+   approved the exact documents and separately recorded the displayed authorization,
+   the operator verifies those gates before any separately authorized transport
+   activation. An agent must not approve personal documents or permission on the
+   owner's behalf. The owner can then click Send this authorized application once. Provider acceptance is not inbox
    delivery. Check the receipt after an interrupted response; never resend an
    uncertain action. Confirm actual inbox/attachments privately, without sharing
    links, keys, passwords or private document content in chat.
@@ -74,9 +85,29 @@ checked again at the final transport boundary.
 
 ## Rollback and limits
 
-Disable APPLICATION_EMAIL_ENABLED and reload first; leave account security mail
+Disable APPLICATION_EMAIL_ENABLED and reload first; disable
+APPLICATION_PILOT_PREPARATION_ENABLED separately to close further preparation; leave account security mail
 and all approvals, immutable documents, authorizations, budgets, receipts and newer
 writes intact. Do not reverse history or restore an old DB over later writes.
 The package adds no migration/dependency. Historical documents are not regenerated.
 Employer website submission remains a user action, not automated form filling.
 The synthetic pilot is not a public delivery rollout or legal-compliance claim.
+
+
+### 24 October 2026 — preparation before transport activation
+
+A production reload with the sending flag enabled was rejected by automatic
+approval review because personal document approval and exact send authorization
+had not yet completed. No reload or provider send occurred. The persisted sending
+flag was immediately returned to False. An inactive synthetic draft was prepared;
+no approval, authorization, delivery attempt or budget entry was created.
+
+The separate preparation flag resolves the ordering problem while dispatch still
+requires APPLICATION_EMAIL_ENABLED. Disabling preparation preserves documents and
+reviews. This package adds no migration, dependency or frontend build change.
+
+Local preparation repair gates: full440 Django tests passed374.277s (one known
+platform skip),141 components passed73.08s, Node24.19 locked install/lint/ESLint/
+build2.37s passed, and all36 generated files matched committed bytes. System,
+migration-drift, Ruff and strict schema checks passed. Required CI and preparation
+activation remain pending. No new real email has been sent.

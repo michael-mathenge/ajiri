@@ -65,5 +65,12 @@ passed62.01s, Node24.19 locked install audited364/zero vulnerabilities, lint/ESL
 Ruff and build2.00s passed. Source/runner and exact36-file generated-build checks
 passed. The real Chromium progress save/reload journey passed31.108s, including
 axe and zero email/provider/ledger effects. All nine local browser journeys passed
-246.544s; strict schema regeneration matched exactly. CI and deployment remain
-pending. No real owner progress or employer outcome was entered by Codex.
+246.544s; strict schema regeneration matched exactly. PR #50 passed all six required checks (CI40049180274) and merged/deployed as
+fbae0956f17df25b5d69c9a94f17b9568519e089 on24 October2026. A fresh consistent
+private backup, independently verified off-server ZIP and isolated restore passed
+before jobs.0015. All legacy application fields/snapshots matched across migration;
+check/drift and empty migration plan passed. Web and both writer workflows were
+restored to their prior active states. HTTPS health200/HSTS300, clean source and
+exact live index/application chunk passed. The signed-in account's list was empty,
+so production form entry remains unexercised; the real-endpoint browser journey
+covers save/reload. No real owner progress or employer outcome was entered by Codex.

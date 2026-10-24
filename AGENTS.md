@@ -30,18 +30,21 @@ Users are mostly on phones with limited data. **Mobile-first, lightweight, acces
 
 ## 4. Verified state (24 October 2026)
 
-Recorded deployed source is `c628ec00466b1dd9168f77b7afafea6d50cca7e8` (PR #46),
-including owner-only saved searches, reviewed employer posting and shared vacancy
-freshness checks. Additive jobs.0014 applied after a verified private off-server
-backup and isolated restore. SAVED_SEARCHES_ENABLED is true; memory capture and
-real application/saved-search email remain disabled. Authenticated saved-search
-page/API, exact live build, health200/HSTS300 and clean source passed. Local402
-Django tests (one platform skip),137 components and eight browser journeys passed;
-all six CI checks passed at fb96186. See docs/SAVED_SEARCHES.md. AJ43 stays In
-Progress for remaining email acceptance; the backlog is not complete. PR #42's
-managed application transport remains gated; deployment does not enable sending.
-Additive jobs.0012/0013 applied; system/drift checks and an empty migration plan
-passed. The optional application URL preserves all three SQLite search triggers.
+Recorded deployed source is `fbae0956f17df25b5d69c9a94f17b9568519e089` (PR #50),
+including owner-only saved searches and application progress reporting. Additive
+jobs.0014/0015 applied after verified private off-server backups and isolated
+restores. Legacy application fields/snapshots were preserved. Saved searches are
+enabled; application/saved-search real sending and queue capture remain disabled.
+Payment and inline queue contracts are offline test integrations, not live services.
+PR50 passed all six CI checks; local434 Django tests (one platform skip),141
+components and nine real-endpoint browser journeys passed. Production health,
+exact live build, clean source and authenticated empty application-list reads
+passed. Real owner progress entry was unavailable because the account had no rows.
+See docs/APPLICATION_PIPELINE.md and docs/JIRA_ROADMAP_PROGRESS.md for evidence.
+The preparation-only repair is local until its own release evidence is recorded;
+never activate sending before personal document approval and exact authorization.
+The backlog is not complete. Optional application URLs preserve all three SQLite
+search triggers. Account mail remains a separate owner-only pilot.
 
 JOB_FRESHNESS_ENFORCED and EMPLOYER_POSTING_ENABLED are true. Anonymous
 PUBLIC_JOBS_ENABLED remains false. 979 jobs were retained; 977 active historical
