@@ -18,9 +18,11 @@ from .models import Profile, CVApproval
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
-def create_profile(sender, instance, created, **kwargs):
-    if created:
-        Profile.objects.create(user=instance)
+def create_profile(sender, instance, created, raw=False, using=None, **kwargs):
+    # see docs/CONCEPTS.md#fixture-safe-profile-signal
+    # A raw fixture supplies its own related rows; never invent defaults on restore.
+    if created and not raw:
+        Profile.objects.using(using).create(user=instance)
 
 
 @receiver(post_delete, sender=CVApproval)

@@ -1109,3 +1109,24 @@ the already-tested PR54 package (467 local Django tests/one platform skip; locke
 Node24.19 lint/build and36-file match). Required CI will re-run the full gates on
 the evidence commit before merge. Its results are not preclaimed. No second local
 runtime suite is represented as having run for a documentation-only update.
+
+## AJ47 synthetic PostgreSQL rehearsal — 24 October 2026
+
+Branch codex/postgres-data-rehearsal, base 7c624568bbb4c974f62b5a399bb4ddb6b29c00f1.
+Local package; not yet pushed, merged or deployed. No migration/hosting change.
+Raw fixture restores skip automatic profile creation; normal creation honors its database alias.
+Backend check and migration drift passed; full suite: 469 tests, 329.121s, one known platform skip.
+Seven helper tests passed (0.056s), changed-file Ruff and exact OpenAPI generation passed.
+Initial Windows sandbox Temp ACL failures were resolved by elevated isolated reruns.
+Node 24.19.0 npm ci: 363 installed/364 audited, zero vulnerabilities; Oxlint/ESLint passed;
+Vite build 2.54s, all 36 committed build files identical. No frontend changes.
+Actual isolated PostgreSQL 17.11 rehearsal: 34 models, 161 rows, four private files;
+exact canonical values/relationships, microseconds, FK enforcement, sequences,
+owner-only private downloads and unchanged document bytes passed. No email/provider call.
+Final hash: 142cffa8a232026d864a32c41cd0e384c8df2ee878ab5eff87ac2e35b7179260.
+Source unchanged; no PostgreSQL migration history marked applied. Target network none,
+no host mounts/ports; verified exact ID/label before removal. Only synthetic data used.
+Initial invalid fixture policy corrected; JSON timestamp precision loss fixed with regression.
+Historical PostgreSQL migrations, search parity, object storage, interruption recovery
+and production cutover remain unverified. AJ47 unfinished. Signal rollback is source-only.
+See STORAGE_MIGRATION_REHEARSAL.md. Existing production flags and storage unchanged.
