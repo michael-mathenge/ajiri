@@ -12,6 +12,8 @@ SPECTACULAR_SETTINGS = {
     'APPEND_COMPONENTS': {'securitySchemes': {'refreshCookie': {'type': 'apiKey', 'in': 'cookie', 'name': 'refresh_token', 'description': 'httpOnly cookie; CSRF token and valid Origin required.'}}},
     'DISABLE_DOCSTRING_DESCRIPTIONS': True,
     'COMPONENT_SPLIT_REQUEST': True,
+    # Both channels share the model's choice set; use one stable public enum name.
+    'ENUM_NAME_OVERRIDES': {'SavedSearchFrequencyEnum': [('off', 'Off'), ('daily', 'Daily'), ('weekly', 'Every seven days')]},
     'PREPROCESSING_HOOKS': ['config.schema_contract.version_one_only'],
 }
 

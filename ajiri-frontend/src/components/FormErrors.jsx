@@ -17,6 +17,7 @@ export default function FormErrors({
   errors,
   prefix = 'form',
   className = '',
+  fieldLabels = {},
 }) {
   if (!Object.keys(errors).length) return null
   return (
@@ -26,7 +27,8 @@ export default function FormErrors({
         {Object.entries(errors).map(([field, messages]) => (
           <li id={`${prefix}-${field}-error`} key={field}>
             <strong>
-              {labels[field] ||
+              {fieldLabels[field] ||
+                labels[field] ||
                 field.charAt(0).toUpperCase() +
                   field
                     .slice(1)

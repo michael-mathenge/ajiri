@@ -18,6 +18,7 @@ from jobs.models import (Application, ApplicationPackage, ApplicationPackageAppr
                          ApplicationSendAuthorization, ApplicationSendAttemptLink,
                          DeliveryAttempt, DeliveryDailyBudget, Job, Notification)
 from profiles.models import Profile, CVWorkspace, CVApproval, AlertConsentEvent
+from jobs.models import SavedSearch, SavedSearchMatch
 
 
 class Command(BaseCommand):
@@ -66,8 +67,11 @@ class Command(BaseCommand):
             raise CommandError('Cross-owner authorization reference; investigate before export.')
         notifications = Notification.objects.filter(user=user)
         jobs = Job.objects.filter(pk__in=applications.values('job_id')).union(
-            Job.objects.filter(pk__in=notifications.values('job_id')))
+            Job.objects.filter(pk__in=notifications.values('job_id')),
+            Job.objects.filter(pk__in=SavedSearchMatch.objects.filter(search__owner=user).values('job_id')))
         scopes = [
+            ('saved_search', SavedSearch.objects.filter(owner=user)),
+            ('saved_search_match', SavedSearchMatch.objects.filter(search__owner=user)),
             ('profile', Profile.objects.filter(user=user)),
             ('cv_workspace', CVWorkspace.objects.filter(profile__user=user)),
             ('cv_approval', CVApproval.objects.filter(profile__user=user)),
@@ -90,7 +94,8 @@ class Command(BaseCommand):
                 record = {}
                 for field in row._meta.concrete_fields:
                     if ((isinstance(row, DeliveryAttempt) and field.name in ('recipient_digest', 'idempotency_key'))
-                            or (isinstance(row, AlertConsentEvent) and field.name == 'recipient_digest')):
+                            or (isinstance(row, AlertConsentEvent) and field.name == 'recipient_digest')
+                            or (isinstance(row, SavedSearchMatch) and field.name == 'email_attempt')):
                         continue  # Internal accounting fingerprints/keys are not portable account content.
                     value = getattr(row, field.attname)
                     if isinstance(field, FileField):

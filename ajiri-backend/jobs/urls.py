@@ -1,4 +1,5 @@
 from django.urls import path
+from .saved_search_views import SavedSearchList, SavedSearchDetail, SavedSearchMatches
 from .employer_views import OrganisationList, DraftList, DraftWithdraw, OrganisationReview, DraftReview, ReviewQueue
 from .send_views import (SendPlanView, SendAuthorizationListView, SendAuthorizationView,
                          WithdrawAuthorizationView, DispatchAuthorizationView)
@@ -21,6 +22,9 @@ from .views import (
 )
 
 urlpatterns = [
+    path('saved-searches/', SavedSearchList.as_view(), name='saved-search-list'),
+    path('saved-searches/<uuid:pk>/', SavedSearchDetail.as_view(), name='saved-search-detail'),
+    path('saved-searches/<uuid:pk>/matches/', SavedSearchMatches.as_view(), name='saved-search-matches'),
     path('employers/review-queue/', ReviewQueue.as_view(), name='employer-review-queue'),
     path('employers/organisations/', OrganisationList.as_view(), name='employer-organisations'),
     path('employers/drafts/', DraftList.as_view(), name='employer-drafts'),

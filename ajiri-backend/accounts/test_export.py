@@ -61,6 +61,28 @@ class AccountExportTests(TestCase):
                 self.run_export(**options)
         self.assertFalse((self.root / 'export').exists())
 
+    def test_saved_search_export_is_owner_scoped_and_includes_match_job_context(self):
+        from django.utils import timezone
+        from jobs.models import SavedSearch, SavedSearchMatch, Job
+        from jobs.saved_searches import reset_windows
+        search = SavedSearch(owner=self.owner, name='Owned synthetic query', q='Python')
+        reset_windows(search, timezone.now())
+        search.save()
+        other = SavedSearch(owner=self.other, name='Other private query')
+        reset_windows(other, timezone.now())
+        other.save()
+        job = Job.objects.create(title='Synthetic export job', company_name='Synthetic',
+            source_url='https://example.invalid/saved-export', source_name='synthetic')
+        SavedSearchMatch.objects.create(search=search, revision=1, channel='in_app', job=job,
+            window_start=timezone.now(), window_end=timezone.now())
+        self.run_export()
+        data = json.loads((self.root / 'export' / 'account.json').read_text())
+        self.assertEqual([row['name'] for row in data['records']['saved_search']], ['Owned synthetic query'])
+        self.assertEqual(len(data['records']['saved_search_match']), 1)
+        self.assertNotIn('email_attempt', data['records']['saved_search_match'][0])
+        self.assertEqual([row['title'] for row in data['records']['job']], ['Synthetic export job'])
+        self.assertNotIn('Other private query', json.dumps(data))
+
     def test_unsafe_or_existing_destination_rejected_without_overwrite(self):
         for destination in (str(self.media / 'export'), str(self.root), 'relative'):
             with self.assertRaises(CommandError):

@@ -254,6 +254,7 @@ REST_FRAMEWORK = {
         'refresh': os.environ.get('THROTTLE_REFRESH_RATE', '60/min'),
         'apply': os.environ.get('THROTTLE_APPLY_RATE', '20/hour'),
         'employer_mutation': '60/hour',
+        'saved_search_mutation': '60/hour',
         'send': os.environ.get('THROTTLE_SEND_RATE', '10/hour'),
     },
 }
@@ -400,6 +401,8 @@ PUBLIC_JOB_ORIGIN = os.environ.get('PUBLIC_JOB_ORIGIN', '')
 # Enable only after the additive publication-evidence migration is installed.
 JOB_FRESHNESS_ENFORCED = env_bool('JOB_FRESHNESS_ENFORCED', False)
 EMPLOYER_POSTING_ENABLED = env_bool('EMPLOYER_POSTING_ENABLED', False)
+SAVED_SEARCHES_ENABLED = env_bool('SAVED_SEARCHES_ENABLED', False)
+SAVED_SEARCH_EMAIL_TEST_CAPTURE = False  # Closed test integration, never a production sending switch.
 RSS_AVAILABILITY_MAX_AGE_SECONDS = 86400
 if FRONTEND_BUILD_DIR.is_dir():
     WHITENOISE_ROOT = FRONTEND_BUILD_DIR
