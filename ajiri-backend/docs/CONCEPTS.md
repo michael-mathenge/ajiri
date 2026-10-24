@@ -1207,3 +1207,20 @@ Browser acceptance uses a private temporary SQLite file. This gives threaded HTT
 requests independent connections, rather than sharing one in-memory connection.
 The test runner removes the database afterwards; normal unit-test discovery keeps
 Django's default setup. Development and production databases are never copied.
+
+## saved-search-windows
+
+A saved query belongs to one account and does not grant email consent. Both
+channel frequencies default off. Daily windows close at the next Nairobi midnight;
+weekly windows close at midnight seven days later. The matching sweep collects
+in-app results only, after the saved choice, up to 50 current vacancies per window.
+Missed intervals coalesce; expired, scam or unverified jobs never enter results.
+Revision claims serialize edits with collection. Edits reset future windows and
+keep old match evidence separate. Removing a search stops its future collection.
+
+Email integration is deliberately memory-only: exact-address consent, verification,
+shared daily quotas, idempotency and final transport rechecks are tested without
+Brevo/SMTP. The test-capture constant cannot be opened by production environment
+configuration. Production email frequency is a preference, not an active transport.
+Private preferences/results are included in verified owner exports and cascade
+with their account; shared settled delivery accounting survives preference removal.

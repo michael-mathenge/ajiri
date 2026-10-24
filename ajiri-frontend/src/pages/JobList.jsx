@@ -180,6 +180,11 @@ export default function JobList() {
           </p>
         </Dialog>
       </div>
+      <Link
+        to={`/saved-searches?${new URLSearchParams({ q: title, location, job_type: type })}`}
+      >
+        Save this search
+      </Link>
       {loading ? (
         <LoadingState label="Loading jobs" />
       ) : error ? (
@@ -199,7 +204,7 @@ export default function JobList() {
         >
           {filtered
             ? 'Try a broader title or another location.'
-            : 'Check back soon for new job listings.'}
+            : 'Only vacancies with current availability evidence appear here. Unverified or expired listings are hidden. Check back for reviewed openings.'}
         </EmptyState>
       ) : (
         <>

@@ -224,6 +224,63 @@ class BrowserJourney(LiveServerTestCase):
             self.assertEqual(list(workers.map(read, range(48))), [200] * 48)
         self.assertEqual(WorkerRollbackFixture.server_failures, [])
 
+    @override_settings(SAVED_SEARCHES_ENABLED=True)
+    def test_saved_search_choices_edit_and_remove_never_send(self):
+        from django.contrib.auth import get_user_model
+        from jobs.models import SavedSearch
+        user = get_user_model().objects.create_user(
+            email='saved-browser@example.invalid', password='Synthetic-Saved-982!')
+
+        def journey():
+            with sync_playwright() as playwright:
+                browser = playwright.chromium.launch()
+                context = browser.new_context(viewport={'width': 390, 'height': 844})
+                failures = []
+                context.on('response', lambda response: failures.append(response.status) if response.status >= 500 else None)
+                context.route('**/*', lambda route: route.continue_()
+                    if route.request.url.startswith(self.live_server_url + '/') else route.abort())
+                page = context.new_page()
+                page.goto(self.live_server_url+'/login')
+                page.get_by_label('Email address', exact=True).fill(user.email)
+                page.get_by_label('Password', exact=True).fill('Synthetic-Saved-982!')
+                page.get_by_role('button', name='Log in', exact=True).click()
+                page.wait_for_url(self.live_server_url+'/')
+                page.goto(self.live_server_url+'/saved-searches?q=Python')
+                expect(page.get_by_role('heading', name='Saved searches', exact=True)).to_be_visible()
+                page.get_by_label('Search name', exact=True).fill('Synthetic saved query')
+                page.get_by_label('In-app frequency', exact=True).select_option('daily')
+                page.get_by_label('Email frequency (sending disabled)', exact=True).select_option('weekly')
+                page.get_by_role('button', name='Save search', exact=True).click()
+                expect(page.get_by_role('status')).to_contain_text('does not authorize or send email')
+                expect(page.get_by_role('heading', name='Synthetic saved query', exact=True)).to_be_visible()
+                page.get_by_role('button', name='Edit Synthetic saved query', exact=True).click()
+                page.get_by_label('Job keywords', exact=True).fill('x'*65)
+                page.get_by_role('button', name='Save changes', exact=True).click()
+                expect(page.get_by_role('alert')).to_contain_text('each at most 64 characters')
+                page.get_by_label('Job keywords', exact=True).fill('Testing')
+                page.get_by_role('button', name='Save changes', exact=True).click()
+                expect(page.get_by_role('heading', name='Edit saved search', exact=True)).not_to_be_visible()
+                page.get_by_role('button', name='Show matches for Synthetic saved query', exact=True).click()
+                expect(page.get_by_text('No current matches yet.', exact=False)).to_be_visible()
+                audit(self, page, 'saved-searches-light')
+                page.get_by_role('button', name='Remove Synthetic saved query', exact=True).click()
+                expect(page.get_by_role('status')).to_contain_text('future checks are stopped')
+                expect(page.get_by_text('No saved searches yet.', exact=True)).to_be_visible()
+                page.wait_for_load_state('networkidle')
+                self.assertEqual(failures, [], WorkerRollbackFixture.server_failures)
+                context.close()
+                browser.close()
+
+        with patch('jobs.brevo_transport.BrevoTransport.send') as provider:
+            with ThreadPoolExecutor(max_workers=1) as worker:
+                worker.submit(journey).result(timeout=120)
+            provider.assert_not_called()
+        self.assertFalse(SavedSearch.objects.filter(owner=user).exists())
+        self.assertFalse(user.profile.alert_consent_events.exists())
+        self.assertEqual(DeliveryAttempt.objects.count(), 0)
+        self.assertEqual(DeliveryDailyBudget.objects.count(), 0)
+        self.assertEqual(mail.outbox, [])
+
     def test_exception_diagnostics_omit_messages_and_absolute_paths(self):
         from contextlib import redirect_stdout
         from io import StringIO

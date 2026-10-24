@@ -103,4 +103,6 @@ def sweep_all_active_jobs_for_matches():
     archive_expired()
     for job in eligible_jobs():
         total_notified += notify_matching_profiles(job)
+    from .saved_searches import run_due_saved_searches
+    run_due_saved_searches()  # In-app only; no new email route or scheduler credential.
     return total_notified

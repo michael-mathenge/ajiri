@@ -49,6 +49,20 @@ The [managed application pilot](MANAGED_APPLICATION_PILOT.md) is a bounded synth
 owner test, not general employer email delivery. Other users keep the reviewed
 download/external-submission journey while broader sending remains closed.
 
+## Saved searches (release pending)
+
+The next release adds **Saved searches** to navigation and **Save this search**
+to job results. Save keywords, location and job type; choose Off, Daily or Every
+seven days independently for in-app results and email preferences. Both start
+Off. Saving a frequency does not grant email consent or send mail; saved-search
+email delivery remains disabled. Profile alert choices still apply.
+
+You can keep ten searches. Each due window collects up to fifty new, currently
+eligible jobs; expired or unverified vacancies remain hidden. Checks follow the
+existing sweep, so midnight in Nairobi is a window boundary, not a guaranteed
+delivery time. Editing starts a new window; removing a search stops its future
+checks. See [saved searches](SAVED_SEARCHES.md) for limits and release status.
+
 ## Employer vacancies and availability
 
 The reviewed employer workflow is deployed. General employer onboarding still

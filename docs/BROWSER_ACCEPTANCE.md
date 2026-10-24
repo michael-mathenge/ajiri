@@ -1,5 +1,11 @@
 # Browser acceptance (AJ-27)
 
+> 24 October 2026 reconciliation: the limitations below describe the original
+> package. Subsequent managed-pilot, employer and privacy journeys passed in
+> PR44/45 Linux CI, with mocked transport and synthetic data. AJ-27 is now Done;
+> this is not proof of real employer delivery. The saved-search journey is being
+> verified separately; see SAVED_SEARCHES.md for its current results.
+
 This suite drives real Chromium against Django's disposable live test server and
 the committed React build. It is separate from Vitest component tests and the
 DRF endpoint journey. No production URL, credentials or user data are used.

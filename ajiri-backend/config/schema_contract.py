@@ -14,6 +14,7 @@ from jobs.views import ApplicationCVInput
 from jobs.package_views import DraftInput, PackageInput, ApprovalInput
 from jobs.send_views import AuthorizationInput
 from jobs.employer_views import ReviewInput
+from jobs.saved_search_views import SearchInput
 
 
 class LoginInput(serializers.Serializer):
@@ -89,6 +90,8 @@ class ContractSchema(AutoSchema):
 
     # see docs/CONCEPTS.md#api-version-contract
     def get_request_serializer(self):
+        if type(self.view).__name__ in ('SavedSearchList', 'SavedSearchDetail') and self.method in ('POST', 'PATCH'):
+            return SearchInput()
         configured = INPUTS.get((type(self.view).__name__, self.method))
         if configured:
             return configured()

@@ -21,9 +21,8 @@ class EmployerOrganisation(models.Model):
 
 class Job(models.Model):
     """
-    A single job listing pulled in from an external job board.
-    We don't create jobs ourselves — every Job row represents something
-    scraped/ingested from a source like BrighterMonday or MyJobMag.
+    A listing ingested from a source or published after independent employer review.
+    Publication evidence, not the presence of this historical row, controls visibility.
     """
 
     class JobType(models.TextChoices):
@@ -124,6 +123,44 @@ class EmployerReview(models.Model):
     decision = models.CharField(max_length=20)
     reason = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+
+
+class SavedSearch(models.Model):
+    # see docs/CONCEPTS.md#saved-search-windows
+    class Frequency(models.TextChoices):
+        OFF = 'off', 'Off'
+        DAILY = 'daily', 'Daily'
+        WEEKLY = 'weekly', 'Every seven days'
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='saved_searches')
+    name = models.CharField(max_length=80)
+    q = models.CharField(max_length=255, blank=True)
+    location = models.CharField(max_length=255, blank=True)
+    job_type = models.CharField(max_length=20, blank=True, choices=Job.JobType.choices)
+    in_app_frequency = models.CharField(max_length=8, choices=Frequency.choices, default=Frequency.OFF)
+    email_frequency = models.CharField(max_length=8, choices=Frequency.choices, default=Frequency.OFF)
+    revision = models.PositiveIntegerField(default=1)
+    in_app_cursor = models.DateTimeField()
+    email_cursor = models.DateTimeField()
+    next_in_app_at = models.DateTimeField(null=True, blank=True)
+    next_email_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+class SavedSearchMatch(models.Model):
+    search = models.ForeignKey(SavedSearch, on_delete=models.CASCADE, related_name='matches')
+    revision = models.PositiveIntegerField()
+    job = models.ForeignKey(Job, on_delete=models.PROTECT)
+    channel = models.CharField(max_length=8, choices=[('in_app', 'In app'), ('email', 'Email')])
+    window_start = models.DateTimeField()
+    window_end = models.DateTimeField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    notification = models.ForeignKey('Notification', on_delete=models.SET_NULL, null=True, blank=True)
+    email_attempt = models.ForeignKey('DeliveryAttempt', on_delete=models.SET_NULL, null=True, blank=True)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=('search', 'revision', 'job', 'channel'), name='saved_search_unique_match')]
 
 
 class Application(models.Model):
