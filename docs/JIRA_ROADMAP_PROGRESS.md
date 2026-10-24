@@ -1,5 +1,29 @@
 # Jira roadmap execution
 
+## 24 October: application pipeline (AJ50 local)
+
+Branch codex/application-pipeline from reviewed main b24b070. Private owner
+progress/note updates use bounded optimistic revisions, never submission/send
+permission. Receipt labels distinguish provider acceptance, unknown/reserved,
+failed attempts, user-reported external submission and legacy unverified email.
+Query-cache updates let later server receipts replace the saved progress row.
+Additive jobs.0015 preserves snapshots and infers no personal/employer outcome.
+
+Actual gates: full434 Django tests passed365.125s (one platform skip); initial
+focused10 passed1.066s, plus cross-owner receipt regression covered by full suite.
+Components141 passed62.01s; Node24.19 locked install audited364/zero vulnerabilities,
+lint/ESLint/Ruff and build2.00s passed. Exact source and36 generated files verified.
+Strict offline schema passed; new Chromium save/reload journey passed31.108s with
+axe and no provider/email/ledger effects. Initial component run140 had one old
+CV-focus timing failure; corrected to await the same required effect. New form
+button required explicit submit type; click regression now passes. All nine
+browser journeys passed246.544s; exact strict schema regeneration passed. Final
+CI/release remain pending; source is not deployed acceptance.
+
+PR49 closed queue first scope merged b24b070 after all six checks passed in
+CI40047364994. Payment and queue remain inactive test integrations, not live
+financial/worker services. Production remains c628ec0 pending this release batch.
+
 ## 24 October: closed queue integration (local AJ48 first scope)
 
 Branch codex/queue-test-integration includes minimal immutable owner/authorization

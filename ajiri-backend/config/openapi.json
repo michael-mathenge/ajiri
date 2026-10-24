@@ -2904,6 +2904,132 @@
                 }
             }
         },
+        "/api/v1/jobs/applications/{id}/progress/": {
+            "patch": {
+                "operationId": "patch_api_v1_jobs_applications_id_progress",
+                "description": "Same owner permissions, validation, throttles and explicit-action requirements as the legacy route.",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "jobs"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedProgressInputRequest"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedProgressInputRequest"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedProgressInputRequest"
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "jwtAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Application"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {}
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorOutput"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "403": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorOutput"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "404": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorOutput"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "409": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorOutput"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "429": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorOutput"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "503": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorOutput"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/api/v1/jobs/applications/{id}/restore/": {
             "post": {
                 "operationId": "post_api_v1_jobs_applications_id_restore",
@@ -7296,6 +7422,33 @@
                         "format": "date-time",
                         "readOnly": true,
                         "nullable": true
+                    },
+                    "progress_stage": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/ApplicationProgressStageEnum"
+                            }
+                        ],
+                        "readOnly": true
+                    },
+                    "progress_note": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "progress_revision": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "progress_reported_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true,
+                        "nullable": true
+                    },
+                    "delivery_evidence": {
+                        "type": "object",
+                        "additionalProperties": {},
+                        "readOnly": true
                     }
                 },
                 "required": [
@@ -7303,12 +7456,17 @@
                     "application_method",
                     "company_name",
                     "created_at",
+                    "delivery_evidence",
                     "employer_url",
                     "generated_cover_letter",
                     "generated_cv",
                     "id",
                     "job",
                     "job_title",
+                    "progress_note",
+                    "progress_reported_at",
+                    "progress_revision",
+                    "progress_stage",
                     "sent_at",
                     "status",
                     "updated_at"
@@ -7333,6 +7491,17 @@
                 ],
                 "type": "string",
                 "description": "* `email` - Email\n* `external_link` - External Link"
+            },
+            "ApplicationProgressStageEnum": {
+                "enum": [
+                    "not_reported",
+                    "applied",
+                    "interview",
+                    "offer",
+                    "closed"
+                ],
+                "type": "string",
+                "description": "* `not_reported` - No update reported\n* `applied` - Applied (your report)\n* `interview` - Interview (your report)\n* `offer` - Offer (your report)\n* `closed` - Closed (your report)"
             },
             "ApplicationStatusEnum": {
                 "enum": [
@@ -8195,6 +8364,24 @@
                     },
                     "notify_in_app": {
                         "type": "boolean"
+                    }
+                }
+            },
+            "PatchedProgressInputRequest": {
+                "type": "object",
+                "properties": {
+                    "expected_revision": {
+                        "type": "integer",
+                        "maximum": 2147483646,
+                        "minimum": 0
+                    },
+                    "stage": {
+                        "$ref": "#/components/schemas/ApplicationProgressStageEnum"
+                    },
+                    "note": {
+                        "type": "string",
+                        "default": "",
+                        "maxLength": 1000
                     }
                 }
             },

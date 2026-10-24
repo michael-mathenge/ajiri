@@ -224,6 +224,50 @@ class BrowserJourney(LiveServerTestCase):
             self.assertEqual(list(workers.map(read, range(48))), [200] * 48)
         self.assertEqual(WorkerRollbackFixture.server_failures, [])
 
+    def test_private_progress_update_does_not_submit(self):
+        from accounts.models import User
+        user = User.objects.create_user(email='progress-browser@example.invalid', password='Synthetic-Progress-982!')
+        job = Job.objects.create(title='Synthetic progress role', company_name='Synthetic company',
+            source_name='synthetic', source_url='https://example.invalid/progress-browser', is_active=False)
+        application = Application.objects.create(user=user, job=job, status='ready_for_review', application_method='external_link')
+
+        def journey():
+            with sync_playwright() as playwright:
+                browser = playwright.chromium.launch()
+                page = browser.new_page(viewport={'width': 390, 'height': 844})
+                page.route('**/*', lambda route: route.continue_()
+                    if route.request.url.startswith(self.live_server_url + '/') else route.abort())
+                page.goto(self.live_server_url+'/login')
+                page.get_by_label('Email address', exact=True).fill(user.email)
+                page.get_by_label('Password', exact=True).fill('Synthetic-Progress-982!')
+                page.get_by_role('button', name='Log in', exact=True).click()
+                page.wait_for_url(self.live_server_url+'/')
+                page.goto(self.live_server_url+'/applications')
+                page.get_by_text('Track my progress', exact=True).click()
+                page.get_by_label('Your progress', exact=True).select_option('interview')
+                page.get_by_label('Private note (optional)', exact=True).fill('Synthetic personal report only')
+                page.get_by_role('button', name='Save my update', exact=True).click()
+                expect(page.get_by_role('status')).to_contain_text('No application was sent')
+                expect(page.locator('p').filter(has_text='Interview (your report)')).to_be_visible()
+                audit(self, page, 'application-progress-light')
+                page.reload()
+                page.get_by_text('Track my progress', exact=True).click()
+                expect(page.get_by_label('Your progress', exact=True)).to_have_value('interview')
+                expect(page.get_by_label('Private note (optional)', exact=True)).to_have_value('Synthetic personal report only')
+                browser.close()
+
+        with patch('jobs.brevo_transport.BrevoTransport.send') as provider:
+            with ThreadPoolExecutor(max_workers=1) as worker:
+                worker.submit(journey).result(timeout=120)
+            provider.assert_not_called()
+        application.refresh_from_db()
+        self.assertEqual((application.progress_stage, application.progress_revision), ('interview', 1))
+        self.assertEqual(application.status, 'ready_for_review')
+        self.assertIsNone(application.sent_at)
+        self.assertFalse(DeliveryAttempt.objects.exists())
+        self.assertFalse(DeliveryDailyBudget.objects.exists())
+        self.assertEqual(mail.outbox, [])
+
     @override_settings(SAVED_SEARCHES_ENABLED=True)
     def test_saved_search_choices_edit_and_remove_never_send(self):
         from django.contrib.auth import get_user_model
