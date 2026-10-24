@@ -1282,3 +1282,13 @@ SQLite first claims its writer inside the transaction before reading the reviewe
 state; contention is an explicit retry/check-history result. Admin flags and audit
 records are read-only outside this workflow. See jobs/moderation.py, jobs/admin.py
 and the repo-root docs/JOB_MODERATION.md. No personal application is adjudicated.
+
+
+## analytics-test-contract
+
+A default-off memory fixture tests independent analytics choice and coarse
+allowlisted event counts before any live collection is designed. It accepts no
+payload attributes or production transport. Synthetic channel/time/policy records
+are not durable real consent. Revocation stops subsequent counts. No SDK, endpoint
+or production instrumentation is present. See jobs/analytics_test_contract.py and
+the repo-root docs/ANALYTICS_TEST_CONTRACT.md for the remaining privacy decisions.
