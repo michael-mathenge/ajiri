@@ -49,9 +49,9 @@ The [managed application pilot](MANAGED_APPLICATION_PILOT.md) is a bounded synth
 owner test, not general employer email delivery. Other users keep the reviewed
 download/external-submission journey while broader sending remains closed.
 
-## Saved searches (release pending)
+## Saved searches
 
-The next release adds **Saved searches** to navigation and **Save this search**
+The deployed release adds **Saved searches** to navigation and **Save this search**
 to job results. Save keywords, location and job type; choose Off, Daily or Every
 seven days independently for in-app results and email preferences. Both start
 Off. Saving a frequency does not grant email consent or send mail; saved-search
