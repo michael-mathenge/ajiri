@@ -1236,3 +1236,14 @@ applying and existing documents remain free. Memory locks and injected write
 failures demonstrate the contract, not durable provider integration. The lab has
 no production caller, migrations, credentials or network adapter. See repository
 docs/PAYMENTS_TEST_CONTRACT.md for outstanding sandbox/commercial prerequisites.
+
+## queue-reconciliation-contract
+
+A queue carries only an owner and exact application authorization identifier.
+Dispatch reloads current permission/documents and reuses the shared delivery key;
+redelivery must never invent a retry or repeat uncertain provider IO. A crash can
+lose acknowledgement even when the provider accepted a message, so receipt
+reconciliation comes before any retry. The inline test executor is default closed,
+has no production caller and proves neither broker durability nor worker hosting.
+See repository docs/QUEUE_TEST_INTEGRATION.md for activation prerequisites and
+the difference between a queue acknowledgement and actual delivery evidence.
