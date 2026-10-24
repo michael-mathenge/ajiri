@@ -957,3 +957,34 @@ Both workflow states restored active and web app enabled. No real employer revie
 application send or broadened email pilot occurred. Current work tracked as AJ53;
 AJ42 stays In Progress because anonymous publication remains gated. Other backlog
 items and general employer onboarding are not claimed complete.
+
+
+### 24 October 2026 — application pipeline deployed; preparation-only repair
+
+PR50 all six checks passed at5824da3 (CI40049180274); deployed source is
+fbae0956f17df25b5d69c9a94f17b9568519e089. Applied jobs.0015 after fresh consistent
+backup backup-20261024T012025757458Z-23b2c6e7. Independent private off-server copy
+and isolated restore passed; ZIP SHA256
+2de7e79dd628aef00c4d9b35a33ef6d2f76821023b0a10ed7f940326e2bf7b6d.
+Legacy application fields/snapshots matched before/after migration. Check/drift,
+empty plan, health200/HSTS300, exact live HTML/application chunk and clean source
+passed. All writers resumed their previous active states. Authenticated list read
+passed but the account had no rows; no real user progress was invented. Local434
+Django/one skip,141 components and nine browser journeys passed as recorded in
+APPLICATION_PIPELINE.md. Payment and inline-queue contracts are included in source,
+not live merchant integrations or a durable worker. Application email stays off.
+
+The attempted sending-enabled reload was rejected by automatic approval review
+before execution: personal document approval and exact send authorization were
+not yet complete. No reload/provider send occurred; persisted sending was returned
+to False. A hidden synthetic draft exists, without new document approvals,
+authorizations, attempts or budget use. The repair branch
+codex/owner-pilot-preparation separates preparation from transport activation.
+Six new regressions plus nine existing dispatch tests passed4.244s. It adds no migration/dependency/frontend change. Initial locked
+Node24.19 install was blocked by Windows sandbox EPERM; dependent tools were
+unavailable in that attempt. Corrected elevated Node24.19 npm ci passed (363 added/364 audited, zero findings);
+lint/ESLint and build2.37s passed. All141 components passed73.08s. Source/runner
+and all36 committed build files matched exactly; no frontend commit is needed.
+Full440 Django tests passed374.277s (one known platform skip); manage.py check,
+makemigrations --check --dry-run, Ruff and strict offline schema drift check passed.
+Required CI and deployment remain pending; failed attempts are retained as evidence. No quota pruning occurred.

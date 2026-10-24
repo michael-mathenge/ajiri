@@ -1257,3 +1257,16 @@ employer decision. Legacy sent rows without receipts remain unverified; provider
 acceptance is not inbox delivery, and an unknown receipt requires reconciliation.
 The shared client cache lets a later server receipt replace a progress response.
 See repository docs/APPLICATION_PIPELINE.md for defaults, rollback and release status.
+
+
+## prepare-before-sending-activation
+
+Preparing an application is separate from enabling its delivery transport. The
+owner-only synthetic preparation flag allows selecting an approved CV, reviewing
+and approving a saved package, and recording the exact email authorization while
+APPLICATION_EMAIL_ENABLED remains False. Dispatch checks the sending flag again
+and cannot reserve budget or call the provider merely because preparation is on.
+Both switches default off; the existing exact owner and verified mailbox policy
+still applies. The owner personally completes approvals; feature approval is not
+personal permission. Turning preparation off preserves saved documents and reviews.
+See jobs/application_dispatch.py and docs/MANAGED_APPLICATION_PILOT.md at repo root.

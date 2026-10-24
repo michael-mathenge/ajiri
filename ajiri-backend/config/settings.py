@@ -214,6 +214,7 @@ DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'Ajiri <noreply@ajiri.
 REAL_EMAIL_ENABLED = env_bool('REAL_EMAIL_ENABLED', False)
 # Separate opt-in; default remains disabled even when account security mail is on.
 APPLICATION_EMAIL_ENABLED = env_bool('APPLICATION_EMAIL_ENABLED', False)
+APPLICATION_PILOT_PREPARATION_ENABLED = env_bool('APPLICATION_PILOT_PREPARATION_ENABLED', False)
 APPLICATION_PILOT_LIMIT_REVIEW = os.environ.get('APPLICATION_PILOT_LIMIT_REVIEW', '')
 EMAIL_DELIVERY_MODE = os.environ.get('EMAIL_DELIVERY_MODE', '')
 EMAIL_PILOT_OWNER_ID = os.environ.get('EMAIL_PILOT_OWNER_ID', '')

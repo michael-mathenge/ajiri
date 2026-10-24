@@ -3,7 +3,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from accounts.models import User
 from profiles.models import Profile
-from jobs.application_dispatch import configuration, SOURCE, DISCLAIMER
+from jobs.application_dispatch import preparation_configuration, SOURCE, DISCLAIMER
 from jobs.models import Job, Application
 
 
@@ -15,9 +15,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         # see docs/CONCEPTS.md#managed-application-pilot
-        configured = configuration()
+        configured = preparation_configuration()
         if configured is None:
-            raise CommandError('The reviewed owner application pilot is not enabled.')
+            raise CommandError('Owner-only application preparation is not enabled.')
         policy, _ = configured
         user = User.objects.filter(pk=policy.owner_id, is_active=True).first()
         if (user is None or user.email.casefold() != policy.recipient
