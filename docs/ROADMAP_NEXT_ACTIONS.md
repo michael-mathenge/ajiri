@@ -3,7 +3,11 @@
 Live Jira reconciliation returned12 unfinished non-Epic issues with no next page.
 AJ49 (reasoned moderation) and AJ50 (pipeline first scope) are now Done with deployed
 evidence. This list distinguishes tested implementation from missing live acceptance.
-No test provider is a live service. Use JIRA_ROADMAP_PROGRESS.md for actual revisions.
+No test provider is a live service. PR51 preparation and PR52 moderation are
+deployed; PR53/54 offline contracts are included in verified release b6cc6af.
+The final local suite passed467 tests (one platform skip), all six CI checks passed
+for each PR, and production source/build/health checks passed. No analytics,
+scanner, financial service or broader sending was activated. Use JIRA_ROADMAP_PROGRESS.md for actual revisions.
 
 | Issue | Existing evidence | Next concrete boundary |
 |---|---|---|

@@ -63,5 +63,8 @@ resurrection of a removed fixture. Full467 Django tests passed329.007s (one know
 Ruff and strict schema checks passed. Node24.19 locked install audited364/zero
 findings, lint/ESLint and build2.08s passed; source/runner and all36 committed build
 files matched. Frontend source is unchanged; earlier141 components are historical
-regression evidence, not a new package run. Required remote CI remains pending.
+regression evidence, not a new package run. PR54 passed all six required checks (CI40090201927) and merged/deployed as
+b6cc6af6267bb61aaec3a1a4035c61d1e054d6ea. No migration or activation was needed.
+Production check/drift/empty plan, clean source, health200/HSTS300 and exact live
+HTML/entry bundle passed. There is no production scanner caller or file transfer.
 AJ52 stays In Progress for real scanner/storage integration and live acceptance.

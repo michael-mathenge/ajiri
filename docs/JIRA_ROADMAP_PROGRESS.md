@@ -1080,3 +1080,32 @@ source/runner and all36 build files matched. No frontend source/build change or
 new component-pass claim. No production scanning, schema/host change or document
 transfer. Required CI and code-only source deployment remain pending. README links
 the short remaining-actions guide; historic reviews remain evidence, not setup.
+
+
+### 24 October 2026 - verified code-only release and final evidence
+
+PR54 all six required checks passed at2860565 (CI40090201927), then merged/deployed
+source b6cc6af6267bb61aaec3a1a4035c61d1e054d6ea. It includes merged PR53 (all six
+checks, CI40089298387). No migration, dependency or frontend change; the verified
+17-file off-server recovery copy/restore from the moderation window remains.
+Production check/drift and empty plan passed. Before reload, sending False and no
+startup caller for either test contract were checked. After reload, health200/
+HSTS300, exact live HTML/entry bundle and clean source passed. No writer pause,
+production collection, scanner I/O or private-file transfer was needed for this
+code-only batch. The earlier workflows/web remain active. Sending is still False;
+the last read found zero active exact pilot authorizations. Revision2 document
+approval alone does not authorize delivery. No actual send or quota reservation.
+
+Current Jira reconciliation remains12 unfinished non-Epic stories, no next page.
+AJ49/AJ50 have deployed bounded-scope evidence; AJ51/AJ52 remain In Progress and
+AJ47 remains To Do. ROADMAP_NEXT_ACTIONS.md lists the implementation/live gates;
+STORAGE_MIGRATION_REHEARSAL.md records the explicit non-SQLite migration guard.
+No hosting change or migration-history edit was made. No actual legal approval,
+credentials, merchant ownership or user consent was invented. Retention is still
+report-only and original dirty checkout, stash/config and Docker lesson preserved.
+
+This final follow-up changes only documentation; runtime source exactly matches
+the already-tested PR54 package (467 local Django tests/one platform skip; locked
+Node24.19 lint/build and36-file match). Required CI will re-run the full gates on
+the evidence commit before merge. Its results are not preclaimed. No second local
+runtime suite is represented as having run for a documentation-only update.
