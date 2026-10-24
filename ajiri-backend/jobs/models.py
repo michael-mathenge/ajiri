@@ -86,6 +86,21 @@ class Job(models.Model):
         return self.external_application_url or self.source_url
 
 
+class JobModerationReview(models.Model):
+    # see docs/CONCEPTS.md#reasoned-job-moderation
+    job = models.ForeignKey(Job, on_delete=models.PROTECT, related_name='moderation_reviews')
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name='+')
+    reviewed_fingerprint = models.CharField(max_length=64)
+    decision = models.CharField(max_length=10, choices=[('clear', 'Clear flag'), ('uphold', 'Keep flag')])
+    reason = models.TextField()
+    before = models.JSONField()
+    after = models.JSONField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=['job', 'reviewed_fingerprint'], name='unique_job_moderation_evidence')]
+
+
 class JobPublication(models.Model):
     # see docs/CONCEPTS.md#job-freshness-evidence
     job = models.OneToOneField(Job, on_delete=models.PROTECT, related_name='publication')

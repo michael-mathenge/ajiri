@@ -988,3 +988,36 @@ and all36 committed build files matched exactly; no frontend commit is needed.
 Full440 Django tests passed374.277s (one known platform skip); manage.py check,
 makemigrations --check --dry-run, Ruff and strict offline schema drift check passed.
 Required CI and deployment remain pending; failed attempts are retained as evidence. No quota pruning occurred.
+
+
+### 24 October 2026 - preparation-only release and AJ49 work
+
+PR51 all six required checks passed at abe049b (CI40083463571); merged/deployed
+source a47c4eedf571daaaf23d9a55658294d7f0dc74e4. Clean source, system/migration-drift
+and empty migration plan passed; no migration was needed. Today's verified private
+release backup/restore was retained. Actual quota414.2/512MB before release; no
+retention deletion. APPLICATION_PILOT_PREPARATION_ENABLED=True and
+APPLICATION_EMAIL_ENABLED=False were explicitly checked before reload. Health200/
+HSTS300 and authenticated synthetic application editor passed. No provider call,
+new delivery allocation or agent-made personal approval occurred. The owner is
+completing the personal gates; a claimed authorization was not found server-side,
+so transport stayed disabled and the exact UI steps were clarified. AJ50 moved
+Done with deployed refined-scope evidence and the manual empty-list limitation.
+
+AJ49 branch codex/job-moderation-reviews starts from reviewed a47c4ee. Existing
+JobAdmin was reconciled as baseline; new single-job reasoned review and protected
+before/after audit are under test. Additive jobs.0016 creates only the audit table.
+No bulk publication or actual moderation decision. See JOB_MODERATION.md; full
+verification, CI, migration/backup and activation remain pending.
+
+
+AJ49 final local gates: manage.py check and makemigrations --check --dry-run passed;
+full451 tests passed379.607s (one known platform skip). Focused11 moderation/migration
+tests passed2.706s; writer-claim and cache-header corrections are described in
+JOB_MODERATION.md. Node24.19 npm ci audited364/zero findings, lint/ESLint and build
+2.17s passed; all36 committed build files matched. All141 components passed81.08s.
+Ruff, strict schema and three hook-safety tests passed. No frontend source change,
+so no generated-build commit. Required remote CI and activation remain pending.
+The owner personally approved pilot package revision2 after corrected synthetic
+email wording was saved as a new immutable revision; authorization is still a
+separate owner action. No agent personal approval, actual send or quota reservation.

@@ -1270,3 +1270,15 @@ Both switches default off; the existing exact owner and verified mailbox policy
 still applies. The owner personally completes approvals; feature approval is not
 personal permission. Turning preparation off preserves saved documents and reviews.
 See jobs/application_dispatch.py and docs/MANAGED_APPLICATION_PILOT.md at repo root.
+
+
+## reasoned-job-moderation
+
+A scam signal hides a listing until an authorized staff member reviews one exact
+version and records a reason. The decision keeps actor/time and before/after audit
+evidence; an old form cannot overwrite a later decision. Clearing a flag does not
+change publication or deadline evidence, so expired or archived jobs remain hidden.
+SQLite first claims its writer inside the transaction before reading the reviewed
+state; contention is an explicit retry/check-history result. Admin flags and audit
+records are read-only outside this workflow. See jobs/moderation.py, jobs/admin.py
+and the repo-root docs/JOB_MODERATION.md. No personal application is adjudicated.

@@ -1,0 +1,14 @@
+{% extends "admin/base_site.html" %}
+{% block content %}
+<p>Review this single job and its current source evidence. Clearing a flag does not verify an employer, extend a deadline, reopen an archive or guarantee authenticity.</p>
+<h2>{{ original.title }} — {{ original.company_name }}</h2>
+<p>{{ original.description|linebreaksbr }}</p>
+<p>Recorded scam signals: {{ original.scam_flags|default:"None recorded" }}</p>
+<p>Source reference (not fetched by this page): {{ original.source_url }}</p>
+<p>Active flag: {{ original.is_active }}. Publication state: {{ evidence.publication.status|default:"No verified publication evidence" }}.</p>
+<p>Closing date: {{ evidence.publication.closes_at|default:"Unknown" }}. Last source confirmation: {{ evidence.publication.confirmed_at|default:"Unknown" }}.</p>
+<form method="post">{% csrf_token %}{{ form.as_p }}<input type="submit" value="Record this job review"></form>
+<h2>Recent review history</h2>
+{% for item in reviews %}<article><h3>{{ item.get_decision_display }} — {{ item.created_at }}</h3><p>Reviewer ID: {{ item.actor_id }}. {{ item.reason }}</p></article>{% empty %}<p>No earlier moderation reviews.</p>{% endfor %}
+<p><a href="{% url 'admin:jobs_job_change' original.pk %}">Back to job</a></p>
+{% endblock %}
