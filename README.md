@@ -7,7 +7,7 @@ The Django API and React frontend live in this repository.
 - Quality: [optional hooks, coverage and type baseline](docs/QUALITY_GUIDE.md), [browser acceptance](docs/BROWSER_ACCEPTANCE.md).
 - Users: [account to application guide](docs/USER_GUIDE.md).
 - Operators: [backup automation](docs/BACKUP_AUTOMATION.md) and [deployment checklist](docs/DEPLOYMENT_CHECKLIST.md).
-- Work: [Jira backlog](https://michaelmathenge.atlassian.net/jira/software/projects/AJ/boards/34/backlog), [execution evidence](docs/JIRA_ROADMAP_PROGRESS.md), [agent rules](AGENTS.md).
+- Work: [Jira backlog](https://michaelmathenge.atlassian.net/jira/software/projects/AJ/boards/34/backlog), [next actions](docs/ROADMAP_NEXT_ACTIONS.md), [execution evidence](docs/JIRA_ROADMAP_PROGRESS.md), [agent rules](AGENTS.md).
 
 PythonAnywhere serves committed `ajiri-backend/frontend_build`. Docker is for
 isolated local/staging use, not a container deployment to PythonAnywhere.

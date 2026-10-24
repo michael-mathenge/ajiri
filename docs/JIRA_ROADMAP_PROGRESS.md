@@ -1052,3 +1052,31 @@ locked install audited364/zero findings; lint/ESLint/build1.96s passed. Source/r
 and all36 committed build files match. No frontend source or build change; previous
 141-component evidence is not relabelled as a fresh run. No migration, SDK, actual
 consent or production collection. Required CI pending. AJ51 remains In Progress.
+
+
+### 24 October 2026 - analytics contract merged; scanning contract under test
+
+PR53 all six required checks passed at d1378b3 (CI40089298387); merged source
+1cf2d5935ac48cee5f9cdd00f3bc3a51a6435dea is not yet deployed. No live analytics
+activation is intended. AJ51 remains In Progress for its genuine live prerequisites.
+Next branch codex/scanner-test-contract was fast-forwarded from bc45649 to reviewed
+1cf2d59 before full verification. It adds only a synthetic memory quarantine and
+fixture scanner behind existing content validation. Eight focused tests passed
+0.056s; Ruff passed. No production file/scanner/transport/route/migration change.
+See SCANNER_TEST_CONTRACT.md. Full gates, CI and code-only release remain pending.
+
+
+Current live Jira reconciliation:12 unfinished non-Epic stories, complete single
+page/no cursor. ROADMAP_NEXT_ACTIONS.md separates live gaps and external gates.
+AJ47 source blocker additionally confirmed: migration0011 rejects non-SQLite;
+no migration history or host change was made. The isolated bootstrap/search/target
+proposal is in STORAGE_MIGRATION_REHEARSAL.md and is not an executed migration.
+
+
+Scanner package local final gates: full467 Django tests passed329.007s (one known
+platform skip); focused eight0.056s, system/drift/Ruff/strict schema passed.
+Node24.19 locked install audited364/zero findings; lint/ESLint/build2.08s passed;
+source/runner and all36 build files matched. No frontend source/build change or
+new component-pass claim. No production scanning, schema/host change or document
+transfer. Required CI and code-only source deployment remain pending. README links
+the short remaining-actions guide; historic reviews remain evidence, not setup.

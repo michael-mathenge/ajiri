@@ -1292,3 +1292,13 @@ payload attributes or production transport. Synthetic channel/time/policy record
 are not durable real consent. Revocation stops subsequent counts. No SDK, endpoint
 or production instrumentation is present. See jobs/analytics_test_contract.py and
 the repo-root docs/ANALYTICS_TEST_CONTRACT.md for the remaining privacy decisions.
+
+
+## scanner-test-contract
+
+A memory-only synthetic quarantine tests the order of bounded content validation,
+owner isolation and correlated scan results. It accepts only a fake scanner and
+never changes real upload/download routes. Old scan results cannot release replaced
+or removed bytes; unavailable/unknown results stay blocked. This is not an actual
+malware engine, private filesystem, durable audit or production protection. See
+profiles/scanning_test_contract.py and repo-root docs/SCANNER_TEST_CONTRACT.md.
