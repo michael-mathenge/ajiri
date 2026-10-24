@@ -1169,3 +1169,17 @@ Local source pending push/CI/release at this entry. AJ48 remains In Progress:
 production target, broker/host crash durability, natural recovery/DLQ operations,
 uncertain provider IO and live sending remain unverified. Rollback removes only the
 unused lab, retaining all authorization/receipt evidence. See QUEUE_BROKER_REHEARSAL.md.
+
+### PR58 merged and production source verified
+
+f2982419467439767f19707b7dcfbef041672958 passed all six required checks in
+CI40095199385. PR58 merged as1c26416493b5808e35e268e00520a7e25378c718.
+Production source synced after verifying no runtime/frontend/CI change (backend docs
+excluded); no reload/worker activation was needed. Runtime remains the verified
+PR56 fixture fix. System check/empty migration plan and health200/HSTS300/exact live
+HTML/entry bundle/clean source passed. One initial Bash history-expansion failure
+prevented the command from running; single-quoting the Git exclusion fixed it.
+No database migration, worker/broker provisioning or real email. AJ48 remains
+In Progress (local evidence comment10064). Pilot active/unexpired authorization
+count remained0, so application sending remains off. The source/docs followup
+records these observed results; it does not claim a new local full-suite execution.

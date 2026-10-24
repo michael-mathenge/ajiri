@@ -30,20 +30,27 @@ Users are mostly on phones with limited data. **Mobile-first, lightweight, acces
 
 ## 4. Verified state (24 October 2026)
 
-Latest verified runtime package is `b6cc6af6267bb61aaec3a1a4035c61d1e054d6ea`
-(PR #54; subsequent documentation-only revisions may exist),
+Latest verified runtime package is `d940b9f7f86acb3770dddc067aefec3e47d24812`
+(PR #56 fixture-safe restoration; subsequent unused test-script/docs revisions may exist),
 including offline analytics/scanner contracts (no production callers or activation),
 owner-only saved searches, application progress and reasoned staff
 moderation. jobs.0016 added only the protected audit table after a fresh verified
 private off-server backup/restore. Existing table values were preserved; no actual
 moderation decision or staff access grant occurred. All six checks passed through
-PR54; local467 Django tests passed (one platform skip), with an unchanged36-file
+PR58; local469 Django tests passed (one platform skip), with an unchanged36-file
 frontend build. The141-component pass is earlier moderation-package evidence.
 See docs/JOB_MODERATION.md and docs/ROADMAP_NEXT_ACTIONS.md. Twelve non-Epic
 stories remain unfinished; test adapters do not establish live service acceptance. Additive
 jobs.0014/0015 applied after verified private off-server backups and isolated
 restores. Legacy application fields/snapshots were preserved. Saved searches are
 enabled; application/saved-search real sending and queue capture remain disabled.
+
+PR56/58 added actual isolated synthetic PostgreSQL data and Redis/Celery process-crash
+rehearsals. Data/relationships/private document bytes and one-handoff receipt reuse
+passed; no historical PostgreSQL migration, object storage, broker/host durability,
+production storage switch or hosted worker is verified. Source1c264164 contains the
+unused queue lab; production runtime and sending flags are unchanged. AJ47/AJ48
+remain In Progress. See docs/STORAGE_MIGRATION_REHEARSAL.md and docs/QUEUE_BROKER_REHEARSAL.md.
 Payment and inline queue contracts are offline test integrations, not live services.
 PR50 passed all six CI checks; local434 Django tests (one platform skip),141
 components and nine real-endpoint browser journeys passed. Production health,
