@@ -1302,3 +1302,17 @@ never changes real upload/download routes. Old scan results cannot release repla
 or removed bytes; unavailable/unknown results stay blocked. This is not an actual
 malware engine, private filesystem, durable audit or production protection. See
 profiles/scanning_test_contract.py and repo-root docs/SCANNER_TEST_CONTRACT.md.
+# Fixture restoration and storage rehearsal
+
+## fixture-safe-profile-signal
+
+Normal account creation creates its profile on the same database alias. Raw fixture
+restoration supplies related rows itself, so the signal must not invent a second
+profile or reset saved preferences. See profiles/signals.py and its fixture tests.
+
+## isolated-postgres-data-rehearsal
+
+A disposable synthetic PostgreSQL database can test model data, relationships and
+private document portability without changing production. Full datetime precision
+matters for approval evidence. Creating current-model tables proves neither historical
+migration compatibility nor a hosting cutover; those need separate verified work.

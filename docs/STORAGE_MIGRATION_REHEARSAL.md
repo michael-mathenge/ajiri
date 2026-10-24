@@ -1,6 +1,7 @@
 # Storage migration rehearsal requirements (AJ-47)
 
-24 October2026: no production or test-target migration has been performed.
+Initial assessment on 24 October2026 (superseded by the local result below):
+no production or test-target migration had been performed.
 The earlier Docker image inventory could not connect to dockerDesktopLinuxEngine.
 A Docker Desktop executable exists, but no service/target was started in this run.
 No PostgreSQL driver or object-store client is listed in current requirements.
@@ -39,3 +40,30 @@ No target purchase, credentials, new dependency, hosting change, database migrat
 or original migration edit is included in this requirements note. The decision
 and target are still missing; AJ47 remains To Do. A local rehearsal would not by
 itself establish production hosting eligibility or authorize a real cutover.
+
+## Local synthetic data rehearsal — 24 October 2026
+
+Docker Desktop was subsequently started. The dedicated PostgreSQL 17.11 container
+used network none, no published ports or host mounts, and tmpfs database storage.
+The non-root Python container shared only that isolated network namespace. Only
+tracked backend source plus the explicit rehearsal script entered its build context;
+private database, environment and document files were excluded.
+
+`scripts/prepare_storage_rehearsal.py` prepares the context;
+`scripts/storage-rehearsal/Dockerfile` pins the Python base digest and optional
+psycopg 3.3.6 driver inside this test image only. The runtime requirements are unchanged.
+`scripts/storage_rehearsal.py` creates a normally migrated synthetic SQLite source,
+then an empty PostgreSQL schema from current Django models. It deliberately creates
+no PostgreSQL django_migrations table and does not mark historical migrations applied.
+
+Actual result: 34 models, 161 rows, four private files; canonical field/relationship
+comparison, FK enforcement, sequence reset, owner-only downloads and exact approved
+CV/application document bytes passed. Source rows remained unchanged. No email was
+sent. Object storage, historical PostgreSQL migrations, search parity, interruption
+recovery and production cutover remain UNVERIFIED. AJ47 therefore remains unfinished.
+
+The rehearsal exposed two issues: raw fixture loading created duplicate profiles
+(fixed by skipping the creation signal for raw saves and honoring its database alias),
+and Django JSON fixture serialization truncated microseconds (the rehearsal now
+exports full ISO datetime precision). Both have focused regression coverage. Initial
+failed comparisons are not successful migration evidence.
