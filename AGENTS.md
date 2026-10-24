@@ -30,12 +30,17 @@ Users are mostly on phones with limited data. **Mobile-first, lightweight, acces
 
 ## 4. Verified state (24 October 2026)
 
-Recorded deployed source is `bc456497ac84eea5fb3055a887be3aabb857873d` (PR #52),
-including owner-only saved searches, application progress and reasoned staff
+Latest verified runtime package is `b6cc6af6267bb61aaec3a1a4035c61d1e054d6ea`
+(PR #54; subsequent documentation-only revisions may exist),
+including offline analytics/scanner contracts (no production callers or activation),
+owner-only saved searches, application progress and reasoned staff
 moderation. jobs.0016 added only the protected audit table after a fresh verified
 private off-server backup/restore. Existing table values were preserved; no actual
-moderation decision or staff access grant occurred. All six CI checks and local451
-Django tests (one skip)/141 components passed. See docs/JOB_MODERATION.md. Additive
+moderation decision or staff access grant occurred. All six checks passed through
+PR54; local467 Django tests passed (one platform skip), with an unchanged36-file
+frontend build. The141-component pass is earlier moderation-package evidence.
+See docs/JOB_MODERATION.md and docs/ROADMAP_NEXT_ACTIONS.md. Twelve non-Epic
+stories remain unfinished; test adapters do not establish live service acceptance. Additive
 jobs.0014/0015 applied after verified private off-server backups and isolated
 restores. Legacy application fields/snapshots were preserved. Saved searches are
 enabled; application/saved-search real sending and queue capture remain disabled.
