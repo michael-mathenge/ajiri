@@ -37,8 +37,8 @@ on production. AGENTS.md section10 protects migration history and hosting change
    actual account quotas and private verified off-server backups before cutover.
 
 No target purchase, credentials, new dependency, hosting change, database migration
-or original migration edit is included in this requirements note. The decision
-and target are still missing; AJ47 remains To Do. A local rehearsal would not by
+or original migration edit is included in this requirements note. The production decision
+and target are still missing; AJ47 is In Progress. A local rehearsal would not by
 itself establish production hosting eligibility or authorize a real cutover.
 
 ## Local synthetic data rehearsal — 24 October 2026
