@@ -1,5 +1,9 @@
 # Background delivery: closed inline integration
 
+Historical first integration. The later actual isolated Redis/Celery process-crash
+rehearsal is documented in [QUEUE_BROKER_REHEARSAL.md](QUEUE_BROKER_REHEARSAL.md).
+Neither package establishes a production worker or broker durability.
+
 24 October 2026. AJ-48 first scope uses an inline fake executor before provisioning
 a broker or worker. It is not a running queue service. The PythonAnywhere free
 WSGI app has not acquired an always-on worker. No Celery schedule, ingestion

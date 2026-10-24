@@ -1148,3 +1148,24 @@ are unresolved. Original checkout AGENTS hash stayed884B35161A8906E6A881C948D2BA
 Only the dedicated synthetic target was removed after exact ID/label verification.
 The latest docs-only followup has no runtime changes; local suite results above
 belong to ae160fb, not a freshly repeated docs-only suite.
+
+## AJ48 actual local Redis/Celery rehearsal — 24 October 2026
+
+Branch codex/queue-broker-rehearsal from reviewed main9a0ce3d531b80cfc26bac3bc8a213fb2806c212b.
+No production task/caller, migration, hosting/CI or runtime requirements change.
+Pinned official Redis image (actual8.10.2), separate Celery5.6.3 worker and synthetic
+SQLite/private files tested a hard exit73 after a durable accepted receipt and before
+acknowledgement. Explicit expired-lease restore and duplicate execution reused the
+same receipt: one captured handoff/attempt/budget; withdrawn authorization denied.
+No real email. Initial denial exception was unclassified by the harness; corrected
+without changing runtime validation. Target network none, loopback-only broker,
+no host ports/mounts; exact created ID/label checked before its removal.
+Backend check/drift passed; full469 tests passed345.569s with one known platform skip.
+Eight helper tests passed0.105s; changed-script Ruff and reviewed OpenAPI match passed.
+Explicit Node24.19.0 locked npm ci installed363/audited364, zero vulnerabilities;
+Oxlint/ESLint passed, Vite build2.08s and all36 committed build files identical.
+No fresh component/manual browser pass is claimed; unchanged runtime covered by suite.
+Local source pending push/CI/release at this entry. AJ48 remains In Progress:
+production target, broker/host crash durability, natural recovery/DLQ operations,
+uncertain provider IO and live sending remain unverified. Rollback removes only the
+unused lab, retaining all authorization/receipt evidence. See QUEUE_BROKER_REHEARSAL.md.
