@@ -1316,3 +1316,11 @@ A disposable synthetic PostgreSQL database can test model data, relationships an
 private document portability without changing production. Full datetime precision
 matters for approval evidence. Creating current-model tables proves neither historical
 migration compatibility nor a hosting cutover; those need separate verified work.
+
+## isolated-queue-broker-rehearsal
+
+A real broker can redeliver a task after a worker exits before acknowledgement.
+The task must keep the original authorization identity and resolve its durable
+receipt before another handoff. The isolated ../../scripts/queue_broker_rehearsal.py lab
+captures provider IO and tests that boundary; it does not create a hosted worker
+or prove broker durability. See ../../docs/QUEUE_BROKER_REHEARSAL.md.
