@@ -28,10 +28,17 @@ Users are mostly on phones with limited data. **Mobile-first, lightweight, acces
 - Production: PythonAnywhere free tier, a committed `frontend_build`, and a GitHub Actions workflow that posts jobs to `POST /api/jobs/ingest/` and `/api/jobs/sweep/` (header `X-Ingest-Key`)
 - CI exists (`.github/workflows/ci.yml`: backend checks, migrations, tests, frontend lint/build, committed-build consistency; Python matrix 3.12-3.14). Local dev and PythonAnywhere use Python 3.12.
 
-## 4. Verified state (23 October 2026)
+## 4. Verified state (24 October 2026)
 
-Recorded deployed source is `2a301f049cdcb66920cd71abd0b00a4fea24c35a` (PR #44),
-including reviewed employer posting and shared vacancy freshness checks. PR #42's
+Recorded deployed source is `c628ec00466b1dd9168f77b7afafea6d50cca7e8` (PR #46),
+including owner-only saved searches, reviewed employer posting and shared vacancy
+freshness checks. Additive jobs.0014 applied after a verified private off-server
+backup and isolated restore. SAVED_SEARCHES_ENABLED is true; memory capture and
+real application/saved-search email remain disabled. Authenticated saved-search
+page/API, exact live build, health200/HSTS300 and clean source passed. Local402
+Django tests (one platform skip),137 components and eight browser journeys passed;
+all six CI checks passed at fb96186. See docs/SAVED_SEARCHES.md. AJ43 stays In
+Progress for remaining email acceptance; the backlog is not complete. PR #42's
 managed application transport remains gated; deployment does not enable sending.
 Additive jobs.0012/0013 applied; system/drift checks and an empty migration plan
 passed. The optional application URL preserves all three SQLite search triggers.

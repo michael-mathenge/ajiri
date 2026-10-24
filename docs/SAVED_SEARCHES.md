@@ -3,6 +3,8 @@
 24 October 2026. AJ-43 requirements and test-integration first package. This
 document does not claim a production email rollout. Check the release evidence in
 JIRA_ROADMAP_PROGRESS.md for the actual deployed revision and activation status.
+PR46 is deployed at c628ec00466b1dd9168f77b7afafea6d50cca7e8, with saved searches
+enabled and email sending disabled. AJ43 remains In Progress for email acceptance.
 
 ## User workflow
 
@@ -91,6 +93,13 @@ passes without suppressing warnings. Final full Django run passed 402 tests in
 The new Chromium saved-search journey passed in 29.854s, including axe and zero
 provider/mail/consent/ledger effects. A sandbox run failed because temporary
 storage creation was denied; the full pass used local temporary-storage access.
-All eight local browser journeys passed in 193.183s. CI and release gates remain
-pending; local results are not deployment acceptance. Hook-safety and exact
-source/runner/build comparison passed (36 generated files).
+All eight local browser journeys passed in 193.183s. All six required CI checks
+passed at fb96186 (run40044422744) before merge. Hook-safety and exact source/
+runner/build comparison passed (36 generated files); post-commit rebuild matched.
+
+The 24 October release backup passed server verification, exact ZIP SHA/member
+checks, off-server retention and isolated restore (13 media files,224960 bytes).
+jobs.0014 applied before activation; check/drift and empty migration plan passed.
+Web app and both writer workflows restored. Authenticated page/API, default Off
+choices, health200/HSTS300, clean source and exact live HTML/bundle passed.
+No personal preference was created for the owner and no real email was sent.
