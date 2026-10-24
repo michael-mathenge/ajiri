@@ -30,7 +30,7 @@ Users are mostly on phones with limited data. **Mobile-first, lightweight, acces
 
 ## 4. Verified state (24 October 2026)
 
-Recorded deployed source is `fbae0956f17df25b5d69c9a94f17b9568519e089` (PR #50),
+Recorded deployed source is `a47c4eedf571daaaf23d9a55658294d7f0dc74e4` (PR #51),
 including owner-only saved searches and application progress reporting. Additive
 jobs.0014/0015 applied after verified private off-server backups and isolated
 restores. Legacy application fields/snapshots were preserved. Saved searches are
@@ -41,8 +41,10 @@ components and nine real-endpoint browser journeys passed. Production health,
 exact live build, clean source and authenticated empty application-list reads
 passed. Real owner progress entry was unavailable because the account had no rows.
 See docs/APPLICATION_PIPELINE.md and docs/JIRA_ROADMAP_PROGRESS.md for evidence.
-The preparation-only repair is local until its own release evidence is recorded;
-never activate sending before personal document approval and exact authorization.
+The preparation-only repair passed all six required checks and deployed without
+migrations. Owner-only preparation is enabled while application sending remains
+False; authenticated synthetic review editor and health/HSTS passed. Never activate
+sending before current personal document approval and exact authorization.
 The backlog is not complete. Optional application URLs preserve all three SQLite
 search triggers. Account mail remains a separate owner-only pilot.
 
