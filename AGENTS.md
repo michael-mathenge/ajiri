@@ -30,8 +30,12 @@ Users are mostly on phones with limited data. **Mobile-first, lightweight, acces
 
 ## 4. Verified state (24 October 2026)
 
-Recorded deployed source is `a47c4eedf571daaaf23d9a55658294d7f0dc74e4` (PR #51),
-including owner-only saved searches and application progress reporting. Additive
+Recorded deployed source is `bc456497ac84eea5fb3055a887be3aabb857873d` (PR #52),
+including owner-only saved searches, application progress and reasoned staff
+moderation. jobs.0016 added only the protected audit table after a fresh verified
+private off-server backup/restore. Existing table values were preserved; no actual
+moderation decision or staff access grant occurred. All six CI checks and local451
+Django tests (one skip)/141 components passed. See docs/JOB_MODERATION.md. Additive
 jobs.0014/0015 applied after verified private off-server backups and isolated
 restores. Legacy application fields/snapshots were preserved. Saved searches are
 enabled; application/saved-search real sending and queue capture remain disabled.

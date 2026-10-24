@@ -1021,3 +1021,34 @@ so no generated-build commit. Required remote CI and activation remain pending.
 The owner personally approved pilot package revision2 after corrected synthetic
 email wording was saved as a new immutable revision; authorization is still a
 separate owner action. No agent personal approval, actual send or quota reservation.
+
+
+### 24 October 2026 - AJ49 deployed; AJ51 offline contract
+
+PR52 merged/deployed as bc456497ac84eea5fb3055a887be3aabb857873d after all six checks
+passed at134d254 (CI40085261401). Fresh backup-20261024T102207298247Z-c787f77e was
+verified server-side and independently off server, then isolated-restored17 media
+files/372876 bytes. Bundle SHA256:
+b0086539e1386f17fb7ff1a7275bbfb6d03e5f77de1cd13adac68df728d9a34d.
+Private receipt remains outside Git. Actual quota414.6/512MB before backup and
+427.9 after; no pruning. Both writer workflows and web returned to prior active
+states before download. A second short pause applied only jobs.0016; all previous
+table row values matched except expected migration/content-type/permission metadata.
+No actual job reviewed or staff access granted. Check/drift/empty plan, health200/
+HSTS300, exact live HTML/entry bundle and clean source passed; writers restored.
+AJ49 moved Done for its bounded first scope. Wider appeal/deduplication is separate.
+
+Next branch codex/analytics-test-contract from reviewed bc45649 implements only
+the approved provisional requirements/test-integration step for AJ51. Eight memory
+contract tests passed0.008s; Ruff passed. No production analytics, consent schema,
+SDK, runtime caller or provider has been added. Full gates and remote CI pending.
+Personal application email authorization remains a separate owner action; current
+APPLICATION_EMAIL_ENABLED=False is preserved. Account security email is unchanged.
+
+
+AJ51 local final gates: full459 Django tests passed332.771s (one known platform
+skip), eight focused tests0.008s, check/drift/Ruff/strict schema passed. Node24.19
+locked install audited364/zero findings; lint/ESLint/build1.96s passed. Source/runner
+and all36 committed build files match. No frontend source or build change; previous
+141-component evidence is not relabelled as a fresh run. No migration, SDK, actual
+consent or production collection. Required CI pending. AJ51 remains In Progress.
