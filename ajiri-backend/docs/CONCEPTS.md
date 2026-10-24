@@ -1224,3 +1224,15 @@ Brevo/SMTP. The test-capture constant cannot be opened by production environment
 configuration. Production email frequency is a preference, not an active transport.
 Private preferences/results are included in verified owner exports and cascade
 with their account; shared settled delivery accounting survives preference removal.
+
+## synthetic-payment-reconciliation
+
+The offline payment lab accepts only synthetic IDs and a memory gateway. A server
+catalogue controls the example price; callbacks and client labels grant nothing.
+Only matching authoritative test evidence can commit a receipt and capability.
+An unknown initiation is not retried; duplicate decisions reuse its identity.
+Receipt reuse, stale evidence, expiry and refunds fail closed while browsing,
+applying and existing documents remain free. Memory locks and injected write
+failures demonstrate the contract, not durable provider integration. The lab has
+no production caller, migrations, credentials or network adapter. See repository
+docs/PAYMENTS_TEST_CONTRACT.md for outstanding sandbox/commercial prerequisites.
