@@ -1,5 +1,24 @@
 # Jira roadmap execution
 
+## 24 October: closed queue integration (local AJ48 first scope)
+
+Branch codex/queue-test-integration includes minimal immutable owner/authorization
+envelopes and an inline fake acknowledgement executor. Current dispatch reloads
+permissions/documents and reuses the existing authorization, delivery and quota
+ledger. Duplicate messages and unknown receipts never create a new provider key.
+No broker, worker registration, production task or environment activation; constant
+DELIVERY_QUEUE_TEST_CAPTURE stays false. Nine focused tests passed3.711s.
+Initial invalid fixture assumptions were corrected without weakening checks.
+Full423 suite passed329.895s (one platform skip); system/drift/Ruff passed.
+CI/release pending. Node24.19 locked install audited364/zero vulnerabilities;
+lint/build2.01s and exact unchanged36-file comparison passed.
+
+PR48 payment lab merged at c76ee8d after all six checks passed, CI40046293103.
+No payment route or subscription is active; production remains c628ec0.
+AJ47 real PostgreSQL/object-storage rehearsal is unverified: Docker Linux daemon
+was unavailable in a read-only image inventory. No Docker service or hosting was
+started/changed. Continue independent work; do not claim a fake target as Postgres.
+
 ## 24 October 2026: offline payment first scope (local)
 
 Branch codex/payment-test-contracts, based on reviewed main9aa2ada. AJ44-46
