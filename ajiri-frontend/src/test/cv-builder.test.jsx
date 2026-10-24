@@ -68,9 +68,11 @@ it('previews saved content and requires explicit consent before approving and do
   expect(screen.queryByRole('article')).not.toBeInTheDocument()
   fireEvent.click(screen.getByRole('button', { name: 'Save and preview CV' }))
   expect(await screen.findByRole('article')).toHaveTextContent('Test summary')
-  expect(
-    screen.getByRole('heading', { name: 'Review revision 1' })
-  ).toHaveFocus()
+  await waitFor(() =>
+    expect(
+      screen.getByRole('heading', { name: 'Review revision 1' })
+    ).toHaveFocus()
+  )
   const approve = screen.getByRole('button', {
     name: 'Approve this CV version',
   })

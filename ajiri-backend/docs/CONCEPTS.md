@@ -1247,3 +1247,13 @@ reconciliation comes before any retry. The inline test executor is default close
 has no production caller and proves neither broker durability nor worker hosting.
 See repository docs/QUEUE_TEST_INTEGRATION.md for activation prerequisites and
 the difference between a queue acknowledgement and actual delivery evidence.
+
+## application-progress-evidence
+
+Personal progress is an owner's report, separate from immutable document approval,
+sending authorization and provider receipts. A revision-checked update changes
+only the private stage/note/time. It cannot submit an application or infer an
+employer decision. Legacy sent rows without receipts remain unverified; provider
+acceptance is not inbox delivery, and an unknown receipt requires reconciliation.
+The shared client cache lets a later server receipt replace a progress response.
+See repository docs/APPLICATION_PIPELINE.md for defaults, rollback and release status.

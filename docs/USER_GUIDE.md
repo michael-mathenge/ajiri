@@ -25,6 +25,11 @@
    authorize sending information you have not reviewed. Dismiss unused drafts;
    restoring a dismissed application returns saved documents for review and clears
    its former sending permission.
+7. **Track your own progress.** In My applications, open Track my progress to
+   record your own Applied/Interview/Offer/Closed update and an optional private
+   note. This does not send anything or confirm an employer decision. Delivery
+   receipts remain separate; provider acceptance still is not inbox delivery.
+   See [pipeline guide](APPLICATION_PIPELINE.md) for the current release status.
 
 Profile controls for in-app alerts and email alerts are separate. Account password
 reset/verification emails are separate from optional job alerts. Do not interpret

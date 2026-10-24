@@ -126,8 +126,17 @@ class ApplicationListView(generics.ListAPIView):
     serializer_class = ApplicationSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
+    def finalize_response(self, request, response, *args, **kwargs):
+        response = super().finalize_response(request, response, *args, **kwargs)
+        response['Cache-Control'] = 'private, no-store'
+        return response
+
     def get_queryset(self):
-        return Application.objects.filter(user=self.request.user).order_by('-created_at')
+        from django.db.models import Prefetch, F
+        from .models import DeliveryAttempt
+        return Application.objects.filter(user=self.request.user).select_related('job').prefetch_related(
+            Prefetch('delivery_attempts', queryset=DeliveryAttempt.objects.filter(channel='application', user_id=F('application__user_id'))
+                     .order_by('-created_at', '-pk'), to_attr='_pipeline_attempts')).order_by('-created_at')
 
 
 class SendApplicationView(generics.GenericAPIView):

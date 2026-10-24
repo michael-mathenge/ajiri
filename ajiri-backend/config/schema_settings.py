@@ -13,7 +13,11 @@ SPECTACULAR_SETTINGS = {
     'DISABLE_DOCSTRING_DESCRIPTIONS': True,
     'COMPONENT_SPLIT_REQUEST': True,
     # Both channels share the model's choice set; use one stable public enum name.
-    'ENUM_NAME_OVERRIDES': {'SavedSearchFrequencyEnum': [('off', 'Off'), ('daily', 'Daily'), ('weekly', 'Every seven days')]},
+    'ENUM_NAME_OVERRIDES': {
+        'SavedSearchFrequencyEnum': [('off', 'Off'), ('daily', 'Daily'), ('weekly', 'Every seven days')],
+        'ApplicationProgressStageEnum': [('not_reported', 'No update reported'), ('applied', 'Applied (your report)'),
+            ('interview', 'Interview (your report)'), ('offer', 'Offer (your report)'), ('closed', 'Closed (your report)')],
+    },
     'PREPROCESSING_HOOKS': ['config.schema_contract.version_one_only'],
 }
 

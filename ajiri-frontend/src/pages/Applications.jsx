@@ -1,13 +1,16 @@
 import Dialog from '../components/Dialog'
 import { rateLimitMessage } from '../lib/errors'
 import { useRef, useState } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
 import apiClient from '../api/client'
 import DownloadButton from '../components/DownloadButton'
 import ApplicationPackageEditor from '../components/ApplicationPackageEditor'
+import ApplicationProgress from '../components/ApplicationProgress'
 import { useApiQuery, useApiInvalidation } from '../hooks/useApiQuery'
 import {
   ApplicationStatus,
+  Badge,
   Button,
   Card,
   EmptyState,
@@ -25,6 +28,16 @@ export function ApplicationRow({ application: app, onUpdate }) {
   const [opened, setOpened] = useState(false)
   const [dismissOpen, setDismissOpen] = useState(false)
   const email = app.application_method === 'email'
+  const receiptBadge =
+    {
+      accepted: 'Provider accepted',
+      unknown: 'Outcome uncertain',
+      reserved: 'Awaiting reconciliation',
+      definite_failure: 'Attempt failed',
+      user_report: 'Reported submitted',
+      unverified_record: 'Unverified email record',
+    }[app.delivery_evidence?.kind] ||
+    (email ? 'Check email receipt' : 'Reported submitted')
   const ready = app.status === 'ready_for_review'
   const dismissible = ['draft', 'ready_for_review'].includes(app.status)
   const employerUrl = /^https?:\/\//i.test(app.employer_url || '')
@@ -63,7 +76,11 @@ export function ApplicationRow({ application: app, onUpdate }) {
         <h2 tabIndex={-1} ref={heading}>
           {app.job_title}, {app.company_name}
         </h2>
-        <ApplicationStatus status={app.status} />
+        {app.status === 'sent' ? (
+          <Badge>{receiptBadge}</Badge>
+        ) : (
+          <ApplicationStatus status={app.status} />
+        )}
       </div>
       <p className="muted">
         {email ? 'Apply by email' : 'Apply on the employer’s website'}
@@ -171,12 +188,26 @@ export function ApplicationRow({ application: app, onUpdate }) {
       </details>
       {app.status === 'sent' && (
         <p className="status-text">
-          {email ? 'Sent' : 'External submission recorded'}
+          {app.delivery_evidence?.label ||
+            (email
+              ? 'Email record; check delivery receipt'
+              : 'External submission reported by you')}
           {app.sent_at
             ? ` ${new Date(app.sent_at).toLocaleString('en-KE')}`
             : ''}
         </p>
       )}
+      {app.status !== 'sent' &&
+        app.delivery_evidence &&
+        ['accepted', 'unknown', 'reserved', 'definite_failure'].includes(
+          app.delivery_evidence.kind
+        ) && <p className="status-text">{app.delivery_evidence.label}</p>}
+      <details className="review-details">
+        <summary>Track my progress</summary>
+        <div className="mt-4">
+          <ApplicationProgress application={app} onUpdate={onUpdate} />
+        </div>
+      </details>
       {app.status === 'dismissed' && (
         <div className="stack">
           <p className="status-text">
@@ -226,10 +257,9 @@ export function ApplicationRow({ application: app, onUpdate }) {
 
 export default function Applications() {
   const [page, setPage] = useState(1)
-  const { data, loading, error, retry } = useApiQuery(
-    `/jobs/applications/?page=${page}`
-  )
-  const [updates, setUpdates] = useState({})
+  const client = useQueryClient()
+  const url = `/jobs/applications/?page=${page}`
+  const { data, loading, error, retry } = useApiQuery(url)
   if (loading) return <LoadingState label="Loading applications" />
   if (error) return <ErrorState onRetry={retry}>{error}</ErrorState>
   return (
@@ -256,9 +286,18 @@ export default function Applications() {
           {data.results.map((item) => (
             <ApplicationRow
               key={item.id}
-              application={updates[item.id] || item}
-              onUpdate={(item) =>
-                setUpdates((current) => ({ ...current, [item.id]: item }))
+              application={item}
+              onUpdate={(updated) =>
+                client.setQueryData(['api', url], (current) =>
+                  current
+                    ? {
+                        ...current,
+                        results: current.results.map((row) =>
+                          row.id === updated.id ? updated : row
+                        ),
+                      }
+                    : current
+                )
               }
             />
           ))}

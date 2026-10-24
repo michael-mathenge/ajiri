@@ -183,6 +183,19 @@ class Application(models.Model):
         SENT = 'sent', 'Sent'
         DISMISSED = 'dismissed', 'Dismissed'
 
+    class Progress(models.TextChoices):
+        NOT_REPORTED = 'not_reported', 'No update reported'
+        APPLIED = 'applied', 'Applied (your report)'
+        INTERVIEW = 'interview', 'Interview (your report)'
+        OFFER = 'offer', 'Offer (your report)'
+        CLOSED = 'closed', 'Closed (your report)'
+
+    # see docs/CONCEPTS.md#application-progress-evidence
+    progress_stage = models.CharField(max_length=16, choices=Progress.choices, default=Progress.NOT_REPORTED)
+    progress_note = models.CharField(max_length=1000, blank=True, default='')
+    progress_revision = models.PositiveIntegerField(default=0)
+    progress_reported_at = models.DateTimeField(null=True, blank=True, default=None)
+
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,

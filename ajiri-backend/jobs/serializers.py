@@ -71,6 +71,27 @@ class ApplicationSerializer(serializers.ModelSerializer):
     job_title = serializers.CharField(source='job.title', read_only=True)
     company_name = serializers.CharField(source='job.company_name', read_only=True)
     employer_url = serializers.URLField(source='job.application_target', read_only=True)
+    delivery_evidence = serializers.SerializerMethodField()
+
+    def get_delivery_evidence(self, obj) -> dict:
+        attempts = getattr(obj, '_pipeline_attempts', None)
+        if attempts is None:
+            attempts = list(obj.delivery_attempts.filter(channel='application', user_id=obj.user_id)
+                            .order_by('-created_at', '-pk')[:1])
+        if attempts:
+            attempt = attempts[0]
+            labels = {'accepted': 'Email provider accepted; inbox delivery unconfirmed',
+                      'reserved': 'Email outcome uncertain; reconciliation required',
+                      'unknown': 'Email outcome uncertain; reconciliation required',
+                      'definite_failure': 'Latest email attempt failed'}
+            return {'kind': attempt.state, 'label': labels[attempt.state],
+                    'recorded_at': attempt.created_at.isoformat()}
+        if obj.status == 'sent':
+            label = ('External submission reported by you' if obj.application_method == 'external_link'
+                     else 'Historical email record; provider evidence unavailable')
+            return {'kind': 'user_report' if obj.application_method == 'external_link' else 'unverified_record',
+                    'label': label, 'recorded_at': obj.sent_at.isoformat() if obj.sent_at else None}
+        return {'kind': obj.status, 'label': obj.get_status_display(), 'recorded_at': None}
 
     class Meta:
         model = Application
@@ -80,12 +101,14 @@ class ApplicationSerializer(serializers.ModelSerializer):
             'generated_cv', 'generated_cover_letter',
             'email_subject', 'email_body',
             'created_at', 'updated_at', 'sent_at',
+            'progress_stage', 'progress_note', 'progress_revision', 'progress_reported_at', 'delivery_evidence',
         )
         read_only_fields = (
             'id', 'job', 'job_title', 'company_name', 'status',
             'application_method', 'application_email',
             'generated_cv', 'generated_cover_letter',
             'created_at', 'updated_at', 'sent_at',
+            'progress_stage', 'progress_note', 'progress_revision', 'progress_reported_at', 'delivery_evidence',
         )
 
 
