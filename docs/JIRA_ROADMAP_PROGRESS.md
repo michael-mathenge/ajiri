@@ -1200,3 +1200,29 @@ commits, build last. Earlier interrupted runs had no final result and are not pa
 CI/merge/deployment pending at this entry. Production sending remains disabled;
 this usability repair does not complete AJ17. Rollback is source/build only, no
 migration or document/approval data rollback. USER_GUIDE documents the separate steps.
+
+### PR60 release and live UI verification — 25 October 2026
+
+Source6f3638d plus final generated-build commit7eed242 passed all six checks in
+CI40184233326. PR60 merged and deployed/reloaded26261635ccf97c7f69616136258d71032d40fa95.
+Production check/drift/empty migration plan, sendingFalse/preparationTrue/publicationFalse,
+health200/HSTS300, exact HTML/entry/new Applications bundle and clean source passed.
+Authenticated synthetic application revision2 showed its existing personal document
+approval and the new email-plan controls above previews. The bottom return button
+focused the next-step heading. No approval, authorization or send was performed.
+A screenshot proof is local outside Git. User-facing instructions are in USER_GUIDE.
+
+Fresh consistent backup20261025T101626687618Z-edc12560 completed after actual429.4/512MB
+quota and10,633,356 input bytes were checked; no operation conflicts or active/queued
+writer runs. Both previously active workflows and enabled web app were restored
+before download. Server verification and independent exact-member ZIP/hash/member
+checks, SQLite integrity and isolated17-file/372876-byte restore passed off server.
+Bundle3,794,467 bytes; SHA2563dd1f5800634dad0bd2938857331192f1f7abfca4fc0df8ffb5fc9aea7807e64.
+The optional erasure ledger was absent. Sanitized receipt is outside Git, retention
+report-only; no backup deleted. This was a release fallback after the scheduled
+console-access failure, not proof of unattended scheduled success. User reconnected
+the console before the successful run; no security control was bypassed.
+
+JiraAJ17 comment10066 records deployment and remains In Progress. Broader sending
+and personal exact-plan authorization remain unfinished. Documentation-only followup
+records observed release evidence; it does not claim another local full-suite run.
