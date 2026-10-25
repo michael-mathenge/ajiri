@@ -140,10 +140,8 @@ def main():
         assert worker.returncode == 73
         assert DeliveryAttempt.objects.get(application=application).state == 'accepted'
         assert Path('/tmp/provider-calls').read_text().count('synthetic-handoff') == 1
-        # Reconcile the expired Redis lease explicitly; no provider retry identity.
+        # Let the restarted worker recover its expired lease without operator IO.
         time.sleep(2.2)
-        with app.connection() as connection:
-            connection.channel().qos.restore_visible(start=0, num=10, interval=1)
         connections.close_all()
         worker = start()
         replay = first.get(timeout=35)
@@ -161,7 +159,8 @@ def main():
         assert Path('/tmp/provider-calls').read_text().count('synthetic-handoff') == 1
         print('AJIRI_QUEUE_REHEARSAL_RESULT='+json.dumps({'synthetic_only': True,
             'real_redis_broker': True, 'real_celery_worker': True, 'hard_worker_exit': 73,
-            'explicit_expired_lease_restore': True, 'same_receipt_after_redelivery': True,
+            'explicit_expired_lease_restore': False, 'automatic_worker_recovery': True,
+            'same_receipt_after_redelivery': True,
             'duplicate_handoffs': 0, 'captured_handoffs': 1, 'real_email_calls': 0,
             'withdrawal_rechecked': True, 'production_worker': False}, sort_keys=True))
     finally:

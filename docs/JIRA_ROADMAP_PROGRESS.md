@@ -1226,3 +1226,37 @@ the console before the successful run; no security control was bypassed.
 JiraAJ17 comment10066 records deployment and remains In Progress. Broader sending
 and personal exact-plan authorization remain unfinished. Documentation-only followup
 records observed release evidence; it does not claim another local full-suite run.
+
+## Owner pilot and automatic queue recovery - 25 October 2026
+
+Production source078c50a: Michael personally approved/authorized revision2, clicked
+Send and confirmed inbox arrival and correct file content. Two DOCX attachments
+were visible; this does not independently prove both were opened. One accepted
+application receipt had no failure category; Brevo showed Sent/Delivered. Sending
+was disabled/reloaded and fresh configuration reported False. Authorization closed;
+no repeated send. JiraAJ17 comments10068/10069 retain evidence. Broader sending is off.
+
+All12 unfinished non-Epic Jira descriptions were reconciled with existing approved
+requirements, preserving historical text, summaries and In Progress. Direct issue
+readback verified all12; stale search-index output did not trigger repeated writes.
+Michael selected continued isolated test integrations; no live provider approval,
+credentials, legal review or personal consent was inferred.
+
+Branch codex/queue-natural-recovery from fetched main078c50a. Actual isolated
+Redis/Celery Docker run passed automatic replacement-worker lease recovery without
+restore_visible: hard exit73, same accepted receipt on redelivery/duplicate, one
+captured handoff, zero duplicate/real email calls, one reservation and withdrawal
+denial. Exact dedicated container identity/label checked before removal. Broker/host
+failure, uncertain provider IO and production worker remain unverified.
+
+Actual gates: manage.py check and makemigrations --check passed;469 Django tests
+passed639.296s (one platform skip); eight helper tests passed0.075s; script Ruff
+passed. Node24.19.0 npm ci installed363/audited364, zero findings. Directory-based
+lint initially found no files in the ignored runner; npm run lint -- --no-ignore
+with all explicit JS/JSX/MJS paths and npm run lint:eslint passed.144 components in
+25 files passed38.36s; build passed3.42s. Tracked frontend source matched the runner;
+all36 generated files matched frontend_build. No frontend/build commit required.
+No migration, dependency, CI, hosting or runtime change. Push/CI/merge/source sync
+pending at this entry. Rollback removes unused lab change only, preserving data,
+receipts and sending-off state. Existing progress-file bytes were preserved when
+appending this record because its historical encoding is not consistently UTF-8.

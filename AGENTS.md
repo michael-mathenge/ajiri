@@ -40,8 +40,11 @@ moderation decision or staff access grant occurred. All six checks passed throug
 PR60; local469 Django tests passed (one platform skip),144 components and eight
 helper tests passed; regenerated36-file frontend build matched production bytes.
 The latest approved email package puts its separate permission controls before
-long previews, with verified live keyboard return/focus. No personal authorization
-or send was performed. A fresh25October private snapshot, off-server copy and
+long previews, with verified live keyboard return/focus. On25October Michael
+personally authorized and sent one owner-only application pilot; one accepted
+receipt, Brevo Delivered and owner inbox/correct-content confirmation were recorded.
+Application sending was then disabled and reloaded; broader sending remains off.
+A fresh25October private snapshot, off-server copy and
 isolated17-file restore passed; web and both writer workflows were restored.
 See docs/JOB_MODERATION.md and docs/ROADMAP_NEXT_ACTIONS.md. Twelve non-Epic
 stories remain unfinished; test adapters do not establish live service acceptance. Additive

@@ -66,3 +66,20 @@ and operator reconciliation remain unfinished. AJ48 stays In Progress.
 
 No production code imports this script. Rollback removes only the unused lab;
 existing authorizations, delivery receipts, backups and current settings remain.
+
+## Automatic worker recovery — 25 October 2026
+
+The earlier explicit lease-restoration result above remains historical evidence.
+The harness now waits for lease expiry and starts the replacement worker without
+calling Redis/Kombu lease-restoration methods. The replacement worker recovered
+the original task automatically. The real Redis/Celery run passed: hard exit73,
+same accepted receipt on redelivery and duplicate, one captured handoff, zero
+real email calls, one application reservation and withdrawal denial. The dedicated
+network-none Redis had no published port or host mount and used disposable tmpfs;
+its exact container identity/label was verified before removal. Existing Docker
+resources were preserved. The image uses the existing pinned dependencies.
+
+This closes the manual worker-recovery limitation in the earlier rehearsal. It
+does not verify broker/host loss, production hosting, dead-letter operations or a
+crash during uncertain provider IO. AJ48 remains In Progress. Required package
+gates and CI/release results are recorded in JIRA_ROADMAP_PROGRESS.md.
