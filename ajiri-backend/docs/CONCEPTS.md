@@ -1324,6 +1324,9 @@ The task must keep the original authorization identity and resolve its durable
 receipt before another handoff. The isolated ../../scripts/queue_broker_rehearsal.py lab
 captures provider IO and tests that boundary; it does not create a hosted worker
 or prove broker durability. See ../../docs/QUEUE_BROKER_REHEARSAL.md.
+The restarted worker now recovers the expired lease itself; the harness makes no
+manual lease-restoration call. This still tests worker-process recovery only,
+with the same running disposable broker and durable application receipt.
 
 ## application-review-next-step
 
