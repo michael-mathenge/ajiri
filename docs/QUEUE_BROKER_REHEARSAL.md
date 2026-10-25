@@ -83,3 +83,48 @@ This closes the manual worker-recovery limitation in the earlier rehearsal. It
 does not verify broker/host loss, production hosting, dead-letter operations or a
 crash during uncertain provider IO. AJ48 remains In Progress. Required package
 gates and CI/release results are recorded in JIRA_ROADMAP_PROGRESS.md.
+
+## Broker-process crash with retained AOF — 25 October 2026
+
+The optional `--broker-restart` harness mode now verifies that AOF is enabled with
+`appendfsync always` before testing. After the worker exits73, the harness prints
+`AJIRI_SYNTHETIC_BROKER_RESTART_REQUIRED` and waits for the operator's
+`broker-restarted` input. Kill/restart only the exact disposable broker identity
+created for this run; never a shared/production Redis. No Docker socket or host
+credential is mounted into the runner. It checks the Redis server run ID changed
+before continuing, so an unchanged broker cannot masquerade as a restart.
+
+Actual run: Redis8.10.2/Celery5.6.3, pinned official Redis digest above; internal
+network with no published ports, labelled synthetic-only Docker volume for AOF,
+read-only runner and disposable tmpfs for database/documents. The broker accepts
+only the internal test network; this is not production access configuration.
+The broker received SIGKILL and restarted using the same synthetic volume. The
+replacement worker recovered its unacknowledged task automatically. Same accepted
+receipt, one application reservation, one captured handoff, zero duplicate/real
+email calls and withdrawal denial passed. Broker, network and volume labels/identity
+were checked before removal; existing resources and private data were preserved.
+
+Reproduction uses the existing preparation/build commands, with an internal
+dedicated network/volume and Redis arguments `--appendonly yes --appendfsync always`.
+Set `AJIRI_QUEUE_LAB_HOST=broker` on the runner, use `docker run -i` and append
+`python /rehearsal.py --broker-restart`. At the marker, kill/start the exact verified
+broker ID, then send the input token. Only loopback or the fixed `broker` test alias
+is accepted; a regression rejects arbitrary broker hosts before connecting.
+
+This establishes broker-process restart with retained local AOF, not host/power
+loss, disk failure, off-server broker restoration, clustered failover or production
+eligibility. Unknown provider-IO reconciliation and dead-letter operations remain
+unverified. AJ48 stays In Progress; no production worker or mail was activated.
+
+## Hard exit inside uncertain handoff — 25 October 2026
+
+`python /rehearsal.py --uncertain-handoff` uses a separate disposable broker and
+fsyncs the synthetic handoff counter, then exits74 inside the captured transport
+before receipt settlement/acknowledgement. Automatic redelivery and an explicit
+duplicate both returned the same original reserved receipt with no provider ID or
+resolved timestamp. One reservation/one captured side effect remained, with zero
+new handoffs and withdrawal denial. The actual Redis/Celery run passed; the exact
+labelled broker was removed afterwards. This covers a real worker-process crash
+around simulated IO, not an actual uncertain Brevo request or permission to retry.
+The reserved receipt remains unresolved; no operator reconciliation or dead-letter
+policy is inferred or activated. Existing production ledger behavior was unchanged.

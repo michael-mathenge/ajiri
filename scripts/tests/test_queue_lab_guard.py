@@ -17,3 +17,9 @@ class QueueLabGuardTests(unittest.TestCase):
                 MODULE.setup()
             with self.assertRaises(RuntimeError):
                 MODULE.make_app()
+
+    def test_arbitrary_broker_host_is_rejected_before_connecting(self):
+        with patch.object(MODULE, 'require_lab'), patch.dict(os.environ,
+                {'AJIRI_QUEUE_LAB_HOST': 'outside.example.invalid'}):
+            with self.assertRaisesRegex(RuntimeError, 'isolated rehearsal broker'):
+                MODULE.make_app()
