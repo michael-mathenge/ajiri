@@ -36,8 +36,11 @@ def setup():
 def make_app():
     require_lab()
     from celery import Celery
-    app = Celery('ajiri_synthetic_queue', broker='redis://127.0.0.1:6379/0',
-                 backend='redis://127.0.0.1:6379/1')
+    host = os.environ.get('AJIRI_QUEUE_LAB_HOST', '127.0.0.1')
+    if host not in ('127.0.0.1', 'broker'):
+        raise RuntimeError('Only the isolated rehearsal broker is allowed.')
+    app = Celery('ajiri_synthetic_queue', broker=f'redis://{host}:6379/0',
+                 backend=f'redis://{host}:6379/1')
     app.conf.update(task_serializer='json', accept_content=['json'], result_serializer='json',
         task_acks_late=True, task_reject_on_worker_lost=True, worker_prefetch_multiplier=1,
         task_default_queue='ajiri-synthetic-only', result_expires=120,
@@ -61,6 +64,10 @@ def make_app():
                 stream.write('synthetic-handoff\n')
                 stream.flush()
                 os.fsync(stream.fileno())
+            uncertain = Path('/tmp/crash-during-handoff')
+            if uncertain.exists():
+                uncertain.unlink()
+                os._exit(74)  # Side effect occurred; no receipt settlement/ack.
             return Result('accepted', '<synthetic-queue@example.invalid>')
 
         with override_settings(**pilot_settings(user), DELIVERY_QUEUE_TEST_CAPTURE=True):
@@ -125,7 +132,9 @@ def main():
 
     application, authorization = fixture()
     # Broker carries only the existing owner's ID and exact authorization UUID.
-    Path('/tmp/crash-after-handoff').touch()
+    uncertain_handoff = '--uncertain-handoff' in sys.argv
+    expected_state = 'reserved' if uncertain_handoff else 'accepted'
+    Path('/tmp/crash-during-handoff' if uncertain_handoff else '/tmp/crash-after-handoff').touch()
     first = execute.apply_async(args=[user.pk, str(authorization.pk)])
     connections.close_all()
     log = Path('/tmp/worker.log').open('w')
@@ -135,18 +144,35 @@ def main():
         return subprocess.Popen([sys.executable, __file__, '--worker'], stdout=log, stderr=log)
 
     try:
+        broker_restart = '--broker-restart' in sys.argv
+        if broker_restart:
+            from redis import Redis
+            broker = Redis(host=os.environ.get('AJIRI_QUEUE_LAB_HOST', '127.0.0.1'))
+            original_run = broker.info('server')['run_id']
+            assert broker.config_get('appendonly')['appendonly'] == 'yes'
+            assert broker.config_get('appendfsync')['appendfsync'] == 'always'
         worker = start()
         until(lambda: worker.poll() is not None)
-        assert worker.returncode == 73
-        assert DeliveryAttempt.objects.get(application=application).state == 'accepted'
+        assert worker.returncode == (74 if uncertain_handoff else 73)
+        attempt = DeliveryAttempt.objects.get(application=application)
+        assert attempt.state == expected_state
+        if uncertain_handoff:
+            assert not attempt.provider_message_id and attempt.resolved_at is None
         assert Path('/tmp/provider-calls').read_text().count('synthetic-handoff') == 1
+        if broker_restart:
+            # The operator kills/restarts only the disposable labelled broker.
+            # No Docker socket or infrastructure credentials enter the test image.
+            print('AJIRI_SYNTHETIC_BROKER_RESTART_REQUIRED', flush=True)
+            if input().strip() != 'broker-restarted':
+                raise RuntimeError('Explicit synthetic broker restart receipt required.')
+            assert broker.info('server')['run_id'] != original_run
         # Let the restarted worker recover its expired lease without operator IO.
         time.sleep(2.2)
         connections.close_all()
         worker = start()
         replay = first.get(timeout=35)
         duplicate = execute.apply_async(args=[user.pk, str(authorization.pk)]).get(timeout=20)
-        assert replay == duplicate and replay['state'] == 'accepted'
+        assert replay == duplicate and replay['state'] == expected_state
         assert DeliveryAttempt.objects.filter(application=application).count() == 1
         assert DeliveryDailyBudget.objects.get(scope='global').application_reserved == 1
         assert Path('/tmp/provider-calls').read_text().count('synthetic-handoff') == 1
@@ -158,8 +184,11 @@ def main():
         assert not DeliveryAttempt.objects.filter(application=other_application).exists()
         assert Path('/tmp/provider-calls').read_text().count('synthetic-handoff') == 1
         print('AJIRI_QUEUE_REHEARSAL_RESULT='+json.dumps({'synthetic_only': True,
-            'real_redis_broker': True, 'real_celery_worker': True, 'hard_worker_exit': 73,
+            'real_redis_broker': True, 'real_celery_worker': True,
+            'hard_worker_exit': 74 if uncertain_handoff else 73,
             'explicit_expired_lease_restore': False, 'automatic_worker_recovery': True,
+            'broker_process_restart': broker_restart,
+            'uncertain_handoff_not_retried': uncertain_handoff,
             'same_receipt_after_redelivery': True,
             'duplicate_handoffs': 0, 'captured_handoffs': 1, 'real_email_calls': 0,
             'withdrawal_rechecked': True, 'production_worker': False}, sort_keys=True))

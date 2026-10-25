@@ -1327,6 +1327,13 @@ or prove broker durability. See ../../docs/QUEUE_BROKER_REHEARSAL.md.
 The restarted worker now recovers the expired lease itself; the harness makes no
 manual lease-restoration call. This still tests worker-process recovery only,
 with the same running disposable broker and durable application receipt.
+The optional broker-restart mode pauses at an explicit synthetic marker, allowing
+only the separately labelled test broker to be killed/restarted. Its run identity
+must change and AOF must use always-fsync before receipt reuse is accepted. This
+proves a broker-process restart with retained test storage, not host-loss recovery.
+The uncertain-handoff mode exits inside the captured transport, before settlement.
+Redelivery must return the original reserved receipt without another handoff; a
+reserved receipt is unresolved evidence, never a delivery-success claim.
 
 ## application-review-next-step
 

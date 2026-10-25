@@ -1260,3 +1260,32 @@ No migration, dependency, CI, hosting or runtime change. Push/CI/merge/source sy
 pending at this entry. Rollback removes unused lab change only, preserving data,
 receipts and sending-off state. Existing progress-file bytes were preserved when
 appending this record because its historical encoding is not consistently UTF-8.
+
+## Queue broker restart and uncertain-IO crash - 25 October 2026
+
+Branch codex/queue-broker-restart from fetched main929ff47. Optional lab mode verifies
+AOF/always-fsync, pauses for the exact labelled test broker to receive SIGKILL/start,
+and verifies its server run ID changed. Actual isolated Redis8.10.2/Celery5.6.3 run
+passed automatic redelivery, same accepted receipt, one reservation/captured handoff,
+zero duplicate/real email calls and withdrawal denial. Internal network, synthetic
+AOF volume and exact broker labels/identities were verified before removal.
+
+A second actual worker-process test exits74 inside captured transport after its
+fsynced side-effect counter but before receipt settlement. Redelivery and explicit
+duplicate returned the same unresolved reserved receipt, with empty provider ID and
+resolved timestamp; one captured handoff/reservation remained, no repeated IO.
+Separate network-none broker identity verified before removal. No actual provider,
+production worker, hosting or existing data was involved. Host/disk failure, real
+provider uncertainty reconciliation, dead-letter operations and target remain open.
+
+Gates: isolated Python3.12 Docker manage.py check/makemigrations --check and full469
+Django tests passed150.268s (no skips). Initial read-only image DB path failed before
+tests; corrected test-only DATABASES name to /tmp/gates.sqlite3 on tmpfs and reran
+all gates. Nine helper regressions passed1.806s including arbitrary broker denial;
+changed-script Ruff passed. Node24.19 locked npm ci installed363/audited364, zero
+findings; complete explicit-file Oxlint and lint:eslint passed; build2.42s passed,
+all36 committed assets/source matched. Frontend unchanged; prior144-component
+result is historical regression evidence, not another current component run.
+No migration/dependency/CI/frontend/runtime activation. Push/CI/merge/source sync
+pending at this entry. Rollback removes only unused lab additions, preserving
+production data/receipts and disabled application sending.
