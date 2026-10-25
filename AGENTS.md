@@ -28,17 +28,21 @@ Users are mostly on phones with limited data. **Mobile-first, lightweight, acces
 - Production: PythonAnywhere free tier, a committed `frontend_build`, and a GitHub Actions workflow that posts jobs to `POST /api/jobs/ingest/` and `/api/jobs/sweep/` (header `X-Ingest-Key`)
 - CI exists (`.github/workflows/ci.yml`: backend checks, migrations, tests, frontend lint/build, committed-build consistency; Python matrix 3.12-3.14). Local dev and PythonAnywhere use Python 3.12.
 
-## 4. Verified state (24 October 2026)
+## 4. Verified state (25 October 2026)
 
-Latest verified runtime package is `d940b9f7f86acb3770dddc067aefec3e47d24812`
-(PR #56 fixture-safe restoration; subsequent unused test-script/docs revisions may exist),
+Latest verified runtime package is `26261635ccf97c7f69616136258d71032d40fa95`
+(PR #60 review guidance; subsequent documentation-only revisions may exist),
 including offline analytics/scanner contracts (no production callers or activation),
 owner-only saved searches, application progress and reasoned staff
 moderation. jobs.0016 added only the protected audit table after a fresh verified
 private off-server backup/restore. Existing table values were preserved; no actual
 moderation decision or staff access grant occurred. All six checks passed through
-PR58; local469 Django tests passed (one platform skip), with an unchanged36-file
-frontend build. The141-component pass is earlier moderation-package evidence.
+PR60; local469 Django tests passed (one platform skip),144 components and eight
+helper tests passed; regenerated36-file frontend build matched production bytes.
+The latest approved email package puts its separate permission controls before
+long previews, with verified live keyboard return/focus. No personal authorization
+or send was performed. A fresh25October private snapshot, off-server copy and
+isolated17-file restore passed; web and both writer workflows were restored.
 See docs/JOB_MODERATION.md and docs/ROADMAP_NEXT_ACTIONS.md. Twelve non-Epic
 stories remain unfinished; test adapters do not establish live service acceptance. Additive
 jobs.0014/0015 applied after verified private off-server backups and isolated
