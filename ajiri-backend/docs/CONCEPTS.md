@@ -1324,3 +1324,12 @@ The task must keep the original authorization identity and resolve its durable
 receipt before another handoff. The isolated ../../scripts/queue_broker_rehearsal.py lab
 captures provider IO and tests that boundary; it does not create a hosted worker
 or prove broker durability. See ../../docs/QUEUE_BROKER_REHEARSAL.md.
+
+## application-review-next-step
+
+After approving the latest saved email package, focus moves to its separate email-plan
+heading above the long document previews. A return button at the bottom brings keyboard
+users back to those controls. Loading reviews never fetches a plan or records permission
+automatically; historical revisions have no permission controls. The owner still reviews
+the exact plan, checks its unchecked box and records authorization separately from sending.
+See ../../ajiri-frontend/src/components/ApplicationPackageReview.jsx.

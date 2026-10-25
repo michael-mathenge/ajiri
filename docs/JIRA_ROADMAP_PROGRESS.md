@@ -1183,3 +1183,20 @@ No database migration, worker/broker provisioning or real email. AJ48 remains
 In Progress (local evidence comment10064). Pilot active/unexpired authorization
 count remained0, so application sending remains off. The source/docs followup
 records these observed results; it does not claim a new local full-suite execution.
+
+## Application review next-step guidance — 25 October 2026
+
+Branch codex/application-review-guidance from reviewed main5a9a6df92346ef9269cedd65749eb0aafdf30a08.
+The latest approved email package now places separate permission controls above long
+CV/letter previews, with focus after personal document approval and a return button.
+Historical/external/unapproved revisions offer no new permission step. No plan GET,
+authorization POST or sending is triggered automatically. Documents and consent unchanged.
+Actual gates: backend check/drift passed; full469 tests passed333.267s (one platform
+skip). Focused11 review tests passed7.94s; full144 components/25 files passed35.22s.
+Eight helper tests passed0.075s; reviewed OpenAPI matched. Explicit Node24.19.0
+npm ci installed363/audited364, zero vulnerabilities; Oxlint/ESLint passed;
+Vite production build passed2.73s. Source/docs and generated build are separate
+commits, build last. Earlier interrupted runs had no final result and are not passes.
+CI/merge/deployment pending at this entry. Production sending remains disabled;
+this usability repair does not complete AJ17. Rollback is source/build only, no
+migration or document/approval data rollback. USER_GUIDE documents the separate steps.

@@ -84,3 +84,15 @@ date and evidence time where available. RSS jobs without reliable availability
 evidence are hidden; older evidence is archived even if the link still works.
 A temporarily empty list is preferable to presenting unverified jobs as open.
 Existing application documents remain available privately after a vacancy closes.
+
+## Finding email permission after document review
+
+Open My applications, expand Review application and load the latest saved package.
+After you approve its documents, **Next: review your email plan** appears above the
+CV and letter previews. Select **Review email plan / check authorization status**.
+Read the recipient, message and two attachments. If you agree, tick the separate
+permission box and select **Record authorization (does not send)**. Neither document
+approval nor recording permission sends an email. A separate enabled sending route
+and explicit send action are required. **Go to email permission controls** returns
+you to these controls from the bottom of a long preview. Older revisions remain
+readable but cannot grant new sending permission.
