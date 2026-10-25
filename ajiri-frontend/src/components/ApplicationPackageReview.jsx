@@ -49,6 +49,7 @@ function ReviewSession({ applicationId, packageId, revision, disabled }) {
   const id = useId()
   const generation = useRef(0)
   const inFlight = useRef(false)
+  const permissionHeading = useRef(null)
   const [review, setReview] = useState(null)
   const [checked, setChecked] = useState(false)
   const [busy, setBusy] = useState(false)
@@ -110,6 +111,9 @@ function ReviewSession({ applicationId, packageId, revision, disabled }) {
       if (epoch === generation.current) {
         setReview((current) => ({ ...current, approval: data.approval }))
         setChecked(false)
+        // see docs/CONCEPTS.md#application-review-next-step
+        // A long CV must not hide the separate, still-unchecked permission step.
+        requestAnimationFrame(() => permissionHeading.current?.focus())
       }
     } catch (error) {
       if (epoch === generation.current) {
@@ -129,6 +133,10 @@ function ReviewSession({ applicationId, packageId, revision, disabled }) {
       }
     }
   }
+  const hasEmailPermissionStep =
+    review?.approval &&
+    review.is_latest &&
+    review.job_context.application_method === 'email'
   return (
     <section
       className="stack"
@@ -154,6 +162,22 @@ function ReviewSession({ applicationId, packageId, revision, disabled }) {
       {review && !disabled && (
         <>
           <h3>Saved package revision {review.revision}</h3>
+          {hasEmailPermissionStep && (
+            <div className="stack">
+              <h4 ref={permissionHeading} tabIndex={-1}>
+                Next: review your email plan
+              </h4>
+              <p>
+                Your documents are approved. Check the recipient, message and
+                attachments, then decide whether to record separate permission.
+                Recording permission does not send an email.
+              </p>
+              <ApplicationSendPanel
+                applicationId={applicationId}
+                packageId={packageId}
+              />
+            </div>
+          )}
           <p>
             Text and paragraph order come from the saved DOCX files. Fonts and
             page breaks may differ here; download the files to check their
@@ -230,14 +254,14 @@ function ReviewSession({ applicationId, packageId, revision, disabled }) {
             Document approval does not apply to another revision or authorize
             email delivery. Review the separate email permission controls.
           </p>
-          {review.approval &&
-            review.is_latest &&
-            review.job_context.application_method === 'email' && (
-              <ApplicationSendPanel
-                applicationId={applicationId}
-                packageId={packageId}
-              />
-            )}
+          {hasEmailPermissionStep && (
+            <Button
+              variant="outline"
+              onClick={() => permissionHeading.current?.focus()}
+            >
+              Go to email permission controls
+            </Button>
+          )}
         </>
       )}
     </section>

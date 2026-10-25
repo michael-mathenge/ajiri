@@ -197,6 +197,85 @@ it('labels historical approval without offering a new approval or send action', 
   expect(apiClient.post).not.toHaveBeenCalled()
 })
 
+it('places separate email permission before long approved document previews without fetching or authorizing', async () => {
+  apiClient.get.mockResolvedValue({
+    data: {
+      ...review,
+      approval: { policy_version: 'application-documents-v1' },
+      job_context: { ...review.job_context, application_method: 'email' },
+    },
+  })
+  await open()
+  const next = screen.getByRole('heading', {
+    name: 'Next: review your email plan',
+  })
+  const savedCV = screen.getByRole('heading', { name: 'Saved CV' })
+  expect(
+    next.compareDocumentPosition(savedCV) & Node.DOCUMENT_POSITION_FOLLOWING
+  ).toBeTruthy()
+  expect(
+    screen.getByRole('button', {
+      name: 'Review email plan / check authorization status',
+    })
+  ).toBeEnabled()
+  expect(apiClient.get).toHaveBeenCalledExactlyOnceWith(
+    '/jobs/applications/7/packages/package-1/'
+  )
+  expect(apiClient.post).not.toHaveBeenCalled()
+  expect(screen.queryByRole('checkbox')).not.toBeInTheDocument()
+  fireEvent.click(
+    screen.getByRole('button', { name: 'Go to email permission controls' })
+  )
+  expect(next).toHaveFocus()
+})
+
+it('moves focus to the separate permission step after personal document approval without authorizing or sending', async () => {
+  apiClient.get.mockResolvedValue({
+    data: {
+      ...review,
+      job_context: { ...review.job_context, application_method: 'email' },
+    },
+  })
+  await open()
+  fireEvent.click(screen.getByRole('checkbox'))
+  fireEvent.click(
+    screen.getByRole('button', { name: 'Approve saved documents' })
+  )
+  await waitFor(() =>
+    expect(
+      screen.getByRole('heading', { name: 'Next: review your email plan' })
+    ).toHaveFocus()
+  )
+  expect(apiClient.post).toHaveBeenCalledTimes(1)
+  expect(apiClient.post.mock.calls[0][0]).toBe(
+    '/jobs/applications/7/packages/package-1/approve/'
+  )
+  expect(apiClient.get).toHaveBeenCalledTimes(1)
+  expect(screen.queryByRole('checkbox')).not.toBeInTheDocument()
+})
+
+it('never offers the next permission step for a historical email revision', async () => {
+  apiClient.get.mockResolvedValue({
+    data: {
+      ...review,
+      is_latest: false,
+      approvable: false,
+      approval: { policy_version: 'application-documents-v1' },
+      job_context: { ...review.job_context, application_method: 'email' },
+    },
+  })
+  await open()
+  expect(
+    screen.queryByRole('heading', { name: 'Next: review your email plan' })
+  ).not.toBeInTheDocument()
+  expect(
+    screen.queryByRole('button', {
+      name: 'Review email plan / check authorization status',
+    })
+  ).not.toBeInTheDocument()
+  expect(apiClient.post).not.toHaveBeenCalled()
+})
+
 it('does not expose preview, downloads or approval when stored-file verification fails', async () => {
   apiClient.get.mockRejectedValue({
     response: { status: 503, data: { detail: 'Saved package unavailable.' } },
