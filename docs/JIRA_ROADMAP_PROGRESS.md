@@ -1314,3 +1314,40 @@ No migration/dependency/CI/hosting/runtime change. Push/CI/merge/source sync pen
 at this entry. Rollback removes only unused lab. Existing uploads are still not
 malware-scanned; vendor definition freshness, durable quarantine, actual target,
 legacy-file and processing/privacy decisions remain open. See SCANNER_ENGINE_REHEARSAL.md.
+
+
+## Scanner release, scheduled backup and storage interruption - 26 October 2026
+
+PR64 all six exact-head checks passed2606f93 (CI40222439337); merged82e098f and
+production source synchronized without migration/reload/runtime activation.
+Django check passed. Independent public health HEAD returned200/HSTS300 after a
+browser-control interruption left a separate read-only terminal health command
+unfinished. No scanner was enabled. Later console input became unresponsive;
+source remains82e098f until console access is restored. No service was paused.
+
+The daily heartbeat completed a fresh snapshot20261026T085214873536Z-92dbbbc4 from
+f18d5b2. Both prior-active writer workflows and web were restored before download.
+Server verification, independent ZIP/member/hash checks, SQLite integrity and
+isolated17-file/372876-byte restore passed off server; receipt is private outside
+Git. Archive3,803,837 bytes; SHA256e93bfeb60be7c8f740a43bbe1040ee049a326821013d4d2cb8a7aa3bd4192a32.
+Ledger absent per manifest; no erasure/replay or retention deletion. This is a
+verified fresh scheduled backup, not a release fallback. Actual quota444.2 to457.9
+of512MB. No encryption claim. BACKUP_AUTOMATION.md records the verified run.
+
+Branch codex/storage-interruption-rehearsal from fetched main82e098f. Real isolated
+PostgreSQL17.11 run injected an exception after ten target saves: every target row
+rolled back. Retry matched161 rows/34 models, full datetime precision, constraints,
+sequences/profile signal alias and unchanged source. Controlled media-copy failure
+after one whole file resumed by hash reuse plus three copies; four document bytes,
+private downloads and ownership denial matched. No real mail/provider/budget action.
+Dedicated no-port/no-host-mount tmpfs PostgreSQL removed after exact ID/label check.
+Host/power/disk failure, partial-file recovery, object storage, historical schema/
+search and production switchover remain unverified.
+
+Actual gates: Linux Python3.12 manage.py check/makemigrations --check and469 Django
+tests passed210.803s (no skips).16 helper tests passed1.521s; changed-script Ruff
+passed. Node24.19 locked npm ci installed363/audited364, zero findings; complete
+explicit-file Oxlint/ESLint passed; build2.85s passed. No frontend source change;
+all36 assets/source comparison is required before commit. No new component run
+claimed. No migration/dependency/CI/hosting/runtime change. Push/CI/merge/source
+sync pending at this entry; rollback removes unused lab only and preserves data.

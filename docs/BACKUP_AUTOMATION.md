@@ -122,3 +122,26 @@ Retention remains report-only; no retained backup was removed.
 A second release fallback at 19:32 UTC on 23 October captured the changed database.
 The exact off-server bundle and isolated restore passed before migrations; the
 private receipt is retained outside Git. This also does not prove unattended execution.
+
+
+## Scheduled fresh snapshot verified - 26 October 2026
+
+The26October heartbeat created a fresh consistent snapshot at08:52UTC from source
+f18d5b2173dc98cd8b88b082cb011ff4813ebf2e, after verifying no active Git/writer
+operation and actual account quota444.2/512MB versus10,633,356 input bytes. Both
+previously active workflows and enabled web app were paused, then restored and
+verified before download; health returned200. No credentials/configuration changed.
+
+Server verify_private_backup and independent off-server verification passed:
+ZIP3,803,837 bytes; exact manifest/database/media member set, all hashes, both
+SQLite integrity checks and safe isolated17-file/372876-byte restoration. The
+manifest explicitly excluded an erasure ledger; no erasure/replay occurred. A
+sanitized private receipt is retained outside Git. This verifies a fresh scheduled
+run, not merely the earlier same-day skip or release fallback. Console login,
+desktop availability and permissions remain real prerequisites for later runs.
+Final quota457.9/512MB; no retained backup was deleted. Encryption remains unverified.
+
+The first AX download click produced no local file/event. The observed exact ZIP
+link was activated through the documented Playwright locator API and the resulting
+local path was obtained from its download event before checksum verification.
+Browser/UI uncertainty was not treated as a completed off-server backup.

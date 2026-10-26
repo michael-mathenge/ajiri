@@ -67,3 +67,29 @@ The rehearsal exposed two issues: raw fixture loading created duplicate profiles
 and Django JSON fixture serialization truncated microseconds (the rehearsal now
 exports full ISO datetime precision). Both have focused regression coverage. Initial
 failed comparisons are not successful migration evidence.
+
+
+## Controlled interruption and exact retry - 26 October 2026
+
+The actual isolated PostgreSQL17.11 rehearsal now injects a controlled exception
+after ten model saves inside loaddata. It verifies all target tables have zero
+rows after rollback and the source is unchanged. A fresh import then matches all
+161 rows/34 models, full timestamp precision and FK/sequence/profile-signal checks.
+No PostgreSQL migration recorder is created or history marked applied.
+
+Media copy is interrupted after one complete file, then resumes by verifying and
+reusing its exact bytes and copying the three missing files. Changed/extraneous
+destination files fail closed without being overwritten; nested source/destination
+roots, links and special files are refused. The lab bounds its inventory to100
+files and5MiB/file; these are test limits, not a new product policy. Four document
+hashes and owner/private-download bytes match, cross-owner access is denied and
+no provider/email/budget operation occurs. Helper regressions cover verified reuse,
+changed-file refusal and source-tree isolation.
+
+This is an injected exception/transaction rollback and controlled complete-file
+copy interruption, not a power loss or partially written-file recovery claim.
+There is no single-writer production switchover or newer-write resynchronization.
+Object storage, PostgreSQL historical schema/search and actual target/cutover stay
+unverified. No migration/dependency/hosting/runtime change. The dedicated network-none
+PostgreSQL had no ports/host mounts, used disposable tmpfs and was removed only after
+its exact ID/label was verified. Existing Docker resources were preserved.

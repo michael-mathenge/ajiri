@@ -1317,6 +1317,15 @@ private document portability without changing production. Full datetime precisio
 matters for approval evidence. Creating current-model tables proves neither historical
 migration compatibility nor a hosting cutover; those need separate verified work.
 
+## interrupted-synthetic-storage-copy
+
+The isolated PostgreSQL lab injects an exception inside a fixture import, checks
+that every target row rolled back, then retries and compares canonical values.
+Its media copy reuses only bytes with matching hashes and stops on changed or
+extraneous destination files instead of overwriting them. This tests controlled
+interruption/retry with synthetic data, not a host crash or production cutover.
+See ../../scripts/storage_rehearsal.py and ../../docs/STORAGE_MIGRATION_REHEARSAL.md.
+
 ## isolated-queue-broker-rehearsal
 
 A real broker can redeliver a task after a worker exits before acknowledgement.
