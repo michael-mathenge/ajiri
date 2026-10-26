@@ -28,7 +28,23 @@ Users are mostly on phones with limited data. **Mobile-first, lightweight, acces
 - Production: PythonAnywhere free tier, a committed `frontend_build`, and a GitHub Actions workflow that posts jobs to `POST /api/jobs/ingest/` and `/api/jobs/sweep/` (header `X-Ingest-Key`)
 - CI exists (`.github/workflows/ci.yml`: backend checks, migrations, tests, frontend lint/build, committed-build consistency; Python matrix 3.12-3.14). Local dev and PythonAnywhere use Python 3.12.
 
-## 4. Verified state (25 October 2026)
+## 4. Verified state (26 October 2026)
+
+Current verified runtime is `d91da4752a887bc38429cbb88c3b201c61974a8b` (PR69):
+public CV introduction/about and employer-review guide, protected private routes,
+CV navigation and wrapped desktop links. All six corrected-head checks passed;
+Linux11 browser/performance tests passed. Local469 Django tests (one platform skip)
+and152 components passed. All38 production assets, health/HSTS, authenticated jobs/
+CV builder and an existing private CV download passed. Both paused writer workflows
+and web were restored. Today's fresh scheduled backup/off-server17-file isolated
+restore was reverified before release; source/data writes were not replaced.
+PythonAnywhere remains selected, with SQLite/private media; Daraja/commercial work
+comes last. Broader sending and public vacancies remain disabled; genuine employer
+onboarding and other live-service prerequisites still leave12 non-Epic stories open.
+See docs/SHOWCASE_RELEASE.md, docs/EMPLOYER_REVIEW_PLAN.md and the roadmap evidence.
+Earlier release evidence below is historical; later documentation-only commits do
+not establish a newer runtime activation.
+
 
 Latest verified runtime package is `26261635ccf97c7f69616136258d71032d40fa95`
 (PR #60 review guidance; subsequent documentation-only revisions may exist),
@@ -132,9 +148,9 @@ checkout, Docker lesson, uncommitted lockfile, coverage, stash and Git configura
 ## 6. Roadmap workflow
 
 Use the linked Jira backlog, current sprint acceptance and verified implementation
-as the source of work. Complete defined AJ-17 and AJ-24–AJ-41 in tested packages;
+as the source of work. Complete defined AJ-17 and AJ-24â€“AJ-41 in tested packages;
 reconcile completed work rather than duplicating it. Michael chose concrete
-requirements and test integrations first for provisional AJ-42–AJ-52. Designs,
+requirements and test integrations first for provisional AJ-42â€“AJ-52. Designs,
 provider stubs and spikes must not be represented as live services.
 
 Work in isolated `codex/` branches based on fetched reviewed main. Preserve dirty

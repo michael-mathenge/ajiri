@@ -1384,3 +1384,39 @@ the Linux failure remains valid evidence. Permit desktop nav links to wrap withi
 the available width (min-width0); retain the failing overflow assertion unchanged.
 No CI workflow or API change. Corrected build/browser/CI results follow.
 Corrected local Chromium boundary/axe tests passed2 tests86.889s; build2.32s passed. The Linux-specific regression still requires the new exact-head CI run.
+
+
+## Verified showcase release — 26 October 2026
+
+PR69 corrected head14c5c00756ce3a2d3afd28ab337c616a2f7b1590 passed all six
+required checks (CI40352854606). Linux browser/performance:11 tests105.738s OK;
+the1100px overflow assertion passed unchanged. Merged/deployed runtime source is
+d91da4752a887bc38429cbb88c3b201c61974a8b. Generated build was the final frontend
+commit; a repeated final build and all38 live public files matched reviewed bytes.
+New authors/committers used configured noreply identities. No new dependencies,
+migration, CI change or hosting configuration change.
+
+Before staging: clean production checkout, no active data operation/in-flight
+writer, actual quota458.3/512MB. Database mtime08:36UTC and newest media24October
+predated the26October08:52UTC consistent snapshot. Reused today's verified recovery
+copy rather than duplicating unchanged data; off-server DB/media hashes and read-only
+SQLite integrity were rechecked, with complete isolated-restore receipt. Both prior
+active writers were paused and enabled web briefly disabled for checkout. Production
+check/drift passed and migrate --plan showed no operations. Web re-enabled/reloaded;
+HTTP health200/HSTS300 passed. Both prior-active workflows were restored active.
+
+Live about/employer-guide rendered, authenticated jobs remained home, CV builder
+loaded existing data and existing approved private CV downloaded successfully.
+No approval/document edits, employer contact or sending occurred. Normal authenticated
+browser verification can rotate tokens/write auth records after activation; no
+unchanged-live-database-byte claim is made. Source stayed clean. Application sending
+and anonymous vacancy publication remain disabled. Rollback is87b7ac3 source/build
+plus reload, retaining all newer data and security/freshness protections.
+
+Live Jira reconciliation still returned12 unfinished non-Epic issues, no next page.
+AJ17/26/43 need broader delivery acceptance; AJ42/53 need genuine public-vacancy/
+employer onboarding evidence; AJ44–46 are deferred commercial/Daraja decisions;
+AJ47/48/51/52 retain documented live storage/worker/analytics/scanner prerequisites.
+PythonAnywhere is selected now; no infrastructure cutover is needed for this showcase.
+See SHOWCASE_RELEASE.md and EMPLOYER_REVIEW_PLAN.md. This documentation-only follow-up
+retains the deployed runtime/build; it introduces no new product activation.

@@ -1,4 +1,8 @@
-# PythonAnywhere showcase — 26 October 2026
+# PythonAnywhere showcase â€” 26 October 2026
+
+Verified live runtime: `d91da4752a887bc38429cbb88c3b201c61974a8b` (PR69).
+All six checks passed; production health,38 asset hashes, authenticated CV navigation
+and an existing private approved-CV download passed. Sending/public jobs remain off.
 
 PythonAnywhere remains the current host, with SQLite and private local media.
 A public introduction explains the actual CV workflow before registration. Signed-in
