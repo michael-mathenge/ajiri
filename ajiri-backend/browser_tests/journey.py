@@ -7,6 +7,7 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 import tempfile
 import logging
+import json
 from unittest.mock import patch
 
 from django.conf import settings
@@ -126,6 +127,52 @@ class BrowserJourney(LiveServerTestCase):
         self.assertEqual(DeliveryAttempt.objects.count(), 0)
         self.assertEqual(DeliveryDailyBudget.objects.count(), 0)
         self.assertEqual(mail.outbox, [])
+
+    def test_public_showcase_and_private_route_boundary(self):
+        from accounts.models import User
+        from rest_framework_simplejwt.tokens import RefreshToken
+        user = User.objects.create_user(email='showcase-browser@example.invalid')
+        access = str(RefreshToken.for_user(user).access_token)
+        def journey():
+            with sync_playwright() as playwright:
+                browser = playwright.chromium.launch()
+                try:
+                    guest = browser.new_context(viewport={'width': 390, 'height': 844})
+                    guest.route('**/*', lambda route: route.continue_()
+                        if route.request.url.startswith(self.live_server_url+'/') else route.abort())
+                    requests = []
+                    guest.on('request', lambda request: requests.append(request.method)
+                        if '/api/' in request.url else None)
+                    page = guest.new_page()
+                    page.goto(self.live_server_url+'/')
+                    expect(page.get_by_role('heading', name='Build your CV. Prepare your next application.', exact=True)).to_be_visible()
+                    assert not page.get_by_text(self.job.title, exact=True).count()
+                    assert page.evaluate('document.documentElement.scrollWidth <= window.innerWidth')
+                    page.get_by_role('link', name='How employer review works', exact=True).click()
+                    expect(page.get_by_role('heading', name='Credible vacancies, reviewed before publication.', exact=True)).to_be_visible()
+                    assert page.evaluate('document.documentElement.scrollWidth <= window.innerWidth')
+                    page.get_by_role('link', name='Open employer workspace', exact=True).click()
+                    expect(page.get_by_label('Email address', exact=True)).to_be_visible()
+                    self.assertEqual(requests, [])
+                    guest.close()
+                    member = browser.new_context(viewport={'width': 1100, 'height': 844})
+                    member.add_init_script('localStorage.setItem("access_token", '+json.dumps(access)+')')
+                    member.route('**/*', lambda route: route.continue_()
+                        if route.request.url.startswith(self.live_server_url+'/') else route.abort())
+                    page = member.new_page()
+                    page.goto(self.live_server_url+'/')
+                    expect(page.get_by_role('heading', name='Find your next chapter.', exact=True)).to_be_visible()
+                    expect(page.get_by_role('link', name='CV builder', exact=True)).to_be_visible()
+                    assert page.evaluate('document.documentElement.scrollWidth <= window.innerWidth')
+                    member.close()
+                finally:
+                    browser.close()
+        with patch('jobs.brevo_transport.BrevoTransport.send') as provider:
+            with ThreadPoolExecutor(max_workers=1) as worker:
+                worker.submit(journey).result(timeout=120)
+            provider.assert_not_called()
+        self.assertEqual(DeliveryAttempt.objects.count(), 0)
+        self.assertEqual(DeliveryDailyBudget.objects.count(), 0)
 
     @override_settings(JOB_FRESHNESS_ENFORCED=True, EMPLOYER_POSTING_ENABLED=True, PUBLIC_JOB_ORIGIN='https://example.invalid')
     def test_employer_submission_staff_review_and_withdrawal(self):
@@ -427,7 +474,7 @@ class BrowserJourney(LiveServerTestCase):
                         context.route('**/*', lambda route: route.continue_()
                             if route.request.url.startswith(self.live_server_url + '/') else route.abort())
                         page = context.new_page()
-                        for route in ('register', 'login', 'privacy', 'forgot-password'):
+                        for route in ('', 'about', 'employer-guide', 'register', 'login', 'privacy', 'forgot-password'):
                             page.goto(self.live_server_url + '/' + route)
                             expect(page.get_by_role('heading').first).to_be_visible()
                             expect(page.locator('html')).to_have_attribute('data-theme', theme)

@@ -141,6 +141,7 @@ export default function AppShell() {
               <>
                 <NavLink to="/applications">My applications</NavLink>
                 <NavLink to="/profile">Profile</NavLink>
+                <NavLink to="/cv-builder">CV builder</NavLink>
                 <NavLink to="/employers">Post a job</NavLink>
                 <NavLink to="/saved-searches">Saved searches</NavLink>
                 <NavLink to="/notifications">
@@ -154,6 +155,7 @@ export default function AppShell() {
               </>
             ) : (
               <>
+                <NavLink to="/employer-guide">For employers</NavLink>
                 <NavLink to="/login">Log in</NavLink>
                 <Button asChild>
                   <Link to="/register">Create account</Link>
@@ -191,6 +193,8 @@ export default function AppShell() {
         <span className="font-semibold">ajiri</span>
         <span>Your next chapter starts here.</span>
         <span>Made for Kenya · Salaries in KES</span>
+        <Link to="/about">About Ajiri</Link>
+        <Link to="/privacy">Privacy notice</Link>
       </footer>
     </>
   )

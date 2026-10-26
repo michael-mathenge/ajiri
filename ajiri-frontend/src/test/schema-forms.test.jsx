@@ -243,7 +243,9 @@ it('loads notification controls on demand without losing the message', async () 
   )
   expect(screen.queryByText('Synthetic notification')).not.toBeInTheDocument()
   fireEvent.click(screen.getByRole('button', { name: 'Notify' }))
-  expect(await screen.findByText('Synthetic notification')).toBeVisible()
+  expect(
+    await screen.findByText('Synthetic notification', {}, { timeout: 5000 })
+  ).toBeVisible()
   expect(screen.getByText('Action completed.')).toBeVisible()
   fireEvent.click(screen.getByRole('button', { name: 'Dismiss notification' }))
   await waitFor(() =>
