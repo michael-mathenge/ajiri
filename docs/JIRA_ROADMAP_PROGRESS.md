@@ -1351,3 +1351,29 @@ explicit-file Oxlint/ESLint passed; build2.85s passed. No frontend source change
 all36 assets/source comparison is required before commit. No new component run
 claimed. No migration/dependency/CI/hosting/runtime change. Push/CI/merge/source
 sync pending at this entry; rollback removes unused lab only and preserves data.
+
+
+## Public showcase and employer-review plan — 26 October 2026
+
+Branch codex/showcase-launch from fetched main87b7ac3 (PR68). Anonymous root/about
+introduces actual CV capabilities without private/job API requests; members keep
+jobs as home. Added CV navigation and public employer guide. Private routes remain
+protected. No job publication, mail activation, schema/dependency/CI/hosting change.
+PythonAnywhere is the current host; Daraja/commercial decisions come last. See
+SHOWCASE_RELEASE.md and EMPLOYER_REVIEW_PLAN.md; genuine employer review and general
+verification delivery remain live prerequisites, not synthetic acceptance.
+
+Actual local gates: Windows Python3.12 manage.py check and makemigrations --check
+--dry-run passed; full469 Django tests passed336.000s (one platform skip).
+Node24.19 npm ci installed363/audited364/zero findings. Full152 component tests
+passed27.85s. Initial lazy-import assertions timed out under full-suite contention;
+focused17 tests passed, then bounded five-second label/message assertions passed
+without weakening checks. Default Oxlint discovery excluded the ignored runner;
+complete explicit source paths with --no-ignore passed, as did ESLint.
+Production build passed2.06s; all38 generated assets matched copied build bytes.
+Ruff/diff whitespace passed. Real Chromium public/private-boundary, light/dark
+public axe and registration-CV-approval-download-application-review tests passed:
+3 tests114.121s, synthetic data, temporary private storage, no provider/ledger sends.
+CV generation/download occurs before verification in that existing real journey.
+Push, exact-head CI, merge and deployment are pending at this entry.
+Rollback is previous reviewed source/build plus reload; preserve all data.

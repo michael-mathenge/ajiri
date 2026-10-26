@@ -1362,3 +1362,11 @@ users back to those controls. Loading reviews never fetches a plan or records pe
 automatically; historical revisions have no permission controls. The owner still reviews
 the exact plan, checks its unchecked box and records authorization separately from sending.
 See ../../ajiri-frontend/src/components/ApplicationPackageReview.jsx.
+
+## public-showcase-journey
+
+Anonymous visitors can learn the CV workflow without accessing private APIs.
+Signed-in users keep the jobs landing screen; About provides the same public guide.
+A separate employer guide explains human review and expiry without publishing jobs.
+Static introductions must disclose pilot limitations rather than imply live sending
+or guaranteed vacancies. Public navigation never grants private route/API access.

@@ -1,5 +1,11 @@
 # From account to application
 
+Start on the public introduction, or open About Ajiri while signed in. Use the
+CV builder navigation link after login. CV drafting/approval/download does not
+require an account-verification email; application preparation retains that gate.
+The employer guide explains pilot onboarding and independent review. Active jobs
+may be empty: unverified or expired vacancies are hidden, never invented.
+
 1. **Register and log in.** Read the draft privacy notice and make the registration
    choice explicitly. Use your own email. Check spam if you requested an account
    security link; a generic success message is not evidence of inbox delivery.

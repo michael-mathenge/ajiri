@@ -5,6 +5,7 @@ The Django API and React frontend live in this repository.
 
 - Developers: [start locally](SETUP.md).
 - Quality: [optional hooks, coverage and type baseline](docs/QUALITY_GUIDE.md), [browser acceptance](docs/BROWSER_ACCEPTANCE.md).
+- Showcase: [scope and release guide](docs/SHOWCASE_RELEASE.md), [employer review plan](docs/EMPLOYER_REVIEW_PLAN.md).
 - Users: [account to application guide](docs/USER_GUIDE.md).
 - Operators: [backup automation](docs/BACKUP_AUTOMATION.md) and [deployment checklist](docs/DEPLOYMENT_CHECKLIST.md).
 - Work: [Jira backlog](https://michaelmathenge.atlassian.net/jira/software/projects/AJ/boards/34/backlog), [next actions](docs/ROADMAP_NEXT_ACTIONS.md), [execution evidence](docs/JIRA_ROADMAP_PROGRESS.md), [agent rules](AGENTS.md).

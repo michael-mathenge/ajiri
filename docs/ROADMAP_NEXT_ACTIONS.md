@@ -1,6 +1,6 @@
-# Remaining roadmap: 24 October 2026
+# Remaining roadmap: 26 October 2026
 
-Live Jira reconciliation returned12 unfinished non-Epic issues with no next page.
+The previous live Jira reconciliation returned12 unfinished non-Epic issues with no next page.
 AJ49 (reasoned moderation) and AJ50 (pipeline first scope) are now Done with deployed
 evidence. This list distinguishes tested implementation from missing live acceptance.
 No test provider is a live service. PR51 preparation and PR52 moderation are
@@ -29,3 +29,18 @@ remain automated where access is available, with verified off-server copies and
 isolated restoration; retention stays report-only. Hosting renewal is still due
 before19 November2026. Account quota was427.9/512MB after the latest release backup;
 no retained backup has been deleted. A concrete pruning policy needs its own decision.
+
+## Showcase-first order confirmed 26 October
+
+PythonAnywhere is selected now; retain SQLite/private media for the showcase.
+Finish the public introduction, accessible CV entry point and honest employer guide,
+then demonstrate registration through approved CV download. Follow
+[SHOWCASE_RELEASE.md](SHOWCASE_RELEASE.md) and
+[EMPLOYER_REVIEW_PLAN.md](EMPLOYER_REVIEW_PLAN.md). No unknown/stale jobs are reactivated.
+General employer onboarding needs verified account mail and a genuine independent
+organisation/listing review; it is not established by synthetic tests. Daraja and
+commercial decisions are deferred to the end. Broader sending/scanning/queue services
+remain gated and are not prerequisites for a truthful CV showcase.
+
+The 26 October scheduled backup completed with an off-server copy and isolated
+17-file restore. Account quota was457.9/512MB after it; retention remains report-only.

@@ -4,9 +4,12 @@ import AppShell, { AuthProvider, ProtectedRoute } from './components/AppShell'
 import { Button, EmptyState, ToastProvider } from './components/ui'
 import './App.css'
 import PageErrorBoundary from './components/PageErrorBoundary'
+import { useAuth } from './hooks/useAuth'
 
 // Download each screen when it is visited, keeping the first mobile load smaller.
 // see docs/CONCEPTS.md#route-code-splitting
+const Showcase = lazy(() => import('./pages/Showcase'))
+const EmployerGuide = lazy(() => import('./pages/EmployerGuide'))
 const Login = lazy(() => import('./pages/Login'))
 const Register = lazy(() => import('./pages/Register'))
 const JobList = lazy(() => import('./pages/JobList'))
@@ -23,6 +26,11 @@ const AccountRecovery = lazy(() => import('./pages/AccountRecovery'))
 const Privacy = lazy(() => import('./pages/Privacy'))
 const AlertUnsubscribe = lazy(() => import('./pages/AlertUnsubscribe'))
 
+function Home() {
+  const { signedIn } = useAuth()
+  return signedIn ? <JobList /> : <Showcase />
+}
+
 export default function App() {
   return (
     <PageErrorBoundary>
@@ -30,8 +38,10 @@ export default function App() {
         <ToastProvider>
           <Routes>
             <Route element={<AppShell />}>
+              <Route path="/" element={<Home />} />
+              <Route path="/employer-guide" element={<EmployerGuide />} />
+              <Route path="/about" element={<Showcase />} />
               <Route element={<ProtectedRoute />}>
-                <Route path="/" element={<JobList />} />
                 <Route path="/jobs/:id" element={<JobDetail />} />
                 <Route path="/applications" element={<Applications />} />
                 <Route path="/notifications" element={<Notifications />} />
