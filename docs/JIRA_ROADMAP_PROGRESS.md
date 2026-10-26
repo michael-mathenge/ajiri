@@ -1289,3 +1289,28 @@ result is historical regression evidence, not another current component run.
 No migration/dependency/CI/frontend/runtime activation. Push/CI/merge/source sync
 pending at this entry. Rollback removes only unused lab additions, preserving
 production data/receipts and disabled application sending.
+
+## Queue crash release and real scanner fixture - 25 October 2026
+
+PR63 passed all six CI checks on9c08cf2 (CI40220731557), merged f18d5b2 and production
+source synchronized. Diff contained only unused scripts/tests/docs; no migration,
+reload or queue activation. Production clean source/health200 observed. JiraAJ48
+comment10072 records broker-process/uncertain captured-IO proof and remaining gates.
+
+Branch codex/scanner-engine-rehearsal from fetched mainf18d5b2. Actual official
+ClamAV1.5.4 pinned digest751df8dc649cc977696f107c80db4960b6317a7cb511aebc8066f3b91db6b631
+ran offline against generated harmless bytes/custom SHA256 signature: matched1,
+unmatched0, missing database2. No vendor definitions, EICAR, real malware, private
+files, network or production caller. Bounded unprivileged/no-capability/read-only
+container and exact generated label cleanup passed. Initial shell run failed on
+Windows text-mode CRLF translation; byte input fixed it and a regression covers LF.
+
+Actual gates: fresh tracked-source Python3.12 Docker check/drift and469 Django tests
+passed203.060s (no skips).13 helper tests passed2.397s; changed-script Ruff passed.
+Explicit Node24.19 npm ci installed363/audited364/zero findings; complete explicit-file
+Oxlint/ESLint passed; build2.38s passed, tracked frontend source/all36 assets matched.
+No frontend change; previous144-component result remains historical, not a new run.
+No migration/dependency/CI/hosting/runtime change. Push/CI/merge/source sync pending
+at this entry. Rollback removes only unused lab. Existing uploads are still not
+malware-scanned; vendor definition freshness, durable quarantine, actual target,
+legacy-file and processing/privacy decisions remain open. See SCANNER_ENGINE_REHEARSAL.md.
