@@ -3,6 +3,7 @@
 Runs only inside the dedicated no-host-mount rehearsal image and empty PostgreSQL.
 No historical migration is modified or marked applied on PostgreSQL.
 see docs/CONCEPTS.md#isolated-postgres-data-rehearsal
+see docs/CONCEPTS.md#interrupted-synthetic-storage-copy
 """
 import hashlib
 from datetime import datetime, timezone as datetime_timezone
@@ -11,6 +12,8 @@ import json
 import os
 from pathlib import Path
 import shutil
+import stat
+from unittest.mock import patch
 import sys
 import uuid
 
@@ -19,6 +22,52 @@ def fixture_json(records):
     """Keep full datetime precision; default Django JSON fixtures truncate it."""
     return json.dumps(records, default=lambda item: item.isoformat()
         if isinstance(item, datetime) else str(item))
+
+
+class CopyInterrupted(Exception):
+    pass
+
+
+def file_hashes(root):
+    if root.is_symlink() or not root.is_dir():
+        raise ValueError('A regular synthetic media directory is required.')
+    result = {}
+    for path in root.rglob('*'):
+        mode = path.lstat().st_mode
+        if not (stat.S_ISREG(mode) or stat.S_ISDIR(mode)):
+            raise ValueError('Synthetic media links/special files are not supported.')
+        if stat.S_ISREG(mode):
+            if len(result) >= 100 or path.stat().st_size > 5 * 1024 * 1024:
+                raise ValueError('Synthetic media bounds exceeded.')
+            result[str(path.relative_to(root))] = hashlib.sha256(path.read_bytes()).hexdigest()
+    return result
+
+
+def resume_media_copy(source, target, *, fail_after=None):
+    # Lab only: a changed/extraneous destination is evidence to stop, not overwrite.
+    if (source.resolve().is_relative_to(target.resolve())
+            or target.resolve().is_relative_to(source.resolve()) or target.is_symlink()):
+        raise ValueError('Independent synthetic source and destination required.')
+    if fail_after is not None and (type(fail_after) is not int or fail_after < 1):
+        raise ValueError('Positive synthetic interruption count required.')
+    expected = file_hashes(source)
+    target.mkdir(parents=True, exist_ok=True)
+    existing = file_hashes(target)
+    if any(name not in expected or expected[name] != value for name, value in existing.items()):
+        raise ValueError('Existing destination differs; no file was overwritten.')
+    copied = 0
+    for name in sorted(expected):
+        if name in existing:
+            continue
+        destination = target / name
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source / name, destination)
+        copied += 1
+        if copied == fail_after:
+            raise CopyInterrupted('Controlled synthetic media-copy interruption.')
+    if file_hashes(target) != expected:
+        raise ValueError('Synthetic media copy mismatch.')
+    return {'copied': copied, 'reused': len(existing)}
 
 
 def main():
@@ -112,6 +161,31 @@ def main():
         for model in apps.get_models():
             if model._meta.managed and not model._meta.proxy:
                 editor.create_model(model)
+    # Inject a controlled exception after ten target writes, inside loaddata's
+    # transaction. Retrying must not retain partially imported relationships.
+    from django.db.models import Model
+    original_save = Model.save_base
+    partial_writes = 0
+
+    def interrupted_save(instance, *args, **kwargs):
+        nonlocal partial_writes
+        value = original_save(instance, *args, **kwargs)
+        if kwargs.get('using') == 'rehearsal':
+            partial_writes += 1
+            if partial_writes == 10:
+                raise RuntimeError('AJIRI_SYNTHETIC_IMPORT_INTERRUPTED')
+        return value
+
+    try:
+        with patch.object(Model, 'save_base', interrupted_save):
+            call_command('loaddata', str(fixture), database='rehearsal', verbosity=0, stdout=StringIO())
+    except RuntimeError as error:
+        assert 'AJIRI_SYNTHETIC_IMPORT_INTERRUPTED' in str(error)
+    else:
+        raise AssertionError('Synthetic import was not interrupted.')
+    assert partial_writes == 10
+    assert all(not rows for rows in canonical('rehearsal').values())
+    assert digest(before) == digest(canonical('default'))
     call_command('loaddata', str(fixture), database='rehearsal', verbosity=0, stdout=StringIO())
     target.check_constraints()
     imported = canonical('rehearsal')
@@ -122,13 +196,15 @@ def main():
 
     source_media = Path('/tmp/source-media')
     target_media = Path('/tmp/target-media')
-    shutil.copytree(source_media, target_media)
-
-    def file_hashes(root):
-        files = [path for path in root.rglob('*') if path.is_file()]
-        assert not any(path.is_symlink() for path in root.rglob('*'))
-        return {str(path.relative_to(root)): hashlib.sha256(path.read_bytes()).hexdigest() for path in files}
-
+    try:
+        resume_media_copy(source_media, target_media, fail_after=1)
+    except CopyInterrupted:
+        pass
+    else:
+        raise AssertionError('Synthetic media copy was not interrupted.')
+    assert len(file_hashes(target_media)) == 1
+    resumed = resume_media_copy(source_media, target_media)
+    assert resumed['reused'] == 1 and resumed['copied'] == len(file_hashes(source_media)) - 1
     media_hashes = file_hashes(source_media)
     assert media_hashes == file_hashes(target_media)
     urls = [f'/api/profiles/me/cv-versions/{package.cv_approval_id}/download/',
@@ -184,6 +260,8 @@ def main():
         'canonical_sha256': digest(before), 'media_files': len(media_hashes),
         'private_downloads_equal': True, 'cross_owner_denied': True,
         'foreign_keys_checked': True, 'sequence_and_signal_alias_checked': True,
+        'interrupted_import_rolled_back': True, 'import_retry_exact': True,
+        'interrupted_media_resumed': True, 'verified_media_reused': resumed['reused'],
         'historical_postgres_migrations_applied': False, 'production_cutover': False,
         'object_storage_verified': False, 'email_or_provider_calls': 0,
     }, sort_keys=True))
