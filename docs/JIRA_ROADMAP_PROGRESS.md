@@ -1377,3 +1377,10 @@ public axe and registration-CV-approval-download-application-review tests passed
 CV generation/download occurs before verification in that existing real journey.
 Push, exact-head CI, merge and deployment are pending at this entry.
 Rollback is previous reviewed source/build plus reload; preserve all data.
+
+CI40337924489 passed five checks but Linux Chromium demonstrated signed-in nav
+horizontal overflow at1100px after adding CV builder. Windows Chromium had passed;
+the Linux failure remains valid evidence. Permit desktop nav links to wrap within
+the available width (min-width0); retain the failing overflow assertion unchanged.
+No CI workflow or API change. Corrected build/browser/CI results follow.
+Corrected local Chromium boundary/axe tests passed2 tests86.889s; build2.32s passed. The Linux-specific regression still requires the new exact-head CI run.

@@ -753,6 +753,8 @@ textarea.input {
     display: flex;
     width: auto;
     flex-direction: row;
+    flex-wrap: wrap;
+    min-width: 0;
     align-items: center;
     margin-left: auto;
     order: 0;
