@@ -1,4 +1,4 @@
-"""Account bridge to shared budgets: closed tests or explicit owner-only pilot.
+"""Account bridge to shared budgets: separately gated general mail, tests or pilot.
 
 Real sending defaults off. Never fall back to console for security links.
 see docs/CONCEPTS.md#account-email-accounting

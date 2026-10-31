@@ -87,6 +87,9 @@ def document_path(name):
 
 
 def inventory(user):
+    from jobs.models import DeliveryTask
+    if DeliveryTask.objects.filter(owner=user).exclude(state__in=['succeeded', 'dead']).exists():
+        raise CommandError('Outstanding queued work requires reconciliation before account erasure.')
     # Employer ownership and moderation can affect other applicants' records.
     # Fail before any writes until a scoped, legally reviewed removal is prepared.
     from jobs.models import EmployerOrganisation, EmployerReview, JobModerationReview

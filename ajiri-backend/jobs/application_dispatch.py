@@ -1,4 +1,4 @@
-"""Opt-in synthetic owner application pilot; normal employer delivery stays closed.
+"""Receipt reconciliation and separately gated pilot/general application dispatch.
 
 see docs/CONCEPTS.md#managed-application-pilot
 """

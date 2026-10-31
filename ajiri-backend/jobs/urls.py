@@ -1,5 +1,6 @@
 from django.urls import path
 from .analytics_views import AnalyticsChoiceView, AnalyticsEventView
+from .queue_views import DeliveryTaskView
 from .application_progress import ApplicationProgressView
 from .saved_search_views import SavedSearchList, SavedSearchDetail, SavedSearchMatches
 from .employer_views import OrganisationList, DraftList, DraftWithdraw, OrganisationReview, DraftReview, ReviewQueue
@@ -24,6 +25,7 @@ from .views import (
 )
 
 urlpatterns = [
+    path('delivery-tasks/<uuid:task_id>/', DeliveryTaskView.as_view(), name='delivery-task'),
     path('analytics/choice/', AnalyticsChoiceView.as_view(), name='analytics-choice'),
     path('analytics/events/', AnalyticsEventView.as_view(), name='analytics-events'),
     path('applications/<int:pk>/progress/', ApplicationProgressView.as_view(), name='application-progress'),

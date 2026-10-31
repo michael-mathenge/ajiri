@@ -1,4 +1,4 @@
-"""Purpose-bound account links and reset revocation; owner pilot defaults off.
+"""Purpose-bound account links and reset revocation; delivery defaults off.
 
 see docs/CONCEPTS.md#account-recovery-links
 """

@@ -521,3 +521,32 @@ class AnalyticsDailyCount(models.Model):
             models.CheckConstraint(condition=models.Q(event__in=[
                 'search_used', 'cv_review_opened', 'application_review_opened']), name='analytics_event_allowlist'),
         ]
+
+
+class DeliveryTask(models.Model):
+    # Minimal durable references; recipients/documents never enter the broker payload.
+    # see docs/CONCEPTS.md#durable-delivery-queue
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    dedupe_key = models.UUIDField(unique=True)
+    kind = models.CharField(max_length=16)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,
+        on_delete=models.SET_NULL, related_name='delivery_tasks')
+    authorization = models.OneToOneField(ApplicationSendAuthorization, null=True, blank=True,
+        on_delete=models.SET_NULL, related_name='delivery_task')
+    notification = models.ForeignKey(Notification, null=True, blank=True,
+        on_delete=models.SET_NULL, related_name='delivery_tasks')
+    search = models.ForeignKey(SavedSearch, null=True, blank=True, on_delete=models.SET_NULL, related_name='delivery_tasks')
+    state = models.CharField(max_length=32, default='pending')
+    attempts = models.PositiveIntegerField(default=0)
+    lease_token = models.UUIDField(null=True, blank=True, default=None)
+    lease_until = models.DateTimeField(null=True, blank=True, default=None)
+    last_error = models.CharField(max_length=32, blank=True, default='')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(condition=models.Q(kind__in=['application', 'alert', 'saved_search', 'matching']), name='queue_kind_valid'),
+            models.CheckConstraint(condition=models.Q(state__in=['pending', 'publishing', 'published',
+                'publication_unknown', 'running', 'succeeded', 'blocked', 'needs_reconciliation', 'dead']), name='queue_state_valid'),
+        ]

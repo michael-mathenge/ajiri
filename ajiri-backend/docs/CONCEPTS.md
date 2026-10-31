@@ -1457,3 +1457,20 @@ SDK is installed. Purpose/legal facts, report access and retention require final
 decisions. A retention command reports candidate buckets without pruning. Verified
 account export includes choice records; deletion cascades them, while identity-free
 aggregate buckets cannot be attributed to or subtracted for one account.
+## durable-delivery-queue
+
+The default-off queue stores minimal owner/authorization/notification/search
+references in an additive outbox table. Broker messages carry only its UUID.
+Persistent Celery publication explicitly disables retries; ambiguous publication
+is retained, never automatically republished. A received original message can
+claim the same task. Atomic leases serialize workers, expire after three minutes,
+and stop after three claims. Lease recovery reuses the immutable target and shared
+mail receipt ledger, never a new provider retry identity. Unknown/reserved receipts
+require reconciliation. Late old workers cannot overwrite a newer lease result.
+Owner status exposes coarse state only; receipt acceptance is not inbox delivery.
+Choice/documents/freshness/expiry are rechecked by the same real dispatchers at
+execution, and future saved-search windows cannot be consumed early. New matching
+work is durable/idempotent; no hosting/scheduler activation is implied. Outstanding
+work blocks erasure until reviewed; completed minimal references can be anonymized
+through existing verified erasure. Broker/host durability and recovery after loss
+of the database still require actual operational verification before activation.

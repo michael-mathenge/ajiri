@@ -1,4 +1,4 @@
-"""Delivery accounting service; only account test/pilot callers are connected.
+"""Shared accounting for separately gated account/application/alert callers.
 
 see docs/CONCEPTS.md#atomic-delivery-budgets
 """

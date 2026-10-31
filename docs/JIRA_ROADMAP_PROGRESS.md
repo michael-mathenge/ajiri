@@ -1597,3 +1597,29 @@ those gates finish. No client instrumentation, external SDK, real account action
 production migration/flag/deployment change or collection occurred. Rollback disables
 collection, retains withdrawals/newer rows and never reverses populated tables.
 See DURABLE_ANALYTICS.md and the consolidated activation/decision records.
+
+## Durable queue AJ-48 - 31 October 2026 (CI pending)
+
+Analytics head 8b2dfc77fa38325ccb2d382b2c56d8ba6c3013b2 passed all six pinned
+checks in CI41199055095: full backend matrix, frontend, quality and browser.
+
+Added jobs.0018 durable minimal-reference tasks, owner status, stable deduplication,
+real Celery persistent publication with retry=False to ajiri.delivery, atomic
+three-minute leases/three-claim cap, bounded recovery and coarse dead-letter states.
+Application HTTP dispatch enqueues only when DELIVERY_QUEUE_ENABLED=True (default
+false). Application/alert/saved-search/matching handlers reuse real services and
+shared authorization/consent/freshness/budget receipts. Simulated death before and
+after handoff reused the same receipt; unknown mail was never retried. Broker
+publication uncertainty is retained without automatic republication. Due-window
+validation prevents prematurely consuming a future saved-search task identity.
+Outstanding queue work blocks verified erasure until reviewed; owner exports include
+minimal task metadata. No recipients/documents/tokens in broker payloads.
+
+Focused queue/alias 10 tests passed in 3.388s (earlier 9 queue cases in 3.242s).
+Check/drift, Ruff and regenerated OpenAPI passed. Full pinned-stack CI is pending;
+package remains unverified until all gates pass. No real broker/provider/host,
+worker/scheduler, production migration/flag/deployment or real-account action.
+Existing real Redis crash-lab evidence remains historical, not acceptance for this
+new host. Actual durable host/shared DB/files/monitoring and crash/lost-ledger
+recovery are activation boundaries. See DURABLE_DELIVERY_QUEUE.md and rollback
+checklist; never infer inbox delivery or provider failure from queue state alone.

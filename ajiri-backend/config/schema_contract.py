@@ -111,6 +111,10 @@ class ContractSchema(AutoSchema):
 
     def get_response_serializers(self):
         name = type(self.view).__name__
+        if name == 'DispatchAuthorizationView' and self.method == 'POST':
+            return {200: OpenApiTypes.OBJECT, 202: OpenApiTypes.OBJECT, 400: OpenApiTypes.OBJECT,
+                401: ErrorOutput, 403: ErrorOutput, 404: ErrorOutput, 409: ErrorOutput,
+                429: ErrorOutput, 503: ErrorOutput}
         if name == 'AnalyticsEventView' and self.method == 'POST':
             return {204: None, 400: OpenApiTypes.OBJECT, 401: ErrorOutput,
                 404: ErrorOutput, 429: ErrorOutput, 503: ErrorOutput}
