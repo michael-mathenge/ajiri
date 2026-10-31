@@ -1662,3 +1662,27 @@ callback addition). Ruff, system/drift and regenerated/validated OpenAPI passed.
 Full pinned CI pending; package unverified until required gates pass. Financial
 records block erasure pending a reviewed retention plan; no real-account action.
 See DURABLE_PAYMENTS.md, decisions and activation checklist for exact gaps/rollback.
+
+## Durable capability core AJ-46 - 31 October 2026 (CI pending)
+
+Payment head 2a9fc62f07e63696edea64269f51e836dad1b41f passed all six checks
+in CI41202823539. Exact Node24.19 locked offline install/lint/build passed1.98s;
+offline zero audit summary is not current advisory clearance.
+
+Added jobs.0021 durable unverified-by-default settlements and unique per-receipt
+capability grants, atomic projection with owner serialization, exact server
+snapshot/fixed paid-at expiry, chronology/reference/merchant/payer/amount/evidence
+validation, terminal reversal and Free fallback. No public/admin/command writer
+creates verified settlements. Actual authenticated provider evidence mapping,
+commercial feature/limit/retention facts and protected-action enforcement hooks
+remain blocked; none is represented as complete or activated. All paid switches
+are false and evidence/capability configuration empty. Financial rows are protected
+and added to verified owner export inventory; no real-account action occurred.
+
+Eight final focused entitlement tests passed0.427s, including actual concurrent
+projection; combined earlier18 payment/entitlement tests passed0.842s before the
+last chronology/reference tightening. Earlier7 core tests passed0.356s. Ruff,
+unchanged reviewed OpenAPI, system/drift checks passed. Full pinned CI is pending;
+package remains unverified until required gates finish. Rollback retains newer
+receipts/refunds, disables paid access/initiation and preserves Free access.
+See VERIFIED_CAPABILITY_LEDGER.md and consolidated decisions/activation checklist.

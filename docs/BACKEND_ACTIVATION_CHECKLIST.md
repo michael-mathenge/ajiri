@@ -31,3 +31,14 @@ verified backup/isolated restore then jobs.0019/0020 before activation. No live
 transport exists. Rollback stops initiation, retains owner status/reconciliation
 and preserves all financial records/unknown handoffs. Never reset/retry ambiguity.
 See DURABLE_PAYMENTS.md; no activation is approved by this implementation.
+
+## AJ-46 capability ledger (blocked, inactive)
+
+ENTITLEMENTS_ENABLED=False; PAYMENT_EVIDENCE_VERSION and approved capability
+names empty. jobs.0021 is additive; no verified settlement writer or paid-feature
+hook exists. Prerequisites are actual merchant settlement/reversal mapping and
+accepted sandbox evidence, exact approved commercial capability/action/retention
+rules, backup/isolated restore and migrations before activation. Rollback disables
+paid capabilities with Free fallback, retains reconciliation and all financial
+records, never reverses populated migrations or restores stale grants over refunds.
+See VERIFIED_CAPABILITY_LEDGER.md; test fixtures are not provider verification.

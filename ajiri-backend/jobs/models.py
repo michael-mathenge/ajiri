@@ -593,3 +593,43 @@ class PaymentCheckout(models.Model):
             models.UniqueConstraint(fields=['owner'], condition=~models.Q(state__in=['settled', 'closed']),
                 name='checkout_one_unresolved_owner'),
         ]
+
+
+class PaymentSettlement(models.Model):
+    # No public/admin/command writer: actual authenticated evidence mapping is blocked.
+    # see docs/CONCEPTS.md#verified-capability-ledger
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    checkout = models.OneToOneField(PaymentCheckout, on_delete=models.PROTECT, related_name='settlement')
+    provider_receipt = models.CharField(max_length=128, unique=True)
+    amount_kes = models.PositiveIntegerField()
+    currency = models.CharField(max_length=3, default='KES')
+    merchant_shortcode = models.CharField(max_length=8)
+    payer_fingerprint = models.CharField(max_length=64)
+    paid_at = models.DateTimeField()
+    verified_at = models.DateTimeField(null=True, default=None)
+    evidence_version = models.CharField(max_length=64, blank=True, default='')
+    evidence_sha256 = models.CharField(max_length=64, blank=True, default='')
+    state = models.CharField(max_length=16, default='unverified')
+    revoked_at = models.DateTimeField(null=True, default=None)
+    reversal_sha256 = models.CharField(max_length=64, blank=True, default='')
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(condition=models.Q(amount_kes__gt=0, currency='KES'), name='settlement_amount_currency'),
+            models.CheckConstraint(condition=models.Q(state__in=['unverified', 'settled', 'revoked']), name='settlement_state_valid'),
+            models.CheckConstraint(condition=(models.Q(state='revoked', revoked_at__isnull=False)
+                | models.Q(state__in=['unverified', 'settled'], revoked_at__isnull=True)), name='settlement_revoked_time'),
+        ]
+
+
+class CapabilityGrant(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    settlement = models.OneToOneField(PaymentSettlement, on_delete=models.PROTECT, related_name='grant')
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name='capability_grants')
+    capability = models.CharField(max_length=64)
+    starts_at = models.DateTimeField()
+    ends_at = models.DateTimeField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [models.CheckConstraint(condition=models.Q(ends_at__gt=models.F('starts_at')), name='grant_positive_term')]

@@ -1499,3 +1499,13 @@ merchant/amount/receipt/reversal contract and grants nothing. The real sandbox
 transport uses TLS, fixed hosts, bounded responses and no retries. Actual merchant,
 commercial/legal facts and authoritative evidence mapping remain blocked. See
 ../../docs/DURABLE_PAYMENTS.md and jobs/payments.py, jobs/daraja.py.
+
+## verified-capability-ledger
+
+A unique verified receipt can project one durable grant, atomically with checkout
+state, using the exact server-owned offer term and paid-at time. Replay never
+extends expiry. Current revocation/evidence is checked on every capability read;
+invalid/off/expired data falls back to Free. There is no provider evidence writer
+or invented paid-feature enforcement. Exact commercial features and actual source
+mapping remain blocked. See ../../docs/VERIFIED_CAPABILITY_LEDGER.md and
+jobs/entitlements.py. All paid capability names and switches default empty/off.

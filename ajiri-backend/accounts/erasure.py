@@ -87,8 +87,8 @@ def document_path(name):
 
 
 def inventory(user):
-    from jobs.models import PaymentCheckout
-    if PaymentCheckout.objects.filter(owner=user).exists():
+    from jobs.models import PaymentCheckout, CapabilityGrant
+    if PaymentCheckout.objects.filter(owner=user).exists() or CapabilityGrant.objects.filter(owner=user).exists():
         raise CommandError('Payment records require a reviewed financial retention/erasure plan.')
     from jobs.models import DeliveryTask
     if DeliveryTask.objects.filter(owner=user).exclude(state__in=['succeeded', 'dead']).exists():

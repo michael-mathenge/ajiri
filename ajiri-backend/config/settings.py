@@ -430,6 +430,10 @@ PUBLIC_JOBS_ENABLED = os.environ.get('PUBLIC_JOBS_ENABLED', 'False').lower() == 
 # No production Daraja transport or seeded commercial catalogue.
 # see docs/CONCEPTS.md#durable-payment-boundary
 PAYMENTS_ENABLED = env_bool('PAYMENTS_ENABLED', False)
+ENTITLEMENTS_ENABLED = env_bool('ENTITLEMENTS_ENABLED', False)
+PAYMENT_EVIDENCE_VERSION = os.environ.get('PAYMENT_EVIDENCE_VERSION', '')
+ENTITLEMENT_APPROVED_CAPABILITIES = [value.strip() for value in
+    os.environ.get('ENTITLEMENT_APPROVED_CAPABILITIES', '').split(',') if value.strip()]
 DARAJA_SANDBOX_ENABLED = env_bool('DARAJA_SANDBOX_ENABLED', False)
 DARAJA_RECONCILIATION_ENABLED = env_bool('DARAJA_RECONCILIATION_ENABLED', False)
 DARAJA_MERCHANT_REVIEWED = env_bool('DARAJA_MERCHANT_REVIEWED', False)
