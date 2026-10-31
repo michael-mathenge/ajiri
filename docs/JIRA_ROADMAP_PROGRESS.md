@@ -1686,3 +1686,41 @@ unchanged reviewed OpenAPI, system/drift checks passed. Full pinned CI is pendin
 package remains unverified until required gates finish. Rollback retains newer
 receipts/refunds, disables paid access/initiation and preserves Free access.
 See VERIFIED_CAPABILITY_LEDGER.md and consolidated decisions/activation checklist.
+
+## Final inactive-source handback - 31 October 2026
+
+Current implementation head is5bdafb7 (capability core), branch
+codex/backend-inactive-20261031, draft PR71 unmerged. Per-story states and exact
+external/code boundaries are in reports/status_report_2026-10-31.md. The roadmap
+is not wholly complete: PostgreSQL bootstrap/search, actual private object-store,
+broker/worker/scanner hosting acceptance, genuine employer/listing evidence,
+merchant sandbox/full authenticated receipt-reversal mapping, commercial paid
+capability/action enforcement and actual legal/privacy facts remain unresolved.
+No deployment, production migration, runtime flag change, live recipient mail,
+provider call, charge or real-account export/erasure occurred.
+
+All six CI checks were verified for every prior code package through2a9fc62
+(CI41202823539). Final5bdafb7 CI is unverified: automatic approval review blocked
+GitHub browser access at its usage limit. No alternative browser path bypassed
+that gate; PR title/body remains the older account-only description, and a
+replacement is saved in reports/PR71_BODY.md. No merge/activation was attempted.
+
+Final Node24.19 locked offline npm ci/lint/build passed2.18s; all38 generated files
+matched committed frontend_build bytes. No frontend changes or build commit was
+needed. Offline audit output is not a current clearance of the previously reported
+five advisories. Repository-wide Ruff and reviewed OpenAPI byte validation passed.
+Local Python remains the preserved3.12.6/Django6.1 environment, not pinned6.1.2.
+Original dirty lockfile/Docker work/reports/tools/stash/Git configuration remain
+preserved. All new author/committer addresses use the configured noreply identity.
+
+Pending JSON validated eight unique existing keys/status/comment shapes: AJ-43,
+AJ-47,AJ-48,AJ-51,AJ-52,AJ-44,AJ-45,AJ-46. Earlier Jira updates AJ-17/26/79 and
+proposal AJ-80 are excluded to avoid repeating posted progress. No issue was
+marked Done for inactive source. tools/jira_sync.py was never executed, including
+dry-run, per AGENTS.md section13. Commands in the report point to this worktree's
+JSON from the original repo root; actual dry-run output must come from that run.
+
+Final full local backend suite at5bdafb7:551 tests passed339.967s, one existing
+skip. No passing remote-CI claim for this head; GitHub inspection remains blocked.
+All new features stay inactive. The exact final handback and pending Jira commands
+are in reports/status_report_2026-10-31.md; no sync script was executed.

@@ -1,37 +1,87 @@
-# Backend continuation — 31 October 2026
+# Backend handback — 31 October 2026
 
-Work is on codex/backend-inactive-20261031, isolated from the dirty original
-checkout. This is a progress record, not a completed-roadmap or deployment claim.
-All new switches default off. No production migration, deployment, live mail,
-Daraja call, charging or real-account export/erasure occurred.
+Branch codex/backend-inactive-20261031, isolated at
+C:\dev\ajiri\.worktrees\backend-inactive-20261031. Original dirty checkout,
+lockfile, stash and Git configuration were preserved. Draft PR:
+https://github.com/michael-mathenge/ajiri/pull/71 (unmerged).
 
-| Scope | Current evidence |
-|---|---|
-| Account email prerequisite | ec57336: separate general verification/reset gate and shared ledger; 475 backend tests passed, one existing platform skip. |
-| AJ-26 | baf8829: real inactive match transport and bounded command; 480 backend tests passed, one skip; consent/mailbox/freshness/70% threshold and receipt rechecks. Jira comment 10131 recorded progress, status retained In Progress. |
-| AJ-17 | c497c9e: exact immutable-authorized general application transport; 484 backend tests passed, one skip. Jira comment 10132 recorded progress, status retained In Progress. |
-| AJ-43 | 6338c83: real inactive saved-search transport with durable daily/weekly windows and overlapping receipt deduplication; 488 backend tests passed, one skip. |
-| AJ-42/AJ-53 | Existing public/employer review implementation reconciled; general account onboarding prerequisite added. Genuine organisation/authority/current-vacancy evidence remains external. No source/freshness rule weakened. |
-| AJ-79 | Additive profiles.0008/private API, quarantine, concurrent count/byte quotas, explicit removal, integrity-checked downloads and export/erasure inventory integration passed the corrected 502-test full run (one existing skip). Actual scanner/hosting activation remains pending; no qualification verification or employer sharing. |
-| AJ-47/AJ-48/AJ-51/AJ-52 | Existing test/lab contracts are not live service completion. Durable integration and operational prerequisites remain open. |
-| AJ-44/AJ-45/AJ-46 | Merchant/product/commercial/legal facts remain unresolved; no payment or paid-entitlement activation. |
-| AJ-80 | 623064c: proposal mapped all 23 generic Update comments to existing story topics; original AJ-54–AJ-76 issues unchanged. |
+No deployment, production migration, runtime flag change, live mail, Daraja call,
+charging or real-account export/erasure occurred. All new features default off.
+The roadmap is NOT wholly complete: the boundaries below remain explicit.
 
-Exact Node 24.19 locked installation/lint/build passed for each completed email
-package, and all 38 generated build files matched. Optional pinned Ruff/OpenAPI
-tools were added only to local .tooling; those checks passed. The preserved local
-Python 3.12.6 environment reports Django 6.1; the repo pins 6.1.2, so these local
-runs do not establish an exact pinned dependency environment. GitHub CI for pushed
-c497c9e passed all six checks on its dependency installation. Draft PR71 remains
-unmerged: https://github.com/michael-mathenge/ajiri/pull/71. Later heads need their
-own CI evidence. The online locked frontend audit reported five advisories; an
-offline install's zero summary is not a fresh vulnerability clearance.
+| Story | Status | Source/tests and remaining boundary |
+|---|---|---|
+| Account email prerequisite | code-complete but inactive | ec57336; 475 full local tests passed, one existing skip; shared general security-mail transport. Controlled provider/inbox activation pending. |
+| AJ-17 | code-complete but inactive | c497c9e; 484 full local tests passed, one skip; immutable authorization and document rechecks. All six CI checks passed. |
+| AJ-26 | code-complete but inactive | baf8829; 480 full local tests passed, one skip; consent/freshness/70% alert threshold and shared receipts. CI41195023043 all six passed. |
+| AJ-42 | blocked | Existing public vacancy path reconciled; genuine current listing/source evidence and final publication approval still required. No fabricated jobs or weaker freshness. |
+| AJ-43 | code-complete but inactive | 6338c83; 488 full local tests passed, one skip; durable daily/weekly window delivery and shared receipts. Later certificate CI includes this source. |
+| AJ-44 | blocked | 2a9fc62; merchant/product/offer/privacy/tax/refund/retention facts unresolved. Requirements and safe defaults documented; no invented prices/agreements. |
+| AJ-45 | blocked | 2a9fc62; real sandbox OAuth/Express/query, durable claims and bounded callback hints. 14 focused payment/alias tests passed3.285s; CI41202823539 all six passed. Actual merchant sandbox acceptance and authenticated full settlement/reversal mapping remain missing; no production transport or verified settlement writer. |
+| AJ-46 | blocked | 5bdafb7; real additive settlement/grant tables, atomic fixed-term projection, concurrent deduplication, terminal reversal and Free fallback. Eight final focused tests passed0.427s. Actual provider evidence writer and exact commercial capability/action enforcement remain missing; final full CI is unverified. |
+| AJ-47 | blocked | 4b2f540; seven actual-filesystem copy/isolated restore/recovery tests passed1.048s; CI41202056856 all six passed. Actual private object-store target/driver acceptance and PostgreSQL bootstrap/search parity unresolved: historical jobs.0011 explicitly rejects non-SQLite. No history faked. |
+| AJ-48 | blocked | 5a724e0; durable UUID-only Celery publication, leases/recovery and shared receipts; ten queue/alias tests passed3.388s; CI41200587491 all six passed. Actual durable worker/broker/shared-store host, scheduler/monitoring and new crash/lost-ledger acceptance remain external. |
+| AJ-51 | code-complete but inactive | 8b2dfc7; durable separate versioned choice/withdrawal and identity-free daily counters; six focused tests passed0.403s; CI41199055095 all six passed. Actual purpose/legal/notice/retention/report-access decisions pending; no collection or external SDK. |
+| AJ-52 | blocked | b1bb30b; real bounded local ClamD protocol and fail-closed quarantine; 27 focused scanner/certificate/upload tests passed3.052s; CI41198355067 all six passed. Actual supported private scanner host/signature/capacity and engine acceptance remain external. |
+| AJ-53 | blocked | Existing independent employer/vacancy review path reconciled; normal account-mail prerequisite added. Genuine organisation, authority and current vacancy evidence still required. No fake employer/review. |
+| Certificates AJ-79 | code-complete but inactive | Existing ticket reused before implementation; be8b0c7; additive private owner PDF/quarantine API, count/byte quotas and integrity. Corrected full502 tests passed367.411s, one skip; CI41197654431 all six passed. Real scanner/host/notice activation pending. |
+| Cleanup proposal AJ-80 | done (proposal only) | 623064c mapped all23 generic Update entries AJ-54–AJ-76 to existing topics; original tickets/history/statuses were preserved. This is not approval to perform the proposed cleanup. |
 
-DECISIONS_PENDING.md consolidates reversible defaults. Per-feature prerequisites,
-switches and data-preserving rollback are in docs/BACKEND_ACTIVATION_CHECKLIST.md.
-No issue was marked Done from local implementation alone.
+AJ-17/AJ-26/AJ-79 progress was already recorded through Jira (comments10132,
+10131,10133 respectively; AJ-79 moved to In Progress). Pending JSON excludes
+those earlier updates and contains only new unsynchronized evidenced progress.
+No inactive story was marked Done from local implementation alone.
 
-The sync script was not run, in accordance with AGENTS.md section 13. The pending
-JSON contains only new unsynchronized progress; AJ-17/AJ-26 updates already posted
-through the connector are excluded to avoid replaying them. Review from this
-worktree and run the supplied dry-run/apply commands only in your own terminal.
+## Verification and limitations
+
+Each earlier code package passed all six required CI gates before the next story
+started, through payment head2a9fc62. Full backend matrix uses repository-pinned
+requirements. Preserved local Python3.12.6 reports Django6.1 rather than pinned
+6.1.2; local runs do not prove exact dependency parity. Final entitlement full
+local suite result will be appended below; its GitHub CI remains unverified.
+
+Exact Node24.19 locked offline npm ci, lint and build passed for the final
+entitlement package (build2.18s), as for earlier packages. Existing CI frontend
+job still uses Node22; quality/browser use24.19. CI configuration was preserved.
+No frontend source changed. Existing five online-audit advisories remain disclosed;
+offline npm's zero summary is not a current vulnerability clearance.
+
+GitHub browser refresh was blocked by automatic approval review due to its usage
+limit after entitlement push. It did not determine the action unsafe, but final
+CI inspection and PR title/body editing were not performed. The draft PR still
+has its earlier narrower description; a replacement is saved in reports/PR71_BODY.md.
+No alternate browser path was used to bypass that gate.
+
+DECISIONS_PENDING.md records item/options/default/impact. Per-feature flags,
+prerequisites and data-preserving rollback are in docs/BACKEND_ACTIVATION_CHECKLIST.md.
+New additive migrations are profiles.0008 and jobs.0017–0021. None ran in production.
+Never reverse populated financial/private-file tables or restore stale ledgers
+across uncertain handoffs. Actual provider/host/merchant/legal acceptance is not
+inferred from fixtures, local commits or merged historical source.
+
+## Jira dry-run handback
+
+The sync script was NOT executed: AGENTS.md section13 forbids running it even
+without --apply. JSON validation is not script execution or actual dry-run output.
+The prepared input is reports/status_updates.json in this isolated worktree.
+From the original repository root, Michael can run:
+
+```powershell
+Set-Location C:\dev\ajiri
+python tools/jira_sync.py --file .worktrees/backend-inactive-20261031/reports/status_updates.json
+python tools/jira_sync.py --file .worktrees/backend-inactive-20261031/reports/status_updates.json --apply
+```
+
+Expected: dry-run reviews the proposed In Progress comments; apply only after
+review. No simulated provider or synthetic data is represented as deployed acceptance.
+
+## Final local result
+
+Implementation head5bdafb7 passed the full local backend suite: 551 tests in
+339.967 seconds, OK with one existing platform skip. Command (backend directory):
+PYTHON_DOTENV_DISABLED=1, DEBUG=True, REAL_EMAIL_ENABLED=False, preserved Python
+3.12.6 environment, manage.py test --noinput. Sanitized negative-case error events
+were expected test outcomes, not passing production probes. Full repository Ruff,
+OpenAPI consistency and exact Node24.19 frontend gates/build bytes also passed.
+Remote CI for the final entitlement head remains unverified; the package is not
+claimed production-ready or fully verified against pinned dependencies.

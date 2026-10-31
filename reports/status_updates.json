@@ -1,7 +1,42 @@
 [
   {
-    "key": "AJ-43",
     "status": "In Progress",
-    "comment": "Commit 6338c83 added default-off real saved-search email delivery through durable daily/weekly windows and the shared receipt ledger, with consent, freshness and search-revision rechecks. All 488 backend tests passed with one existing platform skip, and exact Node 24.19 frontend gates passed; no sending or production activation occurred."
+    "comment": "Commit 6338c83 added default-off real saved-search email delivery with durable windows and shared receipt deduplication. All 488 local backend tests passed with one existing skip, and later all-six-check CI included this source; no sending or activation occurred.",
+    "key": "AJ-43"
+  },
+  {
+    "status": "In Progress",
+    "comment": "Commit 4b2f540 added journaled private Storage copy and isolated recovery; seven focused tests and all six checks in CI41202056856 passed. Actual object-store acceptance and PostgreSQL historical bootstrap/search parity remained blocked; no storage switch occurred.",
+    "key": "AJ-47"
+  },
+  {
+    "status": "In Progress",
+    "comment": "Commit 5a724e0 added inactive durable Celery task publication, leases and receipt-preserving recovery; ten focused queue/alias tests and all six checks in CI41200587491 passed. Actual durable worker/broker hosting and new crash/lost-ledger acceptance remained blocked.",
+    "key": "AJ-48"
+  },
+  {
+    "status": "In Progress",
+    "comment": "Commit 8b2dfc7 added default-off durable versioned analytics choice/withdrawal and identity-free daily counters; six focused tests and all six checks in CI41199055095 passed. Actual purpose, legal, notice, retention and reporting decisions remained pending; no collection occurred.",
+    "key": "AJ-51"
+  },
+  {
+    "status": "In Progress",
+    "comment": "Commit b1bb30b added real bounded local ClamD protocol and fail-closed quarantine integration; 27 focused regression tests and all six checks in CI41198355067 passed. Actual scanner host, supported engine/signature and capacity acceptance remained blocked; no real document scanning was claimed.",
+    "key": "AJ-52"
+  },
+  {
+    "status": "In Progress",
+    "comment": "Commit 2a9fc62 documented the sandbox product proposal and unresolved merchant, commercial, privacy, tax, refund and retention facts. All six package checks passed in CI41202823539; no merchant eligibility, agreements, charging or actual sandbox financial acceptance was inferred.",
+    "key": "AJ-44"
+  },
+  {
+    "status": "In Progress",
+    "comment": "Commit 2a9fc62 added real sandbox OAuth/Express/query transport, durable single-attempt checkout claims and bounded non-authoritative callback hints; 14 focused tests and all six checks in CI41202823539 passed. Actual merchant sandbox acceptance and authenticated complete settlement/reversal mapping remained blocked; no provider call occurred.",
+    "key": "AJ-45"
+  },
+  {
+    "status": "In Progress",
+    "comment": "Commit 5bdafb7 added inactive durable settlements and atomic fixed-expiry capability projection with terminal reversal and Free fallback; eight final focused tests and all 551 local backend tests passed with one existing skip. Final remote CI remained unverified, and actual provider verification plus exact commercial action enforcement remained blocked.",
+    "key": "AJ-46"
   }
 ]
