@@ -1420,3 +1420,36 @@ AJ47/48/51/52 retain documented live storage/worker/analytics/scanner prerequisi
 PythonAnywhere is selected now; no infrastructure cutover is needed for this showcase.
 See SHOWCASE_RELEASE.md and EMPLOYER_REVIEW_PLAN.md. This documentation-only follow-up
 retains the deployed runtime/build; it introduces no new product activation.
+
+## Inactive backend continuation - 31 October 2026
+
+Branch codex/backend-inactive-20261031 from fetched main624c378. Current Michael
+limits supersede earlier deployment authorization: no deployment, production
+migrations, live mail/financial calls or runtime flag changes. Original dirty
+checkout and prior worktrees preserved; per-command safe.directory only.
+
+Added separately default-off ACCOUNT_SECURITY_EMAIL_ENABLED/account_security
+mode for account verification/reset via existing Brevo HTTPS/shared ledger.
+Active mailbox/configuration/recipient rechecked at handoff, no attachments or
+extra recipients. Existing account/global budgets and unknown-handoff blockers
+preserved. Owner pilot/auth cookies/schema unchanged. No real delivery claimed.
+
+Actual Python3.12.6: check passed; makemigrations --check --dry-run no changes;
+full475 tests passed406.627s, one existing platform skip. Focused30 tests passed
+2.783s. Synthetic accounts/provider interception only. PYTHON_DOTENV_DISABLED=1.
+Exact portable Node24.19.0 official SHA256 matched
+57f71ab3652e797d84acddc79c81cc9ff1c6ddb2a1974cdb83f00fee9bff4c73.
+Repeated npm ci installed363/audited364; five advisories (four moderate, one high:
+follow-redirects; moderate ESLint-related). No dependency changes included.
+npm run lint, explicit all-source Oxlint --no-ignore and ESLint passed; build
+passed2.32s; all38 committed/generated files matched. Initial bundled24.22.1
+installation superseded by repeated required checks on exact24.19.0.
+Optional Ruff/OpenAPI checks unavailable: missing ruff/drf_spectacular in the
+existing environment. CI has not run. No frontend package or new migration.
+Rollback: disable new switch, preserve account/budget/receipt data and prior mode.
+
+AJ-79 certificate ticket already existed; reused rather than duplicated. Created
+AJ-80 proposal for23 generic Update issues AJ-54-AJ-76, originals unchanged.
+No story marked Done from this account prerequisite. See DECISIONS_PENDING.md
+and docs/BACKEND_ACTIVATION_CHECKLIST.md. Remaining normal application/alert mail,
+certificates/scanner/analytics/queue/storage/payments implementation remains open.

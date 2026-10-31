@@ -1370,3 +1370,16 @@ Signed-in users keep the jobs landing screen; About provides the same public gui
 A separate employer guide explains human review and expiry without publishing jobs.
 Static introductions must disclose pilot limitations rather than imply live sending
 or guaranteed vacancies. Public navigation never grants private route/API access.
+
+## general-account-security-email
+
+Account verification and password reset may use the existing Brevo HTTPS adapter
+for active account owners through a separate default-off switch. The original
+owner pilot remains independent. Both paths reserve the same Nairobi-day account
+and global budgets and persist a receipt before provider handoff. Duplicate IDs
+reuse receipts; uncertain handoffs are never automatically retried. The general
+transport checks current account activity, mailbox, delivery mode and switches
+again immediately before sending, and rejects attachments, reply overrides and
+extra recipients. Runtime configuration requires HTTPS links and valid provider
+configuration; console output is never security-link delivery. Provider acceptance
+is not inbox evidence. See ../../docs/BACKEND_ACTIVATION_CHECKLIST.md.

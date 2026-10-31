@@ -1,0 +1,22 @@
+# Backend activation checklist — pending Michael's final approval
+
+No item below authorizes activation. Preserve currently deployed configuration;
+new feature switches default off in source. Never reverse populated migrations
+as routine rollback or discard newer writes. Back up before migration, apply
+additive schema before serving new code, and verify isolated restoration first.
+
+| Feature | Switch / state | Prerequisites before approval | Rollback |
+|---|---|---|---|
+| Account verification/reset | New ACCOUNT_SECURITY_EMAIL_ENABLED=False; REAL_EMAIL_ENABLED=False by default; account_security mode required | Approved sender/provider processing, HTTPS origin, privately entered credentials, account/global budget review, monitored delivery/error procedure and explicitly approved controlled inbox verification | Disable new switch, retain ledger/budgets and all account data; owner pilot can use its existing reviewed mode separately. No schema change. |
+| Employer posting AJ-53 | Existing posting controls; no runtime change | General onboarding acceptance; genuine employer/authority and independent staff review; future deadline/no applicant fee | Disable posting, retain freshness/audit and historical applications. |
+| Public vacancies AJ-42 | PUBLIC_JOBS_ENABLED stays off | Genuine eligible listing, public metadata/source checks and expiry verification | Disable publication; preserve current availability rules. |
+| Application email AJ-17 | APPLICATION_EMAIL_ENABLED stays off | Production transport code review, exact immutable approval/authorization, current recipient/attachment/privacy policy and controlled pilot explicitly approved | Disable sending; retain receipts/unknown blockers, documents and authorizations. |
+| Match email AJ-26 | ALERT_EMAIL_ENABLED stays off | Explicit independent consent, verified current mailbox, fresh job, shared budgets, unsubscribe and transport acceptance | Disable sending; preserve opt-outs and receipts. |
+| Saved-search email AJ-43 | Existing captured contract only, no activation | Real transport implementation and consent-window/deduplication acceptance | Disable email worker/caller, preserve windows and receipts. |
+| Certificates AJ-79 | Not implemented in this package | Additive schema/API, quotas/concurrency, quarantine/download integrity, scanner and real capacity/backup evidence | Disable routes, retain files/table/newer writes. |
+| Storage AJ-47 | No production switch | Target credentials privately entered, private object storage and historical schema/search rehearsal, interrupted recovery and one-writer cutover | Before new target writes only: restore original writer; after new writes require reconciled reverse migration, never stale SQLite fallback. |
+| Queue AJ-48 | No hosted worker activation | Durable host/broker, lease/dead-letter operations and crash/redelivery acceptance against shared ledger | Stop workers, reconcile reserved/unknown receipts before any replay. |
+| Analytics AJ-51 | No collection activation | Durable versioned choice, purpose/legal facts, retention/cohort/access rules and aggregate collector implementation | Disable collection, preserve withdrawals; pruning requires policy approval. |
+| Scanner AJ-52 | No claim of actual scanning | Real engine/host, private quarantine, signature freshness, resource limits and fail-closed integration | Disable uploads, never bypass quarantine to restore availability. |
+| Daraja AJ-44/45 | No live calls | Genuine merchant/product facts, durable adapter/reconciliation, private sandbox access and verified sandbox evidence, commercial/legal decisions | Disable initiation; reconcile pending/unknown outcomes without retrying initiation. |
+| Entitlements AJ-46 | No charging/enforcement activation | Exact offers/refund/expiry decisions and durable authoritative payment evidence | Disable paid capabilities with Free fallback; preserve verified receipts and free applying/documents. |
