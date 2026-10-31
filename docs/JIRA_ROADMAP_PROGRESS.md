@@ -1478,3 +1478,27 @@ Pinned optional tools installed only under local .tooling (existing venv unchang
 Ruff passed all changed Python; OpenAPI validated and matched reviewed bytes.
 Rollback: disable new alert switch/caller, preserve consent, notifications and all
 receipt/budget records. AJ26 remains In Progress pending final operational acceptance.
+
+## Inactive general application transport - 31 October 2026
+
+New GENERAL_APPLICATION_EMAIL_ENABLED defaults off alongside existing application
+and general account gates. Reuses existing exact immutable authorization, reviewed
+stored documents, shared budgets and durable receipt reconciliation. At final handoff
+rereads authorization cutoff/expiry/policy/hash, current vacancy/mailbox, package
+context/latest revision/approval and exact actual document bytes; no CC/BCC or
+copy-to-self route. Unknown receipts never repeat provider calls. No schema change.
+
+Actual full484 backend tests passed395.918s, one existing platform skip; check and
+drift passed. Four new tests separately passed2.149s. Earlier33-test focused run
+included an imported fixture TestCase; replaced that import with a module alias
+before the full run to avoid duplicated fixture tests. Exact Node24.19 npm ci
+--offline/lint/build2.36s passed; explicit all-source Oxlint/ESLint passed; all38
+build bytes matched. Changed Python Ruff and reviewed OpenAPI check passed using
+isolated pinned local tooling. No live mail/production flags/migrations/deployment.
+Rollback disables general/application gates while preserving approvals/receipts.
+
+Draft PR71 was created through the authenticated browser after gh authentication
+was unavailable. For pushed head baf88296a2c7f02b3e55be3042e2e035e14b878f, CI run
+41195023043 passed all six checks (three backend versions, frontend, quality,
+browser). This does not verify later unpushed commits. PR remains draft/unmerged.
+AJ26 evidence comment10131 was posted; status retained In Progress.

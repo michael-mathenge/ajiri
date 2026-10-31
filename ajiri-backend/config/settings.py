@@ -216,6 +216,8 @@ REAL_EMAIL_ENABLED = env_bool('REAL_EMAIL_ENABLED', False)
 ACCOUNT_SECURITY_EMAIL_ENABLED = env_bool('ACCOUNT_SECURITY_EMAIL_ENABLED', False)
 # see docs/CONCEPTS.md#general-alert-email
 GENERAL_ALERT_EMAIL_ENABLED = env_bool('GENERAL_ALERT_EMAIL_ENABLED', False)
+# see docs/CONCEPTS.md#general-application-email
+GENERAL_APPLICATION_EMAIL_ENABLED = env_bool('GENERAL_APPLICATION_EMAIL_ENABLED', False)
 # Separate opt-in; default remains disabled even when account security mail is on.
 APPLICATION_EMAIL_ENABLED = env_bool('APPLICATION_EMAIL_ENABLED', False)
 APPLICATION_PILOT_PREPARATION_ENABLED = env_bool('APPLICATION_PILOT_PREPARATION_ENABLED', False)

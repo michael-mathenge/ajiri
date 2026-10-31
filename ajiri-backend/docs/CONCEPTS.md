@@ -1393,3 +1393,13 @@ In-app choice remains independent. A bounded operator batch shares the existing
 global/alert receipt ledger; any existing receipt blocks another provider call.
 Consent, freshness, mailbox and switches are checked again at handoff. Unsubscribe
 links require confirmation. No automated retry or live scheduler is installed.
+## general-application-email
+
+General application mail has its own default-off switch in addition to existing
+application and general account transport gates. The exact reviewed documents,
+recipient, subject, body and reply address remain bound to an immutable personal
+authorization. The shared service claims its durable receipt before handoff. The
+transport rechecks current verified mailbox, vacancy evidence, policy, approval,
+expiry and actual file bytes immediately before one provider call. Existing
+receipts reconcile even after switches are off. Unknown outcomes cannot be retried
+automatically; an explicit retry remains limited to existing definite-failure rules.
