@@ -18,7 +18,7 @@ from django.utils.crypto import salted_hmac
 from jobs.brevo_transport import Result
 from jobs.delivery_service import DeliveryError, DeliveryService, QuotaExceeded
 from jobs.models import DeliveryAttempt
-from . import pilot
+from . import general_email, pilot
 
 
 def test_available():
@@ -27,10 +27,14 @@ def test_available():
 
 
 def available():
+    if getattr(settings, 'ACCOUNT_SECURITY_EMAIL_ENABLED', False):
+        return general_email.configuration() is not None
     return pilot.configuration() is not None or test_available()
 
 
 def eligible(user, purpose):
+    if getattr(settings, 'ACCOUNT_SECURITY_EMAIL_ENABLED', False):
+        return general_email.eligible(user, purpose)
     if getattr(settings, 'REAL_EMAIL_ENABLED', False):
         return pilot.eligible(user, purpose)
     return test_available()
@@ -75,8 +79,10 @@ def deliver_account_link(user, purpose, text, request_id):
     previous = DeliveryAttempt.objects.filter(user=user, channel=purpose,
         recipient_digest=digest, state='definite_failure').order_by('-created_at').first()
     try:
-        policy = pilot.configuration()
-        sink = pilot.transport(policy) if policy else MemoryTransport()
+        general = general_email.configuration()
+        policy = None if general else pilot.configuration()
+        sink = (general_email.AccountTransport(general, user, purpose) if general else
+            pilot.transport(policy) if policy else MemoryTransport())
         attempt = DeliveryService(sink, digest_key=key, enabled=True, pilot=policy).deliver(
             user_id=user.pk, channel=purpose, recipient=user.email.casefold(), subject='Ajiri account security',
             text=text, idempotency_key=request_id, retry_of=previous.pk if previous else None)

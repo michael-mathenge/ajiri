@@ -1420,3 +1420,61 @@ AJ47/48/51/52 retain documented live storage/worker/analytics/scanner prerequisi
 PythonAnywhere is selected now; no infrastructure cutover is needed for this showcase.
 See SHOWCASE_RELEASE.md and EMPLOYER_REVIEW_PLAN.md. This documentation-only follow-up
 retains the deployed runtime/build; it introduces no new product activation.
+
+## Inactive backend continuation - 31 October 2026
+
+Branch codex/backend-inactive-20261031 from fetched main624c378. Current Michael
+limits supersede earlier deployment authorization: no deployment, production
+migrations, live mail/financial calls or runtime flag changes. Original dirty
+checkout and prior worktrees preserved; per-command safe.directory only.
+
+Added separately default-off ACCOUNT_SECURITY_EMAIL_ENABLED/account_security
+mode for account verification/reset via existing Brevo HTTPS/shared ledger.
+Active mailbox/configuration/recipient rechecked at handoff, no attachments or
+extra recipients. Existing account/global budgets and unknown-handoff blockers
+preserved. Owner pilot/auth cookies/schema unchanged. No real delivery claimed.
+
+Actual Python3.12.6: check passed; makemigrations --check --dry-run no changes;
+full475 tests passed406.627s, one existing platform skip. Focused30 tests passed
+2.783s. Synthetic accounts/provider interception only. PYTHON_DOTENV_DISABLED=1.
+Exact portable Node24.19.0 official SHA256 matched
+57f71ab3652e797d84acddc79c81cc9ff1c6ddb2a1974cdb83f00fee9bff4c73.
+Repeated npm ci installed363/audited364; five advisories (four moderate, one high:
+follow-redirects; moderate ESLint-related). No dependency changes included.
+npm run lint, explicit all-source Oxlint --no-ignore and ESLint passed; build
+passed2.32s; all38 committed/generated files matched. Initial bundled24.22.1
+installation superseded by repeated required checks on exact24.19.0.
+Optional Ruff/OpenAPI checks unavailable: missing ruff/drf_spectacular in the
+existing environment. CI has not run. No frontend package or new migration.
+Rollback: disable new switch, preserve account/budget/receipt data and prior mode.
+
+AJ-79 certificate ticket already existed; reused rather than duplicated. Created
+AJ-80 proposal for23 generic Update issues AJ-54-AJ-76, originals unchanged.
+No story marked Done from this account prerequisite. See DECISIONS_PENDING.md
+and docs/BACKEND_ACTIVATION_CHECKLIST.md. Remaining normal application/alert mail,
+certificates/scanner/analytics/queue/storage/payments implementation remains open.
+
+## MVP1 exact-candidate verification — 31 October 2026
+
+Approved release scope is account-security email only,PR72,branch
+codex/review-01-account-email. Broad PR71 is reference only;d8a4239 passed all six
+checks in CI41217043158 and is not the MVP1 release candidate.
+
+Exactec57336 local pinned Django6.1.2 full475 tests passed358.988s,one existing
+skip;external-I/O audit recorded zero connection attempts. Node24.19 locked
+install/lint,152 component tests in26 files (32.31s) and build2.01s passed;all38
+committed/generated files matched. Backend check/drift,Ruff and OpenAPI passed.
+
+PR72 CI41240872454 found a timing-dependent pre-existing saved-search fixture:
+backend3.13 and quality full-suite coverage failed expected50/actual0 near Nairobi
+midnight;backend3.12/3.14 were matrix-cancelled,not independent failures. The
+fixture placed samples two days ago plus10minutes,which can cross the last
+completed weekly boundary. Only this test now uses samples three days ago;
+production windows/freshness/limits remain unchanged. Focused22 tests passed
+26.171s;explicit frozen23:55/00:05 Nairobi regressions each passed (1.222/1.291s).
+Full pinned suite/remote rerun pending;not claimed verified until both finish.
+
+No migrations,feature,dependency,frontend,CI,hosting or production-data change in
+this correction. No deployment/flags/live sending occurred. PythonAnywhere is
+signed out;current quota,backup/restore and actual source/settings preflight remain
+unverified until owner signs in privately. All excluded feature activation stays off.
