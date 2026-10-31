@@ -1453,3 +1453,28 @@ AJ-80 proposal for23 generic Update issues AJ-54-AJ-76, originals unchanged.
 No story marked Done from this account prerequisite. See DECISIONS_PENDING.md
 and docs/BACKEND_ACTIVATION_CHECKLIST.md. Remaining normal application/alert mail,
 certificates/scanner/analytics/queue/storage/payments implementation remains open.
+
+## Inactive normal match-alert transport - 31 October 2026
+
+Account prerequisite committed/pushed as ec57336 with configured noreply identities.
+Draft PR creation via gh was blocked: CLI has no authenticated session. No merge,
+deployment, real email or production setting change occurred.
+
+New GENERAL_ALERT_EMAIL_ENABLED defaults off. Normal current-job match email uses
+the real Brevo adapter, explicit current verified-mailbox consent predating the
+notification, score>=70, enforced freshness and shared account/global transport
+configuration and alert/global receipt budget. Independent in-app choice retained.
+A bounded deliver_match_emails command was added; no scheduler was activated.
+Existing receipts block repeat provider calls, including failed/unknown attempts.
+Current consent/mailbox/freshness/switches are rechecked before provider handoff.
+
+Actual focused5 tests passed0.461s. Full480 Django tests passed450.015s, one existing
+platform skip. check/drift passed. Exact Node24.19 locked npm ci --offline installed
+363/audited364, lint/build3.10s passed; all38 assets matched. Offline audit's zero
+findings is NOT clearance: prior online audit found five advisories. An attempted
+parallel lint overlapped npm ci and failed on partial node_modules; rerun after
+installation passed explicit all-source Oxlint/ESLint. No frontend/dependency change.
+Pinned optional tools installed only under local .tooling (existing venv unchanged):
+Ruff passed all changed Python; OpenAPI validated and matched reviewed bytes.
+Rollback: disable new alert switch/caller, preserve consent, notifications and all
+receipt/budget records. AJ26 remains In Progress pending final operational acceptance.

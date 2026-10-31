@@ -1383,3 +1383,13 @@ again immediately before sending, and rejects attachments, reply overrides and
 extra recipients. Runtime configuration requires HTTPS links and valid provider
 configuration; console output is never security-link delivery. Provider acceptance
 is not inbox evidence. See ../../docs/BACKEND_ACTIVATION_CHECKLIST.md.
+## general-alert-email
+
+Match email uses a separate default-off GENERAL_ALERT_EMAIL_ENABLED switch, the
+existing alert switch and the reviewed general account transport configuration.
+It requires active users, exact verified addresses, current explicit consent
+predating the notification, a score of at least 70 and current vacancy evidence.
+In-app choice remains independent. A bounded operator batch shares the existing
+global/alert receipt ledger; any existing receipt blocks another provider call.
+Consent, freshness, mailbox and switches are checked again at handoff. Unsubscribe
+links require confirmation. No automated retry or live scheduler is installed.
