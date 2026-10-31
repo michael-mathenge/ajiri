@@ -1474,3 +1474,18 @@ work is durable/idempotent; no hosting/scheduler activation is implied. Outstand
 work blocks erasure until reviewed; completed minimal references can be anonymized
 through existing verified erasure. Broker/host durability and recovery after loss
 of the database still require actual operational verification before activation.
+## verified-private-storage-copy
+
+The copy service uses real Django Storage operations and an exclusive, checksummed,
+fsynced private journal. Paused writers/private exclusive target attestations are
+required; they are prerequisites, not proof of an inaccessible host's state. Reviewed
+relative document roots only are copied, with bounded streamed SHA-256/size checks.
+Exact target names/bytes must match, and source bytes/references must remain stable.
+A durable writing claim precedes each handoff. On uncertainty, resume only verifies
+existing complete bytes; missing/partial/different targets are never automatically
+overwritten or resubmitted. An isolated third store can rehearse restoration without
+switching the runtime or removing source/target bytes. Unknown remote drivers are
+blocked until private namespace and single-attempt-write semantics are reviewed.
+Filesystem tests do not establish object-store or PostgreSQL production acceptance.
+Original SQLite migration history remains intact; its explicit non-SQLite search
+blocker requires a final bootstrap/search strategy before any target cutover.

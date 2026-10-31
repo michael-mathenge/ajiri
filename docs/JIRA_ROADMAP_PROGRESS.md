@@ -1623,3 +1623,21 @@ Existing real Redis crash-lab evidence remains historical, not acceptance for th
 new host. Actual durable host/shared DB/files/monitoring and crash/lost-ledger
 recovery are activation boundaries. See DURABLE_DELIVERY_QUEUE.md and rollback
 checklist; never infer inbox delivery or provider failure from queue state alone.
+
+## Private copy recovery AJ-47 - 31 October 2026 (CI pending)
+
+Queue head 5a724e0a12f35a7350ff9fb886feb28e16c87763 passed all six pinned
+checks in CI41200587491. Actual broker/worker host acceptance remains blocked.
+
+Added real Django Storage copy/recovery with streamed hashes, bounded inventory,
+exclusive durable journal, source/target identity checks and isolated third-store
+restoration. Unknown writes are reconciled from exact bytes without replay; partial
+or absent uncertain targets remain blocked. No deletion, runtime storage change,
+provider selection or production migration. Seven actual-filesystem focused tests
+passed in 1.048s; Ruff, system check and migration drift check passed. Full pinned
+CI is pending. No migration/schema change in this package.
+
+AJ-47 remains blocked for actual object-store/host acceptance and PostgreSQL
+bootstrap/search parity. Existing jobs.0011 rejects non-SQLite; historical migrations
+were preserved, not faked. Previous schema-copy labs are not normal migration
+acceptance. See PRIVATE_STORAGE_COPY.md, activation checklist and decisions.
