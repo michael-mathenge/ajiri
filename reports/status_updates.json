@@ -1,0 +1,7 @@
+[
+  {
+    "key": "AJ-43",
+    "status": "In Progress",
+    "comment": "Commit 6338c83 added default-off real saved-search email delivery through durable daily/weekly windows and the shared receipt ledger, with consent, freshness and search-revision rechecks. All 488 backend tests passed with one existing platform skip, and exact Node 24.19 frontend gates passed; no sending or production activation occurred."
+  }
+]

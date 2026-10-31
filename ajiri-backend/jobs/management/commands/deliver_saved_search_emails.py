@@ -1,3 +1,5 @@
+import uuid
+
 from django.core.management.base import BaseCommand
 from jobs.general_saved_search_email import deliver_due, enabled
 
@@ -14,5 +16,3 @@ class Command(BaseCommand):
             return
         outcomes = deliver_due(options['search_id'])
         self.stdout.write(str({state: outcomes.count(state) for state in set(outcomes)}))
-import uuid
-

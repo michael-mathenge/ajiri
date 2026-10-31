@@ -15,6 +15,7 @@ feed.xml
 MANIFEST.sha256
 .npm-cache/
 .verification/
+.tooling/
 .worktrees/
 
 # Generated Python caches, including repository-level developer tooling.

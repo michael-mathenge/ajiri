@@ -1520,3 +1520,35 @@ offline install's audit summary is not a fresh security scan. Rollback disables 
 new switch/caller while retaining all search windows, opt-outs and receipts.
 PR71's six checks passed for c497c9e before this saved-search commit; new head CI
 remains pending. All final activation decisions remain with Michael.
+
+## Private certificate evidence AJ-79 - 31 October 2026
+
+Added default-off CERTIFICATE_EVIDENCE_ENABLED, additive profiles.0008, private
+owner list/multipart upload/replace/download/confirmed-remove APIs, UUID quarantine,
+5 MiB/file and five-file/20 MiB owner quotas serialized with CV draft saves.
+Expected workspace revision/evidence ID/hash prevent stale mutations. Evidence
+removal precedes deleting its text entry; immutable approvals remain independent.
+Downloads require a current clean result plus exact size/hash and attachment/
+no-store/nosniff. Export/verified-request erasure inventories include evidence;
+a report-only audit detects corruption/orphans. No employer sharing or OCR.
+Actual scanner adapter/host is a next dependency; no real scanning is claimed yet.
+
+Focused 13 certificate tests passed in 1.622s (concurrency, byte quota, storage/DB
+failure, rollback, owner access, quarantine, explicit removal and isolated synthetic
+metadata/file restoration). Existing CV/export/erasure regression group: 41 passed
+in 78.009s. First full 502-test run failed one API-alias fixture lookup after
+403.801s: the route sample map lacked certification_id. Added that UUID sample,
+retaining exact legacy/v1 view assertions; focused alias test passed in 0.016s.
+Corrected full 502 tests passed in 367.411s, one existing Windows platform skip.
+Migration preservation checked existing account/profile/CV references/content/
+revision unchanged; no evidence backfill. System/drift checks and changed Python
+Ruff passed; regenerated OpenAPI validated and matched. Exact Node 24.19 locked
+install/lint/build (2.06s) and full-source Oxlint/ESLint passed; all 38 files matched.
+Local Python 3.12.6/Django 6.1 differs from repo-pinned Django 6.1.2; pinned-stack
+CI remains required before acceptance. No existing virtualenv was upgraded.
+
+No production migration, flag/deployment change, real-user operation or live send.
+Rollback retains table/files/new writes and disables routes. See certificate guide,
+activation checklist and decisions. Retention remains report-only. Only local
+.tooling is newly ignored; original dirty checkout/lockfile/config/stash preserved.
+A style-only saved-search import/EOF cleanup was included; no behavior changed.

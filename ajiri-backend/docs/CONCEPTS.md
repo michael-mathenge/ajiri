@@ -1413,3 +1413,18 @@ notification receipt, so overlapping searches and ordinary match alerts cannot
 repeat a provider handoff. A crash before recording the match link reconciles the
 already durable notification receipt. Quota/unknown outcomes never rewind a window
 or automatically retry the provider. No live scheduler is activated.
+## private-certificate-evidence
+
+Certificate PDFs are unverified supporting evidence, separate from CV JSON and
+immutable approved documents. A default-off owner-only API stores bounded files in
+private UUID quarantine. Workspace revision and evidence identity/hash protect
+replacement/removal, and a shared first-write claim serializes quotas with draft
+edits. Owners must explicitly remove evidence before deleting its certification
+entry; changing a CV never silently destroys private evidence. Replacement rolls
+back metadata and cleans only the request's new file on failure. Old files are
+removed only after commit. Failed cleanup/crash orphans are reported by
+audit_certificate_evidence, never automatically pruned. Export and verified-request
+erasure inventories include these files; generic private-media backups include the
+quarantine tree. Download requires a fresh clean scan plus size/hash verification,
+uses attachment/no-store/nosniff headers, and never grants employer access or embeds
+evidence in CV/application snapshots. No qualification authenticity is inferred.
