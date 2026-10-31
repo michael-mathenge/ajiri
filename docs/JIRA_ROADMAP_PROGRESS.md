@@ -1453,3 +1453,28 @@ AJ-80 proposal for23 generic Update issues AJ-54-AJ-76, originals unchanged.
 No story marked Done from this account prerequisite. See DECISIONS_PENDING.md
 and docs/BACKEND_ACTIVATION_CHECKLIST.md. Remaining normal application/alert mail,
 certificates/scanner/analytics/queue/storage/payments implementation remains open.
+
+## MVP1 exact-candidate verification — 31 October 2026
+
+Approved release scope is account-security email only,PR72,branch
+codex/review-01-account-email. Broad PR71 is reference only;d8a4239 passed all six
+checks in CI41217043158 and is not the MVP1 release candidate.
+
+Exactec57336 local pinned Django6.1.2 full475 tests passed358.988s,one existing
+skip;external-I/O audit recorded zero connection attempts. Node24.19 locked
+install/lint,152 component tests in26 files (32.31s) and build2.01s passed;all38
+committed/generated files matched. Backend check/drift,Ruff and OpenAPI passed.
+
+PR72 CI41240872454 found a timing-dependent pre-existing saved-search fixture:
+backend3.13 and quality full-suite coverage failed expected50/actual0 near Nairobi
+midnight;backend3.12/3.14 were matrix-cancelled,not independent failures. The
+fixture placed samples two days ago plus10minutes,which can cross the last
+completed weekly boundary. Only this test now uses samples three days ago;
+production windows/freshness/limits remain unchanged. Focused22 tests passed
+26.171s;explicit frozen23:55/00:05 Nairobi regressions each passed (1.222/1.291s).
+Full pinned suite/remote rerun pending;not claimed verified until both finish.
+
+No migrations,feature,dependency,frontend,CI,hosting or production-data change in
+this correction. No deployment/flags/live sending occurred. PythonAnywhere is
+signed out;current quota,backup/restore and actual source/settings preflight remain
+unverified until owner signs in privately. All excluded feature activation stays off.
