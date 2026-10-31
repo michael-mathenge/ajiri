@@ -1641,3 +1641,24 @@ AJ-47 remains blocked for actual object-store/host acceptance and PostgreSQL
 bootstrap/search parity. Existing jobs.0011 rejects non-SQLite; historical migrations
 were preserved, not faked. Previous schema-copy labs are not normal migration
 acceptance. See PRIVATE_STORAGE_COPY.md, activation checklist and decisions.
+
+## Durable sandbox payments AJ-44/45 - 31 October 2026 (CI pending)
+
+Private storage head 4b2f54047883f9330951251f4baf4dd07bb094eb passed all six
+checks in CI41202056856. Node24.19 locked offline install/lint/build also passed
+(build2.36s); offline audit output is not current advisory clearance.
+
+Added real single-attempt TLS sandbox OAuth/Express/query transport and additive
+jobs.0019/0020 owner checkout/empty inactive offer schema. Durable claim precedes
+I/O, one unresolved checkout per owner blocks new-decision bypass, and timeout/
+process death cannot repeat initiation. Owner status remains available when off.
+8-KiB callback hints cannot settle/query/grant; Express query success only becomes
+evidence_required. No production transport or verified-settlement writer exists.
+Merchant/product/commercial/legal facts and real authenticated financial evidence
+mapping remain blocked; no provider calls/charging or actual sandbox acceptance.
+
+Focused checkout/wire/alias 14 tests passed in3.285s (earlier13 in3.259s before
+callback addition). Ruff, system/drift and regenerated/validated OpenAPI passed.
+Full pinned CI pending; package unverified until required gates pass. Financial
+records block erasure pending a reviewed retention plan; no real-account action.
+See DURABLE_PAYMENTS.md, decisions and activation checklist for exact gaps/rollback.

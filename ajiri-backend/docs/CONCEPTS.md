@@ -1489,3 +1489,13 @@ blocked until private namespace and single-attempt-write semantics are reviewed.
 Filesystem tests do not establish object-store or PostgreSQL production acceptance.
 Original SQLite migration history remains intact; its explicit non-SQLite search
 blocker requires a final bootstrap/search strategy before any target cutover.
+
+## durable-payment-boundary
+
+Durable checkouts commit the server-owned offer snapshot and unique owner decision
+before the provider handoff. Unknown handoffs cannot repeat, even under a new
+decision. Callback claims are hints only; Express query success lacks the full
+merchant/amount/receipt/reversal contract and grants nothing. The real sandbox
+transport uses TLS, fixed hosts, bounded responses and no retries. Actual merchant,
+commercial/legal facts and authoritative evidence mapping remain blocked. See
+../../docs/DURABLE_PAYMENTS.md and jobs/payments.py, jobs/daraja.py.

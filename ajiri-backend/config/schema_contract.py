@@ -18,6 +18,7 @@ from jobs.employer_views import ReviewInput
 from jobs.saved_search_views import SearchInput
 from jobs.application_progress import ProgressInput
 from jobs.analytics_views import AnalyticsChoiceInput, AnalyticsEventInput
+from jobs.payment_views import CheckoutInput
 
 
 class LoginInput(serializers.Serializer):
@@ -35,6 +36,7 @@ class ErrorOutput(serializers.Serializer):
 
 
 INPUTS = {
+    ('CheckoutCreateView', 'POST'): CheckoutInput,
     ('AnalyticsChoiceView', 'POST'): AnalyticsChoiceInput,
     ('AnalyticsEventView', 'POST'): AnalyticsEventInput,
     ('CertificateDetail', 'PUT'): EvidenceInput,
@@ -111,6 +113,9 @@ class ContractSchema(AutoSchema):
 
     def get_response_serializers(self):
         name = type(self.view).__name__
+        if name == 'CheckoutCreateView' and self.method == 'POST':
+            return {202: OpenApiTypes.OBJECT, 400: OpenApiTypes.OBJECT,
+                401: ErrorOutput, 404: ErrorOutput, 409: ErrorOutput, 429: ErrorOutput}
         if name == 'DispatchAuthorizationView' and self.method == 'POST':
             return {200: OpenApiTypes.OBJECT, 202: OpenApiTypes.OBJECT, 400: OpenApiTypes.OBJECT,
                 401: ErrorOutput, 403: ErrorOutput, 404: ErrorOutput, 409: ErrorOutput,

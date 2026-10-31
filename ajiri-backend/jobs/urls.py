@@ -1,4 +1,5 @@
 from django.urls import path
+from .payment_views import CheckoutCreateView, CheckoutDetailView, DarajaCallbackView
 from .analytics_views import AnalyticsChoiceView, AnalyticsEventView
 from .queue_views import DeliveryTaskView
 from .application_progress import ApplicationProgressView
@@ -25,6 +26,9 @@ from .views import (
 )
 
 urlpatterns = [
+    path('payments/daraja/callback/', DarajaCallbackView.as_view(), name='daraja-callback'),
+    path('payments/checkouts/', CheckoutCreateView.as_view(), name='payment-checkout-create'),
+    path('payments/checkouts/<uuid:checkout_id>/', CheckoutDetailView.as_view(), name='payment-checkout'),
     path('delivery-tasks/<uuid:task_id>/', DeliveryTaskView.as_view(), name='delivery-task'),
     path('analytics/choice/', AnalyticsChoiceView.as_view(), name='analytics-choice'),
     path('analytics/events/', AnalyticsEventView.as_view(), name='analytics-events'),

@@ -550,3 +550,46 @@ class DeliveryTask(models.Model):
             models.CheckConstraint(condition=models.Q(state__in=['pending', 'publishing', 'published',
                 'publication_unknown', 'running', 'succeeded', 'blocked', 'needs_reconciliation', 'dead']), name='queue_state_valid'),
         ]
+
+
+class PaymentOffer(models.Model):
+    # Empty catalogue by default; no preview prices become charging authority.
+    # see docs/CONCEPTS.md#durable-payment-boundary
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    active = models.BooleanField(default=False)
+    amount_kes = models.PositiveIntegerField()
+    term_seconds = models.PositiveIntegerField()
+    capability = models.CharField(max_length=64)
+    terms_version = models.CharField(max_length=64)
+    class Meta:
+        constraints = [
+            models.CheckConstraint(condition=models.Q(amount_kes__gt=0, term_seconds__gt=0), name='offer_positive_values'),
+        ]
+
+
+class PaymentCheckout(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name='payment_checkouts')
+    decision_id = models.UUIDField(unique=True)
+    offer = models.ForeignKey(PaymentOffer, on_delete=models.PROTECT)
+    amount_kes = models.PositiveIntegerField()
+    term_seconds = models.PositiveIntegerField()
+    capability = models.CharField(max_length=64)
+    terms_version = models.CharField(max_length=64)
+    merchant_shortcode = models.CharField(max_length=8)
+    payer_fingerprint = models.CharField(max_length=64)
+    callback_seen_at = models.DateTimeField(null=True, blank=True, default=None)
+    state = models.CharField(max_length=32, default='handoff_started')
+    provider_reference = models.CharField(max_length=128, null=True, default=None, unique=True)
+    merchant_reference = models.CharField(max_length=128, blank=True, default='')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(condition=models.Q(amount_kes__gt=0, term_seconds__gt=0), name='checkout_positive_values'),
+            models.CheckConstraint(condition=models.Q(state__in=['handoff_started', 'unknown', 'accepted',
+                'evidence_required', 'unresolved', 'settled', 'closed']), name='checkout_state_valid'),
+            models.UniqueConstraint(fields=['owner'], condition=~models.Q(state__in=['settled', 'closed']),
+                name='checkout_one_unresolved_owner'),
+        ]

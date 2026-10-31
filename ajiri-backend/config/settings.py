@@ -267,6 +267,8 @@ REST_FRAMEWORK = {
     # see docs/CONCEPTS.md#endpoint-throttling
     'NUM_PROXIES': int(os.environ.get('DRF_NUM_PROXIES', '0')),
     'DEFAULT_THROTTLE_RATES': {
+        'payment': os.environ.get('THROTTLE_PAYMENT_RATE', '10/hour'),
+        'payment_callback': os.environ.get('THROTTLE_PAYMENT_CALLBACK_RATE', '30/minute'),
         'alert_preference': os.environ.get('THROTTLE_ALERT_PREFERENCE_RATE', '60/min'),
         'alert_unsubscribe': os.environ.get('THROTTLE_ALERT_UNSUBSCRIBE_RATE', '30/hour'),
         'account_email': os.environ.get('THROTTLE_ACCOUNT_EMAIL_RATE', '5/hour'),
@@ -425,6 +427,15 @@ FRONTEND_BUILD_DIR = BASE_DIR / 'frontend_build'
 # Publication is an explicit opt-in; private APIs retain their existing guards.
 # see docs/CONCEPTS.md#public-job-contract
 PUBLIC_JOBS_ENABLED = os.environ.get('PUBLIC_JOBS_ENABLED', 'False').lower() == 'true'
+# No production Daraja transport or seeded commercial catalogue.
+# see docs/CONCEPTS.md#durable-payment-boundary
+PAYMENTS_ENABLED = env_bool('PAYMENTS_ENABLED', False)
+DARAJA_SANDBOX_ENABLED = env_bool('DARAJA_SANDBOX_ENABLED', False)
+DARAJA_RECONCILIATION_ENABLED = env_bool('DARAJA_RECONCILIATION_ENABLED', False)
+DARAJA_MERCHANT_REVIEWED = env_bool('DARAJA_MERCHANT_REVIEWED', False)
+DARAJA_PRODUCT_REVIEW = os.environ.get('DARAJA_PRODUCT_REVIEW', '')
+for payment_setting in ('CONSUMER_KEY', 'CONSUMER_SECRET', 'PASSKEY', 'SHORTCODE', 'CALLBACK_URL'):
+    globals()['DARAJA_'+payment_setting] = os.environ.get('DARAJA_'+payment_setting, '')
 PUBLIC_JOB_ORIGIN = os.environ.get('PUBLIC_JOB_ORIGIN', '')
 # Enable only after the additive publication-evidence migration is installed.
 JOB_FRESHNESS_ENFORCED = env_bool('JOB_FRESHNESS_ENFORCED', False)

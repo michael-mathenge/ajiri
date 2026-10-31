@@ -87,6 +87,9 @@ def document_path(name):
 
 
 def inventory(user):
+    from jobs.models import PaymentCheckout
+    if PaymentCheckout.objects.filter(owner=user).exists():
+        raise CommandError('Payment records require a reviewed financial retention/erasure plan.')
     from jobs.models import DeliveryTask
     if DeliveryTask.objects.filter(owner=user).exclude(state__in=['succeeded', 'dead']).exists():
         raise CommandError('Outstanding queued work requires reconciliation before account erasure.')

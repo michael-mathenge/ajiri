@@ -20,3 +20,14 @@ additive schema before serving new code, and verify isolated restoration first.
 | Scanner AJ-52 | MALWARE_SCANNING_ENABLED=False; approved versions empty, host/review attestations unset | Actual supported ClamD host/private socket, signature updates/UTC, daemon limits/capacity, real safe engine acceptance and processing approval; see LOCAL_MALWARE_SCANNING.md | Suspend new uploads with PRIVATE_UPLOADS_SUSPENDED, retain guard/quarantine and all newer data; never bypass scanning to restore availability. |
 | Daraja AJ-44/45 | No live calls | Genuine merchant/product facts, durable adapter/reconciliation, private sandbox access and verified sandbox evidence, commercial/legal decisions | Disable initiation; reconcile pending/unknown outcomes without retrying initiation. |
 | Entitlements AJ-46 | No charging/enforcement activation | Exact offers/refund/expiry decisions and durable authoritative payment evidence | Disable paid capabilities with Free fallback; preserve verified receipts and free applying/documents. |
+
+## AJ-44/45 sandbox payments (blocked, inactive)
+
+PAYMENTS_ENABLED, DARAJA_SANDBOX_ENABLED, DARAJA_RECONCILIATION_ENABLED and
+DARAJA_MERCHANT_REVIEWED are false; product/config empty and catalogue empty.
+Prerequisites: actual approved merchant/product/offer/consent/legal/retention facts,
+private sandbox acceptance and authenticated full settlement/reversal mapping;
+verified backup/isolated restore then jobs.0019/0020 before activation. No live
+transport exists. Rollback stops initiation, retains owner status/reconciliation
+and preserves all financial records/unknown handoffs. Never reset/retry ambiguity.
+See DURABLE_PAYMENTS.md; no activation is approved by this implementation.
