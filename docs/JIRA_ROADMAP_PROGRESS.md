@@ -1502,3 +1502,21 @@ was unavailable. For pushed head baf88296a2c7f02b3e55be3042e2e035e14b878f, CI ru
 41195023043 passed all six checks (three backend versions, frontend, quality,
 browser). This does not verify later unpushed commits. PR remains draft/unmerged.
 AJ26 evidence comment10131 was posted; status retained In Progress.
+
+## Inactive saved-search transport - 31 October 2026
+
+Added SAVED_SEARCH_EMAIL_ENABLED=False and a bounded per-search operator command.
+The real Brevo adapter uses existing daily/weekly durable windows, current exact
+mailbox consent covering each window, search revision/frequency and strict vacancy
+freshness. Shared notification receipts deduplicate overlapping searches/match alerts.
+Existing receipts reconcile after interruptions; no window rewind/provider auto-retry.
+No schema change, scheduler activation, live sending or production change.
+
+Focused 4 tests passed in 0.517s. Full 488 backend tests passed in 394.521s with one
+existing platform skip; system/drift checks passed. Exact Node 24.19 locked install,
+lint/build (2.01s), explicit all-source Oxlint/ESLint passed; all 38 build files matched.
+Ruff and reviewed OpenAPI validation passed. Prior online audit advisories remain;
+offline install's audit summary is not a fresh security scan. Rollback disables the
+new switch/caller while retaining all search windows, opt-outs and receipts.
+PR71's six checks passed for c497c9e before this saved-search commit; new head CI
+remains pending. All final activation decisions remain with Michael.

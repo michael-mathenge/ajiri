@@ -1403,3 +1403,13 @@ transport rechecks current verified mailbox, vacancy evidence, policy, approval,
 expiry and actual file bytes immediately before one provider call. Existing
 receipts reconcile even after switches are off. Unknown outcomes cannot be retried
 automatically; an explicit retry remains limited to existing definite-failure rules.
+## general-saved-search-email
+
+The separately default-off saved-search dispatcher uses existing durable daily or
+weekly windows. Saving a search never grants consent. Real HTTPS delivery requires
+current explicit consent covering the window, a verified address, current search
+revision/frequency and fresh job evidence. Each match is linked to the shared
+notification receipt, so overlapping searches and ordinary match alerts cannot
+repeat a provider handoff. A crash before recording the match link reconciles the
+already durable notification receipt. Quota/unknown outcomes never rewind a window
+or automatically retry the provider. No live scheduler is activated.
