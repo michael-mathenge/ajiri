@@ -1370,3 +1370,142 @@ Signed-in users keep the jobs landing screen; About provides the same public gui
 A separate employer guide explains human review and expiry without publishing jobs.
 Static introductions must disclose pilot limitations rather than imply live sending
 or guaranteed vacancies. Public navigation never grants private route/API access.
+
+## general-account-security-email
+
+Account verification and password reset may use the existing Brevo HTTPS adapter
+for active account owners through a separate default-off switch. The original
+owner pilot remains independent. Both paths reserve the same Nairobi-day account
+and global budgets and persist a receipt before provider handoff. Duplicate IDs
+reuse receipts; uncertain handoffs are never automatically retried. The general
+transport checks current account activity, mailbox, delivery mode and switches
+again immediately before sending, and rejects attachments, reply overrides and
+extra recipients. Runtime configuration requires HTTPS links and valid provider
+configuration; console output is never security-link delivery. Provider acceptance
+is not inbox evidence. See ../../docs/BACKEND_ACTIVATION_CHECKLIST.md.
+## general-alert-email
+
+Match email uses a separate default-off GENERAL_ALERT_EMAIL_ENABLED switch, the
+existing alert switch and the reviewed general account transport configuration.
+It requires active users, exact verified addresses, current explicit consent
+predating the notification, a score of at least 70 and current vacancy evidence.
+In-app choice remains independent. A bounded operator batch shares the existing
+global/alert receipt ledger; any existing receipt blocks another provider call.
+Consent, freshness, mailbox and switches are checked again at handoff. Unsubscribe
+links require confirmation. No automated retry or live scheduler is installed.
+## general-application-email
+
+General application mail has its own default-off switch in addition to existing
+application and general account transport gates. The exact reviewed documents,
+recipient, subject, body and reply address remain bound to an immutable personal
+authorization. The shared service claims its durable receipt before handoff. The
+transport rechecks current verified mailbox, vacancy evidence, policy, approval,
+expiry and actual file bytes immediately before one provider call. Existing
+receipts reconcile even after switches are off. Unknown outcomes cannot be retried
+automatically; an explicit retry remains limited to existing definite-failure rules.
+## general-saved-search-email
+
+The separately default-off saved-search dispatcher uses existing durable daily or
+weekly windows. Saving a search never grants consent. Real HTTPS delivery requires
+current explicit consent covering the window, a verified address, current search
+revision/frequency and fresh job evidence. Each match is linked to the shared
+notification receipt, so overlapping searches and ordinary match alerts cannot
+repeat a provider handoff. A crash before recording the match link reconciles the
+already durable notification receipt. Quota/unknown outcomes never rewind a window
+or automatically retry the provider. No live scheduler is activated.
+## private-certificate-evidence
+
+Certificate PDFs are unverified supporting evidence, separate from CV JSON and
+immutable approved documents. A default-off owner-only API stores bounded files in
+private UUID quarantine. Workspace revision and evidence identity/hash protect
+replacement/removal, and a shared first-write claim serializes quotas with draft
+edits. Owners must explicitly remove evidence before deleting its certification
+entry; changing a CV never silently destroys private evidence. Replacement rolls
+back metadata and cleans only the request's new file on failure. Old files are
+removed only after commit. Failed cleanup/crash orphans are reported by
+audit_certificate_evidence, never automatically pruned. Export and verified-request
+erasure inventories include these files; generic private-media backups include the
+quarantine tree. Download requires a fresh clean scan plus size/hash verification,
+uses attachment/no-store/nosniff headers, and never grants employer access or embeds
+evidence in CV/application snapshots. No qualification authenticity is inferred.
+## local-malware-scanning
+
+The default-off ClamD adapter transfers bounded bytes only over a configured local
+socket or literal loopback address. It requires an explicitly reviewed engine,
+fresh signature timestamp and host/resource attestations before transfer. One
+overall deadline and bounded command/reply sizes protect the request. Unexpected,
+stale, encrypted/limit, error and timeout results fail closed without retries.
+Uploaded CVs are checked before persistence; legacy downloads check actual bytes.
+Certificates use durable quarantine with an exact scan claim, so replacement or
+stalled-worker recovery cannot mark a different file clean. Disabling scanning
+does not make pending certificates downloadable. Signature age and result age are
+both checked. PRIVATE_UPLOADS_SUSPENDED pauses new uploads without bypassing the
+guard. Host configuration/updates and actual engine detection require independent
+operational evidence; protocol fixtures do not establish live malware protection.
+## durable-aggregate-analytics
+
+Analytics has its own explicit versioned choice, independent of registration and
+email preferences. Collection defaults off and also requires confirmed purpose
+configuration plus a published policy version; unset facts cannot enable it.
+Choice/revocation and collection share a first-write owner lock. An old decision
+retry cannot reverse a newer withdrawal, and policy changes require fresh choice.
+The only stored event data is one Nairobi-day/name/count bucket: no owner/session,
+fingerprint, IP, paths, queries, documents, raw events or attributes. Counts describe
+event submissions, not distinct people; duplicate submissions may count twice.
+Choice evidence stays separate and owner-scoped. No public/cohort report or external
+SDK is installed. Purpose/legal facts, report access and retention require final
+decisions. A retention command reports candidate buckets without pruning. Verified
+account export includes choice records; deletion cascades them, while identity-free
+aggregate buckets cannot be attributed to or subtracted for one account.
+## durable-delivery-queue
+
+The default-off queue stores minimal owner/authorization/notification/search
+references in an additive outbox table. Broker messages carry only its UUID.
+Persistent Celery publication explicitly disables retries; ambiguous publication
+is retained, never automatically republished. A received original message can
+claim the same task. Atomic leases serialize workers, expire after three minutes,
+and stop after three claims. Lease recovery reuses the immutable target and shared
+mail receipt ledger, never a new provider retry identity. Unknown/reserved receipts
+require reconciliation. Late old workers cannot overwrite a newer lease result.
+Owner status exposes coarse state only; receipt acceptance is not inbox delivery.
+Choice/documents/freshness/expiry are rechecked by the same real dispatchers at
+execution, and future saved-search windows cannot be consumed early. New matching
+work is durable/idempotent; no hosting/scheduler activation is implied. Outstanding
+work blocks erasure until reviewed; completed minimal references can be anonymized
+through existing verified erasure. Broker/host durability and recovery after loss
+of the database still require actual operational verification before activation.
+## verified-private-storage-copy
+
+The copy service uses real Django Storage operations and an exclusive, checksummed,
+fsynced private journal. Paused writers/private exclusive target attestations are
+required; they are prerequisites, not proof of an inaccessible host's state. Reviewed
+relative document roots only are copied, with bounded streamed SHA-256/size checks.
+Exact target names/bytes must match, and source bytes/references must remain stable.
+A durable writing claim precedes each handoff. On uncertainty, resume only verifies
+existing complete bytes; missing/partial/different targets are never automatically
+overwritten or resubmitted. An isolated third store can rehearse restoration without
+switching the runtime or removing source/target bytes. Unknown remote drivers are
+blocked until private namespace and single-attempt-write semantics are reviewed.
+Filesystem tests do not establish object-store or PostgreSQL production acceptance.
+Original SQLite migration history remains intact; its explicit non-SQLite search
+blocker requires a final bootstrap/search strategy before any target cutover.
+
+## durable-payment-boundary
+
+Durable checkouts commit the server-owned offer snapshot and unique owner decision
+before the provider handoff. Unknown handoffs cannot repeat, even under a new
+decision. Callback claims are hints only; Express query success lacks the full
+merchant/amount/receipt/reversal contract and grants nothing. The real sandbox
+transport uses TLS, fixed hosts, bounded responses and no retries. Actual merchant,
+commercial/legal facts and authoritative evidence mapping remain blocked. See
+../../docs/DURABLE_PAYMENTS.md and jobs/payments.py, jobs/daraja.py.
+
+## verified-capability-ledger
+
+A unique verified receipt can project one durable grant, atomically with checkout
+state, using the exact server-owned offer term and paid-at time. Replay never
+extends expiry. Current revocation/evidence is checked on every capability read;
+invalid/off/expired data falls back to Free. There is no provider evidence writer
+or invented paid-feature enforcement. Exact commercial features and actual source
+mapping remain blocked. See ../../docs/VERIFIED_CAPABILITY_LEDGER.md and
+jobs/entitlements.py. All paid capability names and switches default empty/off.

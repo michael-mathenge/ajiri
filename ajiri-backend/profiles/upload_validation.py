@@ -7,6 +7,7 @@ import zipfile
 from pathlib import PurePosixPath
 from xml.etree import ElementTree
 from rest_framework import serializers
+from django.conf import settings
 
 MAX_BYTES = 5 * 1024 * 1024
 MAX_EXPANDED = 20 * 1024 * 1024
@@ -114,9 +115,12 @@ def _doc(data):
         raise ValueError('No WordDocument stream.')
 
 
-def validate_cv_upload(upload):
+def validate_cv_upload(upload, *, scan=True):
     # Preserve the cursor for Django storage; never extract ZIPs or open private URLs.
     # see docs/CONCEPTS.md#cv-content-validation
+    from .scanner import ScanUnavailable
+    if getattr(settings, 'PRIVATE_UPLOADS_SUSPENDED', False):
+        raise ScanUnavailable()
     extension = PurePosixPath(upload.name).suffix.lower()
     if extension not in {'.pdf', '.doc', '.docx'}:
         raise serializers.ValidationError('Allowed CV formats: PDF, DOC and DOCX.')
@@ -135,6 +139,9 @@ def validate_cv_upload(upload):
             _docx(data)
         else:
             _doc(data)
+        if scan and getattr(settings, 'MALWARE_SCANNING_ENABLED', False):
+            from .scanner import require_clean
+            require_clean(data)
     except (ValueError, zipfile.BadZipFile, RuntimeError, OSError, ElementTree.ParseError, NotImplementedError, struct.error) as error:
         raise serializers.ValidationError('CV content does not match a supported, valid document package.') from error
     finally:

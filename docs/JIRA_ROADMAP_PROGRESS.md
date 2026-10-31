@@ -1420,3 +1420,307 @@ AJ47/48/51/52 retain documented live storage/worker/analytics/scanner prerequisi
 PythonAnywhere is selected now; no infrastructure cutover is needed for this showcase.
 See SHOWCASE_RELEASE.md and EMPLOYER_REVIEW_PLAN.md. This documentation-only follow-up
 retains the deployed runtime/build; it introduces no new product activation.
+
+## Inactive backend continuation - 31 October 2026
+
+Branch codex/backend-inactive-20261031 from fetched main624c378. Current Michael
+limits supersede earlier deployment authorization: no deployment, production
+migrations, live mail/financial calls or runtime flag changes. Original dirty
+checkout and prior worktrees preserved; per-command safe.directory only.
+
+Added separately default-off ACCOUNT_SECURITY_EMAIL_ENABLED/account_security
+mode for account verification/reset via existing Brevo HTTPS/shared ledger.
+Active mailbox/configuration/recipient rechecked at handoff, no attachments or
+extra recipients. Existing account/global budgets and unknown-handoff blockers
+preserved. Owner pilot/auth cookies/schema unchanged. No real delivery claimed.
+
+Actual Python3.12.6: check passed; makemigrations --check --dry-run no changes;
+full475 tests passed406.627s, one existing platform skip. Focused30 tests passed
+2.783s. Synthetic accounts/provider interception only. PYTHON_DOTENV_DISABLED=1.
+Exact portable Node24.19.0 official SHA256 matched
+57f71ab3652e797d84acddc79c81cc9ff1c6ddb2a1974cdb83f00fee9bff4c73.
+Repeated npm ci installed363/audited364; five advisories (four moderate, one high:
+follow-redirects; moderate ESLint-related). No dependency changes included.
+npm run lint, explicit all-source Oxlint --no-ignore and ESLint passed; build
+passed2.32s; all38 committed/generated files matched. Initial bundled24.22.1
+installation superseded by repeated required checks on exact24.19.0.
+Optional Ruff/OpenAPI checks unavailable: missing ruff/drf_spectacular in the
+existing environment. CI has not run. No frontend package or new migration.
+Rollback: disable new switch, preserve account/budget/receipt data and prior mode.
+
+AJ-79 certificate ticket already existed; reused rather than duplicated. Created
+AJ-80 proposal for23 generic Update issues AJ-54-AJ-76, originals unchanged.
+No story marked Done from this account prerequisite. See DECISIONS_PENDING.md
+and docs/BACKEND_ACTIVATION_CHECKLIST.md. Remaining normal application/alert mail,
+certificates/scanner/analytics/queue/storage/payments implementation remains open.
+
+## Inactive normal match-alert transport - 31 October 2026
+
+Account prerequisite committed/pushed as ec57336 with configured noreply identities.
+Draft PR creation via gh was blocked: CLI has no authenticated session. No merge,
+deployment, real email or production setting change occurred.
+
+New GENERAL_ALERT_EMAIL_ENABLED defaults off. Normal current-job match email uses
+the real Brevo adapter, explicit current verified-mailbox consent predating the
+notification, score>=70, enforced freshness and shared account/global transport
+configuration and alert/global receipt budget. Independent in-app choice retained.
+A bounded deliver_match_emails command was added; no scheduler was activated.
+Existing receipts block repeat provider calls, including failed/unknown attempts.
+Current consent/mailbox/freshness/switches are rechecked before provider handoff.
+
+Actual focused5 tests passed0.461s. Full480 Django tests passed450.015s, one existing
+platform skip. check/drift passed. Exact Node24.19 locked npm ci --offline installed
+363/audited364, lint/build3.10s passed; all38 assets matched. Offline audit's zero
+findings is NOT clearance: prior online audit found five advisories. An attempted
+parallel lint overlapped npm ci and failed on partial node_modules; rerun after
+installation passed explicit all-source Oxlint/ESLint. No frontend/dependency change.
+Pinned optional tools installed only under local .tooling (existing venv unchanged):
+Ruff passed all changed Python; OpenAPI validated and matched reviewed bytes.
+Rollback: disable new alert switch/caller, preserve consent, notifications and all
+receipt/budget records. AJ26 remains In Progress pending final operational acceptance.
+
+## Inactive general application transport - 31 October 2026
+
+New GENERAL_APPLICATION_EMAIL_ENABLED defaults off alongside existing application
+and general account gates. Reuses existing exact immutable authorization, reviewed
+stored documents, shared budgets and durable receipt reconciliation. At final handoff
+rereads authorization cutoff/expiry/policy/hash, current vacancy/mailbox, package
+context/latest revision/approval and exact actual document bytes; no CC/BCC or
+copy-to-self route. Unknown receipts never repeat provider calls. No schema change.
+
+Actual full484 backend tests passed395.918s, one existing platform skip; check and
+drift passed. Four new tests separately passed2.149s. Earlier33-test focused run
+included an imported fixture TestCase; replaced that import with a module alias
+before the full run to avoid duplicated fixture tests. Exact Node24.19 npm ci
+--offline/lint/build2.36s passed; explicit all-source Oxlint/ESLint passed; all38
+build bytes matched. Changed Python Ruff and reviewed OpenAPI check passed using
+isolated pinned local tooling. No live mail/production flags/migrations/deployment.
+Rollback disables general/application gates while preserving approvals/receipts.
+
+Draft PR71 was created through the authenticated browser after gh authentication
+was unavailable. For pushed head baf88296a2c7f02b3e55be3042e2e035e14b878f, CI run
+41195023043 passed all six checks (three backend versions, frontend, quality,
+browser). This does not verify later unpushed commits. PR remains draft/unmerged.
+AJ26 evidence comment10131 was posted; status retained In Progress.
+
+## Inactive saved-search transport - 31 October 2026
+
+Added SAVED_SEARCH_EMAIL_ENABLED=False and a bounded per-search operator command.
+The real Brevo adapter uses existing daily/weekly durable windows, current exact
+mailbox consent covering each window, search revision/frequency and strict vacancy
+freshness. Shared notification receipts deduplicate overlapping searches/match alerts.
+Existing receipts reconcile after interruptions; no window rewind/provider auto-retry.
+No schema change, scheduler activation, live sending or production change.
+
+Focused 4 tests passed in 0.517s. Full 488 backend tests passed in 394.521s with one
+existing platform skip; system/drift checks passed. Exact Node 24.19 locked install,
+lint/build (2.01s), explicit all-source Oxlint/ESLint passed; all 38 build files matched.
+Ruff and reviewed OpenAPI validation passed. Prior online audit advisories remain;
+offline install's audit summary is not a fresh security scan. Rollback disables the
+new switch/caller while retaining all search windows, opt-outs and receipts.
+PR71's six checks passed for c497c9e before this saved-search commit; new head CI
+remains pending. All final activation decisions remain with Michael.
+
+## Private certificate evidence AJ-79 - 31 October 2026
+
+Added default-off CERTIFICATE_EVIDENCE_ENABLED, additive profiles.0008, private
+owner list/multipart upload/replace/download/confirmed-remove APIs, UUID quarantine,
+5 MiB/file and five-file/20 MiB owner quotas serialized with CV draft saves.
+Expected workspace revision/evidence ID/hash prevent stale mutations. Evidence
+removal precedes deleting its text entry; immutable approvals remain independent.
+Downloads require a current clean result plus exact size/hash and attachment/
+no-store/nosniff. Export/verified-request erasure inventories include evidence;
+a report-only audit detects corruption/orphans. No employer sharing or OCR.
+Actual scanner adapter/host is a next dependency; no real scanning is claimed yet.
+
+Focused 13 certificate tests passed in 1.622s (concurrency, byte quota, storage/DB
+failure, rollback, owner access, quarantine, explicit removal and isolated synthetic
+metadata/file restoration). Existing CV/export/erasure regression group: 41 passed
+in 78.009s. First full 502-test run failed one API-alias fixture lookup after
+403.801s: the route sample map lacked certification_id. Added that UUID sample,
+retaining exact legacy/v1 view assertions; focused alias test passed in 0.016s.
+Corrected full 502 tests passed in 367.411s, one existing Windows platform skip.
+Migration preservation checked existing account/profile/CV references/content/
+revision unchanged; no evidence backfill. System/drift checks and changed Python
+Ruff passed; regenerated OpenAPI validated and matched. Exact Node 24.19 locked
+install/lint/build (2.06s) and full-source Oxlint/ESLint passed; all 38 files matched.
+Local Python 3.12.6/Django 6.1 differs from repo-pinned Django 6.1.2; pinned-stack
+CI remains required before acceptance. No existing virtualenv was upgraded.
+
+No production migration, flag/deployment change, real-user operation or live send.
+Rollback retains table/files/new writes and disables routes. See certificate guide,
+activation checklist and decisions. Retention remains report-only. Only local
+.tooling is newly ignored; original dirty checkout/lockfile/config/stash preserved.
+A style-only saved-search import/EOF cleanup was included; no behavior changed.
+
+## Local ClamD adapter AJ-52 - 31 October 2026 (CI pending)
+
+Certificate head be8b0c771496a6ae61b1103982011d958baa471d passed all six pinned CI
+checks in run41197654431, including full backend Python3.12-3.14, frontend,
+quality and browser. AJ79 moved To Do -> In Progress with evidence comment10133.
+
+Added real local ClamD VERSIONCOMMANDS/INSTREAM adapter with bounded bytes/chunks/
+replies and one overall deadline, exact approved engine and fresh database timestamp.
+Default-off/unconfigured host checks reject before transfer. Error, stale, limits,
+encryption and timeout fail closed; no retry. New CV validation/legacy downloads
+use actual bytes when enabled. Certificate scan claims use exact file/start CAS;
+stale recovery/replacement cannot apply an old result. Clean downloads recheck
+signature/result age and integrity. New uploads can be suspended without guard bypass.
+No new schema/dependency/hosting change. Actual engine host/signature acceptance
+remains external; protocol fixtures are NOT proof of live malware protection.
+
+Focused scanner/certificate/upload regression 27 tests passed in 3.052s; changed
+Python Ruff passed. Full pinned-stack CI and API validation are pending this entry;
+package is unverified until required gates finish. No real user documents, daemon
+host operation, production flags, migration, deployment or external vendor transfer.
+See LOCAL_MALWARE_SCANNING.md for actual prerequisites and data-preserving rollback.
+
+## Durable analytics AJ-51 - 31 October 2026 (CI pending)
+
+Scanner head b1bb30b359aab3e445abad432f1c187e517d498b passed all six checks in
+CI41198355067, including full pinned backend suites, frontend, quality and browser.
+Scanner system/drift and unchanged OpenAPI checks also passed locally after a
+corrected working-directory invocation. Actual engine/host acceptance remains blocked.
+
+Analytics now has real additive jobs.0017 owner choice and identity-free daily
+counter tables, separate strict choice/event APIs and serialized withdrawal at
+collection. Default feature/purpose flags are false and policy version empty.
+No registration/email choice is reused. Event shape is one allowlisted name only;
+no raw events, user/session/IP/query/path/document/fingerprint or attributes in
+counters. Duplicate requests may count twice; no distinct-person/cohort claims or
+report endpoint. Choice/export/erasure integration retained; retention report-only.
+Actual purpose/legal/notice/report/retention decisions remain external activation facts.
+
+Focused 6 tests passed in 0.403s; check/drift, Ruff and regenerated/validated
+OpenAPI passed. Full pinned-stack CI is pending; package remains unverified until
+those gates finish. No client instrumentation, external SDK, real account action,
+production migration/flag/deployment change or collection occurred. Rollback disables
+collection, retains withdrawals/newer rows and never reverses populated tables.
+See DURABLE_ANALYTICS.md and the consolidated activation/decision records.
+
+## Durable queue AJ-48 - 31 October 2026 (CI pending)
+
+Analytics head 8b2dfc77fa38325ccb2d382b2c56d8ba6c3013b2 passed all six pinned
+checks in CI41199055095: full backend matrix, frontend, quality and browser.
+
+Added jobs.0018 durable minimal-reference tasks, owner status, stable deduplication,
+real Celery persistent publication with retry=False to ajiri.delivery, atomic
+three-minute leases/three-claim cap, bounded recovery and coarse dead-letter states.
+Application HTTP dispatch enqueues only when DELIVERY_QUEUE_ENABLED=True (default
+false). Application/alert/saved-search/matching handlers reuse real services and
+shared authorization/consent/freshness/budget receipts. Simulated death before and
+after handoff reused the same receipt; unknown mail was never retried. Broker
+publication uncertainty is retained without automatic republication. Due-window
+validation prevents prematurely consuming a future saved-search task identity.
+Outstanding queue work blocks verified erasure until reviewed; owner exports include
+minimal task metadata. No recipients/documents/tokens in broker payloads.
+
+Focused queue/alias 10 tests passed in 3.388s (earlier 9 queue cases in 3.242s).
+Check/drift, Ruff and regenerated OpenAPI passed. Full pinned-stack CI is pending;
+package remains unverified until all gates pass. No real broker/provider/host,
+worker/scheduler, production migration/flag/deployment or real-account action.
+Existing real Redis crash-lab evidence remains historical, not acceptance for this
+new host. Actual durable host/shared DB/files/monitoring and crash/lost-ledger
+recovery are activation boundaries. See DURABLE_DELIVERY_QUEUE.md and rollback
+checklist; never infer inbox delivery or provider failure from queue state alone.
+
+## Private copy recovery AJ-47 - 31 October 2026 (CI pending)
+
+Queue head 5a724e0a12f35a7350ff9fb886feb28e16c87763 passed all six pinned
+checks in CI41200587491. Actual broker/worker host acceptance remains blocked.
+
+Added real Django Storage copy/recovery with streamed hashes, bounded inventory,
+exclusive durable journal, source/target identity checks and isolated third-store
+restoration. Unknown writes are reconciled from exact bytes without replay; partial
+or absent uncertain targets remain blocked. No deletion, runtime storage change,
+provider selection or production migration. Seven actual-filesystem focused tests
+passed in 1.048s; Ruff, system check and migration drift check passed. Full pinned
+CI is pending. No migration/schema change in this package.
+
+AJ-47 remains blocked for actual object-store/host acceptance and PostgreSQL
+bootstrap/search parity. Existing jobs.0011 rejects non-SQLite; historical migrations
+were preserved, not faked. Previous schema-copy labs are not normal migration
+acceptance. See PRIVATE_STORAGE_COPY.md, activation checklist and decisions.
+
+## Durable sandbox payments AJ-44/45 - 31 October 2026 (CI pending)
+
+Private storage head 4b2f54047883f9330951251f4baf4dd07bb094eb passed all six
+checks in CI41202056856. Node24.19 locked offline install/lint/build also passed
+(build2.36s); offline audit output is not current advisory clearance.
+
+Added real single-attempt TLS sandbox OAuth/Express/query transport and additive
+jobs.0019/0020 owner checkout/empty inactive offer schema. Durable claim precedes
+I/O, one unresolved checkout per owner blocks new-decision bypass, and timeout/
+process death cannot repeat initiation. Owner status remains available when off.
+8-KiB callback hints cannot settle/query/grant; Express query success only becomes
+evidence_required. No production transport or verified-settlement writer exists.
+Merchant/product/commercial/legal facts and real authenticated financial evidence
+mapping remain blocked; no provider calls/charging or actual sandbox acceptance.
+
+Focused checkout/wire/alias 14 tests passed in3.285s (earlier13 in3.259s before
+callback addition). Ruff, system/drift and regenerated/validated OpenAPI passed.
+Full pinned CI pending; package unverified until required gates pass. Financial
+records block erasure pending a reviewed retention plan; no real-account action.
+See DURABLE_PAYMENTS.md, decisions and activation checklist for exact gaps/rollback.
+
+## Durable capability core AJ-46 - 31 October 2026 (CI pending)
+
+Payment head 2a9fc62f07e63696edea64269f51e836dad1b41f passed all six checks
+in CI41202823539. Exact Node24.19 locked offline install/lint/build passed1.98s;
+offline zero audit summary is not current advisory clearance.
+
+Added jobs.0021 durable unverified-by-default settlements and unique per-receipt
+capability grants, atomic projection with owner serialization, exact server
+snapshot/fixed paid-at expiry, chronology/reference/merchant/payer/amount/evidence
+validation, terminal reversal and Free fallback. No public/admin/command writer
+creates verified settlements. Actual authenticated provider evidence mapping,
+commercial feature/limit/retention facts and protected-action enforcement hooks
+remain blocked; none is represented as complete or activated. All paid switches
+are false and evidence/capability configuration empty. Financial rows are protected
+and added to verified owner export inventory; no real-account action occurred.
+
+Eight final focused entitlement tests passed0.427s, including actual concurrent
+projection; combined earlier18 payment/entitlement tests passed0.842s before the
+last chronology/reference tightening. Earlier7 core tests passed0.356s. Ruff,
+unchanged reviewed OpenAPI, system/drift checks passed. Full pinned CI is pending;
+package remains unverified until required gates finish. Rollback retains newer
+receipts/refunds, disables paid access/initiation and preserves Free access.
+See VERIFIED_CAPABILITY_LEDGER.md and consolidated decisions/activation checklist.
+
+## Final inactive-source handback - 31 October 2026
+
+Current implementation head is5bdafb7 (capability core), branch
+codex/backend-inactive-20261031, draft PR71 unmerged. Per-story states and exact
+external/code boundaries are in reports/status_report_2026-10-31.md. The roadmap
+is not wholly complete: PostgreSQL bootstrap/search, actual private object-store,
+broker/worker/scanner hosting acceptance, genuine employer/listing evidence,
+merchant sandbox/full authenticated receipt-reversal mapping, commercial paid
+capability/action enforcement and actual legal/privacy facts remain unresolved.
+No deployment, production migration, runtime flag change, live recipient mail,
+provider call, charge or real-account export/erasure occurred.
+
+All six CI checks were verified for every prior code package through2a9fc62
+(CI41202823539). Final5bdafb7 CI is unverified: automatic approval review blocked
+GitHub browser access at its usage limit. No alternative browser path bypassed
+that gate; PR title/body remains the older account-only description, and a
+replacement is saved in reports/PR71_BODY.md. No merge/activation was attempted.
+
+Final Node24.19 locked offline npm ci/lint/build passed2.18s; all38 generated files
+matched committed frontend_build bytes. No frontend changes or build commit was
+needed. Offline audit output is not a current clearance of the previously reported
+five advisories. Repository-wide Ruff and reviewed OpenAPI byte validation passed.
+Local Python remains the preserved3.12.6/Django6.1 environment, not pinned6.1.2.
+Original dirty lockfile/Docker work/reports/tools/stash/Git configuration remain
+preserved. All new author/committer addresses use the configured noreply identity.
+
+Pending JSON validated eight unique existing keys/status/comment shapes: AJ-43,
+AJ-47,AJ-48,AJ-51,AJ-52,AJ-44,AJ-45,AJ-46. Earlier Jira updates AJ-17/26/79 and
+proposal AJ-80 are excluded to avoid repeating posted progress. No issue was
+marked Done for inactive source. tools/jira_sync.py was never executed, including
+dry-run, per AGENTS.md section13. Commands in the report point to this worktree's
+JSON from the original repo root; actual dry-run output must come from that run.
+
+Final full local backend suite at5bdafb7:551 tests passed339.967s, one existing
+skip. No passing remote-CI claim for this head; GitHub inspection remains blocked.
+All new features stay inactive. The exact final handback and pending Jira commands
+are in reports/status_report_2026-10-31.md; no sync script was executed.

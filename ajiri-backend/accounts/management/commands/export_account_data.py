@@ -17,8 +17,9 @@ from jobs.management.commands.backup_private_data import no_links
 from jobs.models import (Application, ApplicationPackage, ApplicationPackageApproval,
                          ApplicationSendAuthorization, ApplicationSendAttemptLink,
                          DeliveryAttempt, DeliveryDailyBudget, Job, Notification)
-from profiles.models import Profile, CVWorkspace, CVApproval, AlertConsentEvent
+from profiles.models import Profile, CVWorkspace, CVApproval, AlertConsentEvent, CertificateEvidence
 from jobs.models import SavedSearch, SavedSearchMatch
+from jobs.models import AnalyticsChoice, DeliveryTask, PaymentCheckout, PaymentSettlement, CapabilityGrant
 
 
 class Command(BaseCommand):
@@ -70,11 +71,17 @@ class Command(BaseCommand):
             Job.objects.filter(pk__in=notifications.values('job_id')),
             Job.objects.filter(pk__in=SavedSearchMatch.objects.filter(search__owner=user).values('job_id')))
         scopes = [
+            ('payment_settlement', PaymentSettlement.objects.filter(checkout__owner=user)),
+            ('capability_grant', CapabilityGrant.objects.filter(owner=user)),
+            ('payment_checkout', PaymentCheckout.objects.filter(owner=user)),
+            ('delivery_task', DeliveryTask.objects.filter(owner=user)),
+            ('analytics_choice', AnalyticsChoice.objects.filter(owner=user)),
             ('saved_search', SavedSearch.objects.filter(owner=user)),
             ('saved_search_match', SavedSearchMatch.objects.filter(search__owner=user)),
             ('profile', Profile.objects.filter(user=user)),
             ('cv_workspace', CVWorkspace.objects.filter(profile__user=user)),
             ('cv_approval', CVApproval.objects.filter(profile__user=user)),
+            ('certificate_evidence', CertificateEvidence.objects.filter(profile__user=user)),
             ('alert_consent', AlertConsentEvent.objects.filter(profile__user=user)),
             ('application', applications), ('application_package', packages),
             ('package_approval', ApplicationPackageApproval.objects.filter(package__application__user=user)),

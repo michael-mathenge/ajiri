@@ -499,3 +499,137 @@ class ApplicationSendAttemptLink(models.Model):
             models.CheckConstraint(condition=(models.Q(previous_attempt__isnull=True)
                 | ~models.Q(previous_attempt=models.F('attempt'))), name='app_send_retry_not_self'),
         ]
+
+
+class AnalyticsChoice(models.Model):
+    # see docs/CONCEPTS.md#durable-aggregate-analytics
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='analytics_choices')
+    decision_id = models.UUIDField(unique=True)
+    enabled = models.BooleanField()
+    policy_version = models.CharField(max_length=64, blank=True, default='')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+class AnalyticsDailyCount(models.Model):
+    day = models.DateField()
+    event = models.CharField(max_length=32)
+    count = models.PositiveBigIntegerField(default=0)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=('day', 'event'), name='analytics_unique_day_event'),
+            models.CheckConstraint(condition=models.Q(event__in=[
+                'search_used', 'cv_review_opened', 'application_review_opened']), name='analytics_event_allowlist'),
+        ]
+
+
+class DeliveryTask(models.Model):
+    # Minimal durable references; recipients/documents never enter the broker payload.
+    # see docs/CONCEPTS.md#durable-delivery-queue
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    dedupe_key = models.UUIDField(unique=True)
+    kind = models.CharField(max_length=16)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,
+        on_delete=models.SET_NULL, related_name='delivery_tasks')
+    authorization = models.OneToOneField(ApplicationSendAuthorization, null=True, blank=True,
+        on_delete=models.SET_NULL, related_name='delivery_task')
+    notification = models.ForeignKey(Notification, null=True, blank=True,
+        on_delete=models.SET_NULL, related_name='delivery_tasks')
+    search = models.ForeignKey(SavedSearch, null=True, blank=True, on_delete=models.SET_NULL, related_name='delivery_tasks')
+    state = models.CharField(max_length=32, default='pending')
+    attempts = models.PositiveIntegerField(default=0)
+    lease_token = models.UUIDField(null=True, blank=True, default=None)
+    lease_until = models.DateTimeField(null=True, blank=True, default=None)
+    last_error = models.CharField(max_length=32, blank=True, default='')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(condition=models.Q(kind__in=['application', 'alert', 'saved_search', 'matching']), name='queue_kind_valid'),
+            models.CheckConstraint(condition=models.Q(state__in=['pending', 'publishing', 'published',
+                'publication_unknown', 'running', 'succeeded', 'blocked', 'needs_reconciliation', 'dead']), name='queue_state_valid'),
+        ]
+
+
+class PaymentOffer(models.Model):
+    # Empty catalogue by default; no preview prices become charging authority.
+    # see docs/CONCEPTS.md#durable-payment-boundary
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    active = models.BooleanField(default=False)
+    amount_kes = models.PositiveIntegerField()
+    term_seconds = models.PositiveIntegerField()
+    capability = models.CharField(max_length=64)
+    terms_version = models.CharField(max_length=64)
+    class Meta:
+        constraints = [
+            models.CheckConstraint(condition=models.Q(amount_kes__gt=0, term_seconds__gt=0), name='offer_positive_values'),
+        ]
+
+
+class PaymentCheckout(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name='payment_checkouts')
+    decision_id = models.UUIDField(unique=True)
+    offer = models.ForeignKey(PaymentOffer, on_delete=models.PROTECT)
+    amount_kes = models.PositiveIntegerField()
+    term_seconds = models.PositiveIntegerField()
+    capability = models.CharField(max_length=64)
+    terms_version = models.CharField(max_length=64)
+    merchant_shortcode = models.CharField(max_length=8)
+    payer_fingerprint = models.CharField(max_length=64)
+    callback_seen_at = models.DateTimeField(null=True, blank=True, default=None)
+    state = models.CharField(max_length=32, default='handoff_started')
+    provider_reference = models.CharField(max_length=128, null=True, default=None, unique=True)
+    merchant_reference = models.CharField(max_length=128, blank=True, default='')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(condition=models.Q(amount_kes__gt=0, term_seconds__gt=0), name='checkout_positive_values'),
+            models.CheckConstraint(condition=models.Q(state__in=['handoff_started', 'unknown', 'accepted',
+                'evidence_required', 'unresolved', 'settled', 'closed']), name='checkout_state_valid'),
+            models.UniqueConstraint(fields=['owner'], condition=~models.Q(state__in=['settled', 'closed']),
+                name='checkout_one_unresolved_owner'),
+        ]
+
+
+class PaymentSettlement(models.Model):
+    # No public/admin/command writer: actual authenticated evidence mapping is blocked.
+    # see docs/CONCEPTS.md#verified-capability-ledger
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    checkout = models.OneToOneField(PaymentCheckout, on_delete=models.PROTECT, related_name='settlement')
+    provider_receipt = models.CharField(max_length=128, unique=True)
+    amount_kes = models.PositiveIntegerField()
+    currency = models.CharField(max_length=3, default='KES')
+    merchant_shortcode = models.CharField(max_length=8)
+    payer_fingerprint = models.CharField(max_length=64)
+    paid_at = models.DateTimeField()
+    verified_at = models.DateTimeField(null=True, default=None)
+    evidence_version = models.CharField(max_length=64, blank=True, default='')
+    evidence_sha256 = models.CharField(max_length=64, blank=True, default='')
+    state = models.CharField(max_length=16, default='unverified')
+    revoked_at = models.DateTimeField(null=True, default=None)
+    reversal_sha256 = models.CharField(max_length=64, blank=True, default='')
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(condition=models.Q(amount_kes__gt=0, currency='KES'), name='settlement_amount_currency'),
+            models.CheckConstraint(condition=models.Q(state__in=['unverified', 'settled', 'revoked']), name='settlement_state_valid'),
+            models.CheckConstraint(condition=(models.Q(state='revoked', revoked_at__isnull=False)
+                | models.Q(state__in=['unverified', 'settled'], revoked_at__isnull=True)), name='settlement_revoked_time'),
+        ]
+
+
+class CapabilityGrant(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    settlement = models.OneToOneField(PaymentSettlement, on_delete=models.PROTECT, related_name='grant')
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name='capability_grants')
+    capability = models.CharField(max_length=64)
+    starts_at = models.DateTimeField()
+    ends_at = models.DateTimeField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [models.CheckConstraint(condition=models.Q(ends_at__gt=models.F('starts_at')), name='grant_positive_term')]

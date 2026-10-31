@@ -1,0 +1,44 @@
+# Backend activation checklist — pending Michael's final approval
+
+No item below authorizes activation. Preserve currently deployed configuration;
+new feature switches default off in source. Never reverse populated migrations
+as routine rollback or discard newer writes. Back up before migration, apply
+additive schema before serving new code, and verify isolated restoration first.
+
+| Feature | Switch / state | Prerequisites before approval | Rollback |
+|---|---|---|---|
+| Account verification/reset | New ACCOUNT_SECURITY_EMAIL_ENABLED=False; REAL_EMAIL_ENABLED=False by default; account_security mode required | Approved sender/provider processing, HTTPS origin, privately entered credentials, account/global budget review, monitored delivery/error procedure and explicitly approved controlled inbox verification | Disable new switch, retain ledger/budgets and all account data; owner pilot can use its existing reviewed mode separately. No schema change. |
+| Employer posting AJ-53 | Existing posting controls; no runtime change | General onboarding acceptance; genuine employer/authority and independent staff review; future deadline/no applicant fee | Disable posting, retain freshness/audit and historical applications. |
+| Public vacancies AJ-42 | PUBLIC_JOBS_ENABLED stays off | Genuine eligible listing, public metadata/source checks and expiry verification | Disable publication; preserve current availability rules. |
+| Application email AJ-17 | New GENERAL_APPLICATION_EMAIL_ENABLED=False; existing APPLICATION_EMAIL_ENABLED stays off | General account transport configuration, enforced current vacancy evidence, exact immutable approval/authorization, current recipient/attachment/privacy policy and controlled pilot explicitly approved | Disable general/application sending; retain receipts/unknown blockers, documents and authorizations. |
+| Match email AJ-26 | New GENERAL_ALERT_EMAIL_ENABLED=False; existing ALERT_EMAIL_ENABLED remains off | Requires reviewed general account configuration, explicit consent predating notification, verified current mailbox, score at least70, enforced fresh job evidence, shared budgets, unsubscribe and transport acceptance; approve bounded deliver_match_emails caller separately | Disable new/alert switch or stop batch caller; preserve opt-outs and receipts. |
+| Saved-search email AJ-43 | New SAVED_SEARCH_EMAIL_ENABLED=False; no scheduler activated | General account configuration, existing alert/search switches and enforced freshness; review daily/weekly consent-window semantics and bounded deliver_saved_search_emails caller; controlled provider acceptance remains pending | Disable new switch or caller; preserve windows, opt-outs and all shared receipts. |
+| Certificates AJ-79 | New CERTIFICATE_EVIDENCE_ENABLED=False | Apply additive profiles.0008 before serving new paired code; private backup/off-server isolated restore including quarantine; operational scanner/signature freshness, capacity and final notice/retention decisions; see CERTIFICATE_EVIDENCE_BACKEND.md | Disable routes, retain files/table/newer writes; never reverse a populated migration or bypass quarantine. |
+| Storage AJ-47 | No runtime DB/storage switch; explicit copy command only | Actual target/provider/SDK/private namespace and single-attempt semantics, preserved-history bootstrap/search strategy, canonical DB/FK/UUID/owner-download and off-server restore evidence; see PRIVATE_STORAGE_COPY.md | Keep source/partial target/journals/backups; after new target writes require reconciled reverse migration, never stale SQLite fallback or blind uncertain-write replay. |
+| Queue AJ-48 | DELIVERY_QUEUE_ENABLED=False; no hosted worker/producer/scheduler activation | Apply jobs.0018 before paired source; actual private durable broker/worker host consuming ajiri.delivery, shared DB/files, monitored bounded publication/lease recovery and real crash/storage-loss rehearsal; see DURABLE_DELIVERY_QUEUE.md | Stop producers/consumers and disable claims; retain tasks/leases/receipts, reconcile all uncertain or restored-ledger outcomes before any replay. |
+| Analytics AJ-51 | ANALYTICS_ENABLED=False, ANALYTICS_PURPOSE_CONFIRMED=False, policy version empty | Additive jobs.0017 before paired code; actual purpose/legal facts, published independent choice notice, host-log/backup privacy review and retention/cohort/report rules; see DURABLE_ANALYTICS.md | Disable collection, preserve withdrawals/choice records/newer counts and tables; pruning requires policy approval. |
+| Scanner AJ-52 | MALWARE_SCANNING_ENABLED=False; approved versions empty, host/review attestations unset | Actual supported ClamD host/private socket, signature updates/UTC, daemon limits/capacity, real safe engine acceptance and processing approval; see LOCAL_MALWARE_SCANNING.md | Suspend new uploads with PRIVATE_UPLOADS_SUSPENDED, retain guard/quarantine and all newer data; never bypass scanning to restore availability. |
+| Daraja AJ-44/45 | No live calls | Genuine merchant/product facts, durable adapter/reconciliation, private sandbox access and verified sandbox evidence, commercial/legal decisions | Disable initiation; reconcile pending/unknown outcomes without retrying initiation. |
+| Entitlements AJ-46 | No charging/enforcement activation | Exact offers/refund/expiry decisions and durable authoritative payment evidence | Disable paid capabilities with Free fallback; preserve verified receipts and free applying/documents. |
+
+## AJ-44/45 sandbox payments (blocked, inactive)
+
+PAYMENTS_ENABLED, DARAJA_SANDBOX_ENABLED, DARAJA_RECONCILIATION_ENABLED and
+DARAJA_MERCHANT_REVIEWED are false; product/config empty and catalogue empty.
+Prerequisites: actual approved merchant/product/offer/consent/legal/retention facts,
+private sandbox acceptance and authenticated full settlement/reversal mapping;
+verified backup/isolated restore then jobs.0019/0020 before activation. No live
+transport exists. Rollback stops initiation, retains owner status/reconciliation
+and preserves all financial records/unknown handoffs. Never reset/retry ambiguity.
+See DURABLE_PAYMENTS.md; no activation is approved by this implementation.
+
+## AJ-46 capability ledger (blocked, inactive)
+
+ENTITLEMENTS_ENABLED=False; PAYMENT_EVIDENCE_VERSION and approved capability
+names empty. jobs.0021 is additive; no verified settlement writer or paid-feature
+hook exists. Prerequisites are actual merchant settlement/reversal mapping and
+accepted sandbox evidence, exact approved commercial capability/action/retention
+rules, backup/isolated restore and migrations before activation. Rollback disables
+paid capabilities with Free fallback, retains reconciliation and all financial
+records, never reverses populated migrations or restores stale grants over refunds.
+See VERIFIED_CAPABILITY_LEDGER.md; test fixtures are not provider verification.

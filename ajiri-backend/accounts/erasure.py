@@ -18,7 +18,7 @@ from config.paths import application_tree
 from jobs.management.commands.backup_private_data import no_links
 from jobs.models import (Application, ApplicationPackage, ApplicationPackageApproval,
     ApplicationSendAuthorization, ApplicationSendAttemptLink, DeliveryAttempt, DeliveryDailyBudget)
-from profiles.models import Profile, CVApproval
+from profiles.models import Profile, CVApproval, CertificateEvidence
 
 SALT = 'ajiri.erasure-journal.v1'
 
@@ -87,6 +87,12 @@ def document_path(name):
 
 
 def inventory(user):
+    from jobs.models import PaymentCheckout, CapabilityGrant
+    if PaymentCheckout.objects.filter(owner=user).exists() or CapabilityGrant.objects.filter(owner=user).exists():
+        raise CommandError('Payment records require a reviewed financial retention/erasure plan.')
+    from jobs.models import DeliveryTask
+    if DeliveryTask.objects.filter(owner=user).exclude(state__in=['succeeded', 'dead']).exists():
+        raise CommandError('Outstanding queued work requires reconciliation before account erasure.')
     # Employer ownership and moderation can affect other applicants' records.
     # Fail before any writes until a scoped, legally reviewed removal is prepared.
     from jobs.models import EmployerOrganisation, EmployerReview, JobModerationReview
@@ -108,6 +114,7 @@ def inventory(user):
     scopes = [
         (Profile, 'user', ('cv_file',)),
         (CVApproval, 'profile__user', ('document',)),
+        (CertificateEvidence, 'profile__user', ('document',)),
         (Application, 'user', ('generated_cv', 'generated_cover_letter')),
         (ApplicationPackage, 'application__user', ('cv_document', 'letter_document')),
     ]

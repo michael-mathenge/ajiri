@@ -9,6 +9,7 @@ from rest_framework import serializers
 from accounts.serializers import RegisterSerializer
 from accounts.recovery_views import EmailInput, ResetInput, RequestInput, VerificationInput
 from profiles.cv_views import SaveInput, ApproveInput
+from profiles.certificate_views import EvidenceInput, RemoveEvidenceInput
 from profiles.alert_views import ChoiceSerializer
 from jobs.views import ApplicationCVInput
 from jobs.package_views import DraftInput, PackageInput, ApprovalInput
@@ -16,6 +17,8 @@ from jobs.send_views import AuthorizationInput
 from jobs.employer_views import ReviewInput
 from jobs.saved_search_views import SearchInput
 from jobs.application_progress import ProgressInput
+from jobs.analytics_views import AnalyticsChoiceInput, AnalyticsEventInput
+from jobs.payment_views import CheckoutInput
 
 
 class LoginInput(serializers.Serializer):
@@ -33,6 +36,11 @@ class ErrorOutput(serializers.Serializer):
 
 
 INPUTS = {
+    ('CheckoutCreateView', 'POST'): CheckoutInput,
+    ('AnalyticsChoiceView', 'POST'): AnalyticsChoiceInput,
+    ('AnalyticsEventView', 'POST'): AnalyticsEventInput,
+    ('CertificateDetail', 'PUT'): EvidenceInput,
+    ('CertificateDetail', 'DELETE'): RemoveEvidenceInput,
     ('ApplicationProgressView', 'PATCH'): ProgressInput,
     ('OrganisationReview', 'POST'): ReviewInput,
     ('DraftReview', 'POST'): ReviewInput,
@@ -52,7 +60,7 @@ INPUTS = {
     ('SendAuthorizationListView', 'POST'): AuthorizationInput,
 }
 DOWNLOADS = {'DownloadUploadedCVView', 'CVVersionDownloadView', 'CurrentCVDownloadView',
-             'GenerateCoverLetterView', 'ApplicationDocumentView', 'PackageDocumentView'}
+             'GenerateCoverLetterView', 'ApplicationDocumentView', 'PackageDocumentView', 'CertificateDetail'}
 
 
 def version_one_only(endpoints):
@@ -105,7 +113,17 @@ class ContractSchema(AutoSchema):
 
     def get_response_serializers(self):
         name = type(self.view).__name__
-        if name in DOWNLOADS:
+        if name == 'CheckoutCreateView' and self.method == 'POST':
+            return {202: OpenApiTypes.OBJECT, 400: OpenApiTypes.OBJECT,
+                401: ErrorOutput, 404: ErrorOutput, 409: ErrorOutput, 429: ErrorOutput}
+        if name == 'DispatchAuthorizationView' and self.method == 'POST':
+            return {200: OpenApiTypes.OBJECT, 202: OpenApiTypes.OBJECT, 400: OpenApiTypes.OBJECT,
+                401: ErrorOutput, 403: ErrorOutput, 404: ErrorOutput, 409: ErrorOutput,
+                429: ErrorOutput, 503: ErrorOutput}
+        if name == 'AnalyticsEventView' and self.method == 'POST':
+            return {204: None, 400: OpenApiTypes.OBJECT, 401: ErrorOutput,
+                404: ErrorOutput, 429: ErrorOutput, 503: ErrorOutput}
+        if name in DOWNLOADS and self.method == 'GET':
             success = OpenApiTypes.BINARY
         elif name in ('LoginView', 'RefreshView'):
             success = AccessOutput

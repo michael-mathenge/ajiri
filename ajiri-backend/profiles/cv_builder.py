@@ -16,7 +16,7 @@ from django.db.models import F
 from django.utils import timezone
 from rest_framework.exceptions import APIException
 from .cv_validation import validate_content, MAX_DOCUMENT_BYTES
-from .models import CVWorkspace, CVApproval, approved_cv_path
+from .models import CVWorkspace, CVApproval, CertificateEvidence, approved_cv_path
 
 TEMPLATE_VERSION = 'cv-v2'
 
@@ -137,10 +137,17 @@ def save_workspace(workspace, expected_revision, patch):
         merged['contact'] = {**workspace.content.get('contact', {}), **patch['contact']}
     content = validate_content(merged)
     updated = timezone.now()
-    changed = CVWorkspace.objects.filter(pk=workspace.pk, revision=expected_revision).update(
-        content=content, revision=F('revision') + 1, updated_at=updated)
-    if changed != 1:
-        raise CVConflict()
+    with transaction.atomic():
+        # Evidence uploads and draft saves claim the same writer before checking
+        # membership. Explicit evidence removal must precede removing its entry.
+        # see docs/CONCEPTS.md#private-certificate-evidence
+        if CVWorkspace.objects.filter(pk=workspace.pk, revision=expected_revision).update(revision=F('revision')) != 1:
+            raise CVConflict()
+        retained = [row['id'] for row in content.get('certifications', [])]
+        if CertificateEvidence.objects.filter(profile=workspace.profile).exclude(certification_id__in=retained).exists():
+            raise CVConflict('Remove the private evidence explicitly before removing its certification entry.')
+        CVWorkspace.objects.filter(pk=workspace.pk, revision=expected_revision).update(
+            content=content, revision=F('revision') + 1, updated_at=updated)
     workspace.content, workspace.revision, workspace.updated_at = content, expected_revision + 1, updated
     return workspace
 

@@ -1,5 +1,6 @@
-"""Owner-only evidence and opt-in synthetic pilot dispatch; employers stay blocked."""
+"""Owner-scoped exact authorization and default-off transport/queue gates."""
 from django.db import IntegrityError
+from django.conf import settings
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework.response import Response
@@ -92,6 +93,11 @@ class DispatchAuthorizationView(PrivateCVView):
             return Response(data)  # Receipt remains readable even after file/mailbox edits.
         if not data['dispatch_enabled']:
             return Response({'detail': data['disabled_reason'], 'code': 'application_sending_disabled'}, status=409)
+        if getattr(settings, 'DELIVERY_QUEUE_ENABLED', False):
+            from .delivery_queue import enqueue
+            from .queue_views import task_data
+            task = enqueue('application', authorization.pk, owner=request.user)
+            return Response({**data, 'queue': task_data(task)}, status=202)
         from .application_dispatch import dispatch
         from .delivery_service import DeliveryError
         try:

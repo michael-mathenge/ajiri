@@ -212,6 +212,31 @@ DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'Ajiri <noreply@ajiri.
 
 # see docs/CONCEPTS.md#owner-email-pilot
 REAL_EMAIL_ENABLED = env_bool('REAL_EMAIL_ENABLED', False)
+# see docs/CONCEPTS.md#general-account-security-email
+ACCOUNT_SECURITY_EMAIL_ENABLED = env_bool('ACCOUNT_SECURITY_EMAIL_ENABLED', False)
+# see docs/CONCEPTS.md#general-alert-email
+GENERAL_ALERT_EMAIL_ENABLED = env_bool('GENERAL_ALERT_EMAIL_ENABLED', False)
+# see docs/CONCEPTS.md#general-application-email
+GENERAL_APPLICATION_EMAIL_ENABLED = env_bool('GENERAL_APPLICATION_EMAIL_ENABLED', False)
+# see docs/CONCEPTS.md#general-saved-search-email
+SAVED_SEARCH_EMAIL_ENABLED = env_bool('SAVED_SEARCH_EMAIL_ENABLED', False)
+# see docs/CONCEPTS.md#private-certificate-evidence
+CERTIFICATE_EVIDENCE_ENABLED = env_bool('CERTIFICATE_EVIDENCE_ENABLED', False)
+# see docs/CONCEPTS.md#local-malware-scanning
+MALWARE_SCANNING_ENABLED = env_bool('MALWARE_SCANNING_ENABLED', False)
+PRIVATE_UPLOADS_SUSPENDED = env_bool('PRIVATE_UPLOADS_SUSPENDED', False)
+CLAMD_UNIX_SOCKET = os.environ.get('CLAMD_UNIX_SOCKET', '')
+CLAMD_HOST = os.environ.get('CLAMD_HOST', '127.0.0.1')
+CLAMD_PORT = os.environ.get('CLAMD_PORT', '3310')
+CLAMD_ALLOWED_ENGINE_VERSIONS = env_list('CLAMD_ALLOWED_ENGINE_VERSIONS')
+CLAMD_HOST_UTC_CONFIRMED = env_bool('CLAMD_HOST_UTC_CONFIRMED', False)
+CLAMD_LIMITS_REVIEW = os.environ.get('CLAMD_LIMITS_REVIEW', '')
+# see docs/CONCEPTS.md#durable-aggregate-analytics
+ANALYTICS_ENABLED = env_bool('ANALYTICS_ENABLED', False)
+ANALYTICS_PURPOSE_CONFIRMED = env_bool('ANALYTICS_PURPOSE_CONFIRMED', False)
+ANALYTICS_POLICY_VERSION = os.environ.get('ANALYTICS_POLICY_VERSION', '')
+# see docs/CONCEPTS.md#durable-delivery-queue
+DELIVERY_QUEUE_ENABLED = env_bool('DELIVERY_QUEUE_ENABLED', False)
 # Separate opt-in; default remains disabled even when account security mail is on.
 APPLICATION_EMAIL_ENABLED = env_bool('APPLICATION_EMAIL_ENABLED', False)
 APPLICATION_PILOT_PREPARATION_ENABLED = env_bool('APPLICATION_PILOT_PREPARATION_ENABLED', False)
@@ -242,9 +267,13 @@ REST_FRAMEWORK = {
     # see docs/CONCEPTS.md#endpoint-throttling
     'NUM_PROXIES': int(os.environ.get('DRF_NUM_PROXIES', '0')),
     'DEFAULT_THROTTLE_RATES': {
+        'payment': os.environ.get('THROTTLE_PAYMENT_RATE', '10/hour'),
+        'payment_callback': os.environ.get('THROTTLE_PAYMENT_CALLBACK_RATE', '30/minute'),
         'alert_preference': os.environ.get('THROTTLE_ALERT_PREFERENCE_RATE', '60/min'),
         'alert_unsubscribe': os.environ.get('THROTTLE_ALERT_UNSUBSCRIBE_RATE', '30/hour'),
         'account_email': os.environ.get('THROTTLE_ACCOUNT_EMAIL_RATE', '5/hour'),
+        'analytics': os.environ.get('THROTTLE_ANALYTICS_RATE', '30/hour'),
+        'analytics_choice': os.environ.get('THROTTLE_ANALYTICS_CHOICE_RATE', '20/hour'),
         'account_target': os.environ.get('THROTTLE_ACCOUNT_TARGET_RATE', '3/hour'),
         'account_confirm': os.environ.get('THROTTLE_ACCOUNT_CONFIRM_RATE', '10/hour'),
         'verification_status': os.environ.get('THROTTLE_VERIFICATION_STATUS_RATE', '60/min'),
@@ -398,6 +427,19 @@ FRONTEND_BUILD_DIR = BASE_DIR / 'frontend_build'
 # Publication is an explicit opt-in; private APIs retain their existing guards.
 # see docs/CONCEPTS.md#public-job-contract
 PUBLIC_JOBS_ENABLED = os.environ.get('PUBLIC_JOBS_ENABLED', 'False').lower() == 'true'
+# No production Daraja transport or seeded commercial catalogue.
+# see docs/CONCEPTS.md#durable-payment-boundary
+PAYMENTS_ENABLED = env_bool('PAYMENTS_ENABLED', False)
+ENTITLEMENTS_ENABLED = env_bool('ENTITLEMENTS_ENABLED', False)
+PAYMENT_EVIDENCE_VERSION = os.environ.get('PAYMENT_EVIDENCE_VERSION', '')
+ENTITLEMENT_APPROVED_CAPABILITIES = [value.strip() for value in
+    os.environ.get('ENTITLEMENT_APPROVED_CAPABILITIES', '').split(',') if value.strip()]
+DARAJA_SANDBOX_ENABLED = env_bool('DARAJA_SANDBOX_ENABLED', False)
+DARAJA_RECONCILIATION_ENABLED = env_bool('DARAJA_RECONCILIATION_ENABLED', False)
+DARAJA_MERCHANT_REVIEWED = env_bool('DARAJA_MERCHANT_REVIEWED', False)
+DARAJA_PRODUCT_REVIEW = os.environ.get('DARAJA_PRODUCT_REVIEW', '')
+for payment_setting in ('CONSUMER_KEY', 'CONSUMER_SECRET', 'PASSKEY', 'SHORTCODE', 'CALLBACK_URL'):
+    globals()['DARAJA_'+payment_setting] = os.environ.get('DARAJA_'+payment_setting, '')
 PUBLIC_JOB_ORIGIN = os.environ.get('PUBLIC_JOB_ORIGIN', '')
 # Enable only after the additive publication-evidence migration is installed.
 JOB_FRESHNESS_ENFORCED = env_bool('JOB_FRESHNESS_ENFORCED', False)

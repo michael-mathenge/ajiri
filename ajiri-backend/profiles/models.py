@@ -95,3 +95,31 @@ class CVApproval(models.Model):
             models.CheckConstraint(condition=models.Q(revision__gte=1), name='cv_approval_revision_positive'),
             models.UniqueConstraint(fields=('profile', 'revision'), name='cv_approval_unique_revision'),
         ]
+
+
+def certificate_path(instance, filename):
+    return f'quarantine/certificates/{uuid.uuid4().hex}.pdf'
+
+
+class CertificateEvidence(models.Model):
+    # Private, unverified supporting evidence, never included in approval snapshots.
+    # see docs/CONCEPTS.md#private-certificate-evidence
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='certificate_evidence')
+    certification_id = models.UUIDField()
+    document = models.FileField(upload_to=certificate_path, max_length=100)
+    sha256 = models.CharField(max_length=64)
+    size_bytes = models.PositiveIntegerField()
+    scan_state = models.CharField(max_length=16, default='pending')
+    scan_version = models.CharField(max_length=128, blank=True, default='')
+    scanned_at = models.DateTimeField(null=True, blank=True, default=None)
+    created_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=('profile', 'certification_id'), name='certificate_unique_entry'),
+            models.CheckConstraint(condition=models.Q(size_bytes__gte=1, size_bytes__lte=5*1024*1024),
+                name='certificate_bounded_size'),
+            models.CheckConstraint(condition=models.Q(scan_state__in=['pending', 'scanning', 'clean', 'infected', 'unavailable']),
+                name='certificate_scan_state_valid'),
+        ]

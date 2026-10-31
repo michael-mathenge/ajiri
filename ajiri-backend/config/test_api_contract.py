@@ -23,6 +23,9 @@ class APIContractTests(TestCase):
     def test_every_versioned_alias_uses_the_exact_legacy_view(self):
         replacements = {'<int:pk>': '1', '<uuid:version>': '00000000-0000-0000-0000-000000000001',
             '<uuid:pk>': '00000000-0000-0000-0000-000000000004',
+            '<uuid:certification_id>': '00000000-0000-0000-0000-000000000005',
+            '<uuid:task_id>': '00000000-0000-0000-0000-000000000006',
+            '<uuid:checkout_id>': '00000000-0000-0000-0000-000000000007',
             '<uuid:package_id>': '00000000-0000-0000-0000-000000000002',
             '<uuid:authorization_id>': '00000000-0000-0000-0000-000000000003', '<str:kind>': 'cv'}
         count = 0
