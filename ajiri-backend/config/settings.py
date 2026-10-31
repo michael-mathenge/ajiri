@@ -231,6 +231,10 @@ CLAMD_PORT = os.environ.get('CLAMD_PORT', '3310')
 CLAMD_ALLOWED_ENGINE_VERSIONS = env_list('CLAMD_ALLOWED_ENGINE_VERSIONS')
 CLAMD_HOST_UTC_CONFIRMED = env_bool('CLAMD_HOST_UTC_CONFIRMED', False)
 CLAMD_LIMITS_REVIEW = os.environ.get('CLAMD_LIMITS_REVIEW', '')
+# see docs/CONCEPTS.md#durable-aggregate-analytics
+ANALYTICS_ENABLED = env_bool('ANALYTICS_ENABLED', False)
+ANALYTICS_PURPOSE_CONFIRMED = env_bool('ANALYTICS_PURPOSE_CONFIRMED', False)
+ANALYTICS_POLICY_VERSION = os.environ.get('ANALYTICS_POLICY_VERSION', '')
 # Separate opt-in; default remains disabled even when account security mail is on.
 APPLICATION_EMAIL_ENABLED = env_bool('APPLICATION_EMAIL_ENABLED', False)
 APPLICATION_PILOT_PREPARATION_ENABLED = env_bool('APPLICATION_PILOT_PREPARATION_ENABLED', False)
@@ -264,6 +268,8 @@ REST_FRAMEWORK = {
         'alert_preference': os.environ.get('THROTTLE_ALERT_PREFERENCE_RATE', '60/min'),
         'alert_unsubscribe': os.environ.get('THROTTLE_ALERT_UNSUBSCRIBE_RATE', '30/hour'),
         'account_email': os.environ.get('THROTTLE_ACCOUNT_EMAIL_RATE', '5/hour'),
+        'analytics': os.environ.get('THROTTLE_ANALYTICS_RATE', '30/hour'),
+        'analytics_choice': os.environ.get('THROTTLE_ANALYTICS_CHOICE_RATE', '20/hour'),
         'account_target': os.environ.get('THROTTLE_ACCOUNT_TARGET_RATE', '3/hour'),
         'account_confirm': os.environ.get('THROTTLE_ACCOUNT_CONFIRM_RATE', '10/hour'),
         'verification_status': os.environ.get('THROTTLE_VERIFICATION_STATUS_RATE', '60/min'),

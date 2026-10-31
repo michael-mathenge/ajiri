@@ -17,6 +17,7 @@ from jobs.send_views import AuthorizationInput
 from jobs.employer_views import ReviewInput
 from jobs.saved_search_views import SearchInput
 from jobs.application_progress import ProgressInput
+from jobs.analytics_views import AnalyticsChoiceInput, AnalyticsEventInput
 
 
 class LoginInput(serializers.Serializer):
@@ -34,6 +35,8 @@ class ErrorOutput(serializers.Serializer):
 
 
 INPUTS = {
+    ('AnalyticsChoiceView', 'POST'): AnalyticsChoiceInput,
+    ('AnalyticsEventView', 'POST'): AnalyticsEventInput,
     ('CertificateDetail', 'PUT'): EvidenceInput,
     ('CertificateDetail', 'DELETE'): RemoveEvidenceInput,
     ('ApplicationProgressView', 'PATCH'): ProgressInput,
@@ -108,6 +111,9 @@ class ContractSchema(AutoSchema):
 
     def get_response_serializers(self):
         name = type(self.view).__name__
+        if name == 'AnalyticsEventView' and self.method == 'POST':
+            return {204: None, 400: OpenApiTypes.OBJECT, 401: ErrorOutput,
+                404: ErrorOutput, 429: ErrorOutput, 503: ErrorOutput}
         if name in DOWNLOADS and self.method == 'GET':
             success = OpenApiTypes.BINARY
         elif name in ('LoginView', 'RefreshView'):

@@ -19,6 +19,7 @@ from jobs.models import (Application, ApplicationPackage, ApplicationPackageAppr
                          DeliveryAttempt, DeliveryDailyBudget, Job, Notification)
 from profiles.models import Profile, CVWorkspace, CVApproval, AlertConsentEvent, CertificateEvidence
 from jobs.models import SavedSearch, SavedSearchMatch
+from jobs.models import AnalyticsChoice
 
 
 class Command(BaseCommand):
@@ -70,6 +71,7 @@ class Command(BaseCommand):
             Job.objects.filter(pk__in=notifications.values('job_id')),
             Job.objects.filter(pk__in=SavedSearchMatch.objects.filter(search__owner=user).values('job_id')))
         scopes = [
+            ('analytics_choice', AnalyticsChoice.objects.filter(owner=user)),
             ('saved_search', SavedSearch.objects.filter(owner=user)),
             ('saved_search_match', SavedSearchMatch.objects.filter(search__owner=user)),
             ('profile', Profile.objects.filter(user=user)),

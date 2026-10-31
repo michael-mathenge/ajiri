@@ -1574,3 +1574,26 @@ Python Ruff passed. Full pinned-stack CI and API validation are pending this ent
 package is unverified until required gates finish. No real user documents, daemon
 host operation, production flags, migration, deployment or external vendor transfer.
 See LOCAL_MALWARE_SCANNING.md for actual prerequisites and data-preserving rollback.
+
+## Durable analytics AJ-51 - 31 October 2026 (CI pending)
+
+Scanner head b1bb30b359aab3e445abad432f1c187e517d498b passed all six checks in
+CI41198355067, including full pinned backend suites, frontend, quality and browser.
+Scanner system/drift and unchanged OpenAPI checks also passed locally after a
+corrected working-directory invocation. Actual engine/host acceptance remains blocked.
+
+Analytics now has real additive jobs.0017 owner choice and identity-free daily
+counter tables, separate strict choice/event APIs and serialized withdrawal at
+collection. Default feature/purpose flags are false and policy version empty.
+No registration/email choice is reused. Event shape is one allowlisted name only;
+no raw events, user/session/IP/query/path/document/fingerprint or attributes in
+counters. Duplicate requests may count twice; no distinct-person/cohort claims or
+report endpoint. Choice/export/erasure integration retained; retention report-only.
+Actual purpose/legal/notice/report/retention decisions remain external activation facts.
+
+Focused 6 tests passed in 0.403s; check/drift, Ruff and regenerated/validated
+OpenAPI passed. Full pinned-stack CI is pending; package remains unverified until
+those gates finish. No client instrumentation, external SDK, real account action,
+production migration/flag/deployment change or collection occurred. Rollback disables
+collection, retains withdrawals/newer rows and never reverses populated tables.
+See DURABLE_ANALYTICS.md and the consolidated activation/decision records.

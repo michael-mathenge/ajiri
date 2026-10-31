@@ -1,4 +1,5 @@
 from django.urls import path
+from .analytics_views import AnalyticsChoiceView, AnalyticsEventView
 from .application_progress import ApplicationProgressView
 from .saved_search_views import SavedSearchList, SavedSearchDetail, SavedSearchMatches
 from .employer_views import OrganisationList, DraftList, DraftWithdraw, OrganisationReview, DraftReview, ReviewQueue
@@ -23,6 +24,8 @@ from .views import (
 )
 
 urlpatterns = [
+    path('analytics/choice/', AnalyticsChoiceView.as_view(), name='analytics-choice'),
+    path('analytics/events/', AnalyticsEventView.as_view(), name='analytics-events'),
     path('applications/<int:pk>/progress/', ApplicationProgressView.as_view(), name='application-progress'),
     path('saved-searches/', SavedSearchList.as_view(), name='saved-search-list'),
     path('saved-searches/<uuid:pk>/', SavedSearchDetail.as_view(), name='saved-search-detail'),

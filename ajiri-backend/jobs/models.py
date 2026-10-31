@@ -499,3 +499,25 @@ class ApplicationSendAttemptLink(models.Model):
             models.CheckConstraint(condition=(models.Q(previous_attempt__isnull=True)
                 | ~models.Q(previous_attempt=models.F('attempt'))), name='app_send_retry_not_self'),
         ]
+
+
+class AnalyticsChoice(models.Model):
+    # see docs/CONCEPTS.md#durable-aggregate-analytics
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='analytics_choices')
+    decision_id = models.UUIDField(unique=True)
+    enabled = models.BooleanField()
+    policy_version = models.CharField(max_length=64, blank=True, default='')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+class AnalyticsDailyCount(models.Model):
+    day = models.DateField()
+    event = models.CharField(max_length=32)
+    count = models.PositiveBigIntegerField(default=0)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=('day', 'event'), name='analytics_unique_day_event'),
+            models.CheckConstraint(condition=models.Q(event__in=[
+                'search_used', 'cv_review_opened', 'application_review_opened']), name='analytics_event_allowlist'),
+        ]

@@ -1442,3 +1442,18 @@ does not make pending certificates downloadable. Signature age and result age ar
 both checked. PRIVATE_UPLOADS_SUSPENDED pauses new uploads without bypassing the
 guard. Host configuration/updates and actual engine detection require independent
 operational evidence; protocol fixtures do not establish live malware protection.
+## durable-aggregate-analytics
+
+Analytics has its own explicit versioned choice, independent of registration and
+email preferences. Collection defaults off and also requires confirmed purpose
+configuration plus a published policy version; unset facts cannot enable it.
+Choice/revocation and collection share a first-write owner lock. An old decision
+retry cannot reverse a newer withdrawal, and policy changes require fresh choice.
+The only stored event data is one Nairobi-day/name/count bucket: no owner/session,
+fingerprint, IP, paths, queries, documents, raw events or attributes. Counts describe
+event submissions, not distinct people; duplicate submissions may count twice.
+Choice evidence stays separate and owner-scoped. No public/cohort report or external
+SDK is installed. Purpose/legal facts, report access and retention require final
+decisions. A retention command reports candidate buckets without pruning. Verified
+account export includes choice records; deletion cascades them, while identity-free
+aggregate buckets cannot be attributed to or subtracted for one account.
