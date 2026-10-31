@@ -27,7 +27,9 @@ from .models import CertificateEvidence, CVWorkspace
 from .upload_fixtures import pdf_bytes
 
 
-@override_settings(CERTIFICATE_EVIDENCE_ENABLED=True,
+@override_settings(CERTIFICATE_EVIDENCE_ENABLED=True, MALWARE_SCANNING_ENABLED=True,
+    CLAMD_HOST_UTC_CONFIRMED=True, CLAMD_LIMITS_REVIEW='clamd-bounds-v1',
+    CLAMD_ALLOWED_ENGINE_VERSIONS=['1.4.3'],
     PASSWORD_HASHERS=['django.contrib.auth.hashers.MD5PasswordHasher'])
 class CertificateTests(TransactionTestCase):
     def setUp(self):
@@ -116,7 +118,8 @@ class CertificateTests(TransactionTestCase):
 
     def test_clean_fresh_hash_required_for_attachment_download(self):
         row = self.create()
-        CertificateEvidence.objects.filter(pk=row.pk).update(scan_state='clean', scan_version='test-result-only', scanned_at=timezone.now())
+        version = 'ClamAV 1.4.3/1/'+timezone.now().strftime('%a %b %d %H:%M:%S %Y')
+        CertificateEvidence.objects.filter(pk=row.pk).update(scan_state='clean', scan_version=version, scanned_at=timezone.now())
         response = self.client.get(self.url())
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content, pdf_bytes())

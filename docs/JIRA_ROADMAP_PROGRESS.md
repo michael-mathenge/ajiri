@@ -1552,3 +1552,25 @@ Rollback retains table/files/new writes and disables routes. See certificate gui
 activation checklist and decisions. Retention remains report-only. Only local
 .tooling is newly ignored; original dirty checkout/lockfile/config/stash preserved.
 A style-only saved-search import/EOF cleanup was included; no behavior changed.
+
+## Local ClamD adapter AJ-52 - 31 October 2026 (CI pending)
+
+Certificate head be8b0c771496a6ae61b1103982011d958baa471d passed all six pinned CI
+checks in run41197654431, including full backend Python3.12-3.14, frontend,
+quality and browser. AJ79 moved To Do -> In Progress with evidence comment10133.
+
+Added real local ClamD VERSIONCOMMANDS/INSTREAM adapter with bounded bytes/chunks/
+replies and one overall deadline, exact approved engine and fresh database timestamp.
+Default-off/unconfigured host checks reject before transfer. Error, stale, limits,
+encryption and timeout fail closed; no retry. New CV validation/legacy downloads
+use actual bytes when enabled. Certificate scan claims use exact file/start CAS;
+stale recovery/replacement cannot apply an old result. Clean downloads recheck
+signature/result age and integrity. New uploads can be suspended without guard bypass.
+No new schema/dependency/hosting change. Actual engine host/signature acceptance
+remains external; protocol fixtures are NOT proof of live malware protection.
+
+Focused scanner/certificate/upload regression 27 tests passed in 3.052s; changed
+Python Ruff passed. Full pinned-stack CI and API validation are pending this entry;
+package is unverified until required gates finish. No real user documents, daemon
+host operation, production flags, migration, deployment or external vendor transfer.
+See LOCAL_MALWARE_SCANNING.md for actual prerequisites and data-preserving rollback.

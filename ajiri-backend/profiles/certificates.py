@@ -38,7 +38,7 @@ def claim(profile, expected_revision):
 def put(profile, certification_id, expected_revision, upload, *, expected_id=None, expected_hash=''):
     if PurePosixPath(upload.name).suffix.lower() != '.pdf':
         raise ValidationError({'document': ['Certificate evidence supports PDF only.']})
-    validate_cv_upload(upload)
+    validate_cv_upload(upload, scan=False)  # Persist private quarantine; explicit scanner claims this exact row later.
     upload.seek(0)
     data = upload.read(MAX_BYTES+1)
     if not data or len(data) != upload.size or len(data) > MAX_BYTES:
@@ -103,9 +103,11 @@ def private_bytes(row):
 
 
 def downloadable(row):
+    from .scanner import result_current
     now = timezone.now()
     if (row.scan_state != 'clean' or not row.scan_version or row.scanned_at is None
-            or not now-timedelta(hours=24) <= row.scanned_at <= now):
+            or not now-timedelta(hours=24) <= row.scanned_at <= now
+            or not result_current(row.scan_version, row.scanned_at)):
         raise CVConflict('This evidence is quarantined until a current clean malware scan is available.')
     data = private_bytes(row)
     if not CertificateEvidence.objects.filter(pk=row.pk, profile=row.profile, sha256=row.sha256,

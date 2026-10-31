@@ -1428,3 +1428,17 @@ erasure inventories include these files; generic private-media backups include t
 quarantine tree. Download requires a fresh clean scan plus size/hash verification,
 uses attachment/no-store/nosniff headers, and never grants employer access or embeds
 evidence in CV/application snapshots. No qualification authenticity is inferred.
+## local-malware-scanning
+
+The default-off ClamD adapter transfers bounded bytes only over a configured local
+socket or literal loopback address. It requires an explicitly reviewed engine,
+fresh signature timestamp and host/resource attestations before transfer. One
+overall deadline and bounded command/reply sizes protect the request. Unexpected,
+stale, encrypted/limit, error and timeout results fail closed without retries.
+Uploaded CVs are checked before persistence; legacy downloads check actual bytes.
+Certificates use durable quarantine with an exact scan claim, so replacement or
+stalled-worker recovery cannot mark a different file clean. Disabling scanning
+does not make pending certificates downloadable. Signature age and result age are
+both checked. PRIVATE_UPLOADS_SUSPENDED pauses new uploads without bypassing the
+guard. Host configuration/updates and actual engine detection require independent
+operational evidence; protocol fixtures do not establish live malware protection.
