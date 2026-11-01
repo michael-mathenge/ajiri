@@ -591,7 +591,7 @@ No password was requested in chat. Rollback: pause writers, return source to40c1
 restore prior writer states; retain live data and existing private configuration.
 No migration reversal or routine old-database restoration is needed.
 
-## AJ-33 forms — local verification in progress
+## AJ-33 forms ï¿½ local verification in progress
 
 Branch codex/jira-forms-validation from deployed/fetched46c7ea7. All nine form
 elements now use React Hook Form7.90.0 and Zod4.6.7 Mini through a shared resolver.
@@ -618,7 +618,7 @@ passes. Final three Chromium/axe/performance tests pass; login/register medians:
 zero trace retries. Subsequent build matches exact committed-target bytes.
 No schema migrations, server dependencies, auth-interceptor, ingestion or CI edits.
 
-## AJ-34 API contract — local implementation
+## AJ-34 API contract ï¿½ local implementation
 
 Separate branch codex/jira-api-schema from46c7ea7 while PR36 runs CI. Additive
 /api/v1 aliases reuse exact existing callbacks; ingestion/sweep stay legacy-only.
@@ -646,7 +646,7 @@ No frontend changes in this package. Ruff and hook configuration validation pass
 No migrations or production dependency changes. Source-only contract contains no
 user records; custom response-object typing limits are explicitly documented.
 
-## AJ-39 keyword search — local implementation
+## AJ-39 keyword search ï¿½ local implementation
 
 Branch codex/jira-job-search initially925cff9, then fast-forwarded to reviewed
 PR37 merge5ad44a1. Six focused backend tests pass in1.157s and two client tests
@@ -669,7 +669,7 @@ Mobile medians (login/register):
 
 No production0011 migration or real-data benchmark yet; release acceptance remains pending.
 
-## AJ-40 installability/offline — local implementation
+## AJ-40 installability/offline ï¿½ local implementation
 
 Branch codex/jira-pwa-basics fast-forwarded from5ad44a1 to reviewed PR38 merge
 5f1fcc33f40fd18335becc29bbfdf07648fb40dd. Only byte-verified generated build extras
@@ -959,7 +959,7 @@ AJ42 stays In Progress because anonymous publication remains gated. Other backlo
 items and general employer onboarding are not claimed complete.
 
 
-### 24 October 2026 — application pipeline deployed; preparation-only repair
+### 24 October 2026 ï¿½ application pipeline deployed; preparation-only repair
 
 PR50 all six checks passed at5824da3 (CI40049180274); deployed source is
 fbae0956f17df25b5d69c9a94f17b9568519e089. Applied jobs.0015 after fresh consistent
@@ -1454,6 +1454,72 @@ No story marked Done from this account prerequisite. See DECISIONS_PENDING.md
 and docs/BACKEND_ACTIVATION_CHECKLIST.md. Remaining normal application/alert mail,
 certificates/scanner/analytics/queue/storage/payments implementation remains open.
 
+## Inactive normal match-alert transport - 31 October 2026
+
+Account prerequisite committed/pushed as ec57336 with configured noreply identities.
+Draft PR creation via gh was blocked: CLI has no authenticated session. No merge,
+deployment, real email or production setting change occurred.
+
+New GENERAL_ALERT_EMAIL_ENABLED defaults off. Normal current-job match email uses
+the real Brevo adapter, explicit current verified-mailbox consent predating the
+notification, score>=70, enforced freshness and shared account/global transport
+configuration and alert/global receipt budget. Independent in-app choice retained.
+A bounded deliver_match_emails command was added; no scheduler was activated.
+Existing receipts block repeat provider calls, including failed/unknown attempts.
+Current consent/mailbox/freshness/switches are rechecked before provider handoff.
+
+Actual focused5 tests passed0.461s. Full480 Django tests passed450.015s, one existing
+platform skip. check/drift passed. Exact Node24.19 locked npm ci --offline installed
+363/audited364, lint/build3.10s passed; all38 assets matched. Offline audit's zero
+findings is NOT clearance: prior online audit found five advisories. An attempted
+parallel lint overlapped npm ci and failed on partial node_modules; rerun after
+installation passed explicit all-source Oxlint/ESLint. No frontend/dependency change.
+Pinned optional tools installed only under local .tooling (existing venv unchanged):
+Ruff passed all changed Python; OpenAPI validated and matched reviewed bytes.
+Rollback: disable new alert switch/caller, preserve consent, notifications and all
+receipt/budget records. AJ26 remains In Progress pending final operational acceptance.
+
+## Inactive general application transport - 31 October 2026
+
+New GENERAL_APPLICATION_EMAIL_ENABLED defaults off alongside existing application
+and general account gates. Reuses existing exact immutable authorization, reviewed
+stored documents, shared budgets and durable receipt reconciliation. At final handoff
+rereads authorization cutoff/expiry/policy/hash, current vacancy/mailbox, package
+context/latest revision/approval and exact actual document bytes; no CC/BCC or
+copy-to-self route. Unknown receipts never repeat provider calls. No schema change.
+
+Actual full484 backend tests passed395.918s, one existing platform skip; check and
+drift passed. Four new tests separately passed2.149s. Earlier33-test focused run
+included an imported fixture TestCase; replaced that import with a module alias
+before the full run to avoid duplicated fixture tests. Exact Node24.19 npm ci
+--offline/lint/build2.36s passed; explicit all-source Oxlint/ESLint passed; all38
+build bytes matched. Changed Python Ruff and reviewed OpenAPI check passed using
+isolated pinned local tooling. No live mail/production flags/migrations/deployment.
+Rollback disables general/application gates while preserving approvals/receipts.
+
+Draft PR71 was created through the authenticated browser after gh authentication
+was unavailable. For pushed head baf88296a2c7f02b3e55be3042e2e035e14b878f, CI run
+41195023043 passed all six checks (three backend versions, frontend, quality,
+browser). This does not verify later unpushed commits. PR remains draft/unmerged.
+AJ26 evidence comment10131 was posted; status retained In Progress.
+
+## Inactive saved-search transport - 31 October 2026
+
+Added SAVED_SEARCH_EMAIL_ENABLED=False and a bounded per-search operator command.
+The real Brevo adapter uses existing daily/weekly durable windows, current exact
+mailbox consent covering each window, search revision/frequency and strict vacancy
+freshness. Shared notification receipts deduplicate overlapping searches/match alerts.
+Existing receipts reconcile after interruptions; no window rewind/provider auto-retry.
+No schema change, scheduler activation, live sending or production change.
+
+Focused 4 tests passed in 0.517s. Full 488 backend tests passed in 394.521s with one
+existing platform skip; system/drift checks passed. Exact Node 24.19 locked install,
+lint/build (2.01s), explicit all-source Oxlint/ESLint passed; all 38 build files matched.
+Ruff and reviewed OpenAPI validation passed. Prior online audit advisories remain;
+offline install's audit summary is not a fresh security scan. Rollback disables the
+new switch/caller while retaining all search windows, opt-outs and receipts.
+PR71's six checks passed for c497c9e before this saved-search commit; new head CI
+remains pending. All final activation decisions remain with Michael.
 ## MVP1 exact-candidate verification â€” 31 October 2026
 
 Approved release scope is account-security email only,PR72,branch
@@ -1478,3 +1544,30 @@ No migrations,feature,dependency,frontend,CI,hosting or production-data change i
 this correction. No deployment/flags/live sending occurred. PythonAnywhere is
 signed out;current quota,backup/restore and actual source/settings preflight remain
 unverified until owner signs in privately. All excluded feature activation stays off.
+
+## Stage2 reconciliation with deployed MVP1 â€” 1 November 2026
+
+Merged reviewed main3408565 into the AJ17/26/43 stage without rewriting history.
+Only conflict was appended roadmap evidence; both historical sections were retained.
+The existing8250419 weekly-window test correction is inherited, with no production
+feature/freshness change. No new migration,dependency,frontend,CI or hosting change.
+
+Pinned Python3.12/Django6.1.2 check and migration drift passed. Full488 tests passed
+in350.885s,one existing skip; audit hook recorded zero network/DNS/SMTP attempts.
+Node24.19 npm ci --offline,lint and build passed (1.94s);38 generated build files
+matched committed frontend_build. Offline audit output is not a fresh vulnerability
+scan. Exact-branch remote CI is pending until a PR is created; do not claim merged.
+
+MVP1 production3408565 remains separate: account email configured, employer/search/
+public/application/alert features off. This stage's GENERAL_APPLICATION_EMAIL_ENABLED,
+GENERAL_ALERT_EMAIL_ENABLED and SAVED_SEARCH_EMAIL_ENABLED remain default-off.
+Re-read AJ17/26/43 acceptance on1November: genuine current-vacancy evidence, verified
+mailbox/consent, shared budgets, exact authorization and controlled normal-transport
+acceptance remain required. No real mail or synthetic vacancy was introduced.
+No bounded production batch caller or scheduler was activated.
+
+Activation/rollback: docs/BACKEND_ACTIVATION_CHECKLIST.md account/AJ17/AJ26/AJ43 rows;
+there are no new migrations. Disable new and existing application/alert/search
+switches, stop callers, retain receipts/windows/opt-outs/unknown blockers and all
+newer account/document data. Never retry an ambiguous handoff automatically.
+Frontend full152 tests/26files passed29.15s after the required lint/build gates.

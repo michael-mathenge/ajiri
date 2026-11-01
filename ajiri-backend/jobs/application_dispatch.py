@@ -83,6 +83,10 @@ def allowed(user, application, plan, policy):
 
 
 def dispatch_status(user, application, plan):
+    if getattr(settings, 'GENERAL_APPLICATION_EMAIL_ENABLED', False):
+        from .general_application_email import allowed as general_allowed
+        general = general_allowed(user, application, plan)
+        return {'dispatch_enabled': general, 'disabled_reason': '' if general else DISABLED}
     configured = configuration()
     enabled = bool(configured and allowed(user, application, plan, configured[0]))
     return {'dispatch_enabled': enabled, 'disabled_reason': '' if enabled else DISABLED}
@@ -94,6 +98,9 @@ def dispatch(user, authorization):
         authorization.pk, authorization.pk)
     if existing is not None:
         return existing
+    if getattr(settings, 'GENERAL_APPLICATION_EMAIL_ENABLED', False):
+        from .general_application_email import dispatch as general_dispatch
+        return general_dispatch(user, authorization)
     configured = configuration()
     application = Application.objects.select_related('job').get(pk=authorization.application_id, user=user)
     if not configured or not allowed(user, application, authorization.plan, configured[0]):
