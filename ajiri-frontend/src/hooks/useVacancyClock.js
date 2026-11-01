@@ -48,3 +48,13 @@ export function useVacancyClock(jobs) {
   }, [deadlines, now])
   return now
 }
+
+// Display permission is separate from availability and never authorizes applying.
+// see docs/CONCEPTS.md#unverified-feed-display
+export function displayableAt(job, now) {
+  if (job?.display_only === true && job?.can_apply === false) {
+    const closes = Date.parse(job.publication?.closes_at || '')
+    return !Number.isFinite(closes) || closes > now
+  }
+  return availableAt(job, now)
+}

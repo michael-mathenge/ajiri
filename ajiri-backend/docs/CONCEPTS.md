@@ -534,7 +534,7 @@ Auth tests use synthetic users, a test database and a fast password hasher selec
 A successful action can remove its own button, leaving keyboard focus on the document body. Ajiri moves focus to the affected application heading or notification row after the UI updates. A requestAnimationFrame waits for React to render the result; tabIndex=-1 permits programmatic focus without adding extra stops to normal Tab navigation. Dialogs still use Radix for focus trapping and Escape.
 
 ## private-media-storage
-Private documents live outside public static mappings. FileField names remain relative, so changing the storage root needs no row rewrites. Only authenticated owner endpoints stream bytes; a random URL is not access control. The relocation command defaults to read-only inventory, copies with checksum verification on --apply, never overwrites conflicting files, and never deletes originals or changes database rows. See ../../docs/PRIVATE_MEDIA_DESIGN.md for the approved design and manual cutover.
+Private documents live outside public static mappings. FileField names remain relative, so changing the storage root needs no row rewrites. Only authenticated owner endpoints stream bytes; a random URL is not access control. The relocation command defaults to read-only inventory, copies with checksum verification on --apply, never overwrites conflicting files, and never deletes originals or changes database rows. See ../../docs/MAINTENANCE_HISTORY.md#record-private-media-design for the approved design and manual cutover.
 
 ## application-send-claim
 A conditional database update claims a reviewable application as sent before SMTP begins. Only one request can change ready_for_review to sent; competing requests receive 400 even if they read stale data. The winner releases its own timestamped claim on delivery failure (502), allowing a retry. A stale dismiss cannot undo the claim. No transaction is held across SMTP, and no schema/status value is added. Sent is visible during delivery; a process crash or ambiguous SMTP acknowledgement needs manual reconciliation, not automatic retry. This prevents simultaneous-request duplication, not exactly-once delivery across an external email provider.
@@ -1383,3 +1383,12 @@ again immediately before sending, and rejects attachments, reply overrides and
 extra recipients. Runtime configuration requires HTTPS links and valid provider
 configuration; console output is never security-link delivery. Provider acceptance
 is not inbox evidence. See ../../docs/BACKEND_ACTIVATION_CHECKLIST.md.
+
+## unverified-feed-display
+
+Browse visibility is separate from vacancy eligibility. The default-off
+JOB_FEED_DISPLAY_ENABLED switch allows labelled feed discovery only in the
+authenticated list/detail API. It never supplies jobs to alerts, saved searches,
+application preparation, sending, employer publication or public vacancy pages.
+A source link is for checking evidence, not proof that applications are open.
+No publication records are rewritten. Known closed or scam-flagged rows stay hidden.

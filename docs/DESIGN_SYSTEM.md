@@ -112,4 +112,4 @@ Before merging, verify in the browser at 360px, 390px and desktop width: logged-
 
 Profile and Plans routes are now linked from the shell. DownloadButton uses the existing authenticated client; FormErrors displays every DRF validation message and connects field errors through aria-describedby. Application review uses a native details disclosure, email approval and an explicit external-submission confirmation. Mutations restore focus to the affected application heading or notification row after their action disappears.
 
-The desktop navigation and detailed search layout now expand at 1100px so the extra links do not overflow intermediate widths. Profile fields use two columns from 640px; plans remain stacked until the wide layout. See CHECKPOINT1_REVIEW.md for the actual 375px checks and current verification results.
+The desktop navigation and detailed search layout now expand at 1100px so the extra links do not overflow intermediate widths. Profile fields use two columns from 640px; plans remain stacked until the wide layout. See MAINTENANCE_HISTORY.md#record-checkpoint1-review for the actual 375px checks and historical verification results.

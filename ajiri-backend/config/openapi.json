@@ -7867,13 +7867,34 @@
                         "type": "object",
                         "additionalProperties": {},
                         "readOnly": true
+                    },
+                    "display_only": {
+                        "type": "boolean",
+                        "readOnly": true
+                    },
+                    "display_notice": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "can_apply": {
+                        "type": "boolean",
+                        "readOnly": true
+                    },
+                    "original_source_url": {
+                        "type": "string",
+                        "format": "uri",
+                        "readOnly": true
                     }
                 },
                 "required": [
+                    "can_apply",
                     "company_name",
                     "description",
+                    "display_notice",
+                    "display_only",
                     "id",
                     "match_score",
+                    "original_source_url",
                     "publication",
                     "skills_required",
                     "source_name",
@@ -7936,15 +7957,36 @@
                         "additionalProperties": {},
                         "readOnly": true
                     },
+                    "display_only": {
+                        "type": "boolean",
+                        "readOnly": true
+                    },
+                    "display_notice": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "can_apply": {
+                        "type": "boolean",
+                        "readOnly": true
+                    },
+                    "original_source_url": {
+                        "type": "string",
+                        "format": "uri",
+                        "readOnly": true
+                    },
                     "source_name": {
                         "type": "string",
                         "maxLength": 100
                     }
                 },
                 "required": [
+                    "can_apply",
                     "company_name",
+                    "display_notice",
+                    "display_only",
                     "id",
                     "match_score",
+                    "original_source_url",
                     "publication",
                     "source_name",
                     "title"

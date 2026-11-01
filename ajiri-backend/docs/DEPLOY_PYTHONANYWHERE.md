@@ -1,5 +1,10 @@
 # Deploying Ajiri on PythonAnywhere (free tier)
 
+This is the historical initial-provisioning walkthrough. Ajiri is already deployed.
+For an existing installation use the current [release checklist](../../docs/DEPLOYMENT_CHECKLIST.md)
+and [activation gates](../../docs/BACKEND_ACTIVATION_CHECKLIST.md). Do not repeat first
+deployment, overwrite private configuration or infer runtime flags from this guide.
+
 How it fits together:
 
 ```
@@ -25,8 +30,9 @@ Bash console, **[Web]** a browser.
   disabled. Read the expiry date it shows and put a reminder in your calendar.
 - 512 MB disk and a daily CPU-seconds allowance. `requirements-prod.txt` measures about
   120 MB installed. Watch the CPU figure on the Dashboard after the first few days.
-- Email goes to the console backend: new-match alerts appear in the server log, not in
-  anyone's inbox, until you configure SMTP (see `.env.example`).
+- Managed email uses the reviewed Brevo HTTPS/shared-ledger paths and separate
+  activation gates. Console output is never evidence of delivery; do not enable a
+  legacy SMTP/console bypass using this historical guide.
 
 ## Part 0 - Prepare locally **[PC]**
 
@@ -93,7 +99,7 @@ Bash console, **[Web]** a browser.
 
    WhiteNoise serves public assets. Uploaded CVs and cover letters use owner-checked
    API downloads. Remove old media mappings and aliases before cutover. Follow
-   [the private media runbook](../../docs/PRIVATE_MEDIA_DESIGN.md#pythonanywhere-manual-cutover--michael-only-after-implementation-approval).
+   [the private media runbook](../../maintenance/HISTORY.md#record-private-media-design).
 5. Turn on **Force HTTPS** if the Web tab offers it.
 6. Click the green **Reload** button.
 
@@ -160,4 +166,4 @@ silently deletes every user created since.
 
 ## Checkpoint 2 private media cutover
 
-The relocation command is now available: `python manage.py relocate_private_media --help`. Follow the exact backup, folder, permissions, dry-run/apply/verify, environment and reload sequence in [PRIVATE_MEDIA_DESIGN.md](../../docs/PRIVATE_MEDIA_DESIGN.md). Treat its proposed command interface as implemented for WP7; no production operation has been performed. Keep all writers paused until validation completes. No schema migration is introduced by WP7.
+The relocation command is now available: `python manage.py relocate_private_media --help`. Follow the exact backup, folder, permissions, dry-run/apply/verify, environment and reload sequence in [PRIVATE_MEDIA_DESIGN.md](../../maintenance/HISTORY.md#record-private-media-design). Treat its proposed command interface as implemented for WP7; no production operation has been performed. Keep all writers paused until validation completes. No schema migration is introduced by WP7.

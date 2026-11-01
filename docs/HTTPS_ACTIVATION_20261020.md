@@ -37,3 +37,11 @@ owner's `.config/ajiri-https-check-20261020` directory. Restore only these five
 settings to their prior values and reload if necessary; retain host HTTPS and all
 database writes. HSTS can persist in browsers for its remaining five-minute lifetime.
 Never restore a database for this configuration rollback.
+
+## Stage B reconfirmation — 1 November 2026
+
+At15:14EAT a live HTTPS GET /api/health/ returned HTTP200, {"status":"ok"},
+and exactly Strict-Transport-Security: max-age=300, without subdomains/preload.
+This corroborates the completed native-WSGI activation above; no settings or code
+were changed. AJ-12 remains Done; comment10172 and its reconciled description record
+the current evidence while retaining historical blocked notes as superseded.

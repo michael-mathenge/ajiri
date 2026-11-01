@@ -26,7 +26,7 @@ import {
   Select,
 } from '../components/ui'
 import { dateLabel, jobType, salaryLabel } from '../lib/utils'
-import { useVacancyClock, availableAt } from '../hooks/useVacancyClock'
+import { useVacancyClock, displayableAt } from '../hooks/useVacancyClock'
 
 function Filters({ register }) {
   return (
@@ -88,7 +88,7 @@ export default function JobList() {
   const { data, loading, error, retry } = useApiQuery(`/jobs/?${query}`)
   const rows = data?.results ?? []
   const vacancyNow = useVacancyClock(rows)
-  const currentRows = rows.filter((job) => availableAt(job, vacancyNow))
+  const currentRows = rows.filter((job) => displayableAt(job, vacancyNow))
   const { data: profile } = useApiQuery('/profiles/me/')
   // Missing profile data is unknown, not evidence of an empty skills list.
   // see docs/CONCEPTS.md#ui-feedback
@@ -204,7 +204,7 @@ export default function JobList() {
         >
           {filtered
             ? 'Try a broader title or another location.'
-            : 'Only vacancies with current availability evidence appear here. Unverified or expired listings are hidden. Check back for reviewed openings.'}
+            : 'No listings are available to display. Check back for more openings.'}
         </EmptyState>
       ) : (
         <>
@@ -224,6 +224,7 @@ export default function JobList() {
                   ) : null}
                 </div>
                 <p className="company-name">{job.company_name}</p>
+                {job.display_only && <p role="note">{job.display_notice}</p>}
                 <h3>
                   <Link to={`/jobs/${job.id}`}>{job.title}</Link>
                 </h3>
@@ -241,9 +242,23 @@ export default function JobList() {
                     ? `Closes ${dateLabel(job.publication.closes_at)}`
                     : 'Closing date not verified'}
                 </p>
+                <div>
+                  {job.display_only &&
+                    /^https?:\/\//i.test(job.original_source_url || '') && (
+                      <a
+                        href={job.original_source_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        View original listing
+                      </a>
+                    )}
+                </div>
                 <div className="job-card-bottom">
                   <span className="muted text-sm">
-                    Posted {dateLabel(job.posted_at)}
+                    {job.posted_at
+                      ? `Posted ${dateLabel(job.posted_at)}`
+                      : 'Posted date not supplied'}
                   </span>
                   <Link
                     to={`/jobs/${job.id}`}

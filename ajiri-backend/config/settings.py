@@ -435,3 +435,6 @@ LOGGING = {
         'ajiri.errors': {'handlers': ['safe_errors'], 'level': 'ERROR', 'propagate': False},
     },
 }
+
+# see docs/CONCEPTS.md#unverified-feed-display
+JOB_FEED_DISPLAY_ENABLED = env_bool('JOB_FEED_DISPLAY_ENABLED', False)

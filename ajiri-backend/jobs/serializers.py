@@ -9,6 +9,23 @@ class JobListSerializer(serializers.ModelSerializer):
     match_score = serializers.SerializerMethodField()
     publication = serializers.SerializerMethodField()
 
+    display_only = serializers.SerializerMethodField()
+    display_notice = serializers.SerializerMethodField()
+    can_apply = serializers.SerializerMethodField()
+    original_source_url = serializers.URLField(source='source_url', read_only=True)
+
+    def get_can_apply(self, job) -> bool:
+        from .freshness import job_is_eligible
+        cached = getattr(job, '_can_apply', None)
+        return cached if cached is not None else job_is_eligible(job)
+
+    def get_display_only(self, job) -> bool:
+        return not self.get_can_apply(job)
+
+    def get_display_notice(self, job) -> str:
+        from .feed_display import NOTICE
+        return NOTICE if self.get_display_only(job) else ''
+
     def get_publication(self, job) -> dict:
         from .models import JobPublication
         try:
@@ -29,7 +46,7 @@ class JobListSerializer(serializers.ModelSerializer):
         fields = (
             'id', 'title', 'company_name', 'location', 'job_type',
             'salary_min', 'salary_max', 'is_salary_negotiable',
-            'match_score', 'posted_at', 'publication', 'source_name',
+            'match_score', 'posted_at', 'publication', 'display_only', 'display_notice', 'can_apply', 'original_source_url', 'source_name',
         )
 
     def get_match_score(self, job):
@@ -51,7 +68,7 @@ class JobDetailSerializer(JobListSerializer):
             'id', 'title', 'company_name', 'description', 'requirements',
             'location', 'job_type', 'salary_min', 'salary_max',
             'is_salary_negotiable', 'skills_required', 'match_score',
-            'source_url', 'source_name', 'posted_at', 'publication',
+            'source_url', 'source_name', 'posted_at', 'publication', 'display_only', 'display_notice', 'can_apply', 'original_source_url',
         )
 
     def get_match_score(self, job):

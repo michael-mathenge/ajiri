@@ -1,18 +1,22 @@
-# Decisions pending — 31 October 2026
+# Open decisions — 1 November 2026
 
-Implementation choices below are reversible defaults, not activation approval.
-No deployment, production migration, runtime flag changes, live recipient mail,
-Daraja calls, charging, real-account export/erasure or retention pruning is authorized.
+Only genuinely unresolved inputs are listed here. The implementation and live
+verification steps are in [next actions](docs/ROADMAP_NEXT_ACTIONS.md).
+Completed checkpoint choices, account implementation and owner inbox pilots are
+not repeated approval requests. The old list is [archived](maintenance/HISTORY.md#record-decisions-pending-2026-10-31).
 
-| Item | Options | Default chosen | Impact / final decision |
-|---|---|---|---|
-| Account security mail | Owner pilot only; general transactional security mail | Separate default-off ACCOUNT_SECURITY_EMAIL_ENABLED and account_security delivery mode | Existing pilot preserved. General verification/reset uses current active mailbox and existing 30-account/200-total Nairobi-day budgets; provider/legal/operational activation remains pending. |
-| Employer/public vacancy path AJ-53/AJ-42 | Publish synthetic vacancies; require genuine reviewed source | Retain independent review and strict current-evidence checks | Genuine organisation/listing evidence remains external; no fabricated inventory or freshness relaxation. |
-| Certificates AJ-79 | PDF; images; office formats | PDF, 5 MiB/file, five files/20 MiB, owner only, quarantine required | Existing AJ-79 reused rather than duplicate ticket. No automatic employer sharing; scanner/capacity/retention activation pending. |
-| AJ-17/26/43 delivery | Direct backend bypass; shared ledger | Shared ledger, consent and immutable application authorization | Unknown handoffs cannot auto-retry; no real inbox acceptance claimed. |
-| AJ-51 analytics | External SDK; first-party aggregate collection | Default-off first-party allowlisted aggregates, no identifiers in events | Purpose, choice wording, lawful basis and retention require final factual decisions. |
-| AJ-52 scanner | External upload service; self-hosted ClamAV | Private fail-closed scanner boundary | Hosting/signature freshness/resource capacity need real evidence; content validation is not malware scanning. |
-| AJ-47/48 infrastructure | Production switch now; inactive durable integration | No storage/broker switch | Actual target access, isolated restore and host durability remain prerequisites. |
-| AJ-44/45/46 commerce | Invent prices/merchant terms; hold pending | No charging or paid entitlement activation | Merchant/product/legal facts cannot be inferred. Free browsing/applying/existing documents preserved. |
-| 23 Update tickets AJ-54–AJ-76 | Delete; rename/resolve after provenance review | Proposal only, preserve all issue history/statuses | Inspect comments/links before suggesting specific merges or replacements. |
-| Jira dry run | Execute sync; prepare reviewable inputs | Do not execute tools/jira_sync.py per AGENTS.md section 13 | Provide commands and validated JSON; no fabricated dry-run execution output. |
+| Decision/input | Who supplies it | Why it is still needed |
+| --- | --- | --- |
+| Feed-release authorization and timing | Michael | Local display code is ready for review; the explicit no-push/no-merge/no-production limit remains until changed. |
+| Normal sending acceptance AJ-17/26/43 | Michael/operator plus agent review | Confirm actual provider/privacy facts, genuine eligible vacancy and independently consented recipient for the normal paths; completed synthetic pilot evidence is retained. |
+| Genuine employer/public vacancy AJ-53/42 | Employer/account owner and independent reviewer | Identity, authority, source and deadline cannot be inferred from a feed or synthetic fixture. |
+| Capacity and backup retention | Michael/operator | One-time keep-four/delete17 server cleanup completed after explicit confirmation; dashboard now 228.7/512 MB. Measure feature headroom; ongoing retention remains report-only pending its own policy. |
+| Certificates AJ-79 | Michael/operator | PDF/quota defaults are implemented on an inactive branch; confirm final file/retention policy, scanner and capacity before activation. |
+| Scanner/storage/worker hosting AJ-52/47/48 | Michael/operator | Actual engine/target/host eligibility, durable private recovery and resource limits need real evidence; private credentials are entered outside chat. |
+| Analytics AJ-51 | Product/privacy owner | Actual purpose, choice wording, lawful basis, retention, cohort/report access and processing destination remain factual decisions. |
+| Commerce AJ-44/45/46 | Merchant/product/privacy owner | Merchant/product eligibility, actual sandbox mapping and final price/term/refund/tax facts are unresolved. No live charge or paid enforcement is implied. |
+| Jira cleanup AJ-80 | Michael | Approve exact descriptive historical titles/relates-to mapping before editing those 23 original entries; retain history. |
+
+No repeated approval is needed for already approved designs or routine local
+implementation within scope. This document grants no new production, purchase,
+legal-consent, credential or irreversible user-data authority.

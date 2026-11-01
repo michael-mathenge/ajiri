@@ -1,0 +1,106 @@
+[
+  {
+    "original": "docs/ACCEPTANCE_JOURNEY_REVIEW.md",
+    "record": "record-acceptance-journey-review"
+  },
+  {
+    "original": "docs/APPLICATION_CV_INTEGRATION_REVIEW.md",
+    "record": "record-application-cv-integration-review"
+  },
+  {
+    "original": "docs/APPLICATION_PACKAGE_APPROVAL_REVIEW.md",
+    "record": "record-application-package-approval-review"
+  },
+  {
+    "original": "docs/APPLICATION_PACKAGE_EDITOR_REVIEW.md",
+    "record": "record-application-package-editor-review"
+  },
+  {
+    "original": "docs/APPLICATION_PACKAGE_FINAL_REVIEW.md",
+    "record": "record-application-package-final-review"
+  },
+  {
+    "original": "docs/APPLICATION_PACKAGE_SCHEMA_REVIEW.md",
+    "record": "record-application-package-schema-review"
+  },
+  {
+    "original": "docs/APPLICATION_SEND_AUTHORIZATION_REVIEW.md",
+    "record": "record-application-send-authorization-review"
+  },
+  {
+    "original": "docs/APPLICATION_SEND_CLIENT_REVIEW.md",
+    "record": "record-application-send-client-review"
+  },
+  {
+    "original": "docs/APPLICATION_SEND_SCHEMA_REVIEW.md",
+    "record": "record-application-send-schema-review"
+  },
+  {
+    "original": "docs/APPLICATION_SEND_WORKFLOW_REVIEW.md",
+    "record": "record-application-send-workflow-review"
+  },
+  {
+    "original": "docs/CV_BUILDER_REVIEW.md",
+    "record": "record-cv-builder-review"
+  },
+  {
+    "original": "docs/CV_DATE_CONTROLS_REVIEW.md",
+    "record": "record-cv-date-controls-review"
+  },
+  {
+    "original": "docs/CV_SAVE_FEEDBACK_REVIEW.md",
+    "record": "record-cv-save-feedback-review"
+  },
+  {
+    "original": "docs/CV_SCHEMA_REVIEW.md",
+    "record": "record-cv-schema-review"
+  },
+  {
+    "original": "docs/DELIVERY_CONCURRENCY_REVIEW.md",
+    "record": "record-delivery-concurrency-review"
+  },
+  {
+    "original": "docs/DEPENDABOT_CHECK_FAILURES_REVIEW.md",
+    "record": "record-dependabot-check-failures-review"
+  },
+  {
+    "original": "docs/INGESTION_RELIABILITY_REVIEW.md",
+    "record": "record-ingestion-reliability-review"
+  },
+  {
+    "original": "docs/NPM_DEPENDENCY_BUILD_REVIEW.md",
+    "record": "record-npm-dependency-build-review"
+  },
+  {
+    "original": "docs/OPERATIONS_ROADMAP_REVIEW.md",
+    "record": "record-operations-roadmap-review"
+  },
+  {
+    "original": "docs/PRIVACY_REGISTRATION_REVIEW.md",
+    "record": "record-privacy-registration-review"
+  },
+  {
+    "original": "docs/REGISTRATION_CV_JOURNEY_REVIEW.md",
+    "record": "record-registration-cv-journey-review"
+  },
+  {
+    "original": "docs/UI_FEEDBACK_REVIEW.md",
+    "record": "record-ui-feedback-review"
+  },
+  {
+    "original": "docs/UI_POLISH_PHASE_C_REVIEW.md",
+    "record": "record-ui-polish-phase-c-review"
+  },
+  {
+    "original": "docs/CERTIFICATES_DECISIONS.md",
+    "record": "record-certificates-decisions"
+  },
+  {
+    "original": "docs/DEPENDENCY_ADVISORIES.md",
+    "record": "record-dependency-advisories"
+  },
+  {
+    "original": "docs/MIGRATION_DESIGN_3B1.md",
+    "record": "record-migration-design-3b1"
+  }
+]

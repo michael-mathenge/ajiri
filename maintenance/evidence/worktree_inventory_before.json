@@ -1,0 +1,211 @@
+[
+  {
+    "name": "api-schema",
+    "head": "3d21c37e",
+    "aheadOfMain": 0,
+    "derivedIgnoredCount": 148,
+    "totalIgnoredCount": 149,
+    "action": "remove",
+    "reason": "Clean, fully contained in reviewed main; no private data (any ignored SQLite file is zero bytes).",
+    "dirty": false,
+    "protectedIgnoredCount": 1
+  },
+  {
+    "name": "application-package-schema",
+    "head": "08867c19",
+    "aheadOfMain": 0,
+    "derivedIgnoredCount": 9369,
+    "totalIgnoredCount": 9370,
+    "action": "remove",
+    "reason": "Clean, fully contained in reviewed main; no private data (any ignored SQLite file is zero bytes).",
+    "dirty": false,
+    "protectedIgnoredCount": 1
+  },
+  {
+    "name": "backend-inactive-20261031",
+    "head": "974dc6d6",
+    "aheadOfMain": 19,
+    "derivedIgnoredCount": 37646,
+    "totalIgnoredCount": 37647,
+    "action": "keep",
+    "reason": "Unique commits not contained in reviewed main; retain source and local tooling.",
+    "dirty": false,
+    "protectedIgnoredCount": 1
+  },
+  {
+    "name": "backend-roadmap-final",
+    "head": "624c3789",
+    "aheadOfMain": 0,
+    "derivedIgnoredCount": 0,
+    "totalIgnoredCount": 0,
+    "action": "remove",
+    "reason": "Clean, fully contained in reviewed main; no private data (any ignored SQLite file is zero bytes).",
+    "dirty": false,
+    "protectedIgnoredCount": 0
+  },
+  {
+    "name": "checkpoint-3b",
+    "head": "99988afb",
+    "aheadOfMain": 0,
+    "derivedIgnoredCount": 19383,
+    "totalIgnoredCount": 19384,
+    "action": "remove",
+    "reason": "Clean, fully contained in reviewed main; no private data (any ignored SQLite file is zero bytes).",
+    "dirty": false,
+    "protectedIgnoredCount": 1
+  },
+  {
+    "name": "checkpoint-4",
+    "head": "db6bbce3",
+    "aheadOfMain": 0,
+    "derivedIgnoredCount": 9350,
+    "totalIgnoredCount": 9351,
+    "action": "remove",
+    "reason": "Clean, fully contained in reviewed main; no private data (any ignored SQLite file is zero bytes).",
+    "dirty": false,
+    "protectedIgnoredCount": 1
+  },
+  {
+    "name": "delivery-concurrency",
+    "head": "09b76a16",
+    "aheadOfMain": 0,
+    "derivedIgnoredCount": 9350,
+    "totalIgnoredCount": 9351,
+    "action": "remove",
+    "reason": "Clean, fully contained in reviewed main; no private data (any ignored SQLite file is zero bytes).",
+    "dirty": false,
+    "protectedIgnoredCount": 1
+  },
+  {
+    "name": "jira-roadmap",
+    "head": "43c8be21",
+    "aheadOfMain": 0,
+    "derivedIgnoredCount": 26355,
+    "totalIgnoredCount": 26356,
+    "action": "keep",
+    "reason": "Ignored configuration and coverage retained without reading configuration.",
+    "dirty": false,
+    "protectedIgnoredCount": 1
+  },
+  {
+    "name": "job-feed-display",
+    "head": "34085659",
+    "aheadOfMain": 0,
+    "derivedIgnoredCount": 25971,
+    "totalIgnoredCount": 25972,
+    "action": "keep",
+    "reason": "Active uncommitted feed implementation and current maintenance evidence.",
+    "dirty": true,
+    "protectedIgnoredCount": 1
+  },
+  {
+    "name": "job-search",
+    "head": "2240cdaf",
+    "aheadOfMain": 0,
+    "derivedIgnoredCount": 159,
+    "totalIgnoredCount": 160,
+    "action": "remove",
+    "reason": "Clean, fully contained in reviewed main; no private data (any ignored SQLite file is zero bytes).",
+    "dirty": false,
+    "protectedIgnoredCount": 1
+  },
+  {
+    "name": "job-trust",
+    "head": "d73f8d8b",
+    "aheadOfMain": 3,
+    "derivedIgnoredCount": 25791,
+    "totalIgnoredCount": 25804,
+    "action": "keep",
+    "reason": "Unique commits not contained in reviewed main; retain source and local tooling.",
+    "dirty": false,
+    "protectedIgnoredCount": 13
+  },
+  {
+    "name": "lighthouse-tracing",
+    "head": "cf23eab4",
+    "aheadOfMain": 0,
+    "derivedIgnoredCount": 175,
+    "totalIgnoredCount": 176,
+    "action": "remove",
+    "reason": "Clean, fully contained in reviewed main; no private data (any ignored SQLite file is zero bytes).",
+    "dirty": false,
+    "protectedIgnoredCount": 1
+  },
+  {
+    "name": "managed-send-pilot",
+    "head": "8d0b2767",
+    "aheadOfMain": 0,
+    "derivedIgnoredCount": 25671,
+    "totalIgnoredCount": 25672,
+    "action": "remove",
+    "reason": "Clean, fully contained in reviewed main; no private data (any ignored SQLite file is zero bytes).",
+    "dirty": false,
+    "protectedIgnoredCount": 1
+  },
+  {
+    "name": "mvp1-account-release",
+    "head": "8250419f",
+    "aheadOfMain": 0,
+    "derivedIgnoredCount": 25623,
+    "totalIgnoredCount": 25623,
+    "action": "remove",
+    "reason": "Clean, fully contained in reviewed main; no private data (any ignored SQLite file is zero bytes).",
+    "dirty": false,
+    "protectedIgnoredCount": 0
+  },
+  {
+    "name": "public-jobs",
+    "head": "ac0dfb14",
+    "aheadOfMain": 0,
+    "derivedIgnoredCount": 163,
+    "totalIgnoredCount": 168,
+    "action": "remove",
+    "reason": "Clean, fully contained in reviewed main; no private data (any ignored SQLite file is zero bytes).",
+    "dirty": false,
+    "protectedIgnoredCount": 5
+  },
+  {
+    "name": "pwa-basics",
+    "head": "084e4e3a",
+    "aheadOfMain": 0,
+    "derivedIgnoredCount": 25655,
+    "totalIgnoredCount": 25660,
+    "action": "remove",
+    "reason": "Clean, fully contained in reviewed main; no private data (any ignored SQLite file is zero bytes).",
+    "dirty": false,
+    "protectedIgnoredCount": 5
+  },
+  {
+    "name": "review-02-release",
+    "head": "38bf953c",
+    "aheadOfMain": 5,
+    "derivedIgnoredCount": 25630,
+    "totalIgnoredCount": 25631,
+    "action": "keep",
+    "reason": "Unique commits not contained in reviewed main; retain source and local tooling.",
+    "dirty": false,
+    "protectedIgnoredCount": 1
+  },
+  {
+    "name": "search-tuning",
+    "head": "0678f404",
+    "aheadOfMain": 0,
+    "derivedIgnoredCount": 152,
+    "totalIgnoredCount": 153,
+    "action": "remove",
+    "reason": "Clean, fully contained in reviewed main; no private data (any ignored SQLite file is zero bytes).",
+    "dirty": false,
+    "protectedIgnoredCount": 1
+  },
+  {
+    "name": "sprint-3-evidence",
+    "head": "c42312e5",
+    "aheadOfMain": 0,
+    "derivedIgnoredCount": 9284,
+    "totalIgnoredCount": 9285,
+    "action": "remove",
+    "reason": "Clean, fully contained in reviewed main; no private data (any ignored SQLite file is zero bytes).",
+    "dirty": false,
+    "protectedIgnoredCount": 1
+  }
+]

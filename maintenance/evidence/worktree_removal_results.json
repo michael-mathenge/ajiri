@@ -1,0 +1,86 @@
+[
+  {
+    "name": "api-schema",
+    "head": "3d21c37ef78013c349ffcbbd07603fa7c296f5fa",
+    "branch": "codex/jira-api-schema",
+    "result": "removed; branch retained"
+  },
+  {
+    "name": "application-package-schema",
+    "head": "08867c19",
+    "branch": "codex/application-send-client",
+    "result": "unregistered; Windows-locked remainder retained"
+  },
+  {
+    "name": "backend-roadmap-final",
+    "head": "624c3789045081ccf79439ee2e986bc38c9be243",
+    "branch": "codex/backend-roadmap-final",
+    "result": "removed; branch retained"
+  },
+  {
+    "name": "checkpoint-3b",
+    "head": "99988afb6f8dbb25765167f4fce1b4aebc0f9a16",
+    "branch": "codex/checkout-test-repair",
+    "result": "unregistered; Windows-locked remainder retained"
+  },
+  {
+    "name": "checkpoint-4",
+    "head": "db6bbce3370468ac95ab521d569882476a47402f",
+    "branch": "integration/checkpoint-4",
+    "result": "unregistered; Windows-locked remainder retained"
+  },
+  {
+    "name": "delivery-concurrency",
+    "head": "09b76a166bd2c28db1d91327c20f83fd3b91bcbc",
+    "branch": "codex/application-package-design",
+    "result": "unregistered; Windows-locked remainder retained"
+  },
+  {
+    "name": "job-search",
+    "head": "2240cdaffb3c9c6a4694c8ffdc1fb103df0ede42",
+    "branch": "codex/jira-job-search",
+    "result": "removed; branch retained"
+  },
+  {
+    "name": "lighthouse-tracing",
+    "head": "cf23eab4c3b1d28f0464e84c1676ca15ccab2a71",
+    "branch": "codex/jira-lighthouse-tracing",
+    "result": "removed; branch retained"
+  },
+  {
+    "name": "managed-send-pilot",
+    "head": "8d0b27678fc5ea9c754e097b63ca61ee7a1fa725",
+    "branch": "codex/jira-managed-send-pilot",
+    "result": "unregistered; Windows-locked remainder retained"
+  },
+  {
+    "name": "mvp1-account-release",
+    "head": "8250419f1254879ba3b064d4c5c6e64051c8a12e",
+    "branch": "codex/review-01-account-email",
+    "result": "unregistered; Windows-locked remainder retained"
+  },
+  {
+    "name": "public-jobs",
+    "head": "ac0dfb14c0a7eeabb6705dc3255246637d7acf4f",
+    "branch": "codex/jira-public-jobs",
+    "result": "removed; branch retained"
+  },
+  {
+    "name": "pwa-basics",
+    "head": "084e4e3a97dccf5941ccdf40a3ee7d65812b2df8",
+    "branch": "codex/jira-pwa-basics",
+    "result": "unregistered; Windows-locked remainder retained"
+  },
+  {
+    "name": "search-tuning",
+    "head": "0678f404008ccb5c989ee7175f44b86c5a390b3f",
+    "branch": "codex/jira-search-tuning",
+    "result": "removed; branch retained"
+  },
+  {
+    "name": "sprint-3-evidence",
+    "head": "c42312e58fbec954927878c86f0d71cc8bcb04d6",
+    "branch": "codex/sprint3-release-review",
+    "result": "unregistered; Windows-locked remainder retained"
+  }
+]

@@ -1,8 +1,13 @@
 # PythonAnywhere showcase â€” 26 October 2026
 
-Verified live runtime: `d91da4752a887bc38429cbb88c3b201c61974a8b` (PR69).
+Historical showcase release runtime: `d91da4752a887bc38429cbb88c3b201c61974a8b` (PR69).
 All six checks passed; production health,38 asset hashes, authenticated CV navigation
 and an existing private approved-CV download passed. Sending/public jobs remain off.
+
+1 November update: MVP1 PR72 source `3408565` supersedes that runtime and configures
+account-security mail. The introduction/CV showcase is complete, not pending work.
+Use [next actions](ROADMAP_NEXT_ACTIONS.md) for remaining gates and current recorded
+flags; the dated release checks below are historical evidence.
 
 PythonAnywhere remains the current host, with SQLite and private local media.
 A public introduction explains the actual CV workflow before registration. Signed-in
@@ -15,9 +20,11 @@ These static pages make no account/job API requests. All private routes remain p
 Registration, profile, CV preview, explicit approval and private DOCX download form
 the initial demonstration. CV building does not require email verification; application
 preparation still requires the existing eligibility and verification gates. Account
-security mail remains an owner-only pilot. General application sending is disabled.
+security mail is configured in MVP1; general application sending remains disabled.
 There may be no eligible active vacancies; never seed fake vacancies or restore
-unverified archived jobs for a demonstration. Public vacancy publication remains off.
+unverified archived jobs as eligible vacancies for a demonstration. A separately
+approved default-off [feed display package](JOB_FEED_DISPLAY_OPTIONS.md) allows
+labelled authenticated browsing only; it is local and not deployed. Public vacancy publication remains off.
 No employment guarantee or applicant payment requirement is introduced.
 
 Use [employer review plan](EMPLOYER_REVIEW_PLAN.md) for the next live onboarding step.

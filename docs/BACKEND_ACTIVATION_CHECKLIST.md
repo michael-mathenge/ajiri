@@ -1,4 +1,11 @@
-# Backend activation checklist — pending Michael's final approval
+# Backend activation checklist
+
+1 November reconciliation: this table separates source defaults from remaining
+activation gates. MVP1 PR72 is recorded deployed at `3408565`: account-security
+mail configured; employer posting, saved searches, application/alert mail and
+public vacancies off; freshness on. Do not disable existing account service merely
+because its code default is False. See [next actions](ROADMAP_NEXT_ACTIONS.md) for
+the current ordered work and branch-specific implementation evidence.
 
 No item below authorizes activation. Preserve currently deployed configuration;
 new feature switches default off in source. Never reverse populated migrations
@@ -7,7 +14,8 @@ additive schema before serving new code, and verify isolated restoration first.
 
 | Feature | Switch / state | Prerequisites before approval | Rollback |
 |---|---|---|---|
-| Account verification/reset | New ACCOUNT_SECURITY_EMAIL_ENABLED=False; REAL_EMAIL_ENABLED=False by default; account_security mode required | Approved sender/provider processing, HTTPS origin, privately entered credentials, account/global budget review, monitored delivery/error procedure and explicitly approved controlled inbox verification | Disable new switch, retain ledger/budgets and all account data; owner pilot can use its existing reviewed mode separately. No schema change. |
+| Account verification/reset | Configured in MVP1; source switches default off, account_security mode required | Retain completed owner-inbox confirmation and per-path evidence. Monitor the configured service; general employer onboarding acceptance remains separate from the completed owner test. | Disable account-security switch only for an authorized rollback; retain ledger/budgets and account data. No schema reversal. |
+| Display-only feed browsing | JOB_FEED_DISPLAY_ENABLED=False; local uncommitted package only | Focused review/CI/release authorization and verified recovery/capacity; owner privately enables after deployment. Label every supplemental row; offer no application/document/send action. | Disable display switch; keep freshness and all eligibility gates unchanged. No migration. |
 | Employer posting AJ-53 | Existing posting controls; no runtime change | General onboarding acceptance; genuine employer/authority and independent staff review; future deadline/no applicant fee | Disable posting, retain freshness/audit and historical applications. |
 | Public vacancies AJ-42 | PUBLIC_JOBS_ENABLED stays off | Genuine eligible listing, public metadata/source checks and expiry verification | Disable publication; preserve current availability rules. |
 | Application email AJ-17 | APPLICATION_EMAIL_ENABLED stays off | Production transport code review, exact immutable approval/authorization, current recipient/attachment/privacy policy and controlled pilot explicitly approved | Disable sending; retain receipts/unknown blockers, documents and authorizations. |

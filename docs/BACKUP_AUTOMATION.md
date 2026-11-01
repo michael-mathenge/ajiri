@@ -1,5 +1,16 @@
 # Automatic private backups
 
+1 November evidence reconciliation: the 26 October scheduled run completed its
+private off-server copy and isolated 17-file restore; the MVP1 release also has
+verified off-server recovery evidence. Do not repeat "first run unverified" as a
+current task. Check the latest receipt for each later run. Last recorded hosting
+expiry is 30 November. After the separately approved one-time cleanup, the dashboard
+showed 228.7/512 MB (45%used):17older server snapshots removed, four newest verified
+snapshots retained; off-server copies untouched. Restore/venv-backup folders were
+already absent. Routine automation still reports retention candidates only; this
+one-time pruning does not authorize automatic future deletion. Obtain fresh
+readings before a release.
+
 The active Codex automation **Verify and copy Ajiri daily backup**
 (`verify-and-copy-ajiri-daily-backup`) is scheduled daily at **10:00 Africa/Nairobi**.
 It coordinates the existing verified backup command and private off-server copy.
