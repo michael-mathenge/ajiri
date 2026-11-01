@@ -1392,3 +1392,13 @@ authenticated list/detail API. It never supplies jobs to alerts, saved searches,
 application preparation, sending, employer publication or public vacancy pages.
 A source link is for checking evidence, not proof that applications are open.
 No publication records are rewritten. Known closed or scam-flagged rows stay hidden.
+
+## responsive-navigation
+
+The header keeps the brand and theme/menu controls in fixed grid positions.
+Below 1100 pixels, the menu opens as a full-width column. Medium desktop widths
+give navigation its own row; wide screens use one row with enough room for every
+signed-in link and logout. Labels stay whole and controls retain 44-pixel targets.
+Real-browser tests check guest/member layouts from 320 to 1843 pixels, including
+overflow, overlapping targets and menu visibility. Navigation never changes API
+authorization or feature eligibility.

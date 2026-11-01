@@ -45,3 +45,23 @@ and exactly Strict-Transport-Security: max-age=300, without subdomains/preload.
 This corroborates the completed native-WSGI activation above; no settings or code
 were changed. AJ-12 remains Done; comment10172 and its reconciled description record
 the current evidence while retaining historical blocked notes as superseded.
+
+## Seven-day HSTS rollout — 1 November 2026
+
+Michael explicitly authorized updating only the nonsecret SECURE_HSTS_SECONDS
+entry from300 to604800. A guarded byte replacement required exactly one matching
+entry, preserved every other byte and the existing file mode, and printed no file
+contents or credentials. No environment copy or new secret-bearing backup was made.
+Django check passed before reloading the existing web app. Live HTTPS health at
+17:08:56UTC returned200/statusok and exactly Strict-Transport-Security:
+max-age=604800, without subdomains/preload. The earlier300-second records above
+remain historical Stage B evidence, not the current operator target.
+
+Seven days is the next gradual rollout stage, following Django's guidance to
+increase after HTTPS verification:
+https://docs.djangoproject.com/en/6.0/ref/middleware/#http-strict-transport-security
+The code's fallback remains staged300; the production override is604800. Keep
+native HTTPS/proxy handling, redirect and host Force HTTPS unchanged. Rollback of
+this one value is300 plus reload, but browsers retain an already received HSTS
+policy until it expires or a later valid HTTPS response updates it. No database,
+application eligibility, sending or feed-display setting changed in this operation.
