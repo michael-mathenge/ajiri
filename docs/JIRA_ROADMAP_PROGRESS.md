@@ -1706,3 +1706,48 @@ or changed; three existing cache entries and private configuration were preserve
 Rollback for the feed application remains source3408565 plus reload, preserving
 current data/receipts. Disabling JOB_FEED_DISPLAY_ENABLED rolls back optional browse
 visibility; it is already off. No schema rollback or old-data restoration is needed.
+
+## Responsive topbar, private counts instructions and HSTS — 1 November 2026
+
+On isolated codex/responsive-topbar from reviewed d964a7a, reproduced the member
+navigation defect in Chromium: at1843px logout wrapped50px below the other links.
+The new browser regression failed against the prior build, then passed after the
+CSS fix. Header now uses an explicit full-width grid: collapsed column below1100,
+separate navigation row at medium desktop widths, and a complete wide-screen row
+at1440+. Brand/theme/menu retain stable positions, labels stay whole, inline body
+links remain underlined, and every visible header control stays at least44px high.
+Guest/light and member/dark views passed nine widths320,360,390,768,1024,1100,
+1280,1440,1843, including overflow, overlap, mobile menu visibility and wide-row
+alignment. Test traffic uses a disposable local DB and aborts external requests.
+
+Actual checks: Python3.12 manage.py check and migration drift passed; full503tests
+ran397.005s, OK with one skip and network/SMTP blocked. Node24.19 locked npm ci
+installed363packages; lint/ESLint passed,155tests across27files passed, Prettier
+formatted the changed CSS, and final build passed2.13s. All38generated files matched.
+Ruff0.17.1 passed. The first optional browser install selected a3.13 native wheel;
+its import failed under3.12. Reinstalled into a separate ignored target explicitly
+using pinned3.12, then browser regression passed. No production dependency change.
+
+HSTS one-key exception was explicitly approved by Michael. Production
+SECURE_HSTS_SECONDS changed300 to604800 with all other bytes and file mode
+preserved; no contents/credentials printed or copied. Check passed before reload;
+HTTPS health at17:08:56UTC returned200/statusok/max-age=604800, no subdomains/preload.
+No database, job eligibility, sending or feed-display setting changed. This is a
+configuration rollout on source d964a7a, not evidence that the local topbar is live.
+
+Documentation growth was measured: older checkout20tracked docs, reviewed-main
+107before cleanup,58after51historical removals and two entry documents. Remaining
+feature/runbook guides are current references, not pending work. Updated the existing
+index and activation guides; no new top-level document was added for this package.
+The counts traceback used systemPython3.13 and failed importing Celery before Django
+could discover commands. Existing hosting console now showed ajiri3.12.8 and import
+Celery ok. Documented absolute /home/Mathenge/.virtualenvs/ajiri/bin/python commands;
+no system installation, production counts, ingestion or sending was performed.
+
+Michael reconfirmed clearly warned browse-only rows may be shown at eligible0.
+The private guide explains eligible versus supplemental_unverified/browse_on,
+owner-run one-key activation and reload, and unchanged freshness/sending boundaries.
+The code default staysFalse; the agent did not change the display setting. Owner
+reported AJ15 sync applied successfully; retain dedup cache and do not repeat it.
+Remote exact-head checks and a verified deployment are still required for the
+new header. Generated frontend_build must remain the final frontend-package commit.

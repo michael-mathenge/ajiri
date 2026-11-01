@@ -128,6 +128,65 @@ class BrowserJourney(LiveServerTestCase):
         self.assertEqual(DeliveryDailyBudget.objects.count(), 0)
         self.assertEqual(mail.outbox, [])
 
+    def test_navigation_fits_phone_tablet_and_wide_desktop(self):
+        from accounts.models import User
+        from rest_framework_simplejwt.tokens import RefreshToken
+        user = User.objects.create_user(email='navigation-browser@example.invalid')
+        access = str(RefreshToken.for_user(user).access_token)
+
+        def journey():
+            with sync_playwright() as playwright:
+                browser = playwright.chromium.launch()
+                try:
+                    for signed_in in (True, False):
+                        context = browser.new_context(viewport={'width': 1843, 'height': 900}, color_scheme='light')
+                        if signed_in:
+                            context.add_init_script('localStorage.setItem("access_token", '+json.dumps(access)+')')
+                        context.route('**/*', lambda route: route.continue_()
+                            if route.request.url.startswith(self.live_server_url+'/') else route.abort())
+                        page = context.new_page()
+                        page.goto(self.live_server_url+'/')
+                        expect(page.get_by_role('heading', name=('Find your next chapter.' if signed_in
+                            else 'Build your CV. Prepare your next application.'), exact=True)).to_be_visible()
+                        if signed_in:
+                            page.get_by_role('button', name='Switch to dark mode', exact=True).click()
+                        expect(page.get_by_role('link', name='Ajiri Kenya home')).to_be_visible()
+                        nav = page.get_by_role('navigation', name='Main navigation')
+                        for width in (1843, 1440, 1280, 1100, 1024, 768, 390, 360, 320):
+                            page.set_viewport_size({'width': width, 'height': 900})
+                            toggle = page.get_by_role('button', name='Open menu', exact=True)
+                            if width < 1100:
+                                expect(nav).not_to_be_visible()
+                                toggle.click()
+                            expect(nav).to_be_visible()
+                            controls = nav.locator(':scope > a, :scope > button')
+                            boxes = controls.evaluate_all('elements => elements.map(e => { const r=e.getBoundingClientRect(); return {x:r.x,y:r.y,right:r.right,bottom:r.bottom,height:r.height}; })')
+                            header_boxes = page.locator('.topbar a, .topbar button').evaluate_all('elements => elements.filter(e => e.getClientRects().length).map(e => { const r=e.getBoundingClientRect(); return {x:r.x,y:r.y,right:r.right,bottom:r.bottom,height:r.height}; })')
+                            assert page.evaluate('document.documentElement.scrollWidth <= window.innerWidth'), (signed_in, width)
+                            assert all(b['x'] >= 0 and b['right'] <= width+1 and b['height'] >= 44 for b in header_boxes), (signed_in, width, header_boxes)
+                            for index, box in enumerate(header_boxes):
+                                for other in header_boxes[index+1:]:
+                                    assert (box['right'] <= other['x']+1 or other['right'] <= box['x']+1
+                                        or box['bottom'] <= other['y']+1 or other['bottom'] <= box['y']+1), (width, box, other)
+                            if width == 1843:
+                                evidence = Path(settings.BASE_DIR).parent/'.verification'/'navigation'
+                                evidence.mkdir(parents=True, exist_ok=True)
+                                page.locator('.topbar').screenshot(path=str(evidence/('member-wide.png' if signed_in else 'guest-wide.png')))
+                                assert max(b['y'] for b in boxes)-min(b['y'] for b in boxes) <= 2, boxes
+                            if width < 1100:
+                                if width == 390:
+                                    page.locator('.topbar').screenshot(path=str(evidence/('member-mobile.png' if signed_in else 'guest-mobile.png')))
+                                page.get_by_role('button', name='Close menu', exact=True).click()
+                                expect(nav).not_to_be_visible()
+                        context.close()
+                finally:
+                    browser.close()
+        with patch('jobs.brevo_transport.BrevoTransport.send') as provider:
+            with ThreadPoolExecutor(max_workers=1) as worker:
+                worker.submit(journey).result(timeout=120)
+            provider.assert_not_called()
+        self.assertEqual(DeliveryAttempt.objects.count(), 0)
+
     def test_public_showcase_and_private_route_boundary(self):
         from accounts.models import User
         from rest_framework_simplejwt.tokens import RefreshToken

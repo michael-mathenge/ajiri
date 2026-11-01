@@ -2,6 +2,14 @@
 
 Updated 1 November 2026. Use these entry points instead of dated checkpoint lists.
 
+The old checkout had 20 tracked files under `docs/`; reviewed main had 107 before
+cleanup. Consolidation removed 51 historical originals and added two current entry
+documents, leaving 58 tracked files including nested evidence. Updating to main
+therefore increased the old checkout's visible guides while reducing the current
+project documentation. The remaining feature/security/operations guides describe
+maintained behavior; completed reviews live in the single maintenance history.
+Use the index below rather than treating every guide as pending work.
+
 | Need | Current document |
 | --- | --- |
 | Pending work, order, owner and completion conditions | [Next actions](ROADMAP_NEXT_ACTIONS.md) |

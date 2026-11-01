@@ -61,7 +61,8 @@ are historical. Never copy a developer database/media directory onto production.
 
 For this PythonAnywhere host, verified native WSGI HTTPS means
 `SECURE_PROXY_SSL_HEADER=None`, host Force HTTPS on, Django redirect on and HSTS
-300 seconds with subdomains/preload off. W005/W021 are intentional for that policy.
+604800 seconds (seven days) with subdomains/preload off, verified 1 November 2026.
+The earlier 300-second Stage B value is historical. W005/W021 are intentional for that policy.
 Do not copy these assumptions to another hosting setup without verifying it.
 
 Rollback restores the reviewed server/client pair and changed configuration;
