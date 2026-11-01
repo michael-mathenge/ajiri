@@ -591,7 +591,7 @@ No password was requested in chat. Rollback: pause writers, return source to40c1
 restore prior writer states; retain live data and existing private configuration.
 No migration reversal or routine old-database restoration is needed.
 
-## AJ-33 forms — local verification in progress
+## AJ-33 forms ï¿½ local verification in progress
 
 Branch codex/jira-forms-validation from deployed/fetched46c7ea7. All nine form
 elements now use React Hook Form7.90.0 and Zod4.6.7 Mini through a shared resolver.
@@ -618,7 +618,7 @@ passes. Final three Chromium/axe/performance tests pass; login/register medians:
 zero trace retries. Subsequent build matches exact committed-target bytes.
 No schema migrations, server dependencies, auth-interceptor, ingestion or CI edits.
 
-## AJ-34 API contract — local implementation
+## AJ-34 API contract ï¿½ local implementation
 
 Separate branch codex/jira-api-schema from46c7ea7 while PR36 runs CI. Additive
 /api/v1 aliases reuse exact existing callbacks; ingestion/sweep stay legacy-only.
@@ -646,7 +646,7 @@ No frontend changes in this package. Ruff and hook configuration validation pass
 No migrations or production dependency changes. Source-only contract contains no
 user records; custom response-object typing limits are explicitly documented.
 
-## AJ-39 keyword search — local implementation
+## AJ-39 keyword search ï¿½ local implementation
 
 Branch codex/jira-job-search initially925cff9, then fast-forwarded to reviewed
 PR37 merge5ad44a1. Six focused backend tests pass in1.157s and two client tests
@@ -669,7 +669,7 @@ Mobile medians (login/register):
 
 No production0011 migration or real-data benchmark yet; release acceptance remains pending.
 
-## AJ-40 installability/offline — local implementation
+## AJ-40 installability/offline ï¿½ local implementation
 
 Branch codex/jira-pwa-basics fast-forwarded from5ad44a1 to reviewed PR38 merge
 5f1fcc33f40fd18335becc29bbfdf07648fb40dd. Only byte-verified generated build extras
@@ -959,7 +959,7 @@ AJ42 stays In Progress because anonymous publication remains gated. Other backlo
 items and general employer onboarding are not claimed complete.
 
 
-### 24 October 2026 — application pipeline deployed; preparation-only repair
+### 24 October 2026 ï¿½ application pipeline deployed; preparation-only repair
 
 PR50 all six checks passed at5824da3 (CI40049180274); deployed source is
 fbae0956f17df25b5d69c9a94f17b9568519e089. Applied jobs.0015 after fresh consistent
@@ -1647,3 +1647,62 @@ npm checkout and all existing stashes remain preserved. Exact bounded inventory 
 removal records are in maintenance/evidence/. Remote CI, merge and deployment must
 be verified against the eventual exact release SHA; local results alone are not
 production acceptance. JOB_FEED_DISPLAY_ENABLED stays default-off for Michael.
+
+
+## PR74 deployed; maintenance closeout â€” 1 November 2026
+
+PR74 source7758b5b plus final generated-build commit69423a3 merged as
+2a4dfdf05f5371e61e13e7a68b3009993fdd0a2a. All six checks passed on both the
+PR head (run41322887530) and merged main (run41323225515). Main was
+fast-forwarded in the original checkout; all five named stashes were preserved.
+
+Deployment pause started15:55:09UTC; ingestion/sweep were disabled, no queued or
+running workflows or other manage.py/Celery writers were found, and web was disabled.
+The database had changed, so a fresh consistent snapshot was taken:
+backup-20261101T155600665941Z-4a2ccbe5. Server verification passed. A private
+6,835,624-byte ZIP downloaded successfully; SHA256
+436efcd4b2622fd785f11dd6a50936b8795f45a7030e014c7a1511bc9690a82d matched.
+Off-server isolated restore verified SQLite integrity and17files/372876bytes.
+The new private copy's33entries were restricted to owner/SYSTEM/Administrators.
+Four previously retained snapshots and every off-server copy were preserved;
+no ongoing automatic pruning policy was inferred.
+
+Clean production checkout moved3408565 to2a4dfdf. Release planner confirmed no
+migration or dependency changes and frontend index SHA256
+b5ba62006d0c5d47937491468ecb6f6a177a98a2a2c2964388928b7c25fe03e5.
+Django check/drift passed; migration plan was empty; live DB hash stayed unchanged.
+Web was re-enabled/reloaded and both prior workflows restored by15:59:19UTC
+(4m10s). At16:01UTC health returned200/statusok/HSTS300/no-store-private;
+index, entry JS/CSS and job list/detail chunks matched committed hashes. Login200,
+unauthenticated jobs/private CV401, disabled sitemap/direct media404. The first CV
+probe used a nonexistent route (404); the configured route correctly returned401.
+
+Read-only whitelist settings confirmed feed displayFalse, freshnessTrue,
+account-securityTrue/account_security mode, application/alert emailFalse,
+saved-search/employer/publicFalse. No .env was read or edited. Michael enables the
+feed switch privately; production counts and signed-in activation smoke remain his
+next steps. Automatic approval review rejected the combined counts call (reserved
+for Michael) and later manual ingest dispatch (extra live write); neither executed.
+The web/settings checks were completed separately and workflow states reread active.
+A subsequent successful scheduled ingestion was not observed.
+
+Fifteen completed worktrees were unregistered. Nine Windows-locked native caches
+were isolated under .worktrees/.locked-remnants; no shared runtime was terminated.
+Four useful internal checkouts and the external npm checkout remain. Deleted99local
+and47remote stale refs: initial96/46 main-contained tips, the deployed feed branch,
+and two exact duplicate local aliases. Remote deletion used expected-tip leases;
+open PR65/66/67/71/73, unfinished stages, unique work, backup refs and stash remain.
+
+The current action list and maintenance guide now describe these completed results.
+This closeout changes documentation only; application/build source is identical to
+2a4dfdf. Reuse the recorded503backend/155frontend tests, Node24.19 locked install,
+lint/build/schema/Ruff checks for that unchanged source; the closeout PR still must
+pass required remote checks. No fresh passing result is inferred from a queued check.
+The Jira report compares against the13:19EAT baseline and queues only new AJ15
+backup-cleanup progress. AJ12 comment10172 and AJ17 comment10171 were already
+recorded directly and are not duplicated. tools/jira_sync.py was never executed
+or changed; three existing cache entries and private configuration were preserved.
+
+Rollback for the feed application remains source3408565 plus reload, preserving
+current data/receipts. Disabling JOB_FEED_DISPLAY_ENABLED rolls back optional browse
+visibility; it is already off. No schema rollback or old-data restoration is needed.

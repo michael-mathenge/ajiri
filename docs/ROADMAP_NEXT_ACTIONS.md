@@ -31,39 +31,37 @@ Read-only Jira reconciliation on 1 November returned 14 open non-Epic issues:
 Evidence for the MVP1 source/flags/quota/expiry and PR73 CI is in
 `reports/MVP1_RELEASE_EXECUTION_2026-11-01.md` and the progress ledger on branch
 `codex/backend-inactive-20261031`. That broader branch and its report are not
-merged into this checkout. Current local feed results are in this checkout's ledger.
+merged into this checkout. Completed feed-release and recovery results are in this checkout's ledger.
 
-## 1. Finish the feed-display release package first
+## 1. Privately evaluate and activate feed discovery
 
-**State:** release package on `codex/job-feed-display`. Main and runtime acceptance
-require the exact reviewed revision and recorded release checks.
-The default-off switch is `JOB_FEED_DISPLAY_ENABLED`. No new Jira key was assigned.
+**State:** implemented, merged in PR74 and deployed as application release
+`2a4dfdf05f5371e61e13e7a68b3009993fdd0a2a`. All six checks passed on both
+PR head and merged main. The documentation closeout retains the identical application
+and generated build. `JOB_FEED_DISPLAY_ENABLED=False` was verified after reload;
+freshness stayed on and all existing sending/public/employer exclusions stayed off.
+No new Jira key was assigned and no migration was introduced.
 
-1. Review the existing diff and [display options](JOB_FEED_DISPLAY_OPTIONS.md).
-   Keep strict eligibility and known-closed/scam exclusions; no model migration.
-2. Prepare focused commits after review, checking the branch and configured
-   noreply identity; commit generated `frontend_build` last. Retain the latest
-   local test, schema and 38-file build-comparison evidence.
-3. Michael authorized the MVP1 merge and deployment on 1 November. Push/open a
-   focused PR and pass all required CI checks before merging.
-   Reconcile AJ-53's historical browse wording with the approved display-only
-   exception without weakening applications, sending, employer or public eligibility.
-4. For an authorized deployment, follow backup/off-server restore, capacity and
-   migration preflight before activating code. Michael enables the switch privately.
-   Verify labelled results and absence of apply/send actions; disabling the switch
-   is the feature rollback. Do not claim production counts before checking them.
+1. Michael runs the SELECT-only counts command below privately in the production
+   virtualenv. Counts were deliberately not run by the agent.
+2. Review the [display options](JOB_FEED_DISPLAY_OPTIONS.md), then privately enable
+   only `JOB_FEED_DISPLAY_ENABLED` and reload if desired. Leave eligibility and
+   sending gates unchanged.
+3. Verify signed-in warning/date/source rendering and absent apply, CV selection,
+   cover-letter and send controls. Scams and known closed listings stay hidden.
+   Disable this switch to roll back visibility.
 
-Read-only counts, against an existing configured database with this code installed:
+Local PowerShell (using an existing configured database):
 
 ```powershell
-Set-Location C:\dev\ajiri\.worktrees\job-feed-display\ajiri-backend
+Set-Location C:\dev\ajiri\ajiri-backend
 python manage.py job_feed_display_counts
 ```
 
-Expected: aggregate JSON including eligible, supplemental, display-off/on and
-14-day counts; no archiving, ingestion or mail. A fresh empty worktree database
-without schema cannot provide production counts. See the options document for
-owner-run production instructions after this code is available there.
+Private production Bash: `workon ajiri`, then
+`cd /home/Mathenge/ajiri/ajiri-backend` and the same management command.
+Expected: aggregate JSON for one evaluation time, with eligible, supplemental,
+display-off/on and 14-day counts. No ingestion, archiving, notification or transport.
 
 ## 2. Complete normal sending acceptance — AJ-17, AJ-26, AJ-43
 
