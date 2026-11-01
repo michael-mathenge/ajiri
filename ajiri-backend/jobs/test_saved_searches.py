@@ -148,6 +148,8 @@ class SavedSearchTests(SearchFixtures, TestCase):
         self.assertIsNone(next_window(at, 'off'))
 
     def test_weekly_search_waits_seven_days_and_caps_the_current_window(self):
+        # Keep samples inside the completed week, even within ten minutes of Nairobi midnight.
+        self.start = timezone.now() - timedelta(days=3)
         search = self.search()
         search.in_app_frequency = 'weekly'
         reset_windows(search, self.start)

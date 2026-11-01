@@ -591,7 +591,7 @@ No password was requested in chat. Rollback: pause writers, return source to40c1
 restore prior writer states; retain live data and existing private configuration.
 No migration reversal or routine old-database restoration is needed.
 
-## AJ-33 forms — local verification in progress
+## AJ-33 forms ï¿½ local verification in progress
 
 Branch codex/jira-forms-validation from deployed/fetched46c7ea7. All nine form
 elements now use React Hook Form7.90.0 and Zod4.6.7 Mini through a shared resolver.
@@ -618,7 +618,7 @@ passes. Final three Chromium/axe/performance tests pass; login/register medians:
 zero trace retries. Subsequent build matches exact committed-target bytes.
 No schema migrations, server dependencies, auth-interceptor, ingestion or CI edits.
 
-## AJ-34 API contract — local implementation
+## AJ-34 API contract ï¿½ local implementation
 
 Separate branch codex/jira-api-schema from46c7ea7 while PR36 runs CI. Additive
 /api/v1 aliases reuse exact existing callbacks; ingestion/sweep stay legacy-only.
@@ -646,7 +646,7 @@ No frontend changes in this package. Ruff and hook configuration validation pass
 No migrations or production dependency changes. Source-only contract contains no
 user records; custom response-object typing limits are explicitly documented.
 
-## AJ-39 keyword search — local implementation
+## AJ-39 keyword search ï¿½ local implementation
 
 Branch codex/jira-job-search initially925cff9, then fast-forwarded to reviewed
 PR37 merge5ad44a1. Six focused backend tests pass in1.157s and two client tests
@@ -669,7 +669,7 @@ Mobile medians (login/register):
 
 No production0011 migration or real-data benchmark yet; release acceptance remains pending.
 
-## AJ-40 installability/offline — local implementation
+## AJ-40 installability/offline ï¿½ local implementation
 
 Branch codex/jira-pwa-basics fast-forwarded from5ad44a1 to reviewed PR38 merge
 5f1fcc33f40fd18335becc29bbfdf07648fb40dd. Only byte-verified generated build extras
@@ -959,7 +959,7 @@ AJ42 stays In Progress because anonymous publication remains gated. Other backlo
 items and general employer onboarding are not claimed complete.
 
 
-### 24 October 2026 — application pipeline deployed; preparation-only repair
+### 24 October 2026 ï¿½ application pipeline deployed; preparation-only repair
 
 PR50 all six checks passed at5824da3 (CI40049180274); deployed source is
 fbae0956f17df25b5d69c9a94f17b9568519e089. Applied jobs.0015 after fresh consistent
@@ -1520,3 +1520,54 @@ offline install's audit summary is not a fresh security scan. Rollback disables 
 new switch/caller while retaining all search windows, opt-outs and receipts.
 PR71's six checks passed for c497c9e before this saved-search commit; new head CI
 remains pending. All final activation decisions remain with Michael.
+## MVP1 exact-candidate verification â€” 31 October 2026
+
+Approved release scope is account-security email only,PR72,branch
+codex/review-01-account-email. Broad PR71 is reference only;d8a4239 passed all six
+checks in CI41217043158 and is not the MVP1 release candidate.
+
+Exactec57336 local pinned Django6.1.2 full475 tests passed358.988s,one existing
+skip;external-I/O audit recorded zero connection attempts. Node24.19 locked
+install/lint,152 component tests in26 files (32.31s) and build2.01s passed;all38
+committed/generated files matched. Backend check/drift,Ruff and OpenAPI passed.
+
+PR72 CI41240872454 found a timing-dependent pre-existing saved-search fixture:
+backend3.13 and quality full-suite coverage failed expected50/actual0 near Nairobi
+midnight;backend3.12/3.14 were matrix-cancelled,not independent failures. The
+fixture placed samples two days ago plus10minutes,which can cross the last
+completed weekly boundary. Only this test now uses samples three days ago;
+production windows/freshness/limits remain unchanged. Focused22 tests passed
+26.171s;explicit frozen23:55/00:05 Nairobi regressions each passed (1.222/1.291s).
+Full pinned suite/remote rerun pending;not claimed verified until both finish.
+
+No migrations,feature,dependency,frontend,CI,hosting or production-data change in
+this correction. No deployment/flags/live sending occurred. PythonAnywhere is
+signed out;current quota,backup/restore and actual source/settings preflight remain
+unverified until owner signs in privately. All excluded feature activation stays off.
+
+## Stage2 reconciliation with deployed MVP1 â€” 1 November 2026
+
+Merged reviewed main3408565 into the AJ17/26/43 stage without rewriting history.
+Only conflict was appended roadmap evidence; both historical sections were retained.
+The existing8250419 weekly-window test correction is inherited, with no production
+feature/freshness change. No new migration,dependency,frontend,CI or hosting change.
+
+Pinned Python3.12/Django6.1.2 check and migration drift passed. Full488 tests passed
+in350.885s,one existing skip; audit hook recorded zero network/DNS/SMTP attempts.
+Node24.19 npm ci --offline,lint and build passed (1.94s);38 generated build files
+matched committed frontend_build. Offline audit output is not a fresh vulnerability
+scan. Exact-branch remote CI is pending until a PR is created; do not claim merged.
+
+MVP1 production3408565 remains separate: account email configured, employer/search/
+public/application/alert features off. This stage's GENERAL_APPLICATION_EMAIL_ENABLED,
+GENERAL_ALERT_EMAIL_ENABLED and SAVED_SEARCH_EMAIL_ENABLED remain default-off.
+Re-read AJ17/26/43 acceptance on1November: genuine current-vacancy evidence, verified
+mailbox/consent, shared budgets, exact authorization and controlled normal-transport
+acceptance remain required. No real mail or synthetic vacancy was introduced.
+No bounded production batch caller or scheduler was activated.
+
+Activation/rollback: docs/BACKEND_ACTIVATION_CHECKLIST.md account/AJ17/AJ26/AJ43 rows;
+there are no new migrations. Disable new and existing application/alert/search
+switches, stop callers, retain receipts/windows/opt-outs/unknown blockers and all
+newer account/document data. Never retry an ambiguous handoff automatically.
+Frontend full152 tests/26files passed29.15s after the required lint/build gates.
