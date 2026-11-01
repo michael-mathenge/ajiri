@@ -111,3 +111,12 @@ platform skip),141 components passed73.08s, Node24.19 locked install/lint/ESLint
 build2.37s passed, and all36 generated files matched committed bytes. System,
 migration-drift, Ruff and strict schema checks passed. Required CI and preparation
 activation remain pending. No new real email has been sent.
+
+## Owner confirmation — 1 November 2026
+
+Michael reconfirmed verified owner inbox delivery. The 25 October release evidence
+records the synthetic application pilot's inbox arrival and correct file content.
+This is owner-confirmed inbox evidence, beyond provider acceptance; it is not a
+new test run or acceptance of broader application/alert sending. AJ-17 remains
+In Progress pending its remaining normal-transport criteria. No production
+activation or sending was performed for this documentation update.

@@ -4,6 +4,7 @@ Find Kenyan jobs, build and approve a CV, and prepare job-specific applications.
 The Django API and React frontend live in this repository.
 
 - Developers: [start locally](SETUP.md).
+- Documentation: [current guides and historical records](docs/README.md).
 - Quality: [optional hooks, coverage and type baseline](docs/QUALITY_GUIDE.md), [browser acceptance](docs/BROWSER_ACCEPTANCE.md).
 - Showcase: [scope and release guide](docs/SHOWCASE_RELEASE.md), [employer review plan](docs/EMPLOYER_REVIEW_PLAN.md).
 - Users: [account to application guide](docs/USER_GUIDE.md).

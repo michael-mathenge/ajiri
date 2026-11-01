@@ -39,14 +39,22 @@ class FreshJobsMixin:
         return eligible_jobs(super().get_queryset()).select_related('publication')
 
 
-class JobListView(FreshJobsMixin, generics.ListAPIView):
+class BrowseJobsMixin(FreshJobsMixin):
+    # Browse visibility must never widen FreshJobsMixin's application gate.
+    # see docs/CONCEPTS.md#unverified-feed-display
+    def get_queryset(self):
+        from .feed_display import browse_jobs
+        return browse_jobs(self.queryset.all()).select_related('publication')
+
+
+class JobListView(BrowseJobsMixin, generics.ListAPIView):
     serializer_class = JobListSerializer
     permission_classes = (permissions.IsAuthenticated,)
     filterset_class = JobFilter
     queryset = Job.objects.filter(is_active=True, is_flagged_scam=False).order_by('-posted_at')
 
 
-class JobDetailView(FreshJobsMixin, generics.RetrieveAPIView):
+class JobDetailView(BrowseJobsMixin, generics.RetrieveAPIView):
     serializer_class = JobDetailSerializer
     permission_classes = (permissions.IsAuthenticated,)
     queryset = Job.objects.filter(is_active=True, is_flagged_scam=False)

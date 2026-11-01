@@ -1478,3 +1478,172 @@ No migrations,feature,dependency,frontend,CI,hosting or production-data change i
 this correction. No deployment/flags/live sending occurred. PythonAnywhere is
 signed out;current quota,backup/restore and actual source/settings preflight remain
 unverified until owner signs in privately. All excluded feature activation stays off.
+
+## Owner inbox evidence reconfirmed — 1 November 2026
+
+Michael reconfirmed owner inbox delivery in this chat. This corroborates the
+25 October owner synthetic application pilot evidence already recorded above:
+owner inbox arrival and correct attachment content, with sending disabled and
+reloaded afterwards. It does not establish a new sending run or broader rollout.
+No mailbox address or message contents are retained here. AJ-17 comment 10171
+records this confirmation; status remains In Progress for the separately scoped
+normal-transport acceptance. No production access or live sending occurred.
+
+## Display-only feed discovery — 1 November 2026
+
+Local branch codex/job-feed-display is based on reviewed main 3408565.
+The dirty original checkout, stash and Git configuration were preserved.
+This package remains uncommitted for review; nothing was pushed, merged or
+deployed. No production access, settings activation, live sending or migration
+occurred. The only Jira change was Michael's separately requested AJ-17 inbox
+confirmation (comment 10171); no feed ticket or acceptance was invented.
+
+First wrote docs/JOB_FEED_DISPLAY_OPTIONS.md: recommend A; compare B at 14 days
+and C hidden. JOB_FEED_DISPLAY_ENABLED defaults off. Authenticated list/detail
+queries alone gain labelled feed discovery with original source/date and no
+application or document actions. Known closure, scam, inactive, employer and
+unexplained archive cases remain excluded. Missing/stale availability archives
+are display candidates only. Shared eligibility, all application/sending guards,
+alerts, saved-search selection/email, employer publishing and public pages remain
+unchanged. Existing external-submission reporting remains a user report, not mail.
+
+Verification used Python 3.12.6 / Django 6.1.2 from the existing isolated
+backend-inactive-20261031/.tooling/parity-venv and portable Node 24.19.0.
+Commands/results:
+- manage.py check: passed, no issues.
+- manage.py makemigrations --check --dry-run: passed, no changes detected.
+- Full manage.py test --noinput via runpy with socket.connect, DNS and SMTP
+  blocked by a Python audit hook: 500 tests passed in 346.348s; one existing skip.
+- Final manage.py test jobs.test_feed_display --noinput: 28 passed in 28.440s.
+  Includes flag-on regressions for alert pilot, saved-search email and employer
+  decisions; positive/negative eligibility, direct application/package/email-send
+  rejection, filtering/pagination, scams, public pages and SELECT-only counts.
+- Node 24.19 npm ci --offline --no-audit --no-fund: 363 locked packages installed
+  from the owner's cache. Initial sandbox-local cache attempt failed ENOTCACHED;
+  the owner cache retry passed. No fresh vulnerability scan was performed.
+- npm run lint: passed. Full npm test -- --run: 155 passed in 27 files (41.61s).
+- Deadline-specific final frontend checks and regenerated build results follow below.
+- Schema dependencies were absent from the pinned runtime. Installed nine cached
+  tooling packages into ignored .verification/schema, without changing shared
+  environments; spectacular --validate --fail-on-warn and scripts/check_api_schema.py
+  passed. Reviewed OpenAPI adds four read-only job fields. An unnecessary broader
+  tooling download was stopped; optional Ruff remains unavailable (No module named
+  ruff / offline wheel unavailable), so no Ruff pass is claimed.
+
+The read-only manage.py job_feed_display_counts command returns aggregate totals
+for a single evaluation time, including display-off/on and recent candidates; its
+test rejected every non-SELECT query. No production counts were queried. See
+docs/JOB_FEED_DISPLAY_OPTIONS.md for local and owner-run production commands.
+Rollback is disabling JOB_FEED_DISPLAY_ENABLED; no database changes need reversal.
+Remote CI and production verification are intentionally out of scope.
+
+Final frontend lint passed; focused feed/list/detail/deadline suite passed all14
+tests in4files (7.74s). Node24.19 final build passed in2.16s. Regenerated
+frontend_build and verified all38 files by SHA256 with no extra files. No commits
+were made, so there is no build commit or remote CI result to claim.
+
+## Documentation housekeeping — 1 November 2026
+
+Superseding recorded release evidence was reconciled from
+`codex/backend-inactive-20261031`'s MVP1 execution report: PR72 source3408565 was
+deployed with zero migrations, account-security mail configured and other MVP1
+feature exclusions off; last observed quota482.4/512MB and expiry30November.
+PR73 stage2 head38bf953 has recorded all-six-check CI success but remains separate
+from deployment. These are existing records, not new remote or production checks.
+
+Six superseded active documents were archived with matching pre-replacement
+SHA256; current entry points and one ordered pending-work list replace duplicated
+onboarding, obsolete questions and completed proposal text. Seventeen dated
+checkpoint/release records were labelled historical. Read-only Jira returned14
+open non-Epic issues (13 In Progress, AJ80 To Do; no next page); all are covered
+in ROADMAP_NEXT_ACTIONS.md. Existing inactive implementations are referenced by
+branch rather than described as missing or deployed. See HOUSEKEEPING_REVIEW.md.
+
+Documentation-only local changes; existing uncommitted feed work and original
+checkout preserved. No Jira write, sync script, production access, push, merge,
+service activation, migration or data/backup deletion. Only documentation checks
+are run for this follow-up; earlier runtime-test results retain their dated scope.
+
+Housekeeping verification passed: six archive copies matched reviewed3408565
+content after newline normalization;83 local Markdown targets in18 active/index
+documents existed;all14 live Jira keys appeared in the action list;git diff --check
+exited0. Runtime behavior was unchanged by this documentation pass.
+
+
+## Historical documents consolidated and originals deleted — 1 November 2026
+
+Michael explicitly requested consolidation and deletion in both checkouts, preserving
+unrelated work. docs/MAINTENANCE_HISTORY.md now contains one maintenance guide,
+completed-work summary, pending snapshot and expandable dated records. Removed13
+obsolete originals in the older checkout and32 historical/archive files in the
+reviewed worktree; no separate archive copies remain. Four maintained screenshot
+guides were retained; links were repaired. All37 detail sections remain, both copies
+match, all45 selected originals are absent,96 local targets/90 record links checked,
+and git diff --check passed in both trees. Final reference SHA256 0ba400a0b6cd9f2585ef9e72d9cedb9ad16d71698fcde4a8a57ce4c1980ca6e2.
+Documentation-only changes; no runtime source, private data, backup, stash or Git
+configuration deletion. No production access, sending, push or merge.
+
+
+## Cleanup and HTTPS reconfirmation — 1 November 2026
+
+AJ12 Stage B live health/HSTS300 reconfirmed15:14EAT; Jira comment10172 and current
+acceptance description updated, status reread Done. No hosting setting/source change.
+Original checkout work preserved in stash1eafb40a; delivery-concurrency docs25ad1cfb
+and job-trust reportsf9f50a72 stashed and both worktrees verified clean. Main has only
+safety ignores modified; duplicate ignore entries removed, protections retained.
+21 server snapshots identified; four retained backups passed server checks with
+matching off-server manifests and17-file isolated-restore checks. Latest local tar
+was browser-decompressed, verified by its recorded uncompressed hash. Venv backup
+and seven restore folders were already absent. Exact17older snapshot plan prepared;
+permanent deletion still pending browser at-action confirmation. Off-server copies
+unchanged. Detailed state/restore commands in MAINTENANCE_HISTORY.md.
+
+
+## Approved snapshot pruning completed — 1 November 2026
+
+Michael supplied explicit at-action confirmation to delete the17older on-server
+backup-* directories. Exact inventory/path/symlink guards, retained manifest hashes
+and full read-only verification passed before deletion. At12:33:36UTC
+(15:33:36EAT),17snapshots were removed,114760909 logical bytes (~109.4MiB).
+Receipt /home/Mathenge/ajiri-private-backups/prune-receipt-20261101T123336Z.json
+is complete/mode0600. Independent post-check found four backup-* snapshots, all17
+approved targets absent, four retained backup verifications passed, and zero
+restore/venv-backup folders. These latter folders were already absent before this
+turn; no new deletion of them is claimed. Off-server copies/other backup types
+were untouched. Dashboard storage now228.7/512MB (45%used), superseding482.4.
+The first console input attempt did not execute; a read-only probe had a syntax
+error; the corrected guarded command completed and was independently verified.
+No source/configuration/service activation, deployment, sending, push or merge.
+One-time deletion approval does not change automatic retention policy. Current
+maintenance guide, next actions, open decisions and backup guide were updated.
+
+## Default-off feed display and durable maintenance release — 1 November 2026
+
+Michael authorized pushing, reviewed merging, MVP1 deployment and removal of
+verified stale branches on 1 November, superseding the earlier release restriction.
+The preceding entries remain dated evidence; their no-push statements are historical.
+The single historical reference is now maintenance/HISTORY.md, with current entry
+points in maintenance/README.md and docs/README.md. An additional 26 completed
+reviews/decisions were consolidated with original hashes and their originals removed.
+A check of 65 Markdown files found no missing local link targets.
+
+Final local checks on the release package:
+- Pinned Python 3.12: manage.py check passed; makemigrations --check --dry-run
+  reported no changes; full suite ran 503 tests in 600.325s, OK with one skipped.
+  A Python audit hook blocked network resolution/connect and SMTP connections.
+- Node v24.19.0: npm ci --offline --no-audit --no-fund installed 363 locked packages;
+  automatic oxlint traversal of the hidden verification directory found no files.
+  Re-running npm run lint with explicit relative source paths and --no-ignore passed;
+  npm run lint:eslint and changed-file Prettier checks passed.
+- Frontend: 155 tests across 27 files passed; quality-script test passed; build passed
+  in 2.68s. All 38 frontend_build files matched the fresh build by SHA256, with no extras.
+- Reviewed OpenAPI generated bytes matched. Ruff 0.17.1 correctness checks passed.
+  No model, migration, freshness, eligibility or sending-policy changes were made.
+
+Fourteen clean main-contained worktrees were unregistered. Eight Windows-locked
+native cache files were isolated in .worktrees/.locked-remnants; they require the
+owning runtime to exit before physical deletion. Five useful checkouts, the external
+npm checkout and all existing stashes remain preserved. Exact bounded inventory and
+removal records are in maintenance/evidence/. Remote CI, merge and deployment must
+be verified against the eventual exact release SHA; local results alone are not
+production acceptance. JOB_FEED_DISPLAY_ENABLED stays default-off for Michael.

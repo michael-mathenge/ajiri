@@ -1,6 +1,9 @@
-# WP22 private backup routine — manual operation
+# Private backup command reference
 
-Local implementation; not run on production by Codex. Database-only mode uses the
+The backup command and off-server restore have recorded production evidence;
+routine execution is covered by [backup automation](BACKUP_AUTOMATION.md). Use
+this reference for an authorized release snapshot or manual fallback, not as a
+missing first-backup task. Database-only mode uses the
 SQLite backup API and is safe with ordinary online SQLite writes (including WAL).
 Media is a separate filesystem snapshot: pause ALL writers before --include-media
 and explicitly attest with --writers-paused. That flag is an operator assertion,
@@ -8,11 +11,12 @@ not an automatic maintenance switch. Recheck source inventory after archiving;
 detected changes abort the snapshot. Never claim an online DB/media point-in-time
 snapshot without a paused-writer window.
 
-## Michael's PythonAnywhere steps after a separate approved deployment
+## PythonAnywhere command procedure
 
 Confirm private DB/media paths, free disk quota, account ownership and every static
-mapping first. This command must not alter Michael's currently pinned c4b9364
-deployment; it is available only after a future Phase A release is reviewed.
+mapping first. Use the command available in the actual deployed revision and the
+current [release checklist](DEPLOYMENT_CHECKLIST.md); obsolete Phase A source pins
+are not current deployment instructions.
 No credentials or environment backup is included. Backups contain personal data:
 0700 destination and 0600 files; do not place under the repo/public/media trees.
 

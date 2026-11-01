@@ -1,5 +1,12 @@
 # Job trust and freshness
 
+1 November reconciliation: the 23 October activation paragraph below is historical.
+MVP1 source `3408565` retains freshness but has employer posting and public jobs off.
+The approved [feed display package](JOB_FEED_DISPLAY_OPTIONS.md) adds a default-off,
+labelled authenticated browsing exception only; it is local and uncommitted. It does
+not relax any application, sending, employer or public-publication eligibility rule.
+Use [next actions](ROADMAP_NEXT_ACTIONS.md) for release and genuine employer evidence.
+
 > Current status - 23 October 2026: PR #44 is merged and source `2a301f0` is deployed. Strict freshness and reviewed employer posting are enabled. Anonymous publication and general employer email onboarding remain gated. The dated local/pending notes below are historical evidence; see the final activation section.
 
 Michael approved these requirements on23 October2026:

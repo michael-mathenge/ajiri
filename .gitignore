@@ -23,3 +23,12 @@ __pycache__/
 
 # Everything else (venvs, node_modules, databases, .env, build output) is ignored by
 # the .gitignore inside ajiri-backend/ and ajiri-frontend/.
+
+# Private local configuration and Jira sync queue/cache
+.env
+ajiri-backend/.env
+tools/.env
+.jira_sync_state.json
+reports/status_updates.json
+ajiri-backend/.coverage
+.tooling/
