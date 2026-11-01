@@ -33,8 +33,9 @@ the later explicitly authorized cleanup checks are recorded below.
 On the reviewed-source worktree, `docs/ROADMAP_NEXT_ACTIONS.md` holds the full
 ordered pending-work list and `docs/JIRA_ROADMAP_PROGRESS.md` remains the active
 execution ledger. Those current documents are not replaced by this history file.
-The original checkout contains older source; documentation cleanup does not
-upgrade its application code or change its branch.
+The original checkout was preserved in named stashes and then fast-forwarded to
+reviewed main. The completed feed worktree has been retired; this is the canonical
+historical reference.
 
 ## Completed work: what to retain rather than rebuild
 
@@ -49,7 +50,7 @@ upgrade its application code or change its branch.
 | Privacy and recovery | Registration/privacy boundaries, verified-owner data operations, private backups and isolated restore tooling | No inferred historical consent. Actual erasure requires a verified owner request; backup retention remains report-only. |
 | Showcase / runtime | Introduction and CV workflow deployed; later MVP1 source `3408565` (PR72) recorded deployed on 1 November without new migrations | Account-security mail configured; employer/search/public/application/alert exclusions off at that release; freshness on. These are recorded observations, not fresh checks. |
 | Backup operation | 26 October scheduled backup and 17-file restore completed; MVP1 off-server recovery also verified | Check each later run's receipt; do not keep listing the first run as unverified. Preserve desktop availability limits. |
-| Feed display | Default-off labelled browsing prepared on `codex/job-feed-display`; consult the release receipt for exact merged/deployed revisions | Preserve strict eligibility. Display-only jobs offer no application/send/document-generation actions; scams and known closed jobs stay hidden. |
+| Feed display | Default-off labelled browsing merged in PR74 and deployed at application release `2a4dfdf`; switch verified off, freshness on | Preserve strict eligibility. Display-only jobs offer no application/send/document-generation actions; scams and known closed jobs stay hidden. |
 
 Last recorded hosting expiry was **30 November 2026**, replacing older 14/19
 November dates. Post-cleanup quota observed on the hosting dashboard was **228.7/512 MB (45%)**,
@@ -70,7 +71,7 @@ git log -1 --format="%h %s"
 Expected: the actual dirty files, branch and local commit, not proof of deployment.
 Preserve unrelated changes, stash and Git configuration. Work from the reviewed
 release source in an isolated branch; reconcile existing implementation first.
-The original checkout and the job-feed-display worktree intentionally differ.
+Use main for the released application; retained worktrees contain separately scoped work.
 
 ### 2. Make and verify a bounded change
 
