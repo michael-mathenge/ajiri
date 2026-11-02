@@ -1751,3 +1751,66 @@ The code default staysFalse; the agent did not change the display setting. Owner
 reported AJ15 sync applied successfully; retain dedup cache and do not repeat it.
 Remote exact-head checks and a verified deployment are still required for the
 new header. Generated frontend_build must remain the final frontend-package commit.
+
+## 2 November 2026: supplemental browsing admin package (release pending)
+
+Baseline main/production supplied by Michael: 12878e1a3e51f62c3c7d1ced3f13948fd1b7190e.
+Work is isolated on codex/supplemental-admin-20261101; original main and its
+untracked reports/tools remain preserved. No production setting or job row was
+changed. Supplemental activation remains exclusively Michael's action.
+
+Phase 1 recovered complete counts at 2026-11-01T17:09:00.356422+00:00: total 1823,
+scam_flagged 12, eligible 0, supplemental_unverified 1808, browse_off 0, browse_on
+1808, supplemental_posted_within_14_days 1372. Old browsing had no age cap and
+allowed missing posted dates. Michael's read-only production query confirmed
+JOB_FEED_DISPLAY_ENABLED=false. Residual IDs 1, 779, 980 are inactive pilot rows
+(deployment-check, ajiri-owner-alert-pilot, ajiri-owner-application-pilot), null
+posted dates and no publication. Retain/exclude them; no data repair is needed.
+Production /admin/ returned 302 to /admin/login/?next=/admin/ on 1 November.
+
+Implemented the disabled admin singleton, protected singleton ID constraint,
+superuser-only controls, atomic actor/old/new audit, read-only audit admin, bounded
+60-second fail-closed cache and emergency force-off. Retired environment-enable
+input is never read. The named inclusive 14-day posted-date window excludes null,
+future and older dates. List/detail/ordinary search retain availability warnings;
+outbound labels say availability not verified. Existing HTTP(S), new-tab and
+noopener/noreferrer safeguards remain. Skill scores remain; supplemental rows
+create no notifications or saved-search matches and enter no alerts/public pages,
+sitemap or JobPosting metadata. Application/document/send eligibility stays strict.
+
+Cookie defaults were already secure in production; no HTTPS/CORS/JWT/hosting
+configuration was changed. Admin login now has shared hashed-IP counters and
+fail-closed storage handling. The configurable single admin segment defaults to
+admin/; a private override makes the old route 404. No secret/provider flag is
+exposed. Existing maintenance documentation covers owner activation, audit,
+backup/quota, smoke checks, rollback, private route and console account recovery,
+plus general account-security email prerequisites without enabling or sending it.
+
+Checks so far: manage.py check and makemigrations --check --dry-run passed. Final
+full Python 3.12 suite passed 518 tests in 411.731s (one platform skip). The
+strengthened exact-pilot/off-mode/audited-rollback tests also passed (10 tests).
+Node 24.19 npm ci installed locked dependencies; lint, ESLint, 155 frontend tests
+across 27 files and frontend quality hooks passed. Ruff 0.17.1, unchanged OpenAPI
+contract and 16 helper tests passed. Runtime/development backend pins match the
+existing Python environment exactly; no dependency or lockfile change. npm reported
+the lockfile's five advisories (four moderate, one high); no automatic upgrades.
+The first sandboxed npm installation could not access the registry; the authorized
+network-enabled retry succeeded. UTF-8 documentation writing was corrected before
+review. A first standalone migration harness reused stale loader state; the
+corrected fresh-loader rehearsal passed forward/reverse/forward on an isolated
+synthetic database, preserving 34 existing tables and all three search triggers,
+integrity ok, singleton off. No production restoration or reverse migration ran.
+
+Final frontend build passed in 2.94s; all 38 generated files match dist bytes.
+Eleven real Chromium journeys passed in 83.246s on the synthetic database. The
+optional local Lighthouse suite was not run; Linux CI performance is still a
+required gate. Read-only production inspection on 2 November confirmed clean
+12878e1 source and Secure session/CSRF cookies. Computer Use then stopped on a
+browser-URL confidence guard; no further browser input was attempted.
+
+Required next steps: final generated-build commit; push/PR; all six required CI checks; fresh verified private backup and
+off-server isolated restore; jobs.0017 migration before requests resume; exact
+deployed/main and effective-off verification. This entry is not deployment proof.
+No manual ingestion, live email, Daraja, charging, public activation, backup/branch
+pruning or Jira sync was run. Supplemental work needs a verified Jira key; do not
+invent one or mark related sending/public stories Done from synthetic tests.

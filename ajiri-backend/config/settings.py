@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
 import os
+import re
 from pathlib import Path
 
 from django.core.exceptions import ImproperlyConfigured
@@ -74,7 +75,7 @@ CSRF_TRUSTED_ORIGINS = env_list(
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
+    'config.admin_site.AjiriAdminConfig',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -253,6 +254,7 @@ REST_FRAMEWORK = {
         'health': os.environ.get('THROTTLE_HEALTH_RATE', '60/min'),
         'csrf': os.environ.get('THROTTLE_CSRF_RATE', '60/min'),
         'login': os.environ.get('THROTTLE_LOGIN_RATE', '10/min'),
+        'admin_login': os.environ.get('THROTTLE_ADMIN_LOGIN_RATE', '10/min'),
         'register': os.environ.get('THROTTLE_REGISTER_RATE', '5/hour'),
         'refresh': os.environ.get('THROTTLE_REFRESH_RATE', '60/min'),
         'apply': os.environ.get('THROTTLE_APPLY_RATE', '20/hour'),
@@ -287,6 +289,18 @@ if throttle_cache_dir:
             'OPTIONS': {'MAX_ENTRIES': 10000},
         },
     }
+
+# File counters are shared by this host's workers even without an opt-in cache.
+# Hashed identities only; never serve this directory or put it in the checkout.
+# see docs/CONCEPTS.md#admin-job-browsing
+if 'CACHES' not in globals():
+    CACHES = {'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}}
+CACHES['admin_login'] = {
+    'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+    'LOCATION': str(Path.home() / 'ajiri-admin-login-cache'),
+    'TIMEOUT': 120,
+    'OPTIONS': {'MAX_ENTRIES': 10000},
+}
 
 from datetime import timedelta
 
@@ -437,4 +451,11 @@ LOGGING = {
 }
 
 # see docs/CONCEPTS.md#unverified-feed-display
-JOB_FEED_DISPLAY_ENABLED = env_bool('JOB_FEED_DISPLAY_ENABLED', False)
+# Retired JOB_FEED_DISPLAY_ENABLED is deliberately never read.
+JOB_FEED_DISPLAY_FORCE_OFF = env_bool('JOB_FEED_DISPLAY_FORCE_OFF', False)
+ADMIN_URL_PATH = os.environ.get('ADMIN_URL_PATH', 'admin/').strip()
+if not re.fullmatch(r'[A-Za-z0-9_-]+/', ADMIN_URL_PATH) or ADMIN_URL_PATH.split('/')[0] in {
+    'api', 'media', 'static', 'assets', 'vacancies', 'jobs', 'profile', 'applications',
+    'cv-builder', 'login', 'register', 'plans', 'about', 'privacy', 'employers',
+    'notifications', 'saved-searches'}:
+    raise ImproperlyConfigured('ADMIN_URL_PATH must be a non-reserved single path segment ending in /.')

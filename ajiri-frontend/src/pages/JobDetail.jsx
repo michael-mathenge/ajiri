@@ -256,9 +256,11 @@ export default function JobDetail() {
                 rel="noopener noreferrer"
                 className="inline-link"
               >
-                {job.publication?.origin === 'employer'
-                  ? 'Open employer application page'
-                  : 'View original listing'}
+                {job.display_only
+                  ? 'View original listing, availability not verified'
+                  : job.publication?.origin === 'employer'
+                    ? 'Open employer application page'
+                    : 'View original listing'}
                 <span className="sr-only"> (opens in a new tab)</span>
                 <ArrowRight size={16} aria-hidden="true" />
               </a>

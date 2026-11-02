@@ -7,14 +7,15 @@ import { availableAt, displayableAt } from '../hooks/useVacancyClock'
 import apiClient from '../api/client'
 
 vi.mock('../api/client', () => ({ default: { get: vi.fn(), post: vi.fn() } }))
-const notice = "Not verified: check the employer's page before applying"
+const notice =
+  "Availability not verified: check the employer's original listing."
 const job = {
   id: 1,
   title: 'Unverified developer',
   company_name: 'Synthetic',
   description: 'Synthetic role',
   source_name: 'Feed',
-  posted_at: null,
+  posted_at: new Date().toISOString(),
   publication: { status: 'archived' },
   display_only: true,
   display_notice: notice,
@@ -38,17 +39,24 @@ beforeEach(() => {
   )
 })
 
-it('displays labelled feed cards with source and explicit missing date', async () => {
+it('displays labelled recent feed cards with safe original links', async () => {
   render(
     <MemoryRouter>
       <JobList />
     </MemoryRouter>
   )
   expect(await screen.findByText(notice)).toBeVisible()
-  expect(screen.getByText('Posted date not supplied')).toBeVisible()
   expect(
-    screen.getByRole('link', { name: 'View original listing' })
+    screen.getByRole('link', {
+      name: 'View original listing, availability not verified',
+    })
   ).toHaveAttribute('href', job.original_source_url)
+  expect(
+    screen.getByRole('link', { name: /View original listing/ })
+  ).toHaveAttribute('rel', 'noopener noreferrer')
+  expect(
+    screen.getByRole('link', { name: /View original listing/ })
+  ).toHaveAttribute('target', '_blank')
   expect(
     screen.queryByRole('button', { name: /apply|send|prepare/i })
   ).not.toBeInTheDocument()
@@ -63,10 +71,15 @@ it('displays details without application or document actions', async () => {
     </MemoryRouter>
   )
   expect(await screen.findByText(notice)).toBeVisible()
-  expect(screen.getByText('Posted date not supplied')).toBeVisible()
   expect(
     screen.getByRole('link', { name: /View original listing/ })
   ).toHaveAttribute('href', job.original_source_url)
+  expect(
+    screen.getByRole('link', { name: /View original listing/ })
+  ).toHaveAttribute('rel', 'noopener noreferrer')
+  expect(
+    screen.getByRole('link', { name: /View original listing/ })
+  ).toHaveAttribute('target', '_blank')
   expect(screen.queryByText('Prepare application')).not.toBeInTheDocument()
   expect(screen.queryByText('Generate cover letter')).not.toBeInTheDocument()
   expect(screen.queryByLabelText('Approved CV version')).not.toBeInTheDocument()

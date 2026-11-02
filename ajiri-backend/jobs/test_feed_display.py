@@ -15,15 +15,21 @@ from .freshness import eligible_jobs
 from .models import Job, JobPublication, Application
 
 
-@override_settings(JOB_FRESHNESS_ENFORCED=True, JOB_FEED_DISPLAY_ENABLED=True)
+@override_settings(JOB_FRESHNESS_ENFORCED=True, JOB_FEED_DISPLAY_FORCE_OFF=False)
 class FeedDisplayTests(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(email='feed@example.invalid')
         self.client = APIClient()
         self.client.force_authenticate(self.user)
         self.at = timezone.now()
+        from .models import JobBrowsingSettings
+        JobBrowsingSettings.objects.filter(pk=1).update(supplemental_browsing_enabled=True)
+        from django.core.cache import cache
+        cache.clear()
+        self.addCleanup(cache.clear)
 
     def job(self, **values):
+        values.setdefault('posted_at', self.at)
         return Job.objects.create(title='Python developer', company_name='Synthetic',
             description='Synthetic role', source_name='MyJobMag Kenya',
             source_url=f'https://example.invalid/{Job.objects.count()}', **values)
@@ -32,7 +38,7 @@ class FeedDisplayTests(TestCase):
         job = self.job(external_application_url='https://example.invalid/apply-elsewhere')
         eligible = list(eligible_jobs().values_list('pk', flat=True))
         for enabled in (False, True):
-            with self.settings(JOB_FEED_DISPLAY_ENABLED=enabled):
+            with patch('jobs.browsing.supplemental_browsing_enabled', return_value=enabled):
                 self.assertEqual(list(eligible_jobs().values_list('pk', flat=True)), eligible)
                 response = self.client.get('/api/jobs/')
                 self.assertEqual(response.data['count'], int(enabled))
@@ -44,17 +50,17 @@ class FeedDisplayTests(TestCase):
                         self.assertFalse(data['can_apply'])
                         self.assertEqual(data['display_notice'], NOTICE)
                         self.assertEqual(data['original_source_url'], job.source_url)
-                        self.assertIsNone(data['posted_at'])
+                        self.assertIsNotNone(data['posted_at'])
                 for path in ('apply/', 'generate-cover-letter/'):
                     method = self.client.post if path == 'apply/' else self.client.get
                     self.assertEqual(method(f'/api/jobs/{job.pk}/{path}').status_code, 404)
 
     def test_candidate_boundaries_and_archive_allowlist(self):
-        missing = self.job()
+        missing = self.job(posted_at=None)
         stale = self.job(posted_at=self.at-timedelta(days=40))
         JobPublication.objects.create(job=stale, origin='rss', status='published',
             closes_at=self.at+timedelta(days=1), confirmed_at=self.at-timedelta(days=40))
-        allowed = {missing.pk, stale.pk}
+        allowed = set()
         for reason in ('availability_not_verified', 'deadline_or_confirmation_expired',
                        'source_closed', 'source_closed_or_deadline_passed', 'employer_withdrew', 'unknown'):
             job = self.job()
@@ -94,7 +100,7 @@ class FeedDisplayTests(TestCase):
         JobPublication.objects.create(job=verified, origin='rss', status='published',
             closes_at=self.at+timedelta(days=1), confirmed_at=self.at)
         for enabled in (False, True):
-            with self.settings(JOB_FEED_DISPLAY_ENABLED=enabled):
+            with patch('jobs.browsing.supplemental_browsing_enabled', return_value=enabled):
                 self.assertEqual(set(eligible_jobs(at=self.at).values_list('pk', flat=True)), {verified.pk})
 
     def test_existing_package_authorization_and_email_send_stay_blocked(self):
@@ -104,7 +110,7 @@ class FeedDisplayTests(TestCase):
         app = Application.objects.create(user=self.user, job=job, status='ready_for_review',
             application_method='email')
         for enabled in (False, True):
-            with self.settings(JOB_FEED_DISPLAY_ENABLED=enabled):
+            with patch('jobs.browsing.supplemental_browsing_enabled', return_value=enabled):
                 with self.assertRaises(PackageConflict):
                     require_editable(app)
                 with self.assertRaises(PackageConflict):
@@ -115,7 +121,7 @@ class FeedDisplayTests(TestCase):
         from .matching import notify_matching_profiles
         job = self.job()
         for enabled in (False, True):
-            with self.settings(JOB_FEED_DISPLAY_ENABLED=enabled), patch('jobs.matching.send_match_email') as send:
+            with patch('jobs.browsing.supplemental_browsing_enabled', return_value=enabled), patch('jobs.matching.send_match_email') as send:
                 self.assertEqual(notify_matching_profiles(job), 0)
                 send.assert_not_called()
 
@@ -143,7 +149,7 @@ class FeedDisplayTests(TestCase):
                 in_app_frequency='daily', email_frequency='daily')
             reset_windows(search, start)
             search.save()
-            with self.settings(JOB_FEED_DISPLAY_ENABLED=enabled), patch('jobs.brevo_transport.BrevoTransport.send') as send:
+            with patch('jobs.browsing.supplemental_browsing_enabled', return_value=enabled), patch('jobs.brevo_transport.BrevoTransport.send') as send:
                 self.assertEqual(collect_due(search.pk), [])
                 self.assertEqual(capture_due_email(search.pk), [])
                 send.assert_not_called()
@@ -165,9 +171,10 @@ class FeedDisplayTests(TestCase):
         self.assertEqual(data['scam_flagged'], 1)
         self.assertEqual(data['eligible'], 0)
         self.assertEqual(data['supplemental_unverified'], 2)
+        self.assertEqual(data['supplemental_browsing_window_days'], 14)
         self.assertEqual(data['browse_off'], 0)
         self.assertEqual(data['browse_on'], browse_jobs().count())
-        self.assertEqual(data['supplemental_posted_within_14_days'], 1)
+        self.assertEqual(data['supplemental_posted_within_14_days'], 2)
 
     def test_anonymous_cannot_browse(self):
         job = self.job()
@@ -186,6 +193,25 @@ class FeedDisplayTests(TestCase):
         self.assertTrue(browse_jobs().filter(pk=job.pk).exists())
         self.assertFalse(listings().filter(pk=job.pk).exists())
 
+    @override_settings(PUBLIC_JOBS_ENABLED=True, PUBLIC_JOB_ORIGIN='https://jobs.example.invalid')
+    def test_public_http_surfaces_and_metadata_exclude_supplemental(self):
+        from .public_views import job_path
+        job = self.job()
+        self.assertTrue(browse_jobs().filter(pk=job.pk).exists())
+        public = self.client.get(job_path(job))
+        self.assertEqual(public.status_code, 404)
+        self.assertNotIn(b'JobPosting', public.content)
+        for path in ('/sitemap.xml', '/sitemap-jobs-1.xml'):
+            response = self.client.get(path)
+            self.assertNotIn(job_path(job).encode(), response.content)
+
+    def test_ordinary_search_preserves_warning_and_display_only(self):
+        self.job()
+        response = self.client.get('/api/jobs/?q=Python&location=')
+        self.assertEqual(response.data['count'], 1)
+        self.assertEqual(response.data['results'][0]['display_notice'], NOTICE)
+        self.assertFalse(response.data['results'][0]['can_apply'])
+
 
 # Exercise established consent, provider and employer decisions with the switch
 # on as well as the existing suite's default-off coverage.
@@ -194,17 +220,25 @@ from . import test_saved_searches as search_cases
 from . import test_freshness as freshness_cases
 
 
-@override_settings(JOB_FEED_DISPLAY_ENABLED=True)
+@override_settings(JOB_FEED_DISPLAY_FORCE_OFF=False)
 class FeedDisplayAlertRegressionTests(alert_cases.AlertDeliveryTests):
-    pass
+    def setUp(self):
+        super().setUp()
+        mock = patch('jobs.browsing.supplemental_browsing_enabled', return_value=True)
+        mock.start()
+        self.addCleanup(mock.stop)
 
 
-@override_settings(JOB_FEED_DISPLAY_ENABLED=True)
+@override_settings(JOB_FEED_DISPLAY_FORCE_OFF=False)
 class FeedDisplaySearchRegressionTests(search_cases.SavedSearchEmailTests):
-    pass
+    def setUp(self):
+        super().setUp()
+        mock = patch('jobs.browsing.supplemental_browsing_enabled', return_value=True)
+        mock.start()
+        self.addCleanup(mock.stop)
 
 
-@override_settings(JOB_FEED_DISPLAY_ENABLED=True, JOB_FRESHNESS_ENFORCED=True,
+@override_settings(JOB_FEED_DISPLAY_FORCE_OFF=False, JOB_FRESHNESS_ENFORCED=True,
     EMPLOYER_POSTING_ENABLED=True, PUBLIC_JOBS_ENABLED=True, PUBLIC_JOB_ORIGIN='https://jobs.example.invalid')
 class FeedDisplayEmployerRegressionTests(TestCase):
     setUp = freshness_cases.JobFreshnessTests.setUp

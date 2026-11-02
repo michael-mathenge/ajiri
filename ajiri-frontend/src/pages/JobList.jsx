@@ -180,6 +180,14 @@ export default function JobList() {
           </p>
         </Dialog>
       </div>
+      {currentRows.some((job) => job.display_only) && (
+        <p role="note">
+          Some listings are supplemental feed results posted within 14 days.
+          Availability not verified. Check the employer&apos;s original listing
+          before sharing information. Skill match scores describe relevance, not
+          availability. These listings do not trigger alerts.
+        </p>
+      )}
       <Link
         to={`/saved-searches?${new URLSearchParams({ q: title, location, job_type: type })}`}
       >
@@ -250,7 +258,7 @@ export default function JobList() {
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        View original listing
+                        View original listing, availability not verified
                       </a>
                     )}
                 </div>

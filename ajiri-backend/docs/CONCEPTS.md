@@ -1384,10 +1384,31 @@ extra recipients. Runtime configuration requires HTTPS links and valid provider
 configuration; console output is never security-link delivery. Provider acceptance
 is not inbox evidence. See ../../docs/BACKEND_ACTIVATION_CHECKLIST.md.
 
+## admin-job-browsing
+
+The Jobs admin singleton controls only authenticated supplemental browsing. It
+starts off; the retired environment enable flag is ignored. Force-off overrides
+cached values. Optional reads fail closed and expire within sixty seconds. A
+superuser change and its actor/old/new audit record commit in one transaction.
+Admin permits no add/delete of settings and no audit edits.
+
+`../jobs/feed_display.py` applies the named inclusive fourteen-day posted-date
+window, excluding null/future dates. `../jobs/freshness.py` still controls
+applications, alerts, saved-search collection and public pages. Skill scores
+describe relevance, not availability; supplemental rows create no notifications.
+The additive migration preserves jobs, publication data, private files and search
+triggers, creating only the settings/audit tables and a disabled singleton.
+
+`../config/admin_site.py` shares hashed login counters across workers using the
+existing proxy policy and best-effort DRF throttling; storage failures deny login.
+The configurable private admin segment defaults to admin/; choosing another
+makes the old route 404. Secure production cookie defaults stay in place. See
+the maintenance entry point for backup, quota, activation and rollback procedures.
+
 ## unverified-feed-display
 
 Browse visibility is separate from vacancy eligibility. The default-off
-JOB_FEED_DISPLAY_ENABLED switch allows labelled feed discovery only in the
+Admin browsing control allows labelled feed discovery only in the
 authenticated list/detail API. It never supplies jobs to alerts, saved searches,
 application preparation, sending, employer publication or public vacancy pages.
 A source link is for checking evidence, not proof that applications are open.
