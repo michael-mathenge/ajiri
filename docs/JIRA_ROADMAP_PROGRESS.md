@@ -1808,9 +1808,31 @@ required gate. Read-only production inspection on 2 November confirmed clean
 12878e1 source and Secure session/CSRF cookies. Computer Use then stopped on a
 browser-URL confidence guard; no further browser input was attempted.
 
-Required next steps: final generated-build commit; push/PR; all six required CI checks; fresh verified private backup and
-off-server isolated restore; jobs.0017 migration before requests resume; exact
-deployed/main and effective-off verification. This entry is not deployment proof.
+PR79 merged source144cfa94938d72cdb3823f44fb6ed0a45cde5ae1 and final generated-build
+commit71b8e35e7b0981db78f5532728b4872a873cd583 as reviewed main
+e7d78b40ac4ed2b9ff6737dba36f379a67846625. All six checks passed on the exact PR
+head in [CI41412455707](https://github.com/michael-mathenge/ajiri/actions/runs/41412455707)
+and merged main in [CI41412928813](https://github.com/michael-mathenge/ajiri/actions/runs/41412928813),
+including Linux browser/performance. Fetched main matches that merge, and its
+tree is identical to the tested PR head. Both commits use Michael's configured
+noreply author/committer identity. A clean isolated reviewed-main checkout passed
+release_preflight.py with exactly jobs.0017_job_browsing_settings and no required
+production dependency install. No historical migration, CI, JWT or CORS change.
+
+Fresh read-only HTTPS verification returned health200/statusok/HSTS604800,
+admin302 to login, and frontend HTML exactly matching baseline12878e1. Production
+remains on that baseline; the new admin menu is not yet live. Computer Use stopped
+itself on a Windows browser-URL confidence guard, so no subsequent UI input,
+writer pause, new snapshot, migration, setting edit or deployment was attempted.
+The prior owner-confirmed production display flag is false; the new singleton's
+disabled state is proven synthetically, not yet in production. Do not claim that
+the retired flag is ignored by the old production runtime.
+
+Required remaining release work: current quota/service states, a fresh verified
+private backup and off-server isolated restore, jobs.0017 while requests are paused
+before new code serves, restored prior writer states, and exact deployed/main,
+asset/private-access and effective-off verification. Michael alone activates the
+new admin switch. This entry is merged-source evidence, not deployment proof.
 No manual ingestion, live email, Daraja, charging, public activation, backup/branch
 pruning or Jira sync was run. Supplemental work needs a verified Jira key; do not
 invent one or mark related sending/public stories Done from synthetic tests.
