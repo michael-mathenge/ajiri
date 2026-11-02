@@ -1,4 +1,7 @@
 from django.contrib import admin
+import re
+from django.conf import settings
+from django.http import HttpResponseNotFound
 from django.urls import path, re_path, include
 
 from .views import frontend, HealthView
@@ -13,7 +16,7 @@ urlpatterns = [
     path('api/schema/', schema_document, name='openapi-schema'),
     path('api/v1/', include(('config.v1_urls', 'v1'))),
     path('api/health/', HealthView.as_view(), name='health'),
-    path('admin/', admin.site.urls),
+    path(settings.ADMIN_URL_PATH, admin.site.urls),
     path('api/accounts/', include('accounts.urls')),
     path('api/profiles/', include('profiles.urls')),
     path('api/jobs/', include('jobs.urls')),
@@ -24,6 +27,9 @@ urlpatterns = [
 
 # Catch-all for the React app: anything that isn't API/admin/media/static
 # gets index.html, and React Router takes over in the browser. Must stay LAST.
+if settings.ADMIN_URL_PATH != 'admin/':
+    urlpatterns += [re_path(r'^admin(?:/.*)?$', lambda request: HttpResponseNotFound())]
+
 urlpatterns += [
-    re_path(r'^(?!api/|admin/|media/|static/).*$', frontend),
+    re_path(r'^(?!api/|admin/|media/|static/|' + re.escape(settings.ADMIN_URL_PATH) + r').*$', frontend),
 ]

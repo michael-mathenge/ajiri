@@ -3,13 +3,15 @@
 see docs/CONCEPTS.md#unverified-feed-display
 """
 from django.conf import settings
+from datetime import timedelta
 from django.db.models import Q, Exists, OuterRef
 from django.utils import timezone
 
 from .freshness import eligible_jobs
 from .models import Job
 
-NOTICE = "Not verified: check the employer's page before applying"
+NOTICE = "Availability not verified: check the employer's original listing."
+SUPPLEMENTAL_BROWSING_WINDOW_DAYS = 14
 
 
 def supplemental_jobs(queryset=None, at=None):
@@ -28,7 +30,7 @@ def supplemental_jobs(queryset=None, at=None):
             'availability_not_verified', 'deadline_or_confirmation_expired'])
     )
     return (queryset.filter(is_active=True, is_flagged_scam=False)
-            .filter(Q(posted_at__isnull=True) | Q(posted_at__lte=at))
+            .filter(posted_at__gte=at-timedelta(days=SUPPLEMENTAL_BROWSING_WINDOW_DAYS), posted_at__lte=at)
             .filter(feed)
             .filter(Q(publication__closes_at__isnull=True) | Q(publication__closes_at__gt=at))
             .filter(allowed_status))
@@ -37,7 +39,9 @@ def supplemental_jobs(queryset=None, at=None):
 def browse_jobs(queryset=None, at=None, enabled=None):
     at = at or timezone.now()
     queryset = Job.objects.all() if queryset is None else queryset
-    enabled = settings.JOB_FEED_DISPLAY_ENABLED if enabled is None else enabled
+    from .browsing import supplemental_browsing_enabled
+    enabled = supplemental_browsing_enabled() if enabled is None else enabled
+    enabled = enabled and not settings.JOB_FEED_DISPLAY_FORCE_OFF
     eligible = eligible_jobs(at=at).filter(pk=OuterRef('pk'))
     result = queryset.annotate(_can_apply=Exists(eligible))
     if enabled:

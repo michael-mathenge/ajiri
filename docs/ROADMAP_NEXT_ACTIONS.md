@@ -33,35 +33,15 @@ Evidence for the MVP1 source/flags/quota/expiry and PR73 CI is in
 `codex/backend-inactive-20261031`. That broader branch and its report are not
 merged into this checkout. Completed feed-release and recovery results are in this checkout's ledger.
 
-## 1. Privately evaluate and activate feed discovery
+## 1. Supplemental browsing remains owner-activated
 
-**State:** implemented, merged in PR74 and deployed as application release
-`2a4dfdf05f5371e61e13e7a68b3009993fdd0a2a`. All six checks passed on both
-PR head and merged main. The documentation closeout retains the identical application
-and generated build. `JOB_FEED_DISPLAY_ENABLED=False` was verified after reload;
-freshness stayed on and all existing sending/public/employer exclusions stayed off.
-No new Jira key was assigned and no migration was introduced.
-
-1. Michael runs the SELECT-only counts command below privately in the production
-   virtualenv. Counts were deliberately not run by the agent.
-2. Review the [display options](JOB_FEED_DISPLAY_OPTIONS.md), then privately enable
-   only `JOB_FEED_DISPLAY_ENABLED` and reload if desired. Leave eligibility and
-   sending gates unchanged.
-3. Verify signed-in warning/date/source rendering and absent apply, CV selection,
-   cover-letter and send controls. Scams and known closed listings stay hidden.
-   Disable this switch to roll back visibility.
-
-Local PowerShell (using an existing configured database):
-
-```powershell
-Set-Location C:\dev\ajiri\ajiri-backend
-python manage.py job_feed_display_counts
-```
-
-Private production Bash: `workon ajiri`, then
-`cd /home/Mathenge/ajiri/ajiri-backend` and the same management command.
-Expected: aggregate JSON for one evaluation time, with eligible, supplemental,
-display-off/on and 14-day counts. No ingestion, archiving, notification or transport.
+The admin package supersedes environment-enable instructions. Follow the
+[maintenance procedure](../maintenance/README.md#supplemental-job-browsing).
+Release, CI and deployment status belongs in the progress ledger; code presence
+does not prove deployment. Keep the admin field off for Michael to activate.
+The named 14-day window excludes null/future posted dates. IDs 1, 779 and 980 are
+inactive owner/deployment pilots with null dates and no publication; retain them
+and keep them hidden. No production data repair is needed.
 
 ## 2. Complete normal sending acceptance — AJ-17, AJ-26, AJ-43
 

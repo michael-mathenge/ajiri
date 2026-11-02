@@ -483,6 +483,61 @@ class ApplicationSendAuthorization(models.Model):
         ]
 
 
+class JobBrowsingSettings(models.Model):
+    # see docs/CONCEPTS.md#admin-job-browsing
+    id = models.PositiveSmallIntegerField(primary_key=True, default=1, editable=False)
+    supplemental_browsing_enabled = models.BooleanField(default=False,
+        help_text='Show signed-in users supplemental feed listings posted within 14 days. '
+        'Availability is not verified. This does not enable applications, email, notifications or public pages.')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    last_changed_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,
+        on_delete=models.PROTECT, related_name='+', editable=False)
+
+    class Meta:
+        verbose_name = 'Job browsing settings'
+        verbose_name_plural = 'Job browsing settings'
+        constraints = [models.CheckConstraint(condition=models.Q(id=1), name='job_browsing_singleton')]
+
+    def __str__(self):
+        return 'Job browsing settings'
+
+    def save(self, *args, actor=None, **kwargs):
+        from django.core.exceptions import PermissionDenied, ValidationError
+        from django.db import transaction
+        from .browsing import invalidate_browsing_cache
+        if self.pk != 1:
+            raise ValidationError('Only the singleton settings row is allowed.')
+        with transaction.atomic():
+            previous = type(self).objects.select_for_update().filter(pk=1).first()
+            changed = previous is not None and previous.supplemental_browsing_enabled != self.supplemental_browsing_enabled
+            if (changed or (previous is None and self.supplemental_browsing_enabled)) and (
+                actor is None or not actor.is_active or not actor.is_superuser):
+                raise PermissionDenied('A superuser must make and audit browsing changes.')
+            if previous is None and self.supplemental_browsing_enabled:
+                raise ValidationError('Create settings off before changing them.')
+            if changed:
+                self.last_changed_by = actor
+            super().save(*args, **kwargs)
+            if changed:
+                JobBrowsingSettingsAudit.objects.create(actor=actor,
+                    old_value=previous.supplemental_browsing_enabled,
+                    new_value=self.supplemental_browsing_enabled)
+            transaction.on_commit(invalidate_browsing_cache)
+
+
+class JobBrowsingSettingsAudit(models.Model):
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name='+')
+    created_at = models.DateTimeField(auto_now_add=True)
+    old_value = models.BooleanField()
+    new_value = models.BooleanField()
+
+    class Meta:
+        verbose_name = 'Job browsing settings audit'
+        verbose_name_plural = 'Job browsing settings audit'
+        ordering = ['-created_at', '-pk']
+
+
 class ApplicationSendAttemptLink(models.Model):
     authorization = models.OneToOneField(ApplicationSendAuthorization, on_delete=models.PROTECT,
                                          related_name='attempt_link')

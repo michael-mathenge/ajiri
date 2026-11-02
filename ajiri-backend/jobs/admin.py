@@ -6,7 +6,7 @@ from django.http import Http404, HttpResponseRedirect
 from django.template.response import TemplateResponse
 from django.urls import path, reverse
 from django.utils.html import format_html
-from .models import Application, Job, Notification, JobModerationReview
+from .models import Application, Job, Notification, JobModerationReview, JobBrowsingSettings, JobBrowsingSettingsAudit
 from .moderation import review, snapshot, fingerprint, StaleReview
 
 
@@ -15,6 +15,44 @@ class JobReviewForm(forms.Form):
     decision = forms.ChoiceField(choices=[('uphold', 'Keep scam flag'), ('clear', 'Clear scam flag')])
     reason = forms.CharField(max_length=1000, widget=forms.Textarea,
         help_text='Record checked source evidence and reasoning. Do not include applicant or private account information.')
+
+
+class SuperuserBrowsingAdmin(admin.ModelAdmin):
+    actions = None
+
+    def has_module_permission(self, request):
+        return request.user.is_active and request.user.is_superuser
+
+    def has_view_permission(self, request, obj=None):
+        return self.has_module_permission(request)
+
+    def has_change_permission(self, request, obj=None):
+        return self.has_module_permission(request)
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+
+@admin.register(JobBrowsingSettings)
+class JobBrowsingSettingsAdmin(SuperuserBrowsingAdmin):
+    fields = ('supplemental_browsing_enabled', 'created_at', 'updated_at', 'last_changed_by')
+    readonly_fields = ('created_at', 'updated_at', 'last_changed_by')
+    list_display = ('__str__', 'supplemental_browsing_enabled', 'updated_at', 'last_changed_by')
+
+    def save_model(self, request, obj, form, change):
+        obj.save(actor=request.user)
+
+
+@admin.register(JobBrowsingSettingsAudit)
+class JobBrowsingSettingsAuditAdmin(SuperuserBrowsingAdmin):
+    list_display = ('created_at', 'actor', 'old_value', 'new_value')
+    fields = readonly_fields = ('created_at', 'actor', 'old_value', 'new_value')
+
+    def has_change_permission(self, request, obj=None):
+        return False
 
 
 @admin.register(Job)
