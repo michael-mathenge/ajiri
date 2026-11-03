@@ -1836,3 +1836,84 @@ new admin switch. This entry is merged-source evidence, not deployment proof.
 No manual ingestion, live email, Daraja, charging, public activation, backup/branch
 pruning or Jira sync was run. Supplemental work needs a verified Jira key; do not
 invent one or mark related sending/public stories Done from synthetic tests.
+
+## 3 November 2026: default-off deployment completed; source survey follows
+
+Production moved from clean12878e1a3e51f62c3c7d1ced3f13948fd1b7190e to exact
+reviewed main86cdf39430b1a1a87c3bb66656dacff78d3f51b1. All six exact-target checks
+passed in [CI41414160973](https://github.com/michael-mathenge/ajiri/actions/runs/41414160973).
+Requirements were unchanged; no installation or dependency change was performed.
+Ingestion/sweep call paths do not read the new tables. Both active workflows were
+paused and no queued/running/requested/waiting/pending runs remained.
+
+Dashboard quota before backup was278.4/512MB;19,198,092input bytes and
+143,901,232bytes conservative reserve fit244,957,184available bytes. No pruning.
+With web disabled and no other app commands, fresh snapshot
+backup-20261103T170555929762Z-72930371 passed manifest hashes, SQLite integrity and
+17-file/372,876-byte media validation. Web and both workflows were restored before
+download. The exact private ZIP and manifest hashes were independently checked
+off-server and an isolated17-file restore passed, with a private receipt retained
+outside Git. The manifest declares no erasure ledger included. No credentials,
+private data or backup files enter this commit. The Windows browser URL-confidence
+guard interrupted earlier access; no bypass occurred. Michael subsequently opened
+and expressly selected the in-app PythonAnywhere session, where work continued.
+
+Before staging, a second writer pause confirmed unchanged database mtime, no WAL,
+identical current media bytes versus the backup and no competing app commands.
+The exact source was staged while web requests remained disabled. Actual
+release_preflight.py, manage.py check, makemigrations --check --dry-run and
+migrate --plan passed, with only jobs.0017_job_browsing_settings pending. Migration
+applied successfully before web activation. All40existing tables retained their
+old values (Django migration/content-type/permission metadata gained only additive
+rows); all three search triggers were unchanged; SQLite integrity remained ok.
+
+After re-enable/reload, health200/HSTS604800, exact live frontend HTML and all30
+asset files passed. Admin login GET200 contained its CSRF/login form; no credentials
+were submitted. Deployed HEAD equals current remote main and source is clean.
+At2026-11-03T17:52:25.718467UTC, singleton ID1 was false, the application's
+supplemental_browsing_enabled() and normal browse query were off, no retired enable
+setting existed, audit count was0and browse count0. No pending migrations remained.
+Both writer workflows were verified active again. Their next naturally scheduled
+post-release outcomes were not yet observed; no manual run was dispatched. Final
+dashboard quota304.4/512MB; expiry remains30November. No settings, personal data,
+sending, Daraja, charging, public activation, retention deletion or Jira sync occurred.
+
+Source rollback is12878e1a3e51f62c3c7d1ced3f13948fd1b7190e with additive schema
+retained. Verify the retired enable flag is still false before reloading old code;
+never reverse0017or replace the live database. Console throttle recovery remains
+the documented dedicated caches['admin_login'].clear(), not a password reset or
+permission change; it was not executed. Owner activation and the post-activation
+audit remain pending Michael's separate action/time.
+
+The subsequent SELECT-only isolated-copy survey reconstructed all1,808original
+non-scam active rows at the recorded1November cutoff: one source,1,104recent now,
+977archived and831unverified, none with stored closing evidence. The current
+100-entry feed has37nonempty explicit future GMT expiryDate values; current code
+ignores that field. Seven match newer stored rows and30are not stored; none match
+the original cohort. Three structured source-page validThrough checks corroborate
+the calendar dates, with an earlier midnight in the feed retained conservatively.
+See JOB_FEED_DISPLAY_OPTIONS.md for per-source counts, bounded0–37opportunity,
+quality findings and the recommendation to combine a narrow adapter with genuine
+employer-direct evidence. No live row was relabelled, no ingestion was triggered.
+
+The parser proposal is isolated on codex/myjobmag-expiry-evidence-20261103 from
+86cdf39. It accepts only the observed MyJobMag host/name contract and explicit
+GMT/numeric-offset timestamps, rejecting absent/ambiguous/invalid values. Existing
+ISO precedence, archives, earlier deadlines, source closure and eligibility remain.
+Eleven focused synthetic tests passed. Full local gates and PR CI are recorded
+below when complete; this source proposal must not be merged or deployed for this
+task. Original checkout/untracked reports/tools, lockfiles, stash and Git config
+were preserved. No Jira action was performed.
+
+Local final gates: Python3.12 manage.py check and makemigrations --check --dry-run
+passed; full Django suite529tests in498.195seconds, one platform skip. Ruff0.17.1
+passed for the complete backend/scripts. Explicit existing Node24.19.0 locked
+npm ci, oxlint, ESLint,155tests/27files and build passed; all38dist files match
+committed frontend_build bytes, so there is no frontend package delta or build
+commit. npm retained the lockfile's five advisories (four moderate, one high);
+no dependency upgrade or lockfile edit occurred. The default runtime had advanced
+to24.22.1; verification used the discovered retained24.19.0runtime. The first local
+quality command found Ruff absent and stopped before the suite; the pinned checker
+was installed only in the ignored worktree verification directory, and its corrected
+check passed. Existing Python/global Node environments were not replaced. PR checks
+remain separately recorded evidence; no source merge/deployment is authorized here.

@@ -1,14 +1,19 @@
 """Explicit feed evidence only; never guess a closing date from description prose."""
 
 from datetime import datetime
+from email.utils import parsedate_to_datetime
+import re
+from urllib.parse import urlsplit
 from django.utils import timezone
 from .models import JobPublication
 
 
-def deadline(entry):
+def deadline(entry, *, source_name="", source_url=""):
     # This first source contract accepts an explicit ISO timestamp with timezone.
     # Unknown date formats stay unverified, rather than silently assuming a zone.
     raw = entry.get("application_deadline") or entry.get("closing_date")
+    if not raw:
+        return myjobmag_expiry(entry, source_name, source_url)
     if not isinstance(raw, str) or len(raw) > 80:
         return None
     try:
@@ -18,8 +23,38 @@ def deadline(entry):
         return None
 
 
+def myjobmag_expiry(entry, source_name, source_url):
+    # Only this observed source contract supplies expiryDate as an RFC timestamp.
+    # Keep its exact instant: never turn midnight into an inferred end of day.
+    # see docs/CONCEPTS.md#myjobmag-expiry-evidence
+    if source_name != "MyJobMag Kenya":
+        return None
+    try:
+        source = urlsplit(source_url)
+    except ValueError:
+        return None
+    if source.scheme not in {"http", "https"} or source.hostname not in {
+        "www.myjobmag.co.ke", "myjobmag.co.ke"
+    }:
+        return None
+    raw = entry.get("expirydate")
+    if not isinstance(raw, str) or len(raw) > 80:
+        return None
+    if not re.fullmatch(
+        r"(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun), \d{1,2} "
+        r"(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) "
+        r"\d{4} \d{2}:\d{2}:\d{2} (?:GMT|[+-]\d{4})", raw
+    ):
+        return None
+    try:
+        value = parsedate_to_datetime(raw)
+        return value if timezone.is_aware(value) else None
+    except (ValueError, TypeError, OverflowError):
+        return None
+
+
 def record(job, entry):
-    closes = deadline(entry)
+    closes = deadline(entry, source_name=job.source_name, source_url=job.source_url)
     source_closed = str(entry.get("status", "")).strip().lower() in (
         "closed",
         "expired",
