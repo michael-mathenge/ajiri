@@ -1,6 +1,9 @@
 """Explicit feed evidence only; never guess a closing date from description prose."""
 
 from datetime import datetime
+from email.utils import parsedate_to_datetime
+import re
+from urllib.parse import urlsplit
 from django.utils import timezone
 from .models import JobPublication
 
@@ -15,6 +18,37 @@ def deadline(entry):
         value = datetime.fromisoformat(raw.replace("Z", "+00:00"))
         return value if timezone.is_aware(value) else None
     except ValueError:
+        return None
+
+
+def myjobmag_expiry(entry, source_name="", source_url=""):
+    # Parsing preparation only: advert expiry is not yet a proven closing deadline.
+    # No production eligibility caller; publisher semantics need confirmation.
+    # Keep its exact instant: never turn midnight into an inferred end of day.
+    # see docs/CONCEPTS.md#myjobmag-expiry-evidence
+    if source_name != "MyJobMag Kenya":
+        return None
+    try:
+        source = urlsplit(source_url)
+    except ValueError:
+        return None
+    if source.scheme not in {"http", "https"} or source.hostname not in {
+        "www.myjobmag.co.ke", "myjobmag.co.ke"
+    }:
+        return None
+    raw = entry.get("expirydate")
+    if not isinstance(raw, str) or len(raw) > 80:
+        return None
+    if not re.fullmatch(
+        r"(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun), \d{1,2} "
+        r"(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) "
+        r"\d{4} \d{2}:\d{2}:\d{2} (?:GMT|[+-]\d{4})", raw
+    ):
+        return None
+    try:
+        value = parsedate_to_datetime(raw)
+        return value if timezone.is_aware(value) else None
+    except (ValueError, TypeError, OverflowError):
         return None
 
 

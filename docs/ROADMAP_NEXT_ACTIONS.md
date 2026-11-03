@@ -1,4 +1,4 @@
-# Pending work — 1 November 2026
+# Pending work — 3 November 2026
 
 This is the single current action list. Completed work belongs in
 [JIRA_ROADMAP_PROGRESS.md](JIRA_ROADMAP_PROGRESS.md), not in a new to-do list.
@@ -34,6 +34,14 @@ Evidence for the MVP1 source/flags/quota/expiry and PR73 CI is in
 merged into this checkout. Completed feed-release and recovery results are in this checkout's ledger.
 
 ## 1. Supplemental browsing remains owner-activated
+
+Production `86cdf39430b1a1a87c3bb66656dacff78d3f51b1` and additive migration
+jobs.0017 were verified on 3 November. The singleton and application read are
+off; no activation occurred. The fresh private off-server backup/17-file isolated
+restore and restored web/workflows passed. Final observed quota: 304.4/512 MB.
+The dated source survey is in [feed guidance](JOB_FEED_DISPLAY_OPTIONS.md#3-november-2026-source-evidence-survey).
+An expiry-parsing preparation PR has no eligibility caller; publisher closing-date
+semantics remain unverified. It is separate source work, not deployed acceptance.
 
 The admin package supersedes environment-enable instructions. Follow the
 [maintenance procedure](../maintenance/README.md#supplemental-job-browsing).
