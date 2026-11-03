@@ -47,21 +47,29 @@ or `closing_date`, neither present, so it accepts **zero** of these expiry value
 Three bounded source-page checks found explicit timezone-aware JobPosting
 `validThrough` values on the same calendar day as the corresponding feed expiry.
 The feed says midnight; structured page metadata says 23:59:59. The proposed
-adapter uses the exact earlier feed value and never extends it. Example evidence:
+preparation helper preserves the exact earlier feed value and never extends it. Example evidence:
 [page A](https://www.myjobmag.co.ke/a_fields.php?id=1378044),
 [page B](https://www.myjobmag.co.ke/a_fields.php?id=1377983),
 [page C](https://www.myjobmag.co.ke/a_fields.php?id=1377981).
-This sample supports the field mapping, not a claim that every listing is open.
+This sample establishes a listing-expiry field, not an employer closing deadline.
+The publisher permits automatic advert durations. Corroboration between its own
+two representations does not resolve that distinction. The helper is therefore
+not connected to deadline(), record() or eligibility; connecting it would require
+an explicit publisher contract for genuine application closing evidence.
 
-| Population | Current adapter | Additional potential from the narrow adapter change |
+| Population | Accepted closing evidence now | Structured-expiry opportunities, not verified gains |
 | --- | ---: | ---: |
 | Original 1,808 rows | 0 evidence-backed conversions | 0 observed: none of the 37 dated entries matches this cohort |
-| Newer already-stored rows | 0 from this field | 0–7, subject to unchanged content, unarchived state and all existing gates |
-| Current-feed entries not yet stored | 0 from this field | 0–30 through future normal ingestion, subject to all existing gates |
-| Entire 100-entry feed sample | 0 from this field | At most 37 potential candidates; 63 empty values remain unverified |
+| Newer already-stored rows | 0 from this field | 7 expiry timestamps to clarify; 0 added by the preparation-only PR |
+| Current-feed entries not yet stored | 0 from this field | 30 expiry timestamps to clarify; no manual ingestion |
+| Entire 100-entry feed sample | 0 from this field | 37 parseable expiry timestamps; 63 empty values; 0 verified gains established |
 
-These are bounded opportunities from one feed snapshot, not predicted live
-inventory or authority to backfill. The older cohort's out-of-feed source pages
+Only if the publisher confirms a real application-deadline contract could a later
+integration have a 0–7 stored / 0–30 new-row opportunity, still subject to unchanged
+content, unarchived state and all eligibility checks. Presently the accepted gain
+is zero for both the current adapter and this preparation-only PR. These are
+bounded opportunities from one feed snapshot, not predicted live inventory or
+authority to backfill. The older cohort's out-of-feed source pages
 were not exhaustively surveyed; its latent recoverable count is unknown. Do not
 extrapolate the 37% sample rate to 1,808, infer dates from prose, assume a missing
 feed entry is closed, or reopen the 977 archived rows. No live conversions occurred.
@@ -77,8 +85,9 @@ authenticity guarantees and explain that expired listings can remain accessible.
 Page existence is therefore insufficient evidence. No other configured vacancy
 source was found to recommend dropping; leave all configuration unchanged.
 
-Use both paths: the narrow, source-scoped expiry parser can help future ordinary
-ingestion; employer-direct listings with owner verification, independent staff
+Use both paths: clarify the publisher's deadline semantics before integrating the
+tested, source-scoped expiry parser; employer-direct listings with owner verification, independent staff
 review and an explicit future deadline are the stronger durable inventory path.
 Do not activate employer posting, sending, public pages or browsing for this work.
-The parser change is an unmerged PR candidate, not part of deployed `86cdf39`.
+The parsing preparation has no production caller and is an unmerged PR candidate,
+not part of deployed `86cdf39`. No freshness rule is broadened by this proposal.

@@ -5,7 +5,7 @@ import feedparser
 from django.test import TestCase, override_settings
 from django.utils import timezone
 
-from .feed_deadlines import deadline, record
+from .feed_deadlines import deadline, myjobmag_expiry, record
 from .freshness import job_is_eligible
 from .models import Job, JobPublication
 
@@ -25,11 +25,11 @@ class MyJobMagExpiryTests(TestCase):
             '<rss version="2.0"><channel><item><expiryDate>' + self.expiry
             + '</expiryDate></item></channel></rss>'
         )
-        self.assertEqual(deadline(feed.entries[0], **self.source),
+        self.assertEqual(myjobmag_expiry(feed.entries[0], **self.source),
                          datetime(2099, 12, 31, tzinfo=dt_timezone.utc))
 
     def test_numeric_offset_keeps_the_explicit_instant(self):
-        self.assertEqual(deadline({"expirydate": "Fri, 31 Dec 2099 03:00:00 +0300"}, **self.source),
+        self.assertEqual(myjobmag_expiry({"expirydate": "Fri, 31 Dec 2099 03:00:00 +0300"}, **self.source),
                          datetime(2099, 12, 31, 3, tzinfo=dt_timezone(timedelta(hours=3))))
 
     def test_missing_ambiguous_and_invalid_expiries_fail_closed(self):
@@ -38,31 +38,31 @@ class MyJobMagExpiryTests(TestCase):
                       "Fri, 32 Dec 2099 00:00:00 GMT", "Fri, 31 Dec 2099 00:00:00 +2460",
                       "Closing on " + self.expiry, "x" * 81):
             with self.subTest(value=value):
-                self.assertIsNone(deadline({"expirydate": value}, **self.source))
+                self.assertIsNone(myjobmag_expiry({"expirydate": value}, **self.source))
 
     def test_other_sources_and_hosts_do_not_gain_this_contract(self):
         for source in ({}, {**self.source, "source_name": "Other source"},
                        {**self.source, "source_url": "https://www.myjobmag.co.ke.example.invalid/job"},
                        {**self.source, "source_url": "https://[invalid"}):
             with self.subTest(source=source):
-                self.assertIsNone(deadline({"expirydate": self.expiry}, **source))
+                self.assertIsNone(myjobmag_expiry({"expirydate": self.expiry}, **source))
 
     def test_existing_explicit_iso_field_keeps_priority(self):
         entry = {"closing_date": "2099-12-01T12:00:00+03:00", "expirydate": self.expiry}
-        self.assertEqual(deadline(entry, **self.source), datetime.fromisoformat(entry["closing_date"]))
+        self.assertEqual(deadline(entry), datetime.fromisoformat(entry["closing_date"]))
         entry["closing_date"] = "2099-12-01"
-        self.assertIsNone(deadline(entry, **self.source))
+        self.assertIsNone(deadline(entry))
 
     def test_description_prose_is_never_deadline_evidence(self):
-        self.assertIsNone(deadline({"description": "Closing " + self.expiry}, **self.source))
+        self.assertIsNone(deadline({"description": "Closing " + self.expiry}))
 
     @override_settings(JOB_FRESHNESS_ENFORCED=True)
-    def test_new_explicit_evidence_uses_existing_freshness_and_scam_gates(self):
+    def test_parsed_expiry_does_not_publish_or_enable_a_vacancy(self):
         job = self.job()
         publication = record(job, {"expirydate": self.expiry})
-        self.assertEqual(publication.status, "published")
-        self.assertEqual(publication.closes_at, datetime(2099, 12, 31, tzinfo=dt_timezone.utc))
-        self.assertTrue(job_is_eligible(job))
+        self.assertEqual(publication.status, "unverified")
+        self.assertIsNone(publication.closes_at)
+        self.assertFalse(job_is_eligible(job))
         job.is_flagged_scam = True
         job.save(update_fields=["is_flagged_scam"])
         self.assertFalse(job_is_eligible(job))
@@ -71,15 +71,15 @@ class MyJobMagExpiryTests(TestCase):
         job.save(update_fields=["is_flagged_scam", "is_active"])
         self.assertFalse(job_is_eligible(job))
 
-    def test_unverified_row_can_receive_evidence_but_deadline_never_extends(self):
+    def test_source_expiry_cannot_replace_existing_deadline_evidence(self):
         job = self.job()
         publication = JobPublication.objects.create(job=job, origin="rss", status="unverified")
-        record(job, {"expirydate": self.expiry})
+        record(job, {"closing_date": "2099-12-01T00:00:00+00:00"})
         publication.refresh_from_db()
         self.assertEqual(publication.status, "published")
         record(job, {"expirydate": "Fri, 31 Dec 2100 00:00:00 GMT"})
         publication.refresh_from_db()
-        self.assertEqual(publication.closes_at.year, 2099)
+        self.assertEqual(publication.closes_at, datetime(2099, 12, 1, tzinfo=dt_timezone.utc))
 
     def test_archived_rows_are_never_revived(self):
         job = self.job()

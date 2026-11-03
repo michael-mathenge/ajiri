@@ -8,12 +8,10 @@ from django.utils import timezone
 from .models import JobPublication
 
 
-def deadline(entry, *, source_name="", source_url=""):
+def deadline(entry):
     # This first source contract accepts an explicit ISO timestamp with timezone.
     # Unknown date formats stay unverified, rather than silently assuming a zone.
     raw = entry.get("application_deadline") or entry.get("closing_date")
-    if not raw:
-        return myjobmag_expiry(entry, source_name, source_url)
     if not isinstance(raw, str) or len(raw) > 80:
         return None
     try:
@@ -23,8 +21,9 @@ def deadline(entry, *, source_name="", source_url=""):
         return None
 
 
-def myjobmag_expiry(entry, source_name, source_url):
-    # Only this observed source contract supplies expiryDate as an RFC timestamp.
+def myjobmag_expiry(entry, source_name="", source_url=""):
+    # Parsing preparation only: advert expiry is not yet a proven closing deadline.
+    # No production eligibility caller; publisher semantics need confirmation.
     # Keep its exact instant: never turn midnight into an inferred end of day.
     # see docs/CONCEPTS.md#myjobmag-expiry-evidence
     if source_name != "MyJobMag Kenya":
@@ -54,7 +53,7 @@ def myjobmag_expiry(entry, source_name, source_url):
 
 
 def record(job, entry):
-    closes = deadline(entry, source_name=job.source_name, source_url=job.source_url)
+    closes = deadline(entry)
     source_closed = str(entry.get("status", "")).strip().lower() in (
         "closed",
         "expired",

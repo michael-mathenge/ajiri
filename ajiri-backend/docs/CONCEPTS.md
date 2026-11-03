@@ -1430,15 +1430,18 @@ MyJobMag's configured XML feed supplies `expiryDate`; feedparser exposes it as
 `expirydate`. Nonempty observed values are RFC timestamps with an explicit GMT
 zone. The source's structured JobPosting metadata uses the same expiry calendar
 date in three inspected examples, although its end-of-day instant differs. The
-adapter keeps the earlier exact feed instant; it never invents an end of day.
+preparation helper keeps the exact feed instant; it never invents an end of day.
 Only the MyJobMag source name and its own HTTP(S) host can use this additional
 contract. Missing, malformed, zone-less, unknown-zone and `-0000` timestamps stay
 unverified. Existing explicit ISO deadline fields keep their priority, including
 failure on a nonempty invalid canonical field. Description prose is never parsed.
 
-This extends evidence parsing, not permission to reopen a vacancy. Existing
+The helper has no production caller. The publisher permits automatic advert
+durations, so neither this field nor the same publisher's validThrough alone
+establishes an employer's application deadline. Do not wire it into deadline()
+or record() without a confirmed closing-deadline source contract. Existing
 archive, employer-evidence, closed-state, earlier-deadline, scam, inactivity and
 24-hour RSS confirmation rules remain authoritative. A future source expiry is
-evidence under the existing rule, not a guarantee of authenticity or availability.
+not accepted closing evidence or a guarantee of authenticity or availability.
 See `../jobs/feed_deadlines.py`, `../jobs/test_feed_deadlines.py` and the dated
 source survey in `../../docs/JOB_FEED_DISPLAY_OPTIONS.md`.

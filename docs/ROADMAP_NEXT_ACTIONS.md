@@ -40,7 +40,8 @@ jobs.0017 were verified on 3 November. The singleton and application read are
 off; no activation occurred. The fresh private off-server backup/17-file isolated
 restore and restored web/workflows passed. Final observed quota: 304.4/512 MB.
 The dated source survey is in [feed guidance](JOB_FEED_DISPLAY_OPTIONS.md#3-november-2026-source-evidence-survey).
-An expiry-field parser PR is separate source work, not deployed acceptance.
+An expiry-parsing preparation PR has no eligibility caller; publisher closing-date
+semantics remain unverified. It is separate source work, not deployed acceptance.
 
 The admin package supersedes environment-enable instructions. Follow the
 [maintenance procedure](../maintenance/README.md#supplemental-job-browsing).

@@ -1892,13 +1892,18 @@ non-scam active rows at the recorded1November cutoff: one source,1,104recent now
 ignores that field. Seven match newer stored rows and30are not stored; none match
 the original cohort. Three structured source-page validThrough checks corroborate
 the calendar dates, with an earlier midnight in the feed retained conservatively.
-See JOB_FEED_DISPLAY_OPTIONS.md for per-source counts, bounded0–37opportunity,
+The publisher permits automatic advert durations, so its structured listing expiry
+is not yet an established employer application deadline. The tested helper remains
+disconnected from eligibility; accepted verified gains remain zero.
+See JOB_FEED_DISPLAY_OPTIONS.md for per-source counts, conditional0–37opportunity,
 quality findings and the recommendation to combine a narrow adapter with genuine
 employer-direct evidence. No live row was relabelled, no ingestion was triggered.
 
-The parser proposal is isolated on codex/myjobmag-expiry-evidence-20261103 from
+The preparation-only parser is isolated on codex/myjobmag-expiry-evidence-20261103 from
 86cdf39. It accepts only the observed MyJobMag host/name contract and explicit
-GMT/numeric-offset timestamps, rejecting absent/ambiguous/invalid values. Existing
+GMT/numeric-offset timestamps, rejecting absent/ambiguous/invalid values. No
+deadline() or record() caller is added; tests enforce that expiry alone cannot
+publish a job or replace existing closing evidence. Existing
 ISO precedence, archives, earlier deadlines, source closure and eligibility remain.
 Eleven focused synthetic tests passed. Full local gates and PR CI are recorded
 below when complete; this source proposal must not be merged or deployed for this
@@ -1917,3 +1922,14 @@ quality command found Ruff absent and stopped before the suite; the pinned check
 was installed only in the ignored worktree verification directory, and its corrected
 check passed. Existing Python/global Node environments were not replaced. PR checks
 remain separately recorded evidence; no source merge/deployment is authorized here.
+Those first gate results cover the earlier source head. After source-semantics
+review, the final proposal was narrowed to parsing preparation with no eligibility
+integration. Final focused/full checks are rerun and recorded separately.
+
+Final preparation-only gates passed: check, makemigrations --check --dry-run,
+repository Ruff0.17.1,11focused tests in0.050seconds and529full Django tests in
+394.201seconds (one platform skip). Frontend source/dependencies/build are unchanged
+from the successful explicit Node24.19verification above. Draft PR81 remains
+unmerged and undeployed; final-head CI is checked separately. No parser helper is
+called by the production deadline/record path, so this proposal adds zero verified
+inventory until a genuine closing-deadline contract and separate integration exist.
