@@ -1,5 +1,21 @@
 # Checkout housekeeping
 
+## Current closeout — 11 November 2026
+
+Michael authorized branch cleanup and carrying unfinished work to MVP2. Twenty
+stale local branches and seven remote development branches were archived then
+removed. All clean linked checkouts were detached at their existing commits;
+their files, ignored configuration and all five stashes remain. Four active
+Dependabot branches/reviews were preserved. PR71/73 are closed historical references.
+The temporary planning branch is retired only after reviewed merge.
+
+Start MVP2 branches from fetched reviewed main. The old stack's jobs.0017 conflicts
+with released browsing settings0017, so port focused packages with fresh additive
+migrations rather than merging the archived stack. Exact tip mappings, private
+bundle verification and recovery commands are in
+[the closeout receipt](../reports/MVP1_CLOSEOUT_2026-11-11.md).
+The inventory below is retained as dated historical evidence, not a current branch list.
+
 Fifteen clean completed checkouts were unregistered on 1 November 2026 after
 checking that their source was included in reviewed main. See the bounded inventory
 and removal results in `evidence/`. Their source remains recoverable in Git.

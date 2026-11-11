@@ -1,9 +1,31 @@
-# Pending work — 3 November 2026
+# Pending work — 11 November 2026
 
-This is the single current action list. Completed work belongs in
-[JIRA_ROADMAP_PROGRESS.md](JIRA_ROADMAP_PROGRESS.md), not in a new to-do list.
-Read-only Jira reconciliation on 1 November returned 14 open non-Epic issues:
-13 In Progress and AJ-80 To Do, with no next page. No Jira edits were made.
+This is the current action entry point. Completed evidence belongs in
+[JIRA_ROADMAP_PROGRESS.md](JIRA_ROADMAP_PROGRESS.md).
+
+1. Triage dependency alert31 and existing PR82 first (AJ81); keep the other active
+   dependency reviews67/83/84 visible. No dependency update was merged in this closeout.
+2. Start focused MVP2 branches from fetched reviewed main. Reconcile archived source
+   and migration compatibility, and measure current recovery capacity (AJ85).
+3. Resolve genuine current inventory and source-quality acceptance (AJ53/AJ82).
+4. Review [the benchmarked MVP2 proposal](MVP2_PROPOSAL.md), including candidate-
+   controlled mobile matching (AJ83), shortlist/follow-up (AJ84), and pilot/disclosure
+   gates (AJ86). Proposal estimates and targets are not delivery commitments.
+5. Complete AJ17/26/43 controlled transport acceptance and AJ42 public eligibility;
+   keep AJ79/47/48/51/44/45/46 conditional on their real external prerequisites.
+   AJ52 scanning requires an actual private engine/host before scanned-file claims.
+
+All13 unfinished stories and AJ80 carry into unreleased MVP2; six readiness/product
+proposals were added. Preserve the23 historical Update tasks. Branch recovery and
+closeout evidence are in [the receipt](../reports/MVP1_CLOSEOUT_2026-11-11.md).
+No production change was made on11November. Last available deployment/audit evidence
+records e682cac on4November with bounded supplemental browsing enabled, strict
+eligibility preserved and zero eligible vacancies. Recorded quota330/512MB is historical.
+
+## Earlier action detail — 3 November evidence
+
+The following earlier baseline and steps retain their dated context. The current
+MVP2 entry point and4November receipt above supersede older source/quota/branch values.
 
 ## Baseline: do not rebuild or repeat
 
