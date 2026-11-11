@@ -5,6 +5,14 @@ verification steps are in [next actions](docs/ROADMAP_NEXT_ACTIONS.md).
 Completed checkpoint choices, account implementation and owner inbox pilots are
 not repeated approval requests. The old list is [archived](maintenance/HISTORY.md#record-decisions-pending-2026-10-31).
 
+Dependency choices recorded11November under the current authorized maintenance
+task (reversible defaults,not additional approval checkpoints):
+
+| Item | Options | Default chosen | Impact |
+|---|---|---|---|
+| dateutil/Celery compatibility | Force dateutil3; retain older Celery; use updated compatible graph | Celery5.7 with its required dateutil2.9.0.post0 | PR67 deferred; no dependency bypass or dateutil3 timezone behaviour introduced. |
+| Residual development-tool advisory | Force minimatch11 override; downgrade ESLint; wait for supported compatibility | Keep compatible graph and track AJ87 | Production-only audit0; three moderate development nodes remain openly recorded. |
+
 | Decision/input | Who supplies it | Why it is still needed |
 | --- | --- | --- |
 | Feed-release authorization and timing | Michael | Local display code is ready for review; the explicit no-push/no-merge/no-production limit remains until changed. |

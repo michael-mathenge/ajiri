@@ -1970,3 +1970,28 @@ All five original stashes remained intact. Added five local-only stash recovery
 tags and a separate owner-private bundle; isolated restore verified all5stash
 commit objects. No stash/private history was pushed. Both bundle SHA256 values
 and commands are recorded in reports/MVP1_CLOSEOUT_2026-11-11.md.
+
+## Dependabot resolution package — 11 November 2026
+
+Current task authorizes handling the four remaining remote dependency branches.
+Original67/82/83/84heads were archived and verified under
+archive/dependabot-20261111/pr-<number>. PR67 was closed with actual resolver and
+installed-distribution evidence: updated Celery5.7 requiresdateutil2.9.0.post0,
+so3.0.0cannot compose with84. No forced/no-deps install;the compatible pin remains.
+The other three PRs are consolidated on codex/dependabot-closeout-20261111 and
+must not be closed as superseded until the replacement passes six CI checks and
+merges. PR83's old failed job explicitly showed stale committed frontend assets;
+the regenerated build is committed last,not bypassed in CI.
+
+The actual new graph installed in a separatePython3.12environment;pip check passed.
+Django6.1.3check/drift and529tests passed323.847s,one existing skip,zero external
+I/O audit attempts. Node24.19locked npm ci,Oxlint/ESLint,155tests/27files (18.63s),
+helper test and Vite8.3.6build (1.43s) passed. Ruff0.17.4/OpenAPI and16repository
+helper tests passed. Mypy2.4.1executed with309nonblocking legacy findings,not clean.
+Fresh online npm audit:0high/critical,3moderate development nodes;production-only
+audit0. Follow-redirects1.16.2security patch retained. AJ87tracks compatible removal
+of the ESLint/config-array/minimatch advisory rather than an unreviewed override
+or downgrade. No application logic,auth/cookie/CORS,ingestion,migrations or CI
+workflow change;no production deployment,flag change,live mail/charging or data
+mutation. Repository pins change toDjango6.1.3;production remains last verified6.1.2.
+See reports/DEPENDABOT_REVIEW_2026-11-11.md for explanations,root causes and rollback.

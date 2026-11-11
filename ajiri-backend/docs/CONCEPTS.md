@@ -1445,3 +1445,13 @@ archive, employer-evidence, closed-state, earlier-deadline, scam, inactivity and
 not accepted closing evidence or a guarantee of authenticity or availability.
 See `../jobs/feed_deadlines.py`, `../jobs/test_feed_deadlines.py` and the dated
 source survey in `../../docs/JOB_FEED_DISPLAY_OPTIONS.md`.
+
+## dependency-graph-refresh
+
+A dependency PR changes library versions, not only version labels. Two separately
+passing PRs can conflict when combined: Celery5.7 requires dateutil2.9.0.post0,
+so dateutil3 cannot be forced into that graph. Install the actual pinned files in
+an isolated environment, run pip check and the full suites, retain security fixes
+when combining lockfiles, and regenerate committed frontend assets last. Report
+production-only and development audit findings separately without dismissing either.
+Repository dependency pins do not establish the installed production environment.
