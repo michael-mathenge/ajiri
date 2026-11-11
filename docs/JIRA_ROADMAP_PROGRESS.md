@@ -2036,3 +2036,30 @@ recovery-capacity and other MVP2 prerequisites remain separate open work. No
 production quota, backup, runtime or pilot result was established by this slice.
 Rollback: reviewed revert of source plus matching built assets; preserve data and
 freshness settings. PR/check evidence must be recorded before integration.
+
+### AJ83 verification receipt — supersedes pending checks above
+
+Feature source `aa4c82b` and last frontend-package build `b3b2801` were pushed in
+[PR88](https://github.com/michael-mathenge/ajiri/pull/88), base `MVP2`.
+All six exact-head checks passed in
+[CI43090219416](https://github.com/michael-mathenge/ajiri/actions/runs/43090219416):
+backend Python3.12/3.13/3.14, frontend, browser/performance and quality. This includes
+the new real-browser low-score explanation/preparation/axe regression and committed
+build consistency. No claim of manual phone review or consented pilot success.
+
+Fresh isolated Python3.13.17 runtime installation subsequently completed using the
+actual requirements.txt pins (Django6.1.3, lxml6.1.3). `python -m pip check`,
+`python manage.py check`, `python manage.py makemigrations --check --dry-run` and
+`python manage.py test --noinput` passed:533tests in218.504s, one existing skip.
+Full suite ran outside the filesystem sandbox to permit existing hard-link tests.
+This supersedes the earlier supplementary full-suite failure (one failure/six
+errors): three private-media tests hit sandbox WinError5 creating hard links and
+four subprocess checks lacked retained dependencies. That failed run remains
+historical failed evidence; it was not a passing pinned run. Local Python3.12 is
+still unavailable, with the pinned3.12 pass provided by CI.
+
+This receipt is a documentation-only follow-up package after the frontend source
+and final generated-build commits. Its corrected head must pass all six checks
+again before merge; the final merge/check receipt will also be retained on AJ83.
+Integration into MVP2 is distinct from a release to main or production. No source
+or data deployment, migration, provider send, pilot or production verification.
