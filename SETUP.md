@@ -61,6 +61,14 @@ PowerShell. Never publish console account-security links.
 Optional developer tooling: [quality checks](docs/QUALITY_GUIDE.md). Hooks are opt-in;
 installing development dependencies does not change your Git hooks or configuration.
 
+Dependency refreshes must use the complete pinned graph: a green PR for one package
+does not prove it composes with another update. The November dependency review pins
+Django6.1.3/Celery5.7.0 and retains python-dateutil2.9.0.post0 because Celery requires
+it. Install the requirements files, run `python -m pip check`, and test the actual
+versions together. See [the review](reports/DEPENDABOT_REVIEW_2026-11-11.md) for
+original PR heads, security/audit limits and rollback. Repository pins do not prove
+the production virtualenv has been updated.
+
 ## 4. Release
 
 Clear development VITE_API_BASE_URL overrides and run

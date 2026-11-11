@@ -1,0 +1,26 @@
+[
+  {
+    "pr": 67,
+    "branch": "dependabot/pip/ajiri-backend/python-dateutil-3.0.0",
+    "sha": "9682d6cdce621213a1fdacd1275608054978fd78",
+    "archive_tag": "archive/dependabot-20261111/pr-67"
+  },
+  {
+    "pr": 82,
+    "branch": "dependabot/npm_and_yarn/ajiri-frontend/follow-redirects-1.16.2",
+    "sha": "949e8b5a3ca5ce8c8948b65b5b03f20bbbd53fc5",
+    "archive_tag": "archive/dependabot-20261111/pr-82"
+  },
+  {
+    "pr": 83,
+    "branch": "dependabot/npm_and_yarn/ajiri-frontend/npm-minor-patch-1ebffc15ca",
+    "sha": "3950e14ab0f74d8a327b94c8d6958d4a2243a7a1",
+    "archive_tag": "archive/dependabot-20261111/pr-83"
+  },
+  {
+    "pr": 84,
+    "branch": "dependabot/pip/ajiri-backend/python-minor-patch-fa9bac1972",
+    "sha": "3a534388654b27bed51cd604238fb55664f6b011",
+    "archive_tag": "archive/dependabot-20261111/pr-84"
+  }
+]
