@@ -111,6 +111,9 @@ class BrowserJourney(LiveServerTestCase):
         from datetime import timedelta
         JobPublication.objects.create(job=self.job, origin='rss', status='published',
             closes_at=timezone.now()+timedelta(days=2), confirmed_at=timezone.now())
+        from profiles.models import Skill
+        self.job.skills_required.add(*(Skill.objects.get_or_create(name=name)[0]
+            for name in ['Python', 'SQL', 'Java']))
 
     def test_register_cv_approve_prepare_review_never_sends(self):
         # Playwright's sync event loop lives in a worker: ORM stays on Django's
@@ -492,6 +495,10 @@ class BrowserJourney(LiveServerTestCase):
                 page.get_by_role('button', name='Download approved CV (revision 1)', exact=True).click()
             self.cv_bytes = Path(downloaded.value.path()).read_bytes()
             page.goto(self.live_server_url + f'/jobs/{self.job.pk}')
+            expect(page.get_by_role('heading', name='How your skills match', exact=True)).to_be_visible()
+            expect(page.get_by_text('Your profile lists 1 of the 3 skills listed for this role.', exact=True)).to_be_visible()
+            expect(page.get_by_role('link', name='Review and edit my profile skills')).to_have_attribute('href', '/profile')
+            audit(self, page, 'job-skill-match-light')
             prepare = page.get_by_role('button', name='Prepare application', exact=True)
             selection = page.get_by_label('Approved CV version', exact=True)
             # Current approved CV is displayed by default. Clearing it must
