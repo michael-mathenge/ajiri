@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Job, Application, Notification
-from .matching import calculate_match_score
+from .matching import calculate_match_score, explain_skill_match
 from profiles.serializers import SkillSerializer
 
 
@@ -61,13 +61,20 @@ class JobDetailSerializer(JobListSerializer):
     skills_required = SkillSerializer(many=True, read_only=True)
     source_url = serializers.URLField(source='application_target', read_only=True)
     match_score = serializers.SerializerMethodField()
+    match_explanation = serializers.SerializerMethodField()
+
+    def get_match_explanation(self, job) -> dict:
+        request = self.context.get('request')
+        if request and hasattr(request.user, 'profile'):
+            return explain_skill_match(request.user.profile, job)
+        return None
 
     class Meta:
         model = Job
         fields = (
             'id', 'title', 'company_name', 'description', 'requirements',
             'location', 'job_type', 'salary_min', 'salary_max',
-            'is_salary_negotiable', 'skills_required', 'match_score',
+            'is_salary_negotiable', 'skills_required', 'match_score', 'match_explanation',
             'source_url', 'source_name', 'posted_at', 'publication', 'display_only', 'display_notice', 'can_apply', 'original_source_url',
         )
 

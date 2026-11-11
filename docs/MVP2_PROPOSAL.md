@@ -89,9 +89,13 @@ is authorized merely by placing an issue in this planning version.
 
 ## Integration and release discipline
 
-Start each implementation branch with fetched reviewed `origin/main`; avoid a
-permanent parallel MVP2 integration branch. Port one focused package, run pinned
-checks/full suites and all required PR checks, then merge through review.
+Michael superseded the original branch recommendation on 11 November 2026:
+`MVP2` is the integration branch, created from fetched reviewed `origin/main`
+at `a8f11fd728aeb0fbe4ff5d62027b7c64712f8a66`. All MVP2 feature branches
+start from the latest reviewed `MVP2` and their PRs target `MVP2`. Use focused
+`codex/mvp2-<issue>-<feature>` branches, run pinned checks/full suites and all
+required PR checks before integration. Release to `main` through a separate
+checked PR when the integrated release is ready; integration is not deployment.
 
 The archived stack predates released `jobs.0017_job_browsing_settings` and contains
 another jobs.0017 plus dependent0018–0021 files. It must not be merged wholesale.

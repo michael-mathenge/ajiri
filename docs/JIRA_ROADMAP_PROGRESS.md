@@ -1995,3 +1995,44 @@ or downgrade. No application logic,auth/cookie/CORS,ingestion,migrations or CI
 workflow change;no production deployment,flag change,live mail/charging or data
 mutation. Repository pins change toDjango6.1.3;production remains last verified6.1.2.
 See reports/DEPENDABOT_REVIEW_2026-11-11.md for explanations,root causes and rollback.
+
+## MVP2 implementation start — 11 November 2026
+
+Michael explicitly selected `MVP2` as the integration branch, superseding the
+proposal's main-only branch recommendation. Created from fetched reviewed
+`origin/main` at `a8f11fd728aeb0fbe4ff5d62027b7c64712f8a66` and published to
+`origin/MVP2`. Original main checkout and unrelated untracked work preserved.
+Feature branches start from reviewed MVP2; feature PRs target MVP2. Release to
+main remains a separate checked PR. No production deployment is implied.
+
+First slice of AJ83: `codex/mvp2-aj83-matching` adds private job-detail skill
+explanations, matched/missing labels, distinct no-job/no-profile-skills states and
+a link to the existing profile editor. It preserves score calculation, the 70%
+alert-only threshold, source/deadline labels and independent application eligibility.
+No schema migration, new source ingestion, telemetry or sending activation.
+
+Commands/results: explicit portable Node24.19.0; `npm ci --no-audit --no-fund
+--cache C:\dev\ajiri\.npm-cache` passed after incomplete offline caches failed.
+`npm run lint`, `npm run lint:eslint`, `npm run test -- --run` (159 tests/28 files),
+`npm run test:quality` (one helper) and `npm run build` (2.25s) passed. Prettier
+formatted the three touched frontend files. Ruff0.17.4 full backend/scripts passed.
+
+Local backend parity is UNVERIFIED: retained Python3.12 environments point to a
+missing base python.exe. Global Python3.13 lacks DRF. A fresh pinned virtualenv
+installation stalled downloading the cp313 lxml6.1.3 wheel, including a bounded
+retry. A supplementary Python3.13 run preloaded globally installed lxml6.0.2,
+yaml/jsonschema and used retained dependency libraries (Django6.1.3). Four new
+`jobs.test_match_explanation` tests passed in4.740s; reviewed OpenAPI regenerated
+successfully. `manage.py check`, `makemigrations --check --dry-run` and full suite
+were also started with that supplementary environment; full results and exact
+pinned CI remain pending at source commit. Do not call this a pinned local pass.
+The browser journey now checks a 33% explanation and preparation, with axe audit;
+browser/performance acceptance also requires CI. Generated frontend_build is
+committed separately after source as the last frontend-package commit.
+
+AJ83 is In Progress, not Done. Normalized location/remote/experience filters,
+preferences/dismissals and consented usability pilot remain. Genuine inventory,
+recovery-capacity and other MVP2 prerequisites remain separate open work. No
+production quota, backup, runtime or pilot result was established by this slice.
+Rollback: reviewed revert of source plus matching built assets; preserve data and
+freshness settings. PR/check evidence must be recorded before integration.

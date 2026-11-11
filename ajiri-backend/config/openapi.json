@@ -7849,6 +7849,11 @@
                         "maximum": 100,
                         "readOnly": true
                     },
+                    "match_explanation": {
+                        "type": "object",
+                        "additionalProperties": {},
+                        "readOnly": true
+                    },
                     "source_url": {
                         "type": "string",
                         "format": "uri",
@@ -7893,6 +7898,7 @@
                     "display_notice",
                     "display_only",
                     "id",
+                    "match_explanation",
                     "match_score",
                     "original_source_url",
                     "publication",
