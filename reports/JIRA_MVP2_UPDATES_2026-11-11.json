@@ -1,0 +1,663 @@
+{
+  "date": "2026-11-11",
+  "board": 34,
+  "versions": {
+    "MVP1": {
+      "id": "10001",
+      "released": true,
+      "doneStories": 34
+    },
+    "MVP2": {
+      "id": "10000",
+      "released": false,
+      "carryoverStories": [
+        "AJ-53",
+        "AJ-52",
+        "AJ-17",
+        "AJ-26",
+        "AJ-43",
+        "AJ-42",
+        "AJ-79",
+        "AJ-47",
+        "AJ-48",
+        "AJ-51",
+        "AJ-44",
+        "AJ-45",
+        "AJ-46"
+      ],
+      "proposals": [
+        {
+          "key": "AJ-81",
+          "summary": "MVP2 readiness: triage follow-redirects security alert and dependency PRs",
+          "ok": true
+        },
+        {
+          "key": "AJ-82",
+          "summary": "Proposal: trusted multi-source inventory and duplicate-quality controls",
+          "ok": true
+        },
+        {
+          "key": "AJ-83",
+          "summary": "Proposal: mobile filters and explainable candidate-controlled matching",
+          "ok": true
+        },
+        {
+          "key": "AJ-84",
+          "summary": "Proposal: saved jobs and transparent application follow-up",
+          "ok": true
+        },
+        {
+          "key": "AJ-85",
+          "summary": "MVP2 readiness: reconcile archived work onto main and verify recovery capacity",
+          "ok": true
+        },
+        {
+          "key": "AJ-86",
+          "summary": "Proposal: MVP2 pilot acceptance, CV safety and product disclosures",
+          "ok": true
+        }
+      ],
+      "historicalCleanup": "AJ-80",
+      "rank": [
+        "AJ-81",
+        "AJ-85",
+        "AJ-53",
+        "AJ-82",
+        "AJ-52",
+        "AJ-83",
+        "AJ-17",
+        "AJ-26",
+        "AJ-43",
+        "AJ-42",
+        "AJ-84",
+        "AJ-86",
+        "AJ-79",
+        "AJ-47",
+        "AJ-48",
+        "AJ-51",
+        "AJ-44",
+        "AJ-45",
+        "AJ-46",
+        "AJ-80"
+      ]
+    }
+  },
+  "mutations": [
+    {
+      "key": "AJ-8",
+      "action": "assign-released-MVP1",
+      "ok": true
+    },
+    {
+      "key": "AJ-9",
+      "action": "assign-released-MVP1",
+      "ok": true
+    },
+    {
+      "key": "AJ-10",
+      "action": "assign-released-MVP1",
+      "ok": true
+    },
+    {
+      "key": "AJ-11",
+      "action": "assign-released-MVP1",
+      "ok": true
+    },
+    {
+      "key": "AJ-12",
+      "action": "assign-released-MVP1",
+      "ok": true
+    },
+    {
+      "key": "AJ-13",
+      "action": "assign-released-MVP1",
+      "ok": true
+    },
+    {
+      "key": "AJ-14",
+      "action": "assign-released-MVP1",
+      "ok": true
+    },
+    {
+      "key": "AJ-15",
+      "action": "assign-released-MVP1",
+      "ok": true
+    },
+    {
+      "key": "AJ-16",
+      "action": "assign-released-MVP1",
+      "ok": true
+    },
+    {
+      "key": "AJ-18",
+      "action": "assign-released-MVP1",
+      "ok": true
+    },
+    {
+      "key": "AJ-19",
+      "action": "assign-released-MVP1",
+      "ok": true
+    },
+    {
+      "key": "AJ-20",
+      "action": "assign-released-MVP1",
+      "ok": true
+    },
+    {
+      "key": "AJ-21",
+      "action": "assign-released-MVP1",
+      "ok": true
+    },
+    {
+      "key": "AJ-22",
+      "action": "assign-released-MVP1",
+      "ok": true
+    },
+    {
+      "key": "AJ-23",
+      "action": "assign-released-MVP1",
+      "ok": true
+    },
+    {
+      "key": "AJ-24",
+      "action": "assign-released-MVP1",
+      "ok": true
+    },
+    {
+      "key": "AJ-25",
+      "action": "assign-released-MVP1",
+      "ok": true
+    },
+    {
+      "key": "AJ-27",
+      "action": "assign-released-MVP1",
+      "ok": true
+    },
+    {
+      "key": "AJ-28",
+      "action": "assign-released-MVP1",
+      "ok": true
+    },
+    {
+      "key": "AJ-29",
+      "action": "assign-released-MVP1",
+      "ok": true
+    },
+    {
+      "key": "AJ-30",
+      "action": "assign-released-MVP1",
+      "ok": true
+    },
+    {
+      "key": "AJ-31",
+      "action": "assign-released-MVP1",
+      "ok": true
+    },
+    {
+      "key": "AJ-32",
+      "action": "assign-released-MVP1",
+      "ok": true
+    },
+    {
+      "key": "AJ-33",
+      "action": "assign-released-MVP1",
+      "ok": true
+    },
+    {
+      "key": "AJ-34",
+      "action": "assign-released-MVP1",
+      "ok": true
+    },
+    {
+      "key": "AJ-35",
+      "action": "assign-released-MVP1",
+      "ok": true
+    },
+    {
+      "key": "AJ-36",
+      "action": "assign-released-MVP1",
+      "ok": true
+    },
+    {
+      "key": "AJ-37",
+      "action": "assign-released-MVP1",
+      "ok": true
+    },
+    {
+      "key": "AJ-38",
+      "action": "assign-released-MVP1",
+      "ok": true
+    },
+    {
+      "key": "AJ-39",
+      "action": "assign-released-MVP1",
+      "ok": true
+    },
+    {
+      "key": "AJ-40",
+      "action": "assign-released-MVP1",
+      "ok": true
+    },
+    {
+      "key": "AJ-41",
+      "action": "assign-released-MVP1",
+      "ok": true
+    },
+    {
+      "key": "AJ-49",
+      "action": "assign-released-MVP1",
+      "ok": true
+    },
+    {
+      "key": "AJ-50",
+      "action": "assign-released-MVP1",
+      "ok": true
+    },
+    {
+      "key": "AJ-53",
+      "action": "carry-to-MVP2",
+      "ok": true
+    },
+    {
+      "key": "AJ-53",
+      "action": "move-to-backlog-preserve-status",
+      "ok": true
+    },
+    {
+      "key": "AJ-53",
+      "action": "carryover-evidence-comment",
+      "commentId": "10174",
+      "ok": true
+    },
+    {
+      "key": "AJ-52",
+      "action": "carry-to-MVP2",
+      "ok": true
+    },
+    {
+      "key": "AJ-52",
+      "action": "move-to-backlog-preserve-status",
+      "ok": true
+    },
+    {
+      "key": "AJ-52",
+      "action": "carryover-evidence-comment",
+      "commentId": "10175",
+      "ok": true
+    },
+    {
+      "key": "AJ-17",
+      "action": "carry-to-MVP2",
+      "ok": true
+    },
+    {
+      "key": "AJ-17",
+      "action": "move-to-backlog-preserve-status",
+      "ok": true
+    },
+    {
+      "key": "AJ-17",
+      "action": "carryover-evidence-comment",
+      "commentId": "10176",
+      "ok": true
+    },
+    {
+      "key": "AJ-26",
+      "action": "carry-to-MVP2",
+      "ok": true
+    },
+    {
+      "key": "AJ-26",
+      "action": "move-to-backlog-preserve-status",
+      "ok": true
+    },
+    {
+      "key": "AJ-26",
+      "action": "carryover-evidence-comment",
+      "commentId": "10177",
+      "ok": true
+    },
+    {
+      "key": "AJ-43",
+      "action": "carry-to-MVP2",
+      "ok": true
+    },
+    {
+      "key": "AJ-43",
+      "action": "move-to-backlog-preserve-status",
+      "ok": true
+    },
+    {
+      "key": "AJ-43",
+      "action": "carryover-evidence-comment",
+      "commentId": "10178",
+      "ok": true
+    },
+    {
+      "key": "AJ-42",
+      "action": "carry-to-MVP2",
+      "ok": true
+    },
+    {
+      "key": "AJ-42",
+      "action": "move-to-backlog-preserve-status",
+      "ok": true
+    },
+    {
+      "key": "AJ-42",
+      "action": "carryover-evidence-comment",
+      "commentId": "10179",
+      "ok": true
+    },
+    {
+      "key": "AJ-79",
+      "action": "carry-to-MVP2",
+      "ok": true
+    },
+    {
+      "key": "AJ-79",
+      "action": "move-to-backlog-preserve-status",
+      "ok": true
+    },
+    {
+      "key": "AJ-79",
+      "action": "carryover-evidence-comment",
+      "commentId": "10180",
+      "ok": true
+    },
+    {
+      "key": "AJ-47",
+      "action": "carry-to-MVP2",
+      "ok": true
+    },
+    {
+      "key": "AJ-47",
+      "action": "move-to-backlog-preserve-status",
+      "ok": true
+    },
+    {
+      "key": "AJ-47",
+      "action": "carryover-evidence-comment",
+      "commentId": "10181",
+      "ok": true
+    },
+    {
+      "key": "AJ-48",
+      "action": "carry-to-MVP2",
+      "ok": true
+    },
+    {
+      "key": "AJ-48",
+      "action": "move-to-backlog-preserve-status",
+      "ok": true
+    },
+    {
+      "key": "AJ-48",
+      "action": "carryover-evidence-comment",
+      "commentId": "10182",
+      "ok": true
+    },
+    {
+      "key": "AJ-51",
+      "action": "carry-to-MVP2",
+      "ok": true
+    },
+    {
+      "key": "AJ-51",
+      "action": "move-to-backlog-preserve-status",
+      "ok": true
+    },
+    {
+      "key": "AJ-51",
+      "action": "carryover-evidence-comment",
+      "commentId": "10183",
+      "ok": true
+    },
+    {
+      "key": "AJ-44",
+      "action": "carry-to-MVP2",
+      "ok": true
+    },
+    {
+      "key": "AJ-44",
+      "action": "move-to-backlog-preserve-status",
+      "ok": true
+    },
+    {
+      "key": "AJ-44",
+      "action": "carryover-evidence-comment",
+      "commentId": "10184",
+      "ok": true
+    },
+    {
+      "key": "AJ-45",
+      "action": "carry-to-MVP2",
+      "ok": true
+    },
+    {
+      "key": "AJ-45",
+      "action": "move-to-backlog-preserve-status",
+      "ok": true
+    },
+    {
+      "key": "AJ-45",
+      "action": "carryover-evidence-comment",
+      "commentId": "10185",
+      "ok": true
+    },
+    {
+      "key": "AJ-46",
+      "action": "carry-to-MVP2",
+      "ok": true
+    },
+    {
+      "key": "AJ-46",
+      "action": "move-to-backlog-preserve-status",
+      "ok": true
+    },
+    {
+      "key": "AJ-46",
+      "action": "carryover-evidence-comment",
+      "commentId": "10186",
+      "ok": true
+    },
+    {
+      "key": "AJ-1",
+      "action": "epic-rollup",
+      "status": "In Progress",
+      "ok": true
+    },
+    {
+      "key": "AJ-2",
+      "action": "epic-rollup",
+      "status": "In Progress",
+      "ok": true
+    },
+    {
+      "key": "AJ-3",
+      "action": "epic-rollup",
+      "status": "In Progress",
+      "ok": true
+    },
+    {
+      "key": "AJ-4",
+      "action": "epic-rollup",
+      "status": "In Progress",
+      "ok": true
+    },
+    {
+      "key": "AJ-5",
+      "action": "epic-rollup",
+      "status": "In Progress",
+      "ok": true
+    },
+    {
+      "key": "AJ-6",
+      "action": "epic-rollup",
+      "status": "In Progress",
+      "ok": true
+    },
+    {
+      "key": "AJ-7",
+      "action": "epic-rollup",
+      "status": "Done",
+      "ok": true
+    },
+    {
+      "key": "AJ-80",
+      "action": "carry-proposal-to-MVP2",
+      "ok": true
+    },
+    {
+      "key": "AJ-81",
+      "action": "rank-MVP2-backlog",
+      "after": null,
+      "ok": true
+    },
+    {
+      "key": "AJ-85",
+      "action": "rank-MVP2-backlog",
+      "after": "AJ-81",
+      "ok": true
+    },
+    {
+      "key": "AJ-53",
+      "action": "rank-MVP2-backlog",
+      "after": "AJ-85",
+      "ok": true
+    },
+    {
+      "key": "AJ-82",
+      "action": "rank-MVP2-backlog",
+      "after": "AJ-53",
+      "ok": true
+    },
+    {
+      "key": "AJ-52",
+      "action": "rank-MVP2-backlog",
+      "after": "AJ-82",
+      "ok": true
+    },
+    {
+      "key": "AJ-83",
+      "action": "rank-MVP2-backlog",
+      "after": "AJ-52",
+      "ok": true
+    },
+    {
+      "key": "AJ-17",
+      "action": "rank-MVP2-backlog",
+      "after": "AJ-83",
+      "ok": true
+    },
+    {
+      "key": "AJ-26",
+      "action": "rank-MVP2-backlog",
+      "after": "AJ-17",
+      "ok": true
+    },
+    {
+      "key": "AJ-43",
+      "action": "rank-MVP2-backlog",
+      "after": "AJ-26",
+      "ok": true
+    },
+    {
+      "key": "AJ-42",
+      "action": "rank-MVP2-backlog",
+      "after": "AJ-43",
+      "ok": true
+    },
+    {
+      "key": "AJ-84",
+      "action": "rank-MVP2-backlog",
+      "after": "AJ-42",
+      "ok": true
+    },
+    {
+      "key": "AJ-86",
+      "action": "rank-MVP2-backlog",
+      "after": "AJ-84",
+      "ok": true
+    },
+    {
+      "key": "AJ-79",
+      "action": "rank-MVP2-backlog",
+      "after": "AJ-86",
+      "ok": true
+    },
+    {
+      "key": "AJ-47",
+      "action": "rank-MVP2-backlog",
+      "after": "AJ-79",
+      "ok": true
+    },
+    {
+      "key": "AJ-48",
+      "action": "rank-MVP2-backlog",
+      "after": "AJ-47",
+      "ok": true
+    },
+    {
+      "key": "AJ-51",
+      "action": "rank-MVP2-backlog",
+      "after": "AJ-48",
+      "ok": true
+    },
+    {
+      "key": "AJ-44",
+      "action": "rank-MVP2-backlog",
+      "after": "AJ-51",
+      "ok": true
+    },
+    {
+      "key": "AJ-45",
+      "action": "rank-MVP2-backlog",
+      "after": "AJ-44",
+      "ok": true
+    },
+    {
+      "key": "AJ-46",
+      "action": "rank-MVP2-backlog",
+      "after": "AJ-45",
+      "ok": true
+    },
+    {
+      "key": "AJ-80",
+      "action": "rank-MVP2-backlog",
+      "after": "AJ-46",
+      "ok": true
+    }
+  ],
+  "sprint4": {
+    "closed": true,
+    "remainingIssues": 6,
+    "doneIssues": 6
+  },
+  "unchangedGenericUpdateKeys": [
+    "AJ-54",
+    "AJ-55",
+    "AJ-56",
+    "AJ-57",
+    "AJ-58",
+    "AJ-59",
+    "AJ-60",
+    "AJ-61",
+    "AJ-62",
+    "AJ-63",
+    "AJ-64",
+    "AJ-65",
+    "AJ-66",
+    "AJ-67",
+    "AJ-68",
+    "AJ-69",
+    "AJ-70",
+    "AJ-71",
+    "AJ-72",
+    "AJ-73",
+    "AJ-74",
+    "AJ-75",
+    "AJ-76"
+  ],
+  "notes": "Actual direct Jira updates; no sync script executed; no repeated sync payload queued."
+}

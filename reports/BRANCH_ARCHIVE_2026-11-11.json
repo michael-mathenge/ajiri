@@ -1,0 +1,218 @@
+[
+  {
+    "scope": "local",
+    "branch": "backup/email-privacy/feature/design-system",
+    "sha": "30cd6d9f4603dd55860a63ad1a35ee52dd3a302c",
+    "archive_tag": "archive/mvp1-20261111/local/backup/email-privacy/feature/design-system",
+    "on_main": false,
+    "remote_archive": false
+  },
+  {
+    "scope": "local",
+    "branch": "backup/email-privacy/main",
+    "sha": "aad9c4daf641cc18c2b4735d00c371dff642525f",
+    "archive_tag": "archive/mvp1-20261111/local/backup/email-privacy/main",
+    "on_main": false,
+    "remote_archive": false
+  },
+  {
+    "scope": "local",
+    "branch": "codex/backend-account-email",
+    "sha": "f5975c753e832783d8ef423f701debeea86d8038",
+    "archive_tag": "archive/mvp1-20261111/local/codex/backend-account-email",
+    "on_main": false,
+    "remote_archive": false
+  },
+  {
+    "scope": "local",
+    "branch": "codex/backend-application-mail",
+    "sha": "d73f8d8b5e1f64ba660d3c2d196e09404548b556",
+    "archive_tag": "archive/mvp1-20261111/local/codex/backend-application-mail",
+    "on_main": false,
+    "remote_archive": false
+  },
+  {
+    "scope": "local",
+    "branch": "codex/backend-inactive-20261031",
+    "sha": "974dc6d65538765fc100c9349c2409f9e35e06d6",
+    "archive_tag": "archive/mvp1-20261111/local/codex/backend-inactive-20261031",
+    "on_main": false,
+    "remote_archive": false
+  },
+  {
+    "scope": "local",
+    "branch": "codex/jira-forms-validation",
+    "sha": "43c8be21bdedf6d5f4e3ad1c3319545df4a00b01",
+    "archive_tag": "archive/mvp1-20261111/local/codex/jira-forms-validation",
+    "on_main": true,
+    "remote_archive": false
+  },
+  {
+    "scope": "local",
+    "branch": "codex/launch-prompt-refinements",
+    "sha": "e9862dbd4b86170e708407b0c6636b36724a6dac",
+    "archive_tag": "archive/mvp1-20261111/local/codex/launch-prompt-refinements",
+    "on_main": false,
+    "remote_archive": false
+  },
+  {
+    "scope": "local",
+    "branch": "codex/myjobmag-expiry-evidence-20261103",
+    "sha": "0871e882cc484860bb124b1b6d9546a1cbd058e3",
+    "archive_tag": "archive/mvp1-20261111/local/codex/myjobmag-expiry-evidence-20261103",
+    "on_main": true,
+    "remote_archive": false
+  },
+  {
+    "scope": "local",
+    "branch": "codex/npm-update-build",
+    "sha": "1bfd3e61efd106ce07fc421f7f38c35491a1ac7d",
+    "archive_tag": "archive/mvp1-20261111/local/codex/npm-update-build",
+    "on_main": false,
+    "remote_archive": false
+  },
+  {
+    "scope": "local",
+    "branch": "codex/review-02-application-alert-search",
+    "sha": "38bf953c3a1a99c8efd3205d7a23fa68bde01cd2",
+    "archive_tag": "archive/mvp1-20261111/local/codex/review-02-application-alert-search",
+    "on_main": false,
+    "remote_archive": false
+  },
+  {
+    "scope": "local",
+    "branch": "codex/review-03-certificates",
+    "sha": "be8b0c771496a6ae61b1103982011d958baa471d",
+    "archive_tag": "archive/mvp1-20261111/local/codex/review-03-certificates",
+    "on_main": false,
+    "remote_archive": false
+  },
+  {
+    "scope": "local",
+    "branch": "codex/review-04-analytics-scanner",
+    "sha": "8b2dfc77fa38325ccb2d382b2c56d8ba6c3013b2",
+    "archive_tag": "archive/mvp1-20261111/local/codex/review-04-analytics-scanner",
+    "on_main": false,
+    "remote_archive": false
+  },
+  {
+    "scope": "local",
+    "branch": "codex/review-05-storage-queue",
+    "sha": "4b2f54047883f9330951251f4baf4dd07bb094eb",
+    "archive_tag": "archive/mvp1-20261111/local/codex/review-05-storage-queue",
+    "on_main": false,
+    "remote_archive": false
+  },
+  {
+    "scope": "local",
+    "branch": "codex/review-06-payments-entitlements",
+    "sha": "d8a423964cc7d80bea50e51c242b724eaacb6285",
+    "archive_tag": "archive/mvp1-20261111/local/codex/review-06-payments-entitlements",
+    "on_main": false,
+    "remote_archive": false
+  },
+  {
+    "scope": "local",
+    "branch": "codex/shared-throttle-cache",
+    "sha": "b860658e45f07cb2acea32e30e83b3e24c35b2e2",
+    "archive_tag": "archive/mvp1-20261111/local/codex/shared-throttle-cache",
+    "on_main": false,
+    "remote_archive": false
+  },
+  {
+    "scope": "local",
+    "branch": "codex/sprint-3-evidence",
+    "sha": "41df0422e2cb20ab65709c34777e8bfbdb237924",
+    "archive_tag": "archive/mvp1-20261111/local/codex/sprint-3-evidence",
+    "on_main": false,
+    "remote_archive": false
+  },
+  {
+    "scope": "local",
+    "branch": "codex/supplemental-admin-20261101",
+    "sha": "71b8e35e7b0981db78f5532728b4872a873cd583",
+    "archive_tag": "archive/mvp1-20261111/local/codex/supplemental-admin-20261101",
+    "on_main": true,
+    "remote_archive": false
+  },
+  {
+    "scope": "local",
+    "branch": "codex/supplemental-admin-closeout-20261102",
+    "sha": "3d6dc39cea7e982aa14f38c0144ccf49831008e0",
+    "archive_tag": "archive/mvp1-20261111/local/codex/supplemental-admin-closeout-20261102",
+    "on_main": true,
+    "remote_archive": false
+  },
+  {
+    "scope": "local",
+    "branch": "integration/checkpoint-3",
+    "sha": "0e96d6b2240a21675e91e6ddcb64e0d34aa29d9f",
+    "archive_tag": "archive/mvp1-20261111/local/integration/checkpoint-3",
+    "on_main": false,
+    "remote_archive": false
+  },
+  {
+    "scope": "local",
+    "branch": "integration/checkpoint-3b",
+    "sha": "edf9d3b6a308c865b77344d3c29285f447c2c4a5",
+    "archive_tag": "archive/mvp1-20261111/local/integration/checkpoint-3b",
+    "on_main": false,
+    "remote_archive": false
+  },
+  {
+    "scope": "remote",
+    "branch": "codex/backend-inactive-20261031",
+    "sha": "d8a423964cc7d80bea50e51c242b724eaacb6285",
+    "archive_tag": "archive/mvp1-20261111/remote/codex/backend-inactive-20261031",
+    "on_main": false,
+    "remote_archive": true
+  },
+  {
+    "scope": "remote",
+    "branch": "codex/jira-forms-validation",
+    "sha": "43c8be21bdedf6d5f4e3ad1c3319545df4a00b01",
+    "archive_tag": "archive/mvp1-20261111/remote/codex/jira-forms-validation",
+    "on_main": true,
+    "remote_archive": true
+  },
+  {
+    "scope": "remote",
+    "branch": "codex/launch-prompt-refinements",
+    "sha": "e9862dbd4b86170e708407b0c6636b36724a6dac",
+    "archive_tag": "archive/mvp1-20261111/remote/codex/launch-prompt-refinements",
+    "on_main": false,
+    "remote_archive": true
+  },
+  {
+    "scope": "remote",
+    "branch": "codex/myjobmag-expiry-evidence-20261103",
+    "sha": "0871e882cc484860bb124b1b6d9546a1cbd058e3",
+    "archive_tag": "archive/mvp1-20261111/remote/codex/myjobmag-expiry-evidence-20261103",
+    "on_main": true,
+    "remote_archive": true
+  },
+  {
+    "scope": "remote",
+    "branch": "codex/review-02-application-alert-search",
+    "sha": "38bf953c3a1a99c8efd3205d7a23fa68bde01cd2",
+    "archive_tag": "archive/mvp1-20261111/remote/codex/review-02-application-alert-search",
+    "on_main": false,
+    "remote_archive": true
+  },
+  {
+    "scope": "remote",
+    "branch": "codex/supplemental-admin-20261101",
+    "sha": "71b8e35e7b0981db78f5532728b4872a873cd583",
+    "archive_tag": "archive/mvp1-20261111/remote/codex/supplemental-admin-20261101",
+    "on_main": true,
+    "remote_archive": true
+  },
+  {
+    "scope": "remote",
+    "branch": "codex/supplemental-admin-closeout-20261102",
+    "sha": "3d6dc39cea7e982aa14f38c0144ccf49831008e0",
+    "archive_tag": "archive/mvp1-20261111/remote/codex/supplemental-admin-closeout-20261102",
+    "on_main": true,
+    "remote_archive": true
+  }
+]

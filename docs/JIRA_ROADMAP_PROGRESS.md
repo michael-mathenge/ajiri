@@ -1933,3 +1933,40 @@ from the successful explicit Node24.19verification above. Draft PR81 remains
 unmerged and undeployed; final-head CI is checked separately. No parser helper is
 called by the production deadline/record path, so this proposal adds zero verified
 inventory until a genuine closing-deadline contract and separate integration exist.
+
+## MVP1 closeout and MVP2 planning — 11 November 2026
+
+Local main fast-forwarded to reviewed e682cac, matching the latest available
+4November deployment receipt; no fresh runtime/deployment claim. Twenty stale local
+and seven remote development branches were preserved by27exact tip tags and a
+verified owner-private complete Git bundle before removal. Worktrees were clean
+and detached at their existing commits; all files and five stashes remain. Four
+active Dependabot branches/PRs67/82/83/84 remain. PR71/73 closed with archive notes,
+not merged. Released jobs.0017 conflicts with the archived analytics0017; MVP2 must
+port focused packages onto main with fresh additive migration design.
+
+Jira:34Done stories assigned released MVP1;13unfinished stories moved to unreleased
+MVP2/backlog with status In Progress and concrete remaining-gate comments. AJ80 and
+all23Update histories retained. AJ81–86 are six To Do readiness/product proposals.
+MVP2's20items were ranked with dependency/security readiness and real inventory
+first. Six epics now In Progress; frontend/API epicAJ7 Done from its five completed
+children. Expired active Sprint4 closed only after its six remaining issues were
+confirmed Done; no sprint started, new dates invented or issue history deleted.
+Direct mutation receipts:reports/JIRA_MVP2_UPDATES_2026-11-11.json.
+
+Pinned Django6.1.2 check/drift and full529tests passed387.531s,one existing skip,
+zero external network/DNS/SMTP audit attempts. Node24.19 locked install,lint,
+155frontend tests/27files (19.54s) and build (1.35s) passed;38committed build files
+matched. Ruff/OpenAPI passed. Remote planning-PR checks are pending until observed.
+Known high follow-redirects alert31 remains open;AJ81/PR82 retain its targeted fix
+for separate reviewed verification. No dependencies/lockfiles/CI/hosting/schema/
+feature code,production flags,data or backups changed. .gitignore protects the
+private .recovery directory. See docs/MVP2_PROPOSAL.md and the closeout report for
+benchmarks,recommended core/conditional scope,targets,hashes and recovery commands.
+
+Additional isolated Git restore verified archived refs/baseline and caught that
+bundle --all captures only the current refs/stash,not older stash reflog entries.
+All five original stashes remained intact. Added five local-only stash recovery
+tags and a separate owner-private bundle; isolated restore verified all5stash
+commit objects. No stash/private history was pushed. Both bundle SHA256 values
+and commands are recorded in reports/MVP1_CLOSEOUT_2026-11-11.md.

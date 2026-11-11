@@ -16,6 +16,8 @@ MANIFEST.sha256
 .npm-cache/
 .verification/
 .worktrees/
+# Private, verified recovery bundles; never publish local-only histories or stash.
+.recovery/
 
 # Generated Python caches, including repository-level developer tooling.
 __pycache__/
