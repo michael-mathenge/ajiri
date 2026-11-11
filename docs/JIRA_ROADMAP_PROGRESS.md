@@ -1963,3 +1963,10 @@ for separate reviewed verification. No dependencies/lockfiles/CI/hosting/schema/
 feature code,production flags,data or backups changed. .gitignore protects the
 private .recovery directory. See docs/MVP2_PROPOSAL.md and the closeout report for
 benchmarks,recommended core/conditional scope,targets,hashes and recovery commands.
+
+Additional isolated Git restore verified archived refs/baseline and caught that
+bundle --all captures only the current refs/stash,not older stash reflog entries.
+All five original stashes remained intact. Added five local-only stash recovery
+tags and a separate owner-private bundle; isolated restore verified all5stash
+commit objects. No stash/private history was pushed. Both bundle SHA256 values
+and commands are recorded in reports/MVP1_CLOSEOUT_2026-11-11.md.

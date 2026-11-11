@@ -36,6 +36,18 @@ refs and full history, including local-only work and stash:
 Git bundle verify passed; SHA256:
 `d110a38a3d89ec84b804d26a5ec48178dd6b08b60432483e937cfea7afa4ece4`.
 The bundle is private recovery material and must never be committed or uploaded.
+An isolated bare restoration verified the baseline and archived refs. It also
+exposed a Git limitation: --all includes refs/stash, not every older stash reflog
+entry. The original five stash entries were unchanged; no stash data was deleted.
+
+To close that recovery gap, all five stash commits received local-only
+`recovery/mvp1-20261111/stash-0` through `stash-4` tags and a second private bundle:
+`C:\dev\ajiri\.recovery\mvp1-20261111\ajiri-all-five-stashes.bundle`.
+Its Git verification and separate isolated bare restore passed for all5commit
+objects. SHA256:
+`1efaab37ed0ed06d254aa93908a48e8eec53b483c8e5adcfe4c8d7a9e6f004fb`.
+These tags/bundles were not pushed. Both recovery artifacts and isolated restores
+remain under the owner/SYSTEM/Administrators-only directory.
 
 PR71 and73 were closed with archive/carryover notes after their heads were preserved;
 their discussions/code/CI history remain intact. Neither was merged. Four active
@@ -58,6 +70,7 @@ git show archive/mvp1-20261111/remote/codex/review-02-application-alert-search
 git branch codex/recovered-reference archive/mvp1-20261111/local/codex/backend-inactive-20261031
 # Independently verify the private bundle before using it for recovery.
 git bundle verify C:\dev\ajiri\.recovery\mvp1-20261111\ajiri-before-branch-cleanup.bundle
+git bundle verify C:\dev\ajiri\.recovery\mvp1-20261111\ajiri-all-five-stashes.bundle
 ```
 
 Expected: new feature branch starts at current main; archive references resolve to
