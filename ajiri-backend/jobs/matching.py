@@ -7,6 +7,22 @@ from .freshness import eligible_jobs, job_is_eligible, archive_expired
 MATCH_ALERT_THRESHOLD = 70
 
 
+def explain_skill_match(profile, job):
+    """Explain stored skill overlap without inferring qualifications or availability."""
+    # see docs/CONCEPTS.md#explainable-skill-matching
+    required = sorted(job.skills_required.all(), key=lambda skill: (skill.name.casefold(), skill.pk))
+    owned = {skill.pk for skill in profile.skills.all()}
+    matched = [{'id': skill.pk, 'name': skill.name} for skill in required if skill.pk in owned]
+    missing = [{'id': skill.pk, 'name': skill.name} for skill in required if skill.pk not in owned]
+    return {
+        'status': 'no_job_skills' if not required else 'no_profile_skills' if not owned else 'compared',
+        'matched_skills': matched,
+        'missing_skills': missing,
+        'required_count': len(required),
+        'matched_count': len(matched),
+    }
+
+
 def calculate_match_score(profile, job):
     """
     Returns a 0-100 integer representing how well a profile's skills

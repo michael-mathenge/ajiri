@@ -1455,3 +1455,19 @@ an isolated environment, run pip check and the full suites, retain security fixe
 when combining lockfiles, and regenerate committed frontend assets last. Report
 production-only and development audit findings separately without dismissing either.
 Repository dependency pins do not establish the installed production environment.
+
+## explainable-skill-matching
+
+Job detail compares the authenticated owner's saved skill IDs with the role's
+listed skill IDs. Matched and missing labels explain the existing rounded overlap
+percentage; missing labels mean absent from the profile, not proven lack of skill.
+No listed job skills and no saved profile skills have distinct messages. Candidates
+can correct skills through the existing profile editor. These are relevance labels,
+not qualification assessments, hiring predictions or evidence that a vacancy is open.
+The 70% threshold controls match alerts only. Browsing and application preparation
+retain the existing independent availability and document-approval gates.
+
+The detail-only explanation adds no writes, inferred preferences, telemetry or
+third-party processing. Responses retain private/no-store headers and use only the
+requesting owner's profile. Revert source and matching frontend assets together;
+this slice has no database migration or new activation switch.

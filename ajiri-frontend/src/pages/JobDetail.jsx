@@ -1,5 +1,6 @@
 import { apiErrors } from '../lib/errors'
 import FormErrors from '../components/FormErrors'
+import SkillMatchExplanation from '../components/SkillMatchExplanation'
 import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import {
@@ -124,6 +125,7 @@ export default function JobDetail() {
       </Card>
       <div className="detail-layout">
         <div className="stack">
+          <SkillMatchExplanation explanation={job.match_explanation} />
           <Card>
             <h2>About the role</h2>
             <p className="job-copy">{job.description}</p>
