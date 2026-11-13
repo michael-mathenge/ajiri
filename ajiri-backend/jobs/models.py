@@ -2,9 +2,10 @@ import uuid
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from django.core.validators import RegexValidator
+from django.core.validators import RegexValidator, MaxValueValidator
 from django.db import models
 from profiles.models import Skill
+from .vacancy_metadata import COUNTIES, WORK_ARRANGEMENTS, MAX_EXPERIENCE_YEARS
 
 
 class EmployerOrganisation(models.Model):
@@ -40,6 +41,13 @@ class Job(models.Model):
     description = models.TextField()
     requirements = models.TextField(blank=True)
     location = models.CharField(max_length=255, blank=True)
+
+    # Nullable additive fields preserve legacy unknowns and SQLite search triggers.
+    # see docs/CONCEPTS.md#normalized-vacancy-filters
+    county = models.CharField(max_length=30, choices=COUNTIES, null=True, blank=True, default=None)
+    work_arrangement = models.CharField(max_length=10, choices=WORK_ARRANGEMENTS, null=True, blank=True, default=None)
+    min_experience_years = models.PositiveSmallIntegerField(null=True, blank=True, default=None,
+        validators=[MaxValueValidator(MAX_EXPERIENCE_YEARS)])
 
     salary_min = models.PositiveIntegerField(null=True, blank=True)
     salary_max = models.PositiveIntegerField(null=True, blank=True)
@@ -86,6 +94,31 @@ class Job(models.Model):
         return self.external_application_url or self.source_url
 
 
+class SavedJob(models.Model):
+    # see docs/CONCEPTS.md#private-shortlist-and-follow-up
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='saved_jobs')
+    job = models.ForeignKey(Job, on_delete=models.PROTECT, related_name='saved_by')
+    saved_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=('owner', 'job'), name='unique_owner_saved_job')]
+
+
+class RecommendationChoice(models.Model):
+    # see docs/CONCEPTS.md#owner-recommendation-choices
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='recommendation_choices')
+    job = models.ForeignKey(Job, on_delete=models.PROTECT, related_name='candidate_choices')
+    dismissed_at = models.DateTimeField(null=True, blank=True)
+    revision = models.PositiveIntegerField(default=0)
+
+    @property
+    def dismissed(self):
+        return self.dismissed_at is not None
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=('owner', 'job'), name='unique_owner_recommendation_choice')]
+
+
 class JobModerationReview(models.Model):
     # see docs/CONCEPTS.md#reasoned-job-moderation
     job = models.ForeignKey(Job, on_delete=models.PROTECT, related_name='moderation_reviews')
@@ -124,6 +157,10 @@ class EmployerJobDraft(models.Model):
     description = models.TextField()
     requirements = models.TextField(blank=True)
     location = models.CharField(max_length=255)
+    county = models.CharField(max_length=30, choices=COUNTIES, null=True, blank=True, default=None)
+    work_arrangement = models.CharField(max_length=10, choices=WORK_ARRANGEMENTS, null=True, blank=True, default=None)
+    min_experience_years = models.PositiveSmallIntegerField(null=True, blank=True, default=None,
+        validators=[MaxValueValidator(MAX_EXPERIENCE_YEARS)])
     job_type = models.CharField(max_length=20, choices=Job.JobType.choices, default=Job.JobType.FULL_TIME)
     application_url = models.URLField()
     closes_at = models.DateTimeField()
@@ -156,6 +193,10 @@ class SavedSearch(models.Model):
     q = models.CharField(max_length=255, blank=True)
     location = models.CharField(max_length=255, blank=True)
     job_type = models.CharField(max_length=20, blank=True, choices=Job.JobType.choices)
+    county = models.CharField(max_length=30, choices=COUNTIES, null=True, blank=True, default=None)
+    work_arrangement = models.CharField(max_length=10, choices=WORK_ARRANGEMENTS, null=True, blank=True, default=None)
+    max_experience_years = models.PositiveSmallIntegerField(null=True, blank=True, default=None,
+        validators=[MaxValueValidator(MAX_EXPERIENCE_YEARS)])
     in_app_frequency = models.CharField(max_length=8, choices=Frequency.choices, default=Frequency.OFF)
     email_frequency = models.CharField(max_length=8, choices=Frequency.choices, default=Frequency.OFF)
     revision = models.PositiveIntegerField(default=1)
@@ -213,6 +254,9 @@ class Application(models.Model):
     progress_note = models.CharField(max_length=1000, blank=True, default='')
     progress_revision = models.PositiveIntegerField(default=0)
     progress_reported_at = models.DateTimeField(null=True, blank=True, default=None)
+    # A personal planning date is independent of delivery evidence or permission.
+    # see docs/CONCEPTS.md#private-shortlist-and-follow-up
+    follow_up_at = models.DateTimeField(null=True, blank=True, default=None)
 
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,

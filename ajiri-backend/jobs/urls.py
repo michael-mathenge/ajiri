@@ -1,4 +1,6 @@
 from django.urls import path
+from .saved_job_views import SavedJobList, SavedJobState
+from .recommendation_views import SuggestionList, DismissedSuggestionList, RecommendationChoiceDetail
 from .application_progress import ApplicationProgressView
 from .saved_search_views import SavedSearchList, SavedSearchDetail, SavedSearchMatches
 from .employer_views import OrganisationList, DraftList, DraftWithdraw, OrganisationReview, DraftReview, ReviewQueue
@@ -23,6 +25,11 @@ from .views import (
 )
 
 urlpatterns = [
+    path('saved/', SavedJobList.as_view(), name='saved-jobs'),
+    path('<int:pk>/saved/', SavedJobState.as_view(), name='saved-job-state'),
+    path('suggestions/', SuggestionList.as_view(), name='job-suggestions'),
+    path('suggestions/dismissed/', DismissedSuggestionList.as_view(), name='dismissed-suggestions'),
+    path('<int:pk>/suggestion-choice/', RecommendationChoiceDetail.as_view(), name='suggestion-choice'),
     path('applications/<int:pk>/progress/', ApplicationProgressView.as_view(), name='application-progress'),
     path('saved-searches/', SavedSearchList.as_view(), name='saved-search-list'),
     path('saved-searches/<uuid:pk>/', SavedSearchDetail.as_view(), name='saved-search-detail'),

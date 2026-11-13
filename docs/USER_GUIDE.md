@@ -116,3 +116,51 @@ decision. Successful publication gives the vacancy its own Ajiri listing; candid
 follow the separate official application instructions. Withdraw it if it closes
 early. Review does not guarantee an employer's conduct, and job seekers never pay
 Ajiri to apply. External feed listings remain separately labelled.
+
+## County, work arrangement and experience filters
+
+On the job list, open **More job filters** on a phone. Combine keywords/location
+and job type with county, remote/on-site/hybrid arrangement and the maximum
+experience a role may require. A zero limit includes roles explicitly requiring
+no prior experience; leaving it blank includes unstated requirements too. Chosen
+county/arrangement filters show only stated matching facts. Clear filters to
+broaden results. A low skill score never stops you browsing or applying to an
+otherwise eligible vacancy.
+
+**Save this search** carries all selected filters into the private saved-search
+form, including zero experience. Each notification channel remains a separate
+choice; saving a search never authorizes or sends email. Existing searches keep
+their current limits unless you edit them explicitly.
+
+Employers may supply county, work arrangement and minimum required experience
+with a draft. Leave unknown requirements unstated. Independent staff see these
+facts during review; publication and current closing-date checks still apply.
+Legacy jobs are labelled **Not stated** where facts are missing. Ajiri does not
+infer location, remote work or experience from a candidate's personal traits.
+
+## Control your suggestions
+
+Open **View skill suggestions** from the job list to see current verified roles
+ordered by listed skill overlap. Low scores are included. The normal **Browse all
+jobs** view remains available.
+
+Use **Dismiss suggestion** for an irrelevant role. You can restore it in
+**Dismissed suggestions**; it will return only if its availability is still
+current. This choice affects suggestions only. Your applications, saved searches
+and alert settings keep their separate controls. Dismissing never sends or
+withdraws an application. If a request fails, use the displayed refresh control
+to read your current choice before trying again.
+
+## Save a role and plan a follow-up
+
+Open a job and choose **Save job** to keep it in your private **Saved jobs** list.
+A saved role may expire, and supplemental references remain unverified.
+The shortlist keeps the availability warning and source reference; only a currently
+eligible role offers its normal application flow. Remove a saved reference when
+you no longer need it. Saving/removing does not submit, send or withdraw an application.
+
+In **My applications → Track my progress**, record your own stage, private note
+and optional **Personal follow-up date** in your local time. The date appears in
+My applications for you to check manually; email/device reminders are not sent.
+Clear the picker and save to remove the date. Your report remains separate from
+provider receipts, employer decisions and exact-document sending permission.

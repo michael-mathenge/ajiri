@@ -48,10 +48,42 @@ it('prefills current query but defaults both channels off and never grants email
     q: 'Python',
     location: 'Kenya',
     job_type: 'contract',
+    county: null,
+    work_arrangement: null,
+    max_experience_years: null,
     in_app_frequency: 'off',
     email_frequency: 'off',
   })
   expect(apiClient.post).toHaveBeenCalledTimes(1)
+})
+
+it('preserves all chosen mobile filters including zero without changing channel permissions', async () => {
+  apiClient.get.mockResolvedValue({ data: { count: 0, results: [] } })
+  apiClient.post.mockResolvedValue({ data: { id: 'new' } })
+  show(
+    '/saved-searches?county=nairobi-city&work_arrangement=remote&max_experience_years=0'
+  )
+  await screen.findByText('No saved searches yet.')
+  expect(screen.getByLabelText('County')).toHaveValue('nairobi-city')
+  expect(screen.getByLabelText('Work arrangement')).toHaveValue('remote')
+  expect(
+    screen.getByLabelText('Maximum required experience (years)')
+  ).toHaveValue(0)
+  fireEvent.change(screen.getByLabelText('Search name'), {
+    target: { value: 'No prior experience' },
+  })
+  fireEvent.click(screen.getByRole('button', { name: 'Save search' }))
+  await screen.findByRole('status')
+  expect(apiClient.post).toHaveBeenCalledWith(
+    '/jobs/saved-searches/',
+    expect.objectContaining({
+      county: 'nairobi-city',
+      work_arrangement: 'remote',
+      max_experience_years: 0,
+      in_app_frequency: 'off',
+      email_frequency: 'off',
+    })
+  )
 })
 
 it('edits with the displayed revision and keeps every returned validation message', async () => {

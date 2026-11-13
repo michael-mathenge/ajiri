@@ -3,6 +3,8 @@ import { useEffect } from 'react'
 import { useSchemaForm } from '../hooks/useSchemaForm'
 import { searchSchema } from '../lib/formSchemas'
 import FormErrors from '../components/FormErrors'
+import VacancyFields from '../components/VacancyFields'
+import RecommendationAction from '../components/RecommendationAction'
 import { useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import {
@@ -28,7 +30,7 @@ import {
 import { dateLabel, jobType, salaryLabel } from '../lib/utils'
 import { useVacancyClock, displayableAt } from '../hooks/useVacancyClock'
 
-function Filters({ register }) {
+function Filters({ register, errors }) {
   return (
     <>
       <div className="field">
@@ -59,25 +61,43 @@ function Filters({ register }) {
           <option value="internship">Internship</option>
         </Select>
       </div>
+      <VacancyFields register={register} prefix="filters" errors={errors} />
     </>
   )
 }
-export default function JobList() {
+export default function JobList({ suggestions = false }) {
   // URL state makes filters shareable and preserves them with browser Back.
   // see docs/CONCEPTS.md#url-search-state
   const [params, setParams] = useSearchParams()
   const title = params.get('q') || params.get('title') || ''
   const location = params.get('location') || ''
   const type = params.get('job_type') || ''
+  const county = params.get('county') || ''
+  const workArrangement = params.get('work_arrangement') || ''
+  const maxExperience = params.get('max_experience_years') || ''
   const {
     form,
     errors: filterErrors,
     submit: validateSubmit,
-  } = useSchemaForm(searchSchema, { title, location, job_type: type })
+  } = useSchemaForm(searchSchema, {
+    title,
+    location,
+    job_type: type,
+    county,
+    work_arrangement: workArrangement,
+    max_experience_years: maxExperience,
+  })
   const { reset } = form
   useEffect(() => {
-    reset({ title, location, job_type: type })
-  }, [title, location, type, reset])
+    reset({
+      title,
+      location,
+      job_type: type,
+      county,
+      work_arrangement: workArrangement,
+      max_experience_years: maxExperience,
+    })
+  }, [title, location, type, county, workArrangement, maxExperience, reset])
   const requestedPage = Number(params.get('page'))
   const page =
     Number.isSafeInteger(requestedPage) && requestedPage > 0 ? requestedPage : 1
@@ -85,7 +105,12 @@ export default function JobList() {
   if (title) query.set(params.has('q') ? 'q' : 'title', title)
   if (location) query.set('location', location)
   if (type) query.set('job_type', type)
-  const { data, loading, error, retry } = useApiQuery(`/jobs/?${query}`)
+  if (county) query.set('county', county)
+  if (workArrangement) query.set('work_arrangement', workArrangement)
+  if (maxExperience) query.set('max_experience_years', maxExperience)
+  const { data, loading, error, retry } = useApiQuery(
+    `/jobs/${suggestions ? 'suggestions/' : ''}?${query}`
+  )
   const rows = data?.results ?? []
   const vacancyNow = useVacancyClock(rows)
   const currentRows = rows.filter((job) => displayableAt(job, vacancyNow))
@@ -96,7 +121,9 @@ export default function JobList() {
     ? profile.skills.length > 0
     : null
   const [showFilters, setShowFilters] = useState(false)
-  const filtered = Boolean(title || location || type)
+  const filtered = Boolean(
+    title || location || type || county || workArrangement || maxExperience
+  )
   const submit = (values) => {
     const next = new URLSearchParams()
     for (const [key, value] of Object.entries(values))
@@ -114,10 +141,25 @@ export default function JobList() {
       <section className="page-heading">
         <div>
           <span className="eyebrow">OPPORTUNITIES, WITH YOU IN MIND</span>
-          <h1>Find your next chapter.</h1>
+          <h1>
+            {suggestions ? 'Your job suggestions' : 'Find your next chapter.'}
+          </h1>
           <p className="lead">
-            Explore jobs across Kenya. Start with the skills that make you, you.
+            {suggestions
+              ? 'Current roles ordered by listed skill overlap, with no score cutoff. Dismiss suggestions that are not relevant to you.'
+              : 'Explore jobs across Kenya. Start with the skills that make you, you.'}
           </p>
+          <div className="flex flex-wrap gap-3">
+            <Link
+              className="inline-link"
+              to={suggestions ? '/' : '/suggestions'}
+            >
+              {suggestions ? 'Browse all jobs' : 'View skill suggestions'}
+            </Link>
+            <Link className="inline-link" to="/saved-jobs">
+              Saved jobs
+            </Link>
+          </div>
         </div>
         <span className="heading-icon">
           <BriefcaseBusiness size={36} aria-hidden="true" />
@@ -127,10 +169,10 @@ export default function JobList() {
         <form
           noValidate
           onSubmit={validateSubmit(submit)}
-          key={`${title}|${location}|${type}`}
+          key={`${title}|${location}|${type}|${county}|${workArrangement}|${maxExperience}`}
         >
           <div className={`search-fields ${showFilters ? 'filters-open' : ''}`}>
-            <Filters register={form.register} />
+            <Filters register={form.register} errors={filterErrors} />
             <Button type="submit">
               <Search size={18} aria-hidden="true" />
               Search jobs
@@ -145,7 +187,7 @@ export default function JobList() {
               onClick={() => setShowFilters(!showFilters)}
             >
               <SlidersHorizontal size={16} aria-hidden="true" />
-              {showFilters ? 'Fewer filters' : 'Location & job type'}
+              {showFilters ? 'Fewer filters' : 'More job filters'}
             </Button>
             {filtered && (
               <Button variant="ghost" onClick={() => setParams({})}>
@@ -189,7 +231,14 @@ export default function JobList() {
         </p>
       )}
       <Link
-        to={`/saved-searches?${new URLSearchParams({ q: title, location, job_type: type })}`}
+        to={`/saved-searches?${new URLSearchParams({
+          q: title,
+          location,
+          job_type: type,
+          county,
+          work_arrangement: workArrangement,
+          max_experience_years: maxExperience,
+        })}`}
       >
         Save this search
       </Link>
@@ -200,7 +249,11 @@ export default function JobList() {
       ) : !currentRows.length ? (
         <EmptyState
           title={
-            filtered ? 'No jobs match those filters' : 'No opportunities yet'
+            filtered
+              ? 'No jobs match those filters'
+              : suggestions
+                ? 'No current suggestions'
+                : 'No opportunities yet'
           }
           action={
             filtered && (
@@ -212,7 +265,9 @@ export default function JobList() {
         >
           {filtered
             ? 'Try a broader title or another location.'
-            : 'No listings are available to display. Check back for more openings.'}
+            : suggestions
+              ? 'No current verified roles remain in your suggestions. Check back or review your dismissed suggestions.'
+              : 'No listings are available to display. Check back for more openings.'}
         </EmptyState>
       ) : (
         <>
@@ -277,6 +332,12 @@ export default function JobList() {
                     <ArrowRight size={16} aria-hidden="true" />
                   </Link>
                 </div>
+                {suggestions && (
+                  <RecommendationAction
+                    job={job}
+                    revision={job.choice_revision}
+                  />
+                )}
               </Card>
             ))}
           </div>

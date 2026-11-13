@@ -1,5 +1,100 @@
 # Jira roadmap execution
 
+## 13 November: AJ84 private shortlist/manual follow-up, local verified package
+
+Branch codex/mvp2-aj84-saved-jobs from checkedMVP2/PR97 mergee31ef17. Idempotent
+owner-only saved-role references retain dates, provenance and unverified/expired
+warnings without changing browse/preparation/alert eligibility. AJ50 personal
+stage/note/revision now optionally stores a manual follow-up date; explicit null
+clears, older-client omission preserves, and sending/uncertain receipts/approved
+documents remain independent. Private export and prepared-journal erasure include
+only owned data. Additive jobs.0021 preserves old rows/documents/search triggers.
+
+Actual full591 Django tests passed286.935s (one existing skip); final171 components
+passed27.34s; five tooling tests3.992s; Node24.19 locked install/both linters/build
+2.34s; check/drift/Ruff/strict schema and safe42-file synchronization passed.
+Initial schema annotation warning was corrected using the generator's media-type
+mapping, not suppressed. Focused14 API/schema/privacy tests9.540s and initial8 UI
+tests6.64s passed; two actual Chromium save/remove/focus/date/reload journeys passed
+21.978s with no provider call. No production action or new mail consent occurred.
+See reports/AJ84_SHORTLIST_FOLLOW_UP_2026-11-13.md. Exact-head CI, checked release,
+fresh private recovery/migrations and live verification remain pending; runtime93cf55e.
+
+## 13 November: AJ83 private suggestion choices, local verified package
+
+Branch codex/mvp2-aj83-candidate-choices from reviewedMVP2/PR96 merge9db23ab.
+Suggestions rank current roles with the same skill arithmetic, including low scores;
+owner-scoped reversible dismissal does not alter browsing, application progress,
+saved-search criteria, email preferences or sending. Strict optimistic revisions,
+private/no-store responses, explicit read-before-retry UI and owner export/erasure
+integration are covered. jobs.0020 adds only the unique owner/job preference table;
+disposable reverse preserves existing job/application values and search triggers.
+
+Actual full577 Django tests passed302.855s/one existing skip;166 components37.20s;
+five tooling tests4.359s; Node24.19 locked install/both linters/build2.40s;
+check/drift/Ruff/strict schema and safe39-file build synchronization passed.
+Expanded focused12 tests passed9.963s after fixing an erasure fixture that omitted
+required journal preparation. Browser first failed with saved searches off; fixture
+now enables them explicitly and waits for the destination heading, correcting a
+prior prefill coverage gap. Expanded Chromium journey passed17.041s, including
+dismissal/restore, retained normal browse access, actual prefill and accessibility.
+No guard or production flag was relaxed. See reports/AJ83_OWNER_CHOICES_2026-11-13.md.
+Source/build, required CI and release activation remain pending; genuine inventory
+and8/10 consented-person acceptance remain open. Production is still93cf55e.
+
+## 13 November: AJ83 normalized mobile filters, local verified package
+
+Branch codex/mvp2-aj83-discovery from reviewedMVP2, advanced toc6ae61e after checked
+PR95. Explicit employer county/work arrangement/experience facts now flow through
+independent review, serializers, URL/mobile filtering and identical owner saved
+search/window queries. Unknowns remain null;0 required years is explicit and kept
+when saving. No trait inference,70% browse/apply gate, consent or delivery change.
+jobs.0019 adds nine nullable fields; disposable forward/reverse preserves legacy
+jobs/drafts/searches and all three search triggers. No production migration yet.
+
+Actual check/drift/Ruff/schema passed;565 Django tests passed291.252s with one
+existing skip;164 components passed37.22s; five tooling tests4.207s; Node24.19
+locked npmci/lint/ESLint/build2.37s and safe39-file build synchronization passed.
+Initial local browser import failed for absent optional Playwright; pinned runner
+installed locally, then real employer/review/mobile-filter/accessibility/withdrawal
+journey passed12.581s with provider uncalled. Focused backend19/10 and UI16 checks
+also passed. Source/build commits, required CI and production activation pending.
+Dismissal and consented pilot acceptance remain open. See
+reports/AJ83_NORMALIZED_FILTERS_2026-11-13.md for exact evidence and rollback.
+
+## 13 November: MVP2 original-source package deployed
+
+AJ80's historical Jira housekeeping also completed:23 descriptive dated titles
+and23 Relates links, with independent readback confirming unchanged source
+comments/IDs/timestamps/counts and Done statuses. No entry was deleted, merged,
+bulk-transitioned or treated as new live acceptance. See
+docs/JIRA_HISTORY_RECONCILIATION.md for the exact preserved mapping.
+
+Reviewed main93cf55e5299e8eb5adab60da215b5fbe1e82d1b4 (PR94) is now the
+verified runtime, replacingd5f2f68. AJ87/PR91, AJ85/PR92 and AJ82/PR93 were
+independent feature branches merged intoMVP2 after six checks each; release94
+and the exact merged main also passed all six. Final application gates:555 Django
+tests/one existing skip,161 components, five tooling tests, both linters, locked
+Node24.19 install/build, schema and migration drift passed.
+
+Only the two specifically approved redundant server archives were removed;
+64,442,246 bytes reclaimed, raw snapshot and all off-server recovery copies retained.
+Fresh paused-writer snapshot backup-20261113T134617405732Z-46a6f54d completed.
+Its10,993,453-byte private download passed independent checksums, off-server copy
+and isolated database/16-file restore before migration0018/activation. All43 old
+tables, three search triggers and media bytes preserved after accounting for the
+two inspected SQLite migration/empty-table counter changes. No old data was restored.
+Next-backup plan passes with16MiB reserve and27,643,851 bytes beyond the plan.
+
+Web re-enabled/reloaded; both writer workflows restored. HTTPS health200/HSTS604800,
+all38 exact production assets and owner jobs/CV/employer/private-document reads
+passed; anonymous document401. No new production employer/job/email. Freshness true;
+posting/public jobs/application and alert email false; existing account mail true.
+Original source is deployed foundation with0 eligible roles/0 employers against
+50/10 targets, not completed AJ82 pilot acceptance or the complete MVP2 backlog.
+See reports/MVP2_ORIGINAL_SOURCE_DEPLOYMENT_2026-11-13.md for revisions, commands,
+failed initial preservation comparisons, recovery hashes, limitations and rollback.
+
 ## 24 October: application pipeline (AJ50 local)
 
 Branch codex/application-pipeline from reviewed main b24b070. Private owner

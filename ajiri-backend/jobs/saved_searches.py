@@ -61,7 +61,9 @@ def collect_due(search_id, channel='in_app', *, at=None):
         rows = []
         if allowed and start < end:
             jobs = eligible_jobs(at=at).filter(scraped_at__gt=start, scraped_at__lte=end)
-            query = JobFilter({'q': search.q, 'location': search.location, 'job_type': search.job_type}, queryset=jobs)
+            query = JobFilter({'q': search.q, 'location': search.location, 'job_type': search.job_type,
+                               'county': search.county, 'work_arrangement': search.work_arrangement,
+                               'max_experience_years': search.max_experience_years}, queryset=jobs)
             if not query.is_valid():
                 raise ValueError('Stored saved search is invalid.')
             for job in query.qs.order_by('-scraped_at', '-pk')[:MAX_MATCHES]:

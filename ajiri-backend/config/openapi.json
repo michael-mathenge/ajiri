@@ -1330,6 +1330,64 @@
                 "parameters": [
                     {
                         "in": "query",
+                        "name": "county",
+                        "schema": {
+                            "type": "string",
+                            "nullable": true,
+                            "enum": [
+                                "baringo",
+                                "bomet",
+                                "bungoma",
+                                "busia",
+                                "elgeyo-marakwet",
+                                "embu",
+                                "garissa",
+                                "homa-bay",
+                                "isiolo",
+                                "kajiado",
+                                "kakamega",
+                                "kericho",
+                                "kiambu",
+                                "kilifi",
+                                "kirinyaga",
+                                "kisii",
+                                "kisumu",
+                                "kitui",
+                                "kwale",
+                                "laikipia",
+                                "lamu",
+                                "machakos",
+                                "makueni",
+                                "mandera",
+                                "marsabit",
+                                "meru",
+                                "migori",
+                                "mombasa",
+                                "muranga",
+                                "nairobi-city",
+                                "nakuru",
+                                "nandi",
+                                "narok",
+                                "nyamira",
+                                "nyandarua",
+                                "nyeri",
+                                "samburu",
+                                "siaya",
+                                "taita-taveta",
+                                "tana-river",
+                                "tharaka-nithi",
+                                "trans-nzoia",
+                                "turkana",
+                                "uasin-gishu",
+                                "vihiga",
+                                "wajir",
+                                "west-pokot"
+                            ]
+                        },
+                        "description": "* `baringo` - Baringo\n* `bomet` - Bomet\n* `bungoma` - Bungoma\n* `busia` - Busia\n* `elgeyo-marakwet` - Elgeyo Marakwet\n* `embu` - Embu\n* `garissa` - Garissa\n* `homa-bay` - Homa Bay\n* `isiolo` - Isiolo\n* `kajiado` - Kajiado\n* `kakamega` - Kakamega\n* `kericho` - Kericho\n* `kiambu` - Kiambu\n* `kilifi` - Kilifi\n* `kirinyaga` - Kirinyaga\n* `kisii` - Kisii\n* `kisumu` - Kisumu\n* `kitui` - Kitui\n* `kwale` - Kwale\n* `laikipia` - Laikipia\n* `lamu` - Lamu\n* `machakos` - Machakos\n* `makueni` - Makueni\n* `mandera` - Mandera\n* `marsabit` - Marsabit\n* `meru` - Meru\n* `migori` - Migori\n* `mombasa` - Mombasa\n* `muranga` - Murang'a\n* `nairobi-city` - Nairobi City\n* `nakuru` - Nakuru\n* `nandi` - Nandi\n* `narok` - Narok\n* `nyamira` - Nyamira\n* `nyandarua` - Nyandarua\n* `nyeri` - Nyeri\n* `samburu` - Samburu\n* `siaya` - Siaya\n* `taita-taveta` - Taita Taveta\n* `tana-river` - Tana River\n* `tharaka-nithi` - Tharaka Nithi\n* `trans-nzoia` - Trans Nzoia\n* `turkana` - Turkana\n* `uasin-gishu` - Uasin Gishu\n* `vihiga` - Vihiga\n* `wajir` - Wajir\n* `west-pokot` - West Pokot"
+                    },
+                    {
+                        "in": "query",
                         "name": "job_type",
                         "schema": {
                             "type": "string",
@@ -1347,6 +1405,16 @@
                         "name": "location",
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "max_experience_years",
+                        "schema": {
+                            "type": "integer",
+                            "maximum": 80,
+                            "minimum": 0,
+                            "nullable": true
                         }
                     },
                     {
@@ -1379,6 +1447,20 @@
                         "schema": {
                             "type": "string"
                         }
+                    },
+                    {
+                        "in": "query",
+                        "name": "work_arrangement",
+                        "schema": {
+                            "type": "string",
+                            "nullable": true,
+                            "enum": [
+                                "hybrid",
+                                "on_site",
+                                "remote"
+                            ]
+                        },
+                        "description": "* `on_site` - On-site\n* `hybrid` - Hybrid\n* `remote` - Remote"
                     }
                 ],
                 "tags": [
@@ -1749,6 +1831,516 @@
                                 "schema": {
                                     "type": "string",
                                     "format": "binary"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {}
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorOutput"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "403": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorOutput"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "404": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorOutput"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "409": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorOutput"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "429": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorOutput"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "503": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorOutput"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/jobs/{id}/saved/": {
+            "get": {
+                "operationId": "get_api_v1_jobs_id_saved",
+                "description": "Same owner permissions, validation, throttles and explicit-action requirements as the legacy route.",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "jobs"
+                ],
+                "security": [
+                    {
+                        "jwtAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SavedState"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {}
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorOutput"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "403": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorOutput"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "404": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorOutput"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "409": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorOutput"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "429": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorOutput"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "503": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorOutput"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "put": {
+                "operationId": "put_api_v1_jobs_id_saved",
+                "description": "Same owner permissions, validation, throttles and explicit-action requirements as the legacy route.",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "jobs"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "additionalProperties": false
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "jwtAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SavedState"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {}
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorOutput"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "403": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorOutput"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "404": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorOutput"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "409": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorOutput"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "429": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorOutput"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "503": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorOutput"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "delete": {
+                "operationId": "delete_api_v1_jobs_id_saved",
+                "description": "Same owner permissions, validation, throttles and explicit-action requirements as the legacy route.",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "jobs"
+                ],
+                "security": [
+                    {
+                        "jwtAuth": []
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No response body"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorOutput"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "403": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorOutput"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "503": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorOutput"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/jobs/{id}/suggestion-choice/": {
+            "get": {
+                "operationId": "get_api_v1_jobs_id_suggestion_choice",
+                "description": "Same owner permissions, validation, throttles and explicit-action requirements as the legacy route.",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "jobs"
+                ],
+                "security": [
+                    {
+                        "jwtAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Choice"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {}
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorOutput"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "403": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorOutput"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "404": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorOutput"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "409": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorOutput"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "429": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorOutput"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "503": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorOutput"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            },
+            "patch": {
+                "operationId": "patch_api_v1_jobs_id_suggestion_choice",
+                "description": "Same owner permissions, validation, throttles and explicit-action requirements as the legacy route.",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "jobs"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedChoiceInputRequest"
+                            }
+                        },
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedChoiceInputRequest"
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatchedChoiceInputRequest"
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "jwtAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Choice"
                                 }
                             }
                         },
@@ -5182,6 +5774,114 @@
                 }
             }
         },
+        "/api/v1/jobs/saved/": {
+            "get": {
+                "operationId": "get_api_v1_jobs_saved",
+                "description": "Same owner permissions, validation, throttles and explicit-action requirements as the legacy route.",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "required": false,
+                        "in": "query",
+                        "description": "A page number within the paginated result set.",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "tags": [
+                    "jobs"
+                ],
+                "security": [
+                    {
+                        "jwtAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PaginatedSavedJobList"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {}
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorOutput"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "403": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorOutput"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "404": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorOutput"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "409": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorOutput"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "429": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorOutput"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "503": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorOutput"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/api/v1/jobs/saved-searches/": {
             "get": {
                 "operationId": "get_api_v1_jobs_saved_searches",
@@ -5782,6 +6482,347 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/PaginatedJobListList"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {}
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorOutput"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "403": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorOutput"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "404": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorOutput"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "409": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorOutput"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "429": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorOutput"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "503": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorOutput"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/jobs/suggestions/": {
+            "get": {
+                "operationId": "get_api_v1_jobs_suggestions",
+                "description": "Same owner permissions, validation, throttles and explicit-action requirements as the legacy route.",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "county",
+                        "schema": {
+                            "type": "string",
+                            "nullable": true,
+                            "enum": [
+                                "baringo",
+                                "bomet",
+                                "bungoma",
+                                "busia",
+                                "elgeyo-marakwet",
+                                "embu",
+                                "garissa",
+                                "homa-bay",
+                                "isiolo",
+                                "kajiado",
+                                "kakamega",
+                                "kericho",
+                                "kiambu",
+                                "kilifi",
+                                "kirinyaga",
+                                "kisii",
+                                "kisumu",
+                                "kitui",
+                                "kwale",
+                                "laikipia",
+                                "lamu",
+                                "machakos",
+                                "makueni",
+                                "mandera",
+                                "marsabit",
+                                "meru",
+                                "migori",
+                                "mombasa",
+                                "muranga",
+                                "nairobi-city",
+                                "nakuru",
+                                "nandi",
+                                "narok",
+                                "nyamira",
+                                "nyandarua",
+                                "nyeri",
+                                "samburu",
+                                "siaya",
+                                "taita-taveta",
+                                "tana-river",
+                                "tharaka-nithi",
+                                "trans-nzoia",
+                                "turkana",
+                                "uasin-gishu",
+                                "vihiga",
+                                "wajir",
+                                "west-pokot"
+                            ]
+                        },
+                        "description": "* `baringo` - Baringo\n* `bomet` - Bomet\n* `bungoma` - Bungoma\n* `busia` - Busia\n* `elgeyo-marakwet` - Elgeyo Marakwet\n* `embu` - Embu\n* `garissa` - Garissa\n* `homa-bay` - Homa Bay\n* `isiolo` - Isiolo\n* `kajiado` - Kajiado\n* `kakamega` - Kakamega\n* `kericho` - Kericho\n* `kiambu` - Kiambu\n* `kilifi` - Kilifi\n* `kirinyaga` - Kirinyaga\n* `kisii` - Kisii\n* `kisumu` - Kisumu\n* `kitui` - Kitui\n* `kwale` - Kwale\n* `laikipia` - Laikipia\n* `lamu` - Lamu\n* `machakos` - Machakos\n* `makueni` - Makueni\n* `mandera` - Mandera\n* `marsabit` - Marsabit\n* `meru` - Meru\n* `migori` - Migori\n* `mombasa` - Mombasa\n* `muranga` - Murang'a\n* `nairobi-city` - Nairobi City\n* `nakuru` - Nakuru\n* `nandi` - Nandi\n* `narok` - Narok\n* `nyamira` - Nyamira\n* `nyandarua` - Nyandarua\n* `nyeri` - Nyeri\n* `samburu` - Samburu\n* `siaya` - Siaya\n* `taita-taveta` - Taita Taveta\n* `tana-river` - Tana River\n* `tharaka-nithi` - Tharaka Nithi\n* `trans-nzoia` - Trans Nzoia\n* `turkana` - Turkana\n* `uasin-gishu` - Uasin Gishu\n* `vihiga` - Vihiga\n* `wajir` - Wajir\n* `west-pokot` - West Pokot"
+                    },
+                    {
+                        "in": "query",
+                        "name": "job_type",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "contract",
+                                "full_time",
+                                "internship",
+                                "part_time"
+                            ]
+                        },
+                        "description": "* `full_time` - Full-time\n* `part_time` - Part-time\n* `contract` - Contract\n* `internship` - Internship"
+                    },
+                    {
+                        "in": "query",
+                        "name": "location",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "max_experience_years",
+                        "schema": {
+                            "type": "integer",
+                            "maximum": 80,
+                            "minimum": 0,
+                            "nullable": true
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "required": false,
+                        "in": "query",
+                        "description": "A page number within the paginated result set.",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "q",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "Keywords"
+                    },
+                    {
+                        "in": "query",
+                        "name": "skill",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "title",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "work_arrangement",
+                        "schema": {
+                            "type": "string",
+                            "nullable": true,
+                            "enum": [
+                                "hybrid",
+                                "on_site",
+                                "remote"
+                            ]
+                        },
+                        "description": "* `on_site` - On-site\n* `hybrid` - Hybrid\n* `remote` - Remote"
+                    }
+                ],
+                "tags": [
+                    "jobs"
+                ],
+                "security": [
+                    {
+                        "jwtAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PaginatedSuggestionList"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {}
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorOutput"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "403": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorOutput"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "404": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorOutput"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "409": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorOutput"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "429": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorOutput"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "503": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorOutput"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/v1/jobs/suggestions/dismissed/": {
+            "get": {
+                "operationId": "get_api_v1_jobs_suggestions_dismissed",
+                "description": "Same owner permissions, validation, throttles and explicit-action requirements as the legacy route.",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "required": false,
+                        "in": "query",
+                        "description": "A page number within the paginated result set.",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "tags": [
+                    "jobs"
+                ],
+                "security": [
+                    {
+                        "jwtAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PaginatedChoiceList"
                                 }
                             }
                         },
@@ -7459,6 +8500,12 @@
                         "type": "object",
                         "additionalProperties": {},
                         "readOnly": true
+                    },
+                    "follow_up_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true,
+                        "nullable": true
                     }
                 },
                 "required": [
@@ -7468,6 +8515,7 @@
                     "created_at",
                     "delivery_evidence",
                     "employer_url",
+                    "follow_up_at",
                     "generated_cover_letter",
                     "generated_cv",
                     "id",
@@ -7611,6 +8659,33 @@
                     ""
                 ]
             },
+            "Choice": {
+                "type": "object",
+                "properties": {
+                    "job": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/JobList"
+                            }
+                        ],
+                        "readOnly": true
+                    },
+                    "revision": {
+                        "type": "integer",
+                        "maximum": 9223372036854775807,
+                        "minimum": 0,
+                        "format": "int64"
+                    },
+                    "dismissed": {
+                        "type": "boolean",
+                        "readOnly": true
+                    }
+                },
+                "required": [
+                    "dismissed",
+                    "job"
+                ]
+            },
             "ChoiceRequest": {
                 "type": "object",
                 "properties": {
@@ -7630,6 +8705,59 @@
                     "enabled",
                     "policy_version"
                 ]
+            },
+            "CountyEnum": {
+                "enum": [
+                    "baringo",
+                    "bomet",
+                    "bungoma",
+                    "busia",
+                    "elgeyo-marakwet",
+                    "embu",
+                    "garissa",
+                    "homa-bay",
+                    "isiolo",
+                    "kajiado",
+                    "kakamega",
+                    "kericho",
+                    "kiambu",
+                    "kilifi",
+                    "kirinyaga",
+                    "kisii",
+                    "kisumu",
+                    "kitui",
+                    "kwale",
+                    "laikipia",
+                    "lamu",
+                    "machakos",
+                    "makueni",
+                    "mandera",
+                    "marsabit",
+                    "meru",
+                    "migori",
+                    "mombasa",
+                    "muranga",
+                    "nairobi-city",
+                    "nakuru",
+                    "nandi",
+                    "narok",
+                    "nyamira",
+                    "nyandarua",
+                    "nyeri",
+                    "samburu",
+                    "siaya",
+                    "taita-taveta",
+                    "tana-river",
+                    "tharaka-nithi",
+                    "trans-nzoia",
+                    "turkana",
+                    "uasin-gishu",
+                    "vihiga",
+                    "wajir",
+                    "west-pokot"
+                ],
+                "type": "string",
+                "description": "* `baringo` - Baringo\n* `bomet` - Bomet\n* `bungoma` - Bungoma\n* `busia` - Busia\n* `elgeyo-marakwet` - Elgeyo Marakwet\n* `embu` - Embu\n* `garissa` - Garissa\n* `homa-bay` - Homa Bay\n* `isiolo` - Isiolo\n* `kajiado` - Kajiado\n* `kakamega` - Kakamega\n* `kericho` - Kericho\n* `kiambu` - Kiambu\n* `kilifi` - Kilifi\n* `kirinyaga` - Kirinyaga\n* `kisii` - Kisii\n* `kisumu` - Kisumu\n* `kitui` - Kitui\n* `kwale` - Kwale\n* `laikipia` - Laikipia\n* `lamu` - Lamu\n* `machakos` - Machakos\n* `makueni` - Makueni\n* `mandera` - Mandera\n* `marsabit` - Marsabit\n* `meru` - Meru\n* `migori` - Migori\n* `mombasa` - Mombasa\n* `muranga` - Murang'a\n* `nairobi-city` - Nairobi City\n* `nakuru` - Nakuru\n* `nandi` - Nandi\n* `narok` - Narok\n* `nyamira` - Nyamira\n* `nyandarua` - Nyandarua\n* `nyeri` - Nyeri\n* `samburu` - Samburu\n* `siaya` - Siaya\n* `taita-taveta` - Taita Taveta\n* `tana-river` - Tana River\n* `tharaka-nithi` - Tharaka Nithi\n* `trans-nzoia` - Trans Nzoia\n* `turkana` - Turkana\n* `uasin-gishu` - Uasin Gishu\n* `vihiga` - Vihiga\n* `wajir` - Wajir\n* `west-pokot` - West Pokot"
             },
             "Draft": {
                 "type": "object",
@@ -7659,6 +8787,40 @@
                     "location": {
                         "type": "string",
                         "maxLength": 255
+                    },
+                    "county": {
+                        "nullable": true,
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/CountyEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/BlankEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/NullEnum"
+                            }
+                        ]
+                    },
+                    "work_arrangement": {
+                        "nullable": true,
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/WorkArrangementEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/BlankEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/NullEnum"
+                            }
+                        ]
+                    },
+                    "min_experience_years": {
+                        "type": "integer",
+                        "maximum": 80,
+                        "minimum": 0,
+                        "nullable": true
                     },
                     "job_type": {
                         "$ref": "#/components/schemas/JobTypeEnum"
@@ -7748,6 +8910,40 @@
                         "type": "string",
                         "minLength": 1,
                         "maxLength": 255
+                    },
+                    "county": {
+                        "nullable": true,
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/CountyEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/BlankEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/NullEnum"
+                            }
+                        ]
+                    },
+                    "work_arrangement": {
+                        "nullable": true,
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/WorkArrangementEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/BlankEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/NullEnum"
+                            }
+                        ]
+                    },
+                    "min_experience_years": {
+                        "type": "integer",
+                        "maximum": 80,
+                        "minimum": 0,
+                        "nullable": true
                     },
                     "job_type": {
                         "$ref": "#/components/schemas/JobTypeEnum"
@@ -7853,6 +9049,40 @@
                         "format": "int64",
                         "nullable": true
                     },
+                    "county": {
+                        "nullable": true,
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/CountyEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/BlankEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/NullEnum"
+                            }
+                        ]
+                    },
+                    "work_arrangement": {
+                        "nullable": true,
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/WorkArrangementEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/BlankEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/NullEnum"
+                            }
+                        ]
+                    },
+                    "min_experience_years": {
+                        "type": "integer",
+                        "maximum": 80,
+                        "minimum": 0,
+                        "nullable": true
+                    },
                     "is_salary_negotiable": {
                         "type": "boolean"
                     },
@@ -7949,6 +9179,40 @@
                     },
                     "job_type": {
                         "$ref": "#/components/schemas/JobTypeEnum"
+                    },
+                    "county": {
+                        "nullable": true,
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/CountyEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/BlankEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/NullEnum"
+                            }
+                        ]
+                    },
+                    "work_arrangement": {
+                        "nullable": true,
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/WorkArrangementEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/BlankEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/NullEnum"
+                            }
+                        ]
+                    },
+                    "min_experience_years": {
+                        "type": "integer",
+                        "maximum": 80,
+                        "minimum": 0,
+                        "nullable": true
                     },
                     "salary_min": {
                         "type": "integer",
@@ -8093,6 +9357,11 @@
                     "sent_email"
                 ]
             },
+            "NullEnum": {
+                "enum": [
+                    null
+                ]
+            },
             "Organisation": {
                 "type": "object",
                 "properties": {
@@ -8232,6 +9501,37 @@
                     }
                 }
             },
+            "PaginatedChoiceList": {
+                "type": "object",
+                "required": [
+                    "count",
+                    "results"
+                ],
+                "properties": {
+                    "count": {
+                        "type": "integer",
+                        "example": 123
+                    },
+                    "next": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri",
+                        "example": "http://api.example.org/accounts/?page=4"
+                    },
+                    "previous": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri",
+                        "example": "http://api.example.org/accounts/?page=2"
+                    },
+                    "results": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Choice"
+                        }
+                    }
+                }
+            },
             "PaginatedDraftList": {
                 "type": "object",
                 "required": [
@@ -8356,6 +9656,37 @@
                     }
                 }
             },
+            "PaginatedSavedJobList": {
+                "type": "object",
+                "required": [
+                    "count",
+                    "results"
+                ],
+                "properties": {
+                    "count": {
+                        "type": "integer",
+                        "example": 123
+                    },
+                    "next": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri",
+                        "example": "http://api.example.org/accounts/?page=4"
+                    },
+                    "previous": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri",
+                        "example": "http://api.example.org/accounts/?page=2"
+                    },
+                    "results": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SavedJob"
+                        }
+                    }
+                }
+            },
             "PaginatedSearchOutputList": {
                 "type": "object",
                 "required": [
@@ -8384,6 +9715,50 @@
                         "items": {
                             "$ref": "#/components/schemas/SearchOutput"
                         }
+                    }
+                }
+            },
+            "PaginatedSuggestionList": {
+                "type": "object",
+                "required": [
+                    "count",
+                    "results"
+                ],
+                "properties": {
+                    "count": {
+                        "type": "integer",
+                        "example": 123
+                    },
+                    "next": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri",
+                        "example": "http://api.example.org/accounts/?page=4"
+                    },
+                    "previous": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri",
+                        "example": "http://api.example.org/accounts/?page=2"
+                    },
+                    "results": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Suggestion"
+                        }
+                    }
+                }
+            },
+            "PatchedChoiceInputRequest": {
+                "type": "object",
+                "properties": {
+                    "dismissed": {
+                        "type": "boolean"
+                    },
+                    "expected_revision": {
+                        "type": "integer",
+                        "maximum": 2147483646,
+                        "minimum": 0
                     }
                 }
             },
@@ -8450,6 +9825,11 @@
                         "type": "string",
                         "default": "",
                         "maxLength": 1000
+                    },
+                    "follow_up_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
                     }
                 }
             },
@@ -8495,6 +9875,34 @@
                                 "$ref": "#/components/schemas/BlankEnum"
                             }
                         ]
+                    },
+                    "county": {
+                        "nullable": true,
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/CountyEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/NullEnum"
+                            }
+                        ]
+                    },
+                    "work_arrangement": {
+                        "nullable": true,
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/WorkArrangementEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/NullEnum"
+                            }
+                        ]
+                    },
+                    "max_experience_years": {
+                        "type": "integer",
+                        "maximum": 80,
+                        "minimum": 0,
+                        "nullable": true
                     },
                     "in_app_frequency": {
                         "allOf": [
@@ -8775,6 +10183,34 @@
                     "reason"
                 ]
             },
+            "SavedJob": {
+                "type": "object",
+                "properties": {
+                    "job": {
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/JobList"
+                            }
+                        ],
+                        "readOnly": true
+                    },
+                    "saved_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "reference_url": {
+                        "type": "string",
+                        "nullable": true,
+                        "readOnly": true
+                    }
+                },
+                "required": [
+                    "job",
+                    "reference_url",
+                    "saved_at"
+                ]
+            },
             "SavedSearchFrequencyEnum": {
                 "enum": [
                     "off",
@@ -8783,6 +10219,30 @@
                 ],
                 "type": "string",
                 "description": "* `off` - Off\n* `daily` - Daily\n* `weekly` - Every seven days"
+            },
+            "SavedState": {
+                "type": "object",
+                "properties": {
+                    "job_id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "saved": {
+                        "type": "boolean",
+                        "readOnly": true
+                    },
+                    "saved_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true,
+                        "nullable": true
+                    }
+                },
+                "required": [
+                    "job_id",
+                    "saved",
+                    "saved_at"
+                ]
             },
             "SearchInputRequest": {
                 "type": "object",
@@ -8812,6 +10272,34 @@
                                 "$ref": "#/components/schemas/BlankEnum"
                             }
                         ]
+                    },
+                    "county": {
+                        "nullable": true,
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/CountyEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/NullEnum"
+                            }
+                        ]
+                    },
+                    "work_arrangement": {
+                        "nullable": true,
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/WorkArrangementEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/NullEnum"
+                            }
+                        ]
+                    },
+                    "max_experience_years": {
+                        "type": "integer",
+                        "maximum": 80,
+                        "minimum": 0,
+                        "nullable": true
                     },
                     "in_app_frequency": {
                         "allOf": [
@@ -8868,6 +10356,40 @@
                                 "$ref": "#/components/schemas/BlankEnum"
                             }
                         ]
+                    },
+                    "county": {
+                        "nullable": true,
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/CountyEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/BlankEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/NullEnum"
+                            }
+                        ]
+                    },
+                    "work_arrangement": {
+                        "nullable": true,
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/WorkArrangementEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/BlankEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/NullEnum"
+                            }
+                        ]
+                    },
+                    "max_experience_years": {
+                        "type": "integer",
+                        "maximum": 80,
+                        "minimum": 0,
+                        "nullable": true
                     },
                     "in_app_frequency": {
                         "$ref": "#/components/schemas/SavedSearchFrequencyEnum"
@@ -8932,6 +10454,135 @@
                     "name"
                 ]
             },
+            "Suggestion": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "title": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "company_name": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "location": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "job_type": {
+                        "$ref": "#/components/schemas/JobTypeEnum"
+                    },
+                    "county": {
+                        "nullable": true,
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/CountyEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/BlankEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/NullEnum"
+                            }
+                        ]
+                    },
+                    "work_arrangement": {
+                        "nullable": true,
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/WorkArrangementEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/BlankEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/NullEnum"
+                            }
+                        ]
+                    },
+                    "min_experience_years": {
+                        "type": "integer",
+                        "maximum": 80,
+                        "minimum": 0,
+                        "nullable": true
+                    },
+                    "salary_min": {
+                        "type": "integer",
+                        "maximum": 9223372036854775807,
+                        "minimum": 0,
+                        "format": "int64",
+                        "nullable": true
+                    },
+                    "salary_max": {
+                        "type": "integer",
+                        "maximum": 9223372036854775807,
+                        "minimum": 0,
+                        "format": "int64",
+                        "nullable": true
+                    },
+                    "is_salary_negotiable": {
+                        "type": "boolean"
+                    },
+                    "match_score": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 100,
+                        "readOnly": true
+                    },
+                    "posted_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
+                    "publication": {
+                        "type": "object",
+                        "additionalProperties": {},
+                        "readOnly": true
+                    },
+                    "display_only": {
+                        "type": "boolean",
+                        "readOnly": true
+                    },
+                    "display_notice": {
+                        "type": "string",
+                        "readOnly": true
+                    },
+                    "can_apply": {
+                        "type": "boolean",
+                        "readOnly": true
+                    },
+                    "original_source_url": {
+                        "type": "string",
+                        "format": "uri",
+                        "readOnly": true
+                    },
+                    "source_name": {
+                        "type": "string",
+                        "maxLength": 100
+                    },
+                    "choice_revision": {
+                        "type": "integer",
+                        "readOnly": true
+                    }
+                },
+                "required": [
+                    "can_apply",
+                    "choice_revision",
+                    "company_name",
+                    "display_notice",
+                    "display_only",
+                    "id",
+                    "match_score",
+                    "original_source_url",
+                    "publication",
+                    "source_name",
+                    "title"
+                ]
+            },
             "VerificationInputRequest": {
                 "type": "object",
                 "properties": {
@@ -8944,6 +10595,15 @@
                 "required": [
                     "token"
                 ]
+            },
+            "WorkArrangementEnum": {
+                "enum": [
+                    "on_site",
+                    "hybrid",
+                    "remote"
+                ],
+                "type": "string",
+                "description": "* `on_site` - On-site\n* `hybrid` - Hybrid\n* `remote` - Remote"
             }
         },
         "securitySchemes": {

@@ -1,6 +1,7 @@
 import { apiErrors } from '../lib/errors'
 import FormErrors from '../components/FormErrors'
 import SkillMatchExplanation from '../components/SkillMatchExplanation'
+import SavedJobButton from '../components/SavedJobButton'
 import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import {
@@ -25,6 +26,7 @@ import {
 } from '../components/ui'
 import { useToast } from '../hooks/useToast'
 import { dateLabel, jobType, salaryLabel } from '../lib/utils'
+import { countyLabel, workArrangementLabel } from '../lib/vacancyMetadata'
 import { useVacancyClock, displayableAt } from '../hooks/useVacancyClock'
 
 export default function JobDetail() {
@@ -88,6 +90,7 @@ export default function JobDetail() {
         All opportunities
       </Link>
       <Card className="detail-heading">
+        <SavedJobButton jobId={job.id} />
         <div className="job-card-top">
           <span className="company-avatar" aria-hidden="true">
             {job.company_name.slice(0, 2).toUpperCase()}
@@ -127,6 +130,16 @@ export default function JobDetail() {
               : 'Posted date not supplied'}
           </span>
         </div>
+        <p>
+          County: {countyLabel(job.county)} · Work arrangement:{' '}
+          {workArrangementLabel(job.work_arrangement)}
+        </p>
+        <p>
+          Minimum required experience:{' '}
+          {job.min_experience_years == null
+            ? 'Not stated'
+            : `${job.min_experience_years} years`}
+        </p>
       </Card>
       <div className="detail-layout">
         <div className="stack">

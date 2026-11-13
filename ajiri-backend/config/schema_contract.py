@@ -16,6 +16,7 @@ from jobs.send_views import AuthorizationInput
 from jobs.employer_views import ReviewInput
 from jobs.saved_search_views import SearchInput
 from jobs.application_progress import ProgressInput
+from jobs.recommendation_views import ChoiceInput
 
 
 class LoginInput(serializers.Serializer):
@@ -33,6 +34,7 @@ class ErrorOutput(serializers.Serializer):
 
 
 INPUTS = {
+    ('RecommendationChoiceDetail', 'PATCH'): ChoiceInput,
     ('ApplicationProgressView', 'PATCH'): ProgressInput,
     ('OrganisationReview', 'POST'): ReviewInput,
     ('DraftReview', 'POST'): ReviewInput,
@@ -92,6 +94,8 @@ class ContractSchema(AutoSchema):
 
     # see docs/CONCEPTS.md#api-version-contract
     def get_request_serializer(self):
+        if type(self.view).__name__ == 'SavedJobState' and self.method == 'PUT':
+            return {'application/json': {'type': 'object', 'additionalProperties': False}}
         if type(self.view).__name__ in ('SavedSearchList', 'SavedSearchDetail') and self.method in ('POST', 'PATCH'):
             return SearchInput()
         configured = INPUTS.get((type(self.view).__name__, self.method))
@@ -105,6 +109,8 @@ class ContractSchema(AutoSchema):
 
     def get_response_serializers(self):
         name = type(self.view).__name__
+        if name == 'SavedJobState' and self.method == 'DELETE':
+            return {204: None, 401: ErrorOutput, 403: ErrorOutput, 503: ErrorOutput}
         if name in DOWNLOADS:
             success = OpenApiTypes.BINARY
         elif name in ('LoginView', 'RefreshView'):
