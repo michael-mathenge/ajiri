@@ -1,5 +1,6 @@
 """Private reports are independent of employer decisions and sending evidence."""
 from pathlib import Path
+from datetime import timedelta
 import tempfile
 from unittest.mock import patch
 
@@ -122,7 +123,8 @@ class ApplicationProgressTests(TestCase):
             app, package = prepared_pilot(self.user)
             before = (package.content_sha256, package.job_snapshot,
                       Path(package.cv_document.path).read_bytes(), Path(package.letter_document.path).read_bytes())
-            response = self.client.patch(self.url(app), {'expected_revision': 0, 'stage': 'offer', 'note': 'My report only'}, format='json')
+            response = self.client.patch(self.url(app), {'expected_revision': 0, 'stage': 'offer', 'note': 'My report only',
+                'follow_up_at': (timezone.now()+timedelta(days=2)).isoformat()}, format='json')
             self.assertEqual(response.status_code, 200)
             package.refresh_from_db()
             self.assertEqual(before, (package.content_sha256, package.job_snapshot,

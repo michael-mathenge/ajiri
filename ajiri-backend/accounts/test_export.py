@@ -83,6 +83,20 @@ class AccountExportTests(TestCase):
         self.assertEqual([row['title'] for row in data['records']['job']], ['Synthetic export job'])
         self.assertNotIn('Other private query', json.dumps(data))
 
+    def test_saved_job_export_includes_only_owned_shortlist_and_context(self):
+        from jobs.models import Job, SavedJob
+        own_job = Job.objects.create(title='Owned shortlist reference', company_name='Synthetic',
+            source_name='synthetic', source_url='https://example.invalid/own-shortlist')
+        other_job = Job.objects.create(title='Other private shortlist reference', company_name='Synthetic',
+            source_name='synthetic', source_url='https://example.invalid/other-shortlist')
+        SavedJob.objects.create(owner=self.owner, job=own_job)
+        SavedJob.objects.create(owner=self.other, job=other_job)
+        self.run_export()
+        data = json.loads((self.root / 'export' / 'account.json').read_text())
+        self.assertEqual([row['job'] for row in data['records']['saved_job']], [own_job.pk])
+        self.assertEqual([row['title'] for row in data['records']['job']], ['Owned shortlist reference'])
+        self.assertNotIn('Other private shortlist reference', json.dumps(data))
+
     def test_recommendation_choices_export_only_owner_choices_and_their_job_context(self):
         from django.utils import timezone
         from jobs.models import Job, RecommendationChoice

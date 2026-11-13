@@ -94,6 +94,16 @@ class Job(models.Model):
         return self.external_application_url or self.source_url
 
 
+class SavedJob(models.Model):
+    # see docs/CONCEPTS.md#private-shortlist-and-follow-up
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='saved_jobs')
+    job = models.ForeignKey(Job, on_delete=models.PROTECT, related_name='saved_by')
+    saved_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=('owner', 'job'), name='unique_owner_saved_job')]
+
+
 class RecommendationChoice(models.Model):
     # see docs/CONCEPTS.md#owner-recommendation-choices
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='recommendation_choices')
@@ -244,6 +254,9 @@ class Application(models.Model):
     progress_note = models.CharField(max_length=1000, blank=True, default='')
     progress_revision = models.PositiveIntegerField(default=0)
     progress_reported_at = models.DateTimeField(null=True, blank=True, default=None)
+    # A personal planning date is independent of delivery evidence or permission.
+    # see docs/CONCEPTS.md#private-shortlist-and-follow-up
+    follow_up_at = models.DateTimeField(null=True, blank=True, default=None)
 
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,

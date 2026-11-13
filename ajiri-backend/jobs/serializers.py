@@ -133,6 +133,7 @@ class ApplicationSerializer(serializers.ModelSerializer):
             'email_subject', 'email_body',
             'created_at', 'updated_at', 'sent_at',
             'progress_stage', 'progress_note', 'progress_revision', 'progress_reported_at', 'delivery_evidence',
+            'follow_up_at',
         )
         read_only_fields = (
             'id', 'job', 'job_title', 'company_name', 'status',
@@ -140,6 +141,7 @@ class ApplicationSerializer(serializers.ModelSerializer):
             'generated_cv', 'generated_cover_letter',
             'created_at', 'updated_at', 'sent_at',
             'progress_stage', 'progress_note', 'progress_revision', 'progress_reported_at', 'delivery_evidence',
+            'follow_up_at',
         )
 
 

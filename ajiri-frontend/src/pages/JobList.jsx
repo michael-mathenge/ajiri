@@ -149,9 +149,17 @@ export default function JobList({ suggestions = false }) {
               ? 'Current roles ordered by listed skill overlap, with no score cutoff. Dismiss suggestions that are not relevant to you.'
               : 'Explore jobs across Kenya. Start with the skills that make you, you.'}
           </p>
-          <Link className="inline-link" to={suggestions ? '/' : '/suggestions'}>
-            {suggestions ? 'Browse all jobs' : 'View skill suggestions'}
-          </Link>
+          <div className="flex flex-wrap gap-3">
+            <Link
+              className="inline-link"
+              to={suggestions ? '/' : '/suggestions'}
+            >
+              {suggestions ? 'Browse all jobs' : 'View skill suggestions'}
+            </Link>
+            <Link className="inline-link" to="/saved-jobs">
+              Saved jobs
+            </Link>
+          </div>
         </div>
         <span className="heading-icon">
           <BriefcaseBusiness size={36} aria-hidden="true" />

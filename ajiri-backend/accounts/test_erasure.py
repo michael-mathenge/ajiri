@@ -62,6 +62,22 @@ class AccountErasureTests(TransactionTestCase):
         self.assertEqual(list(RecommendationChoice.objects.values_list('pk', flat=True)), [other_choice.pk])
         self.assertTrue(Job.objects.filter(pk=self.job.pk).exists())
 
+    def test_verified_synthetic_erasure_removes_only_owned_saved_jobs_and_follow_up_rows(self):
+        from jobs.models import SavedJob
+        from django.utils import timezone
+        target = timezone.now()
+        self.application.follow_up_at = target
+        self.application.save(update_fields=['follow_up_at'])
+        SavedJob.objects.create(owner=self.user, job=self.job)
+        other_saved = SavedJob.objects.create(owner=self.other, job=self.job)
+        other_app = Application.objects.create(user=self.other, job=self.job, follow_up_at=target)
+        self.command('prepare')
+        self.command('execute')
+        self.assertEqual(list(SavedJob.objects.values_list('pk', flat=True)), [other_saved.pk])
+        other_app.refresh_from_db()
+        self.assertEqual(other_app.follow_up_at, target)
+        self.assertTrue(Job.objects.filter(pk=self.job.pk).exists())
+
     def test_rows_and_owned_files_removed_shared_data_and_other_owner_preserved(self):
         attempt = DeliveryAttempt.objects.create(user=self.user, channel='email_verification',
             state='accepted', recipient_digest='a' * 64, provider_message_id='private-provider-id')
