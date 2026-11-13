@@ -96,8 +96,6 @@ Rollback code to93cf55e with additive schema and all new writes retained. Do not
 restore an old database/media snapshot as routine rollback, disable freshness,
 activate posting/publication/sending or overwrite current user data.
 
-## Remaining acceptance
-
 ## Documentation-package gates
 
 The isolated `codex/mvp2-discovery-release-evidence` branch starts at reviewed
