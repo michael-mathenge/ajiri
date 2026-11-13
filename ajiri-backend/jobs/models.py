@@ -116,6 +116,9 @@ class JobPublication(models.Model):
 
 
 class EmployerJobDraft(models.Model):
+    # A retry identifies the same submission; it never authorizes publication.
+    # see docs/CONCEPTS.md#ajiri-original-vacancies
+    submission_id = models.UUIDField(null=True, blank=True, unique=True, default=None)
     organisation = models.ForeignKey(EmployerOrganisation, on_delete=models.PROTECT, related_name='job_drafts')
     title = models.CharField(max_length=255)
     description = models.TextField()

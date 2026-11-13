@@ -102,3 +102,17 @@ approval nor recording permission sends an email. A separate enabled sending rou
 and explicit send action are required. **Go to email permission controls** returns
 you to these controls from the bottom of a long preview. Older revisions remain
 readable but cannot grant new sending permission.
+## Original vacancies on Ajiri
+
+Employers can submit their own vacancies from the employer workspace. Start with
+your organisation and official website, then give the role, location, application
+destination and future closing date. Current account-email verification and
+independent staff review are required. Onboarding remains a pilot; submission does
+not guarantee publication or a review time.
+
+If a submission reports a network error, keep the page open and check your review
+status before trying again. An explicit retry on that page keeps the same submission
+decision. Successful publication gives the vacancy its own Ajiri listing; candidates
+follow the separate official application instructions. Withdraw it if it closes
+early. Review does not guarantee an employer's conduct, and job seekers never pay
+Ajiri to apply. External feed listings remain separately labelled.

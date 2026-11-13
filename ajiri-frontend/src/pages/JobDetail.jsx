@@ -97,7 +97,12 @@ export default function JobDetail() {
         <p className="company-name">{job.company_name}</p>
         {job.display_only && <p role="note">{job.display_notice}</p>}
         <h1>{job.title}</h1>
-        <p>Source: {job.source_name || 'Not supplied'}</p>
+        <p>
+          Source:{' '}
+          {job.publication?.publisher === 'Ajiri'
+            ? 'Ajiri · original employer posting'
+            : job.source_name || 'Not supplied'}
+        </p>
         <p>
           {job.publication?.closes_at
             ? `Applications close: ${new Date(job.publication.closes_at).toLocaleString()}`

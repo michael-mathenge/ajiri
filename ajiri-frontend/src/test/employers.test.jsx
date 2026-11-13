@@ -56,13 +56,79 @@ it('submits an organisation for review without claiming publication or payment',
     screen.getByRole('button', { name: 'Submit organisation for review' })
   )
   expect(await screen.findByRole('status')).toHaveTextContent(
-    'not published yet'
+    'Organisation received for staff review.'
   )
   expect(apiClient.post).toHaveBeenCalledWith(
     '/jobs/employers/organisations/',
     { name: 'Synthetic team', website: 'https://example.invalid' }
   )
   expect(screen.getByText(/Job seekers never pay/)).toBeVisible()
+})
+
+it('keeps the same vacancy decision on an unknown response and changes it only after success', async () => {
+  apiClient.get.mockImplementation((url) =>
+    Promise.resolve({
+      data: {
+        results: url.includes('/organisations/')
+          ? [{ id: 1, name: 'Synthetic team', status: 'approved' }]
+          : [],
+      },
+    })
+  )
+  apiClient.post
+    .mockRejectedValueOnce({
+      response: { data: { detail: 'Outcome unknown. Refresh review status.' } },
+    })
+    .mockResolvedValue({ data: { id: 1, status: 'pending' } })
+  render(<Employers />)
+  await screen.findByRole('heading', { name: 'New vacancy' })
+  const fill = () => {
+    fireEvent.change(screen.getByLabelText('Job title'), {
+      target: { value: 'Synthetic role' },
+    })
+    fireEvent.change(screen.getByLabelText('Location (include country)'), {
+      target: { value: 'Nairobi, Kenya' },
+    })
+    fireEvent.change(screen.getByLabelText('Description'), {
+      target: { value: 'Synthetic responsibilities' },
+    })
+    fireEvent.change(screen.getByLabelText('Official application URL'), {
+      target: { value: 'https://example.invalid/apply' },
+    })
+    fireEvent.change(
+      screen.getByLabelText('Closing date and time (your local time)'),
+      { target: { value: '2027-01-01T17:00' } }
+    )
+  }
+  fill()
+  fireEvent.click(
+    screen.getByRole('button', { name: 'Submit vacancy for review' })
+  )
+  await screen.findByText('Outcome unknown. Refresh review status.')
+  expect(apiClient.post).toHaveBeenCalledTimes(1)
+  const first = apiClient.post.mock.calls[0][1]
+  expect(first.submission_id).toMatch(/^[0-9a-f-]{36}$/)
+  expect(screen.getByLabelText('Job title')).toHaveValue('Synthetic role')
+  fireEvent.click(
+    screen.getByRole('button', { name: 'Submit vacancy for review' })
+  )
+  await screen.findByText(
+    'Vacancy received. Check its review status before submitting it again.'
+  )
+  expect(apiClient.post.mock.calls[1][1]).toEqual(first)
+  await waitFor(() =>
+    expect(
+      screen.getByRole('button', { name: 'Submit vacancy for review' })
+    ).toBeEnabled()
+  )
+  fill()
+  fireEvent.click(
+    screen.getByRole('button', { name: 'Submit vacancy for review' })
+  )
+  await waitFor(() => expect(apiClient.post).toHaveBeenCalledTimes(3))
+  expect(apiClient.post.mock.calls[2][1].submission_id).not.toBe(
+    first.submission_id
+  )
 })
 
 it('shows verification failures and never retries a submission automatically', async () => {

@@ -1471,3 +1471,67 @@ The detail-only explanation adds no writes, inferred preferences, telemetry or
 third-party processing. Responses retain private/no-store headers and use only the
 requesting owner's profile. Revert source and matching frontend assets together;
 this slice has no database migration or new activation switch.
+
+## eslint-glob-security
+
+ESLint uses config-array's glob matcher to decide which files receive correctness
+checks. Its current dependency ranges still select vulnerable minimatch 10, so
+scoped npm overrides select patched 11.0.5 for ESLint and config-array. Node 24.19 meets
+the patched matcher's supported runtime requirement. Real ESLint tests verify that
+source extensions, nested paths and dotfiles still receive checks, JSX still parses,
+and generated/dependency files stay excluded on Windows and Linux. A passing npm
+audit alone would not prove that the linter still checks the intended source.
+
+This affects development tooling, not application permissions or user data. Remove
+the temporary override when a reviewed upstream dependency range selects a patched
+matcher itself. Revert the manifest and lockfile together on rollback; never force
+an incompatible graph with npm audit --force or weaken lint rules to obtain a pass.
+
+## private-recovery-capacity
+
+The next private backup needs room for its completed SQLite/media/erasure snapshot
+and its transfer ZIP at the same time. Shared-host filesystem free space is not
+the account's quota. `private_recovery_plan` accepts freshly measured account quota
+and usage in bytes, then measures database/journal and private-file sizes without
+opening SQLite, copying documents, pruning files or changing permissions. It allows
+tar/ZIP metadata, compression expansion and a default 16 MiB operating reserve.
+The erasure ledger estimate includes all regular files conservatively; it does not
+change which entries the real backup is allowed to include.
+
+A successful estimate is not a backup, scheduler run, integrity check or restore.
+Recheck quota and changing inputs under the paused-writer release window, then run
+the existing complete backup, independent off-server hash check and isolated restore.
+The plan excludes a newly created virtualenv archive by default; include a measured
+upper allowance for additional snapshot artifacts explicitly. Runtime rollback still
+needs its separate verification. Insufficient reserve returns a failure without
+deleting anything. Retention remains report-only; resolve capacity before activation.
+
+## ajiri-original-vacancies
+
+Ajiri publishes original employer-submitted vacancies after the existing independent
+organisation and listing reviews. Each reviewed role keeps its own stable Ajiri URL;
+the employer's official application destination is separate. Publisher identity is
+derived from the employer publication record, so an external feed's source label
+cannot claim to be an Ajiri original. Current email verification, employer authority,
+future closing date, no-applicant-fee checks and withdrawal remain required.
+
+The employer UI retains a UUID submission decision while a request fails or its
+outcome is unknown. Repeating that ID with the same owner and normalized details
+returns the existing draft (200); a new decision creates a draft (201). Reusing an
+ID with different details/ownership returns a generic conflict (409). No automatic
+retry, approval, publication, email or new user consent follows from this ID. Legacy
+clients may omit it; historical drafts keep null IDs without invented decisions.
+Separate posting decisions retain distinct identities, including legitimate roles
+sharing an application portal; staff still review content and authority.
+
+The read-only original_source_readiness command reports aggregate eligible roles,
+employers and pending queues against the 50-role/10-employer pilot targets. It cannot
+claim readiness with freshness enforcement disabled and never creates inventory.
+Actual employer participation, independent review and a consented usability pilot
+remain live acceptance gates. The former three-external-feed target was superseded
+by Michael's13November original-source direction; RSS remains supplemental.
+
+The nullable jobs.0018 field preserves existing drafts, review relationships and job
+search triggers. Apply it while writers/web are paused before activating new code.
+Production rollback keeps the additive column, decision IDs and new employer records;
+reverse-migration tests are disposable rehearsals, not instructions to discard IDs.

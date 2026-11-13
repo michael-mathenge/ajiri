@@ -1,5 +1,12 @@
 # MVP2 proposal — 11 November 2026
 
+13 November approved scope update: Michael chose Ajiri as its own original vacancy
+source. Employer-submitted originals with independent review are now the primary
+inventory path. This supersedes the historical three-independent-feed target below;
+50 genuine eligible roles and10 genuine employers remain pilot targets, not observed
+counts. Keep existing RSS explicitly supplemental and retain every freshness,
+authority, consent and safety gate. See AJ82 and the original-source concept.
+
 **Recommended goal:** help Kenyan job seekers find genuinely current, relevant
 vacancies on a phone, understand why they match, and apply with reviewed documents
 and explicit control. Prioritize useful inventory and trust before monetization.

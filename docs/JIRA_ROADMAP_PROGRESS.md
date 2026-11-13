@@ -2063,3 +2063,94 @@ and final generated-build commits. Its corrected head must pass all six checks
 again before merge; the final merge/check receipt will also be retained on AJ83.
 Integration into MVP2 is distinct from a release to main or production. No source
 or data deployment, migration, provider send, pilot or production verification.
+
+### MVP2 first production activation — 13 November 2026
+
+PR88 merged into `MVP2` as `3e37c47`; release PR89 merged to main as
+`d5f2f6871276434569df10ffb153cb8591a9a7df`. All six exact merged-head checks passed
+in CI43094746515, including a successful rerun after the first browser job's
+artifact-upload service error (the test step had passed). Fresh pinned local full
+release suite: 533 tests/258.239s, one existing skip; earlier frontend gates and exact
+38-file committed-build comparison also passed.
+
+PythonAnywhere now runs that exact release, replacing `e682cac`. The previously
+unfinished private off-server download and isolated restore are complete. The
+11 November consistent snapshot still matched the production database and all
+16 private files under the fresh 13 November writer/web pause. Verified previous
+virtualenv recovery was retained. Exact source staging, offline pinned dependency
+installation, pip/system/drift checks and actual migration plan passed with no
+migrations. Database/media bytes, SQLite integrity/search triggers and feature
+flags were preserved; all 33 runtime pins match, including Django6.1.3.
+
+Web re-enable/reload completed. Post-reload public health200/HSTS604800 and all
+38 exact live frontend files passed. Read-only production authenticated view checks
+passed for jobs (empty), CV draft and existing private approved CV bytes; anonymous
+CV download401. No second active account or currently visible job existed for the
+additional cross-owner/live explanation journey. Ingest/sweep are restored active;
+Michael explicitly authorized one manual ingest after automatic review blocked
+its initial dispatch, and Ingest43425203368 succeeded. No mail/pilot acceptance
+is inferred. AJ83 and the wider MVP2 backlog remain unfinished.
+
+Full recovery hashes, commands, quota, limitations and data-preserving rollback:
+`reports/MVP2_DEPLOYMENT_2026-11-13.md`. This receipt is a documentation follow-up,
+not a new production runtime activation.
+
+## MVP2 security continuation — 13 November 2026
+
+Michael approved implementation/testing/push/checked merge/deployment of the pending
+MVP2 plan. AJ81 is reconciled Done: authenticated GitHub alert31 now reports fixed,
+fixed_at2026-11-11T11:39:39Z, and the previously reviewed dependency package is in
+the verified d5f2f68 production runtime. No manual advisory dismissal occurred.
+
+AJ87 branch `codex/mvp2-aj87-security` starts from reviewed MVP2 `cee43f4`. Exact
+minimatch11.0.5 overrides cover ESLint and config-array's development-only consumers;
+latest upstream ranges still select vulnerable10. Real lint glob regressions and
+existing helper:5tests passed. Node24.19 locked installation, Oxlint/ESLint,
+159components and build passed. Fresh complete npm audit returned0findings. All38
+regenerated frontend files match the unchanged committed build. Backend check/drift
+passed; corrected full suite passed533tests in276.838s (one existing skip).
+Required CI remains pending. An initial wrong-cwd invocation discovered0tests and
+is not full-suite acceptance.
+
+See `reports/AJ87_SECURITY_2026-11-13.md` for source/registry review, validation,
+temporary override removal and rollback. No newer production activation is claimed.
+
+### AJ85 recovery-capacity implementation — 13 November 2026
+
+`codex/mvp2-aj85-recovery` starts from reviewed MVP2 and incorporates reviewed AJ87
+merge00ce84f. Added a read-only account-quota peak planner for simultaneous private
+snapshot and transfer ZIP, compression/metadata allowance and16MiB reserve. It stats
+SQLite/journals/private files without opening SQLite or copying/pruning content.
+Default scope excludes new runtime archives; those need separate measured allowance
+and verification. Backup/restore/scheduler completion is never inferred from a plan.
+
+Eleven focused tests and pinned Ruff0.17.4 passed. System/drift and Node24.19 locked
+npmci/lint/build passed; all38 regenerated files match unchanged committed assets.
+Full backend suite passed544tests in258.304s (one existing skip). Required CI and
+fresh production quota evaluation remain pending.
+Existing16-file off-server recovery from the prior deployment remains completed
+evidence. Archived conflicting migration stacks remain reference-only. See
+`reports/AJ85_RECOVERY_READINESS_2026-11-13.md` for limitations and rollback.
+
+### AJ82 approved original-source direction — 13 November 2026
+
+Michael directed Ajiri to be its own original vacancy source. AJ82's description
+now preserves the historical multi-source proposal beneath superseding acceptance:
+genuine employer-submitted originals, independent review, canonical Ajiri identities,
+safe retry handling and source-readiness diagnostics. The three-external-feed target
+is superseded;50genuine roles/10employers remain pilot targets, not observed counts.
+
+`codex/mvp2-aj82-original-source` incorporates reviewed MVP2 `fbd8834` (AJ87 and AJ85
+both merged after all six checks). Nullable unique jobs.0018 submission IDs provide
+same-owner/exact-intent200replay,201new and409collision/changed intent; they never
+authorize publication. Legacy clients/rows retain compatibility. Original publisher
+metadata derives from employer provenance, with the official application destination
+kept separate. Existing authority/deadline/independent review/withdrawal gates remain.
+
+Focused original-source/migration11 and combined freshness24 passed; focused UI11,
+all161components,5quality helpers, Node24.19 locked install/lint/ESLint/build, pinned
+Ruff, system/drift and strict OpenAPI generation/comparison passed. Full backend
+passed555tests in261.722s (one existing skip). New lost-response browser regression,
+required CI and production activation are pending. See
+`reports/AJ82_ORIGINAL_SOURCE_2026-11-13.md` for actual results and the
+backup -> staging ->0018migration -> activation/data-preserving rollback order.
