@@ -81,7 +81,7 @@ do not routinely restore old production data. AJ84's bounded shortlist/manual-da
 implementation is verified deployed; AJ83's consented participant pilot and genuine
 inventory remain unfinished. No whole-MVP2 completion is claimed.
 
-## Earlier checkpoint — before the specific cleanup approval
+## Activation-evidence validation
 
 The activation-evidence follow-up uses isolated
 `codex/mvp2-discovery-activation-evidence` from reviewed MVP2/PR100 merge396913c.
@@ -93,6 +93,8 @@ all42 regenerated files to committed frontend_build; no generated/source change.
 Whitespace and branch/author/committer checks precede the focused evidence commit.
 Its required PR checks must pass before merge; this is documentation, not another
 runtime activation. The following checkpoint is retained as historical evidence.
+
+## Earlier checkpoint — before the specific cleanup approval
 
 Status at 14 November 2026 (Nairobi): release PR99 merged into main as
 `9676fc4c89b7aef04461c2ba0bbc9eed060ade45`; production activation remains pending
