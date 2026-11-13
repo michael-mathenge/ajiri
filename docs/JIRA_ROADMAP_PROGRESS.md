@@ -2063,3 +2063,34 @@ and final generated-build commits. Its corrected head must pass all six checks
 again before merge; the final merge/check receipt will also be retained on AJ83.
 Integration into MVP2 is distinct from a release to main or production. No source
 or data deployment, migration, provider send, pilot or production verification.
+
+### MVP2 first production activation — 13 November 2026
+
+PR88 merged into `MVP2` as `3e37c47`; release PR89 merged to main as
+`d5f2f6871276434569df10ffb153cb8591a9a7df`. All six exact merged-head checks passed
+in CI43094746515, including a successful rerun after the first browser job's
+artifact-upload service error (the test step had passed). Fresh pinned local full
+release suite: 533 tests/258.239s, one existing skip; earlier frontend gates and exact
+38-file committed-build comparison also passed.
+
+PythonAnywhere now runs that exact release, replacing `e682cac`. The previously
+unfinished private off-server download and isolated restore are complete. The
+11 November consistent snapshot still matched the production database and all
+16 private files under the fresh 13 November writer/web pause. Verified previous
+virtualenv recovery was retained. Exact source staging, offline pinned dependency
+installation, pip/system/drift checks and actual migration plan passed with no
+migrations. Database/media bytes, SQLite integrity/search triggers and feature
+flags were preserved; all 33 runtime pins match, including Django6.1.3.
+
+Web re-enable/reload completed. Post-reload public health200/HSTS604800 and all
+38 exact live frontend files passed. Read-only production authenticated view checks
+passed for jobs (empty), CV draft and existing private approved CV bytes; anonymous
+CV download401. No second active account or currently visible job existed for the
+additional cross-owner/live explanation journey. Ingest/sweep are restored active;
+Michael explicitly authorized one manual ingest after automatic review blocked
+its initial dispatch, and Ingest43425203368 succeeded. No mail/pilot acceptance
+is inferred. AJ83 and the wider MVP2 backlog remain unfinished.
+
+Full recovery hashes, commands, quota, limitations and data-preserving rollback:
+`reports/MVP2_DEPLOYMENT_2026-11-13.md`. This receipt is a documentation follow-up,
+not a new production runtime activation.
