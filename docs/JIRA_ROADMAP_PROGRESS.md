@@ -2131,3 +2131,26 @@ fresh production quota evaluation remain pending.
 Existing16-file off-server recovery from the prior deployment remains completed
 evidence. Archived conflicting migration stacks remain reference-only. See
 `reports/AJ85_RECOVERY_READINESS_2026-11-13.md` for limitations and rollback.
+
+### AJ82 approved original-source direction — 13 November 2026
+
+Michael directed Ajiri to be its own original vacancy source. AJ82's description
+now preserves the historical multi-source proposal beneath superseding acceptance:
+genuine employer-submitted originals, independent review, canonical Ajiri identities,
+safe retry handling and source-readiness diagnostics. The three-external-feed target
+is superseded;50genuine roles/10employers remain pilot targets, not observed counts.
+
+`codex/mvp2-aj82-original-source` incorporates reviewed MVP2 `fbd8834` (AJ87 and AJ85
+both merged after all six checks). Nullable unique jobs.0018 submission IDs provide
+same-owner/exact-intent200replay,201new and409collision/changed intent; they never
+authorize publication. Legacy clients/rows retain compatibility. Original publisher
+metadata derives from employer provenance, with the official application destination
+kept separate. Existing authority/deadline/independent review/withdrawal gates remain.
+
+Focused original-source/migration11 and combined freshness24 passed; focused UI11,
+all161components,5quality helpers, Node24.19 locked install/lint/ESLint/build, pinned
+Ruff, system/drift and strict OpenAPI generation/comparison passed. Full backend
+passed555tests in261.722s (one existing skip). New lost-response browser regression,
+required CI and production activation are pending. See
+`reports/AJ82_ORIGINAL_SOURCE_2026-11-13.md` for actual results and the
+backup -> staging ->0018migration -> activation/data-preserving rollback order.

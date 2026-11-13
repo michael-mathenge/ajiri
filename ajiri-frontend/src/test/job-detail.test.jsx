@@ -23,9 +23,11 @@ const cv = {
   ],
 }
 beforeEach(() => vi.resetAllMocks())
-function page(data = cv) {
+function page(data = cv, jobData = job) {
   apiClient.get.mockImplementation((url) =>
-    Promise.resolve({ data: url === '/profiles/me/cv-versions/' ? data : job })
+    Promise.resolve({
+      data: url === '/profiles/me/cv-versions/' ? data : jobData,
+    })
   )
   render(
     <MemoryRouter initialEntries={['/jobs/1']}>
@@ -38,6 +40,18 @@ function page(data = cv) {
     </MemoryRouter>
   )
 }
+it('labels reviewed Ajiri originals separately from the application destination', async () => {
+  page(cv, {
+    ...job,
+    source_name: 'Employer submission',
+    source_url: 'https://example.invalid/apply',
+    publication: { ...job.publication, origin: 'employer', publisher: 'Ajiri' },
+  })
+  expect(
+    await screen.findByText('Source: Ajiri · original employer posting')
+  ).toBeVisible()
+  expect(apiClient.post).not.toHaveBeenCalled()
+})
 it('requires a CV when none is approved and offers the builder without posting', async () => {
   page({ content: null })
   expect(

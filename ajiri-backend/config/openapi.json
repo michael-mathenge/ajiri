@@ -4113,7 +4113,7 @@
             },
             "post": {
                 "operationId": "post_api_v1_jobs_employers_drafts",
-                "description": "Same owner permissions, validation, throttles and explicit-action requirements as the legacy route.",
+                "description": "Same owner permissions, validation, throttles and explicit-action requirements as the legacy route. A new vacancy returns 201. The same owner submission_id and normalized details return the existing record with 200; changed details or an ownership collision return 409. The ID never authorizes publication.",
                 "tags": [
                     "jobs"
                 ],
@@ -4144,6 +4144,16 @@
                 ],
                 "responses": {
                     "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Draft"
+                                }
+                            }
+                        },
+                        "description": ""
+                    },
+                    "201": {
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -7628,6 +7638,11 @@
                         "type": "integer",
                         "readOnly": true
                     },
+                    "submission_id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "nullable": true
+                    },
                     "organisation": {
                         "type": "integer"
                     },
@@ -7709,6 +7724,11 @@
             "DraftRequest": {
                 "type": "object",
                 "properties": {
+                    "submission_id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "nullable": true
+                    },
                     "organisation": {
                         "type": "integer"
                     },

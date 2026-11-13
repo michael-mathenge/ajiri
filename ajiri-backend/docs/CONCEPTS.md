@@ -1505,3 +1505,33 @@ The plan excludes a newly created virtualenv archive by default; include a measu
 upper allowance for additional snapshot artifacts explicitly. Runtime rollback still
 needs its separate verification. Insufficient reserve returns a failure without
 deleting anything. Retention remains report-only; resolve capacity before activation.
+
+## ajiri-original-vacancies
+
+Ajiri publishes original employer-submitted vacancies after the existing independent
+organisation and listing reviews. Each reviewed role keeps its own stable Ajiri URL;
+the employer's official application destination is separate. Publisher identity is
+derived from the employer publication record, so an external feed's source label
+cannot claim to be an Ajiri original. Current email verification, employer authority,
+future closing date, no-applicant-fee checks and withdrawal remain required.
+
+The employer UI retains a UUID submission decision while a request fails or its
+outcome is unknown. Repeating that ID with the same owner and normalized details
+returns the existing draft (200); a new decision creates a draft (201). Reusing an
+ID with different details/ownership returns a generic conflict (409). No automatic
+retry, approval, publication, email or new user consent follows from this ID. Legacy
+clients may omit it; historical drafts keep null IDs without invented decisions.
+Separate posting decisions retain distinct identities, including legitimate roles
+sharing an application portal; staff still review content and authority.
+
+The read-only original_source_readiness command reports aggregate eligible roles,
+employers and pending queues against the 50-role/10-employer pilot targets. It cannot
+claim readiness with freshness enforcement disabled and never creates inventory.
+Actual employer participation, independent review and a consented usability pilot
+remain live acceptance gates. The former three-external-feed target was superseded
+by Michael's13November original-source direction; RSS remains supplemental.
+
+The nullable jobs.0018 field preserves existing drafts, review relationships and job
+search triggers. Apply it while writers/web are paused before activating new code.
+Production rollback keeps the additive column, decision IDs and new employer records;
+reverse-migration tests are disposable rehearsals, not instructions to discard IDs.
