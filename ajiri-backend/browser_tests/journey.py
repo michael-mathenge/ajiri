@@ -273,8 +273,24 @@ class BrowserJourney(LiveServerTestCase):
                 page.get_by_label('Official application URL',exact=True).fill('https://example.invalid/careers/browser')
                 from datetime import timedelta
                 page.get_by_label('Closing date and time (your local time)',exact=True).fill((timezone.now()+timedelta(days=2)).strftime('%Y-%m-%dT%H:%M'))
+                attempts = []
+                def lose_first_submission_response(route):
+                    if route.request.method == 'POST':
+                        attempts.append(route.request.post_data_json)
+                        if len(attempts) == 1:
+                            response = route.fetch()
+                            assert response.status == 201
+                            route.abort()
+                            return
+                    route.continue_()
+                employer.route('**/api/jobs/employers/drafts/', lose_first_submission_response)
+                page.get_by_role('button',name='Submit vacancy for review',exact=True).click()
+                expect(page.get_by_role('alert').first).to_be_visible()
+                expect(page.get_by_role('button',name='Submit vacancy for review',exact=True)).to_be_enabled()
                 page.get_by_role('button',name='Submit vacancy for review',exact=True).click()
                 expect(page.get_by_role('heading',name='Synthetic reviewed opportunity',exact=True)).to_be_visible()
+                assert len(attempts) == 2 and attempts[0]['submission_id'] == attempts[1]['submission_id']
+                employer.unroute('**/api/jobs/employers/drafts/', lose_first_submission_response)
                 staff, review = login('reviewer-browser@example.invalid','Synthetic-Reviewer-982!')
                 review.goto(self.live_server_url+'/employers/review')
                 organisation_form=review.locator('form').filter(has=review.get_by_role('heading',name='Synthetic Browser Employer',exact=True))
@@ -293,6 +309,7 @@ class BrowserJourney(LiveServerTestCase):
                 published_id = own_drafts.value.json()['results'][0]['job']
                 page.goto(self.live_server_url+f'/jobs/{published_id}')
                 expect(page.get_by_role('heading',name='Synthetic reviewed opportunity',exact=True)).to_be_visible()
+                expect(page.get_by_text('Source: Ajiri · original employer posting', exact=True)).to_be_visible()
                 expect(page.get_by_role('link',name='Open employer application page (opens in a new tab)',exact=True)).to_have_attribute('href','https://example.invalid/careers/browser')
                 page.goto(self.live_server_url+'/employers')
                 expect(page.get_by_text('published',exact=False).first).to_be_visible()

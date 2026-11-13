@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import Job, Application, Notification
 from .matching import calculate_match_score, explain_skill_match
 from profiles.serializers import SkillSerializer
+from .utils import safe_http_url
 
 
 class JobListSerializer(serializers.ModelSerializer):
@@ -38,7 +39,11 @@ class JobListSerializer(serializers.ModelSerializer):
         if evidence.origin == 'rss' and evidence.confirmed_at:
             freshness_end = evidence.confirmed_at + timedelta(seconds=settings.RSS_AVAILABILITY_MAX_AGE_SECONDS)
             until = min(until, freshness_end) if until else freshness_end
+        # Original publisher identity comes from reviewed provenance, never a feed's label.
+        # see docs/CONCEPTS.md#ajiri-original-vacancies
         return {'status': evidence.status, 'closes_at': evidence.closes_at, 'confirmed_until': evidence.confirmed_until,
+                'publisher': 'Ajiri' if evidence.origin == 'employer' else None,
+                'listing_url': safe_http_url(job.source_url) if evidence.origin == 'employer' else None,
                 'confirmed_at': evidence.confirmed_at, 'origin': evidence.origin, 'available_until': until}
 
     class Meta:

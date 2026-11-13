@@ -8,8 +8,9 @@ export default function EmployerGuide() {
         <span className="eyebrow">FOR EMPLOYERS</span>
         <h1>Credible vacancies, reviewed before publication.</h1>
         <p className="lead">
-          Prepare a clear job post with an explicit closing date. An independent
-          staff review is required before it appears to job seekers.
+          Publish your organisation’s original vacancy on Ajiri with an explicit
+          closing date. An independent staff review is required before it
+          appears to job seekers.
         </p>
         <p>
           Employer onboarding is currently a pilot. A verified account email is
@@ -58,6 +59,11 @@ export default function EmployerGuide() {
       </Card>
       <Card className="stack">
         <h2>After publication</h2>
+        <p>
+          Each reviewed vacancy gets its own Ajiri listing. The application
+          destination remains the official page supplied by your organisation.
+          Listings from external feeds are labelled separately.
+        </p>
         <p>
           Expired or stale vacancies leave active listings. Withdraw a role when
           it closes early. Existing application documents remain available to

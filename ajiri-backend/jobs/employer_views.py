@@ -34,6 +34,8 @@ class OrganisationSerializer(serializers.ModelSerializer):
 
 
 class DraftSerializer(serializers.ModelSerializer):
+    submission_id = serializers.UUIDField(required=False, allow_null=True)
+
     def validate_application_url(self, value):
         if not safe_http_url(value):
             raise serializers.ValidationError('Use an HTTP or HTTPS application URL without embedded credentials.')
@@ -42,6 +44,7 @@ class DraftSerializer(serializers.ModelSerializer):
         model = EmployerJobDraft
         fields = (
             "id",
+            "submission_id",
             "organisation",
             "title",
             "description",
@@ -142,6 +145,30 @@ class OrganisationList(PrivateEmployerMixin, generics.ListCreateAPIView):
 class DraftList(PrivateEmployerMixin, generics.ListCreateAPIView):
     permission_classes = (permissions.IsAuthenticated, PublicationRulesEnabled, VerifiedEmployer)
     serializer_class = DraftSerializer
+
+    def create(self, request, *args, **kwargs):
+        # see docs/CONCEPTS.md#ajiri-original-vacancies
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = dict(serializer.validated_data)
+        data.setdefault('requirements', '')
+        data.setdefault('job_type', Job.JobType.FULL_TIME)
+        submission_id = data.get('submission_id')
+        if submission_id is None:
+            # Existing API clients remain compatible; new UI requests carry a key.
+            self.perform_create(serializer)
+            return Response(serializer.data, status=201)
+        with transaction.atomic():
+            draft, created = EmployerJobDraft.objects.get_or_create(
+                submission_id=submission_id,
+                defaults={name: value for name, value in data.items() if name != 'submission_id'})
+            if not created and (
+                draft.organisation.owner_id != request.user.pk
+                or any(getattr(draft, name) != value for name, value in data.items() if name != 'submission_id')
+            ):
+                return Response({'detail': 'This submission was already recorded with different details. '
+                                 'Refresh review status before submitting again.'}, status=409)
+        return Response(self.get_serializer(draft).data, status=201 if created else 200)
 
     def get_queryset(self):
         if getattr(self, "swagger_fake_view", False):
@@ -278,7 +305,7 @@ class DraftReview(PrivateEmployerMixin, APIView):
                     requirements=draft.requirements,
                     location=draft.location,
                     job_type=draft.job_type,
-                    source_name="Employer submission",
+                    source_name="Ajiri employer posting",
                     source_url=f"{base}/jobs/pending-{uuid.uuid4().hex}",
                     external_application_url=draft.application_url,
                     application_method="external_link",

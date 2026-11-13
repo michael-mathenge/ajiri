@@ -114,7 +114,7 @@ class ContractSchema(AutoSchema):
         else:
             success = OpenApiTypes.OBJECT
         # Error dictionaries may also include field-keyed nested validation arrays.
-        return {200: success, **({201: success} if name in ('RegisterView', 'ApplyToJobView', 'PackageListView', 'SendAuthorizationListView') and self.method == 'POST' else {}), 400: OpenApiTypes.OBJECT, 401: ErrorOutput,
+        return {200: success, **({201: success} if name in ('RegisterView', 'ApplyToJobView', 'PackageListView', 'SendAuthorizationListView', 'DraftList') and self.method == 'POST' else {}), 400: OpenApiTypes.OBJECT, 401: ErrorOutput,
                 403: ErrorOutput, 404: ErrorOutput, 409: ErrorOutput,
                 429: ErrorOutput, 503: ErrorOutput}
 
@@ -125,4 +125,6 @@ class ContractSchema(AutoSchema):
             description += ' Custom success response is an extensible JSON object; additional fields are not exhaustively typed in this contract.'
         if name in ('RefreshView', 'LogoutView'):
             description += ' Requires the existing httpOnly refresh cookie and CSRF protocol; refresh tokens are never accepted from or returned in JSON.'
+        if name == 'DraftList' and self.method == 'POST':
+            description += ' A new vacancy returns 201. The same owner submission_id and normalized details return the existing record with 200; changed details or an ownership collision return 409. The ID never authorizes publication.'
         return description

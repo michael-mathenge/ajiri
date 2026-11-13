@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import apiClient from '../api/client'
 import FormErrors from '../components/FormErrors'
 import { apiErrors } from '../lib/errors'
@@ -15,6 +15,7 @@ import {
 // Employer review is independent of account email verification.
 // see docs/CONCEPTS.md#job-freshness-evidence
 export default function Employers() {
+  const submissionId = useRef(null)
   const [orgPage, setOrgPage] = useState(1)
   const [draftPage, setDraftPage] = useState(1)
   const orgQuery = useApiQuery(`/jobs/employers/organisations/?page=${orgPage}`)
@@ -34,6 +35,10 @@ export default function Employers() {
     const form = event.currentTarget
     const values = Object.fromEntries(new FormData(form))
     if (kind === 'drafts') {
+      // Keep the same decision on a failed/unknown request so a retry cannot duplicate it.
+      // see docs/CONCEPTS.md#ajiri-original-vacancies
+      submissionId.current ??= crypto.randomUUID()
+      values.submission_id = submissionId.current
       values.organisation = Number(values.organisation)
       // The picker is local time; transport an explicit timezone-aware instant.
       values.closes_at = new Date(values.closes_at).toISOString()
@@ -43,10 +48,15 @@ export default function Employers() {
     setMessage('')
     try {
       await apiClient.post(`/jobs/employers/${kind}/`, values)
+      if (kind === 'drafts') submissionId.current = null
       form.reset()
       if (kind === 'organisations') setOrgPage(1)
       else setDraftPage(1)
-      setMessage('Submitted for staff review. This job is not published yet.')
+      setMessage(
+        kind === 'drafts'
+          ? 'Vacancy received. Check its review status before submitting it again.'
+          : 'Organisation received for staff review.'
+      )
       await load()
     } catch (error) {
       failure(error)
@@ -82,6 +92,11 @@ export default function Employers() {
   return (
     <section className="stack">
       <h1>Post a job</h1>
+      <p>
+        Publish an original vacancy on Ajiri. Your organisation supplies the
+        role and closing date; an independent staff member reviews it before
+        publication.
+      </p>
       <Button variant="outline" onClick={() => load()}>
         Refresh review status
       </Button>
