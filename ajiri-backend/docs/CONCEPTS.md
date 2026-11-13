@@ -1471,3 +1471,18 @@ The detail-only explanation adds no writes, inferred preferences, telemetry or
 third-party processing. Responses retain private/no-store headers and use only the
 requesting owner's profile. Revert source and matching frontend assets together;
 this slice has no database migration or new activation switch.
+
+## eslint-glob-security
+
+ESLint uses config-array's glob matcher to decide which files receive correctness
+checks. Its current dependency ranges still select vulnerable minimatch 10, so
+scoped npm overrides select patched 11.0.5 for ESLint and config-array. Node 24.19 meets
+the patched matcher's supported runtime requirement. Real ESLint tests verify that
+source extensions, nested paths and dotfiles still receive checks, JSX still parses,
+and generated/dependency files stay excluded on Windows and Linux. A passing npm
+audit alone would not prove that the linter still checks the intended source.
+
+This affects development tooling, not application permissions or user data. Remove
+the temporary override when a reviewed upstream dependency range selects a patched
+matcher itself. Revert the manifest and lockfile together on rollback; never force
+an incompatible graph with npm audit --force or weaken lint rules to obtain a pass.
