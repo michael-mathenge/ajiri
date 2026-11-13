@@ -83,6 +83,21 @@ class AccountExportTests(TestCase):
         self.assertEqual([row['title'] for row in data['records']['job']], ['Synthetic export job'])
         self.assertNotIn('Other private query', json.dumps(data))
 
+    def test_recommendation_choices_export_only_owner_choices_and_their_job_context(self):
+        from django.utils import timezone
+        from jobs.models import Job, RecommendationChoice
+        job = Job.objects.create(title='Owned suggestion context', company_name='Synthetic',
+            source_url='https://example.invalid/owned-suggestion', source_name='synthetic')
+        other_job = Job.objects.create(title='Other private suggestion choice', company_name='Synthetic',
+            source_url='https://example.invalid/other-suggestion', source_name='synthetic')
+        RecommendationChoice.objects.create(owner=self.owner, job=job, dismissed_at=timezone.now(), revision=1)
+        RecommendationChoice.objects.create(owner=self.other, job=other_job, dismissed_at=timezone.now(), revision=1)
+        self.run_export()
+        data = json.loads((self.root / 'export' / 'account.json').read_text())
+        self.assertEqual([row['job'] for row in data['records']['recommendation_choice']], [job.pk])
+        self.assertEqual([row['title'] for row in data['records']['job']], ['Owned suggestion context'])
+        self.assertNotIn('Other private suggestion choice', json.dumps(data))
+
     def test_unsafe_or_existing_destination_rejected_without_overwrite(self):
         for destination in (str(self.media / 'export'), str(self.root), 'relative'):
             with self.assertRaises(CommandError):

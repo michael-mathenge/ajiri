@@ -94,6 +94,21 @@ class Job(models.Model):
         return self.external_application_url or self.source_url
 
 
+class RecommendationChoice(models.Model):
+    # see docs/CONCEPTS.md#owner-recommendation-choices
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='recommendation_choices')
+    job = models.ForeignKey(Job, on_delete=models.PROTECT, related_name='candidate_choices')
+    dismissed_at = models.DateTimeField(null=True, blank=True)
+    revision = models.PositiveIntegerField(default=0)
+
+    @property
+    def dismissed(self):
+        return self.dismissed_at is not None
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=('owner', 'job'), name='unique_owner_recommendation_choice')]
+
+
 class JobModerationReview(models.Model):
     # see docs/CONCEPTS.md#reasoned-job-moderation
     job = models.ForeignKey(Job, on_delete=models.PROTECT, related_name='moderation_reviews')

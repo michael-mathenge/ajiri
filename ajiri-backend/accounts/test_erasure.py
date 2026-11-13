@@ -51,6 +51,17 @@ class AccountErasureTests(TransactionTestCase):
             with self.assertRaises(CommandError): self.command('execute', **{missing: False})
         self.assertTrue(self.mine.exists()); self.assertTrue(get_user_model().objects.filter(pk=self.user.pk).exists())
 
+    def test_verified_synthetic_erasure_removes_only_owner_recommendation_choices(self):
+        from jobs.models import RecommendationChoice
+        from django.utils import timezone
+        RecommendationChoice.objects.create(owner=self.user, job=self.job, dismissed_at=timezone.now(), revision=1)
+        other_choice = RecommendationChoice.objects.create(owner=self.other, job=self.job,
+            dismissed_at=timezone.now(), revision=2)
+        self.command('prepare')
+        self.command('execute')
+        self.assertEqual(list(RecommendationChoice.objects.values_list('pk', flat=True)), [other_choice.pk])
+        self.assertTrue(Job.objects.filter(pk=self.job.pk).exists())
+
     def test_rows_and_owned_files_removed_shared_data_and_other_owner_preserved(self):
         attempt = DeliveryAttempt.objects.create(user=self.user, channel='email_verification',
             state='accepted', recipient_digest='a' * 64, provider_message_id='private-provider-id')
