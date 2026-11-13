@@ -14,6 +14,7 @@ from .freshness import eligible_jobs
 from .models import Job, SavedSearch, SavedSearchMatch
 from .saved_searches import MAX_SEARCHES, reset_windows
 from .search import expression
+from .vacancy_metadata import COUNTIES, WORK_ARRANGEMENTS, MAX_EXPERIENCE_YEARS
 from .serializers import JobListSerializer
 
 
@@ -22,6 +23,10 @@ class SearchInput(StrictSerializer):
     q = serializers.CharField(max_length=255, required=False, allow_blank=True, default='')
     location = serializers.CharField(max_length=255, required=False, allow_blank=True, default='')
     job_type = serializers.ChoiceField(choices=Job.JobType.choices, required=False, allow_blank=True, default='')
+    county = serializers.ChoiceField(choices=COUNTIES, required=False, allow_null=True, default=None)
+    work_arrangement = serializers.ChoiceField(choices=WORK_ARRANGEMENTS, required=False, allow_null=True, default=None)
+    max_experience_years = serializers.IntegerField(required=False, allow_null=True, default=None,
+        min_value=0, max_value=MAX_EXPERIENCE_YEARS)
     in_app_frequency = serializers.ChoiceField(choices=SavedSearch.Frequency.choices, required=False, default='off')
     email_frequency = serializers.ChoiceField(choices=SavedSearch.Frequency.choices, required=False, default='off')
     expected_revision = serializers.IntegerField(min_value=1, required=False, write_only=True)
@@ -44,7 +49,8 @@ class SearchOutput(serializers.ModelSerializer):
 
     class Meta:
         model = SavedSearch
-        fields = ('id', 'name', 'q', 'location', 'job_type', 'in_app_frequency', 'email_frequency',
+        fields = ('id', 'name', 'q', 'location', 'job_type', 'county', 'work_arrangement', 'max_experience_years',
+                  'in_app_frequency', 'email_frequency',
                   'revision', 'next_in_app_at', 'next_email_at', 'email_delivery')
 
 
