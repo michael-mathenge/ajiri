@@ -1597,3 +1597,35 @@ requires the prepared signed journal and all existing verified-request guards.
 Migration order is private recovery, paused writers/web, additive migration, then
 activation. Production rollback retains the table/new choices; reverse tests are
 disposable rehearsals, not instructions to delete personal preferences.
+
+## private-shortlist-and-follow-up
+
+Saved jobs are private references owned by the authenticated candidate. A new
+reference requires a role already visible under the existing browse rules. A
+supplemental listing remains unverified; saving never makes it eligible for
+preparation, matching, alerts or publication. Owned references may remain after
+expiry with an explicit availability warning and a validated source URL. The
+shared Job is protected and its eligibility is always evaluated independently.
+
+PUT is an explicit idempotent save: unique(owner, job) and the SQLite writer claim
+retain one row and the original saved date across retries. DELETE affects only
+the owner's reference; repeating it is harmless. Reads are owner-scoped, paginated
+and private/no-store. Mutations use the existing owner-preference throttle budget.
+No arbitrary external URL, application creation or sending payload is accepted.
+
+Application progress reuses its existing private notes, personal stage and
+optimistic revision. The new optional follow_up_at is a planning date displayed
+in My applications, not a scheduled email/device notification or evidence of
+submission/employer review. The local picker is converted to an explicit instant;
+an explicit null clears it, while omission by an older client preserves it.
+Progress changes cannot clear an unknown delivery receipt or alter approved
+CV/letter bytes. Sending retains its independent exact-document authorization.
+
+Verified-owner export includes owned saved references and job context; application
+dates are exported with existing application fields. Erasure cascades these private
+rows while preserving shared jobs/other owners and all prepared-journal guards.
+jobs.0021 adds SavedJob and a nullable Application date, preserving legacy values,
+document paths/bytes and search triggers. Production order remains verified private
+recovery, paused writers/web, reviewed additive migration and preservation, then
+activation. Code rollback retains added columns/tables and new personal choices;
+reverse tests use only disposable data.

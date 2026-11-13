@@ -41,11 +41,61 @@ it('keeps user reports separate and sends only a revision-checked private update
       stage: 'interview',
       note: 'Synthetic note',
       expected_revision: 0,
+      follow_up_at: null,
     }
   )
   expect(apiClient.post).not.toHaveBeenCalled()
   expect(screen.getByRole('status')).toHaveTextContent(
     'No application was sent'
+  )
+})
+
+it('transports an explicit local follow-up date without claiming a reminder will be sent', async () => {
+  apiClient.patch.mockResolvedValue({ data: { ...app, progress_revision: 1 } })
+  render(<ApplicationProgress application={app} onUpdate={vi.fn()} />)
+  fireEvent.change(
+    screen.getByLabelText(
+      'Personal follow-up date (optional, your local time)'
+    ),
+    {
+      target: { value: '2027-02-03T10:15' },
+    }
+  )
+  fireEvent.click(screen.getByRole('button', { name: 'Save my update' }))
+  await screen.findByRole('status')
+  expect(apiClient.patch).toHaveBeenCalledWith(
+    '/jobs/applications/8/progress/',
+    expect.objectContaining({
+      follow_up_at: new Date('2027-02-03T10:15').toISOString(),
+      expected_revision: 0,
+    })
+  )
+  expect(
+    screen.getByText(/Email and device reminders are not sent/)
+  ).toBeVisible()
+  expect(apiClient.post).not.toHaveBeenCalled()
+})
+
+it('clears a stored personal date only when the user submits an empty picker', async () => {
+  apiClient.patch.mockResolvedValue({
+    data: { ...app, follow_up_at: null, progress_revision: 1 },
+  })
+  render(
+    <ApplicationProgress
+      application={{ ...app, follow_up_at: '2027-02-03T10:15:00Z' }}
+      onUpdate={vi.fn()}
+    />
+  )
+  const picker = screen.getByLabelText(
+    'Personal follow-up date (optional, your local time)'
+  )
+  expect(picker.value).not.toBe('')
+  fireEvent.change(picker, { target: { value: '' } })
+  fireEvent.click(screen.getByRole('button', { name: 'Save my update' }))
+  await screen.findByRole('status')
+  expect(apiClient.patch).toHaveBeenCalledWith(
+    '/jobs/applications/8/progress/',
+    expect.objectContaining({ follow_up_at: null })
   )
 })
 

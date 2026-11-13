@@ -85,6 +85,14 @@ export function ApplicationRow({ application: app, onUpdate }) {
       <p className="muted">
         {email ? 'Apply by email' : 'Apply on the employer’s website'}
       </p>
+      {app.follow_up_at && (
+        <p>
+          Personal follow-up:{' '}
+          <time dateTime={app.follow_up_at}>
+            {new Date(app.follow_up_at).toLocaleString('en-KE')}
+          </time>
+        </p>
+      )}
       <details className="review-details">
         <summary>Review application</summary>
         <div className="stack mt-4">

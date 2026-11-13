@@ -1,5 +1,25 @@
 # Jira roadmap execution
 
+## 13 November: AJ84 private shortlist/manual follow-up, local verified package
+
+Branch codex/mvp2-aj84-saved-jobs from checkedMVP2/PR97 mergee31ef17. Idempotent
+owner-only saved-role references retain dates, provenance and unverified/expired
+warnings without changing browse/preparation/alert eligibility. AJ50 personal
+stage/note/revision now optionally stores a manual follow-up date; explicit null
+clears, older-client omission preserves, and sending/uncertain receipts/approved
+documents remain independent. Private export and prepared-journal erasure include
+only owned data. Additive jobs.0021 preserves old rows/documents/search triggers.
+
+Actual full591 Django tests passed286.935s (one existing skip); final171 components
+passed27.34s; five tooling tests3.992s; Node24.19 locked install/both linters/build
+2.34s; check/drift/Ruff/strict schema and safe42-file synchronization passed.
+Initial schema annotation warning was corrected using the generator's media-type
+mapping, not suppressed. Focused14 API/schema/privacy tests9.540s and initial8 UI
+tests6.64s passed; two actual Chromium save/remove/focus/date/reload journeys passed
+21.978s with no provider call. No production action or new mail consent occurred.
+See reports/AJ84_SHORTLIST_FOLLOW_UP_2026-11-13.md. Exact-head CI, checked release,
+fresh private recovery/migrations and live verification remain pending; runtime93cf55e.
+
 ## 13 November: AJ83 private suggestion choices, local verified package
 
 Branch codex/mvp2-aj83-candidate-choices from reviewedMVP2/PR96 merge9db23ab.

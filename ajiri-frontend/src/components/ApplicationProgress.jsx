@@ -2,7 +2,8 @@ import { useState } from 'react'
 import apiClient from '../api/client'
 import { apiErrors } from '../lib/errors'
 import FormErrors from './FormErrors'
-import { Button, Select, Textarea } from './ui'
+import { Button, Input, Select, Textarea } from './ui'
+import { localDateTime } from '../lib/dateTime'
 
 const stages = {
   not_reported: 'No update reported',
@@ -21,11 +22,17 @@ export default function ApplicationProgress({ application, onUpdate }) {
   async function save(event) {
     event.preventDefault()
     if (busy) return
+    setSaved(false)
     const form = event.currentTarget
     const values = Object.fromEntries(new FormData(form))
+    const followUp = values.follow_up_at ? new Date(values.follow_up_at) : null
+    if (followUp && Number.isNaN(followUp.getTime())) {
+      setErrors({ follow_up_at: ['Choose a valid date and time.'] })
+      return
+    }
+    values.follow_up_at = followUp ? followUp.toISOString() : null
     setBusy(true)
     setErrors({})
-    setSaved(false)
     try {
       const { data } = await apiClient.patch(
         `/jobs/applications/${application.id}/progress/`,
@@ -62,6 +69,7 @@ export default function ApplicationProgress({ application, onUpdate }) {
           stage: 'Your progress',
           note: 'Private note',
           expected_revision: 'Update revision',
+          follow_up_at: 'Personal follow-up date',
         }}
       />
       {saved && (
@@ -102,6 +110,28 @@ export default function ApplicationProgress({ application, onUpdate }) {
             aria-invalid={Boolean(errors.note)}
             aria-describedby={errors.note ? `${prefix}-note-error` : undefined}
           />
+        </div>
+        <div className="field">
+          <label htmlFor={`${prefix}-follow_up_at`}>
+            Personal follow-up date (optional, your local time)
+          </label>
+          <Input
+            id={`${prefix}-follow_up_at`}
+            name="follow_up_at"
+            type="datetime-local"
+            disabled={busy}
+            defaultValue={localDateTime(application.follow_up_at)}
+            aria-invalid={Boolean(errors.follow_up_at)}
+            aria-describedby={
+              errors.follow_up_at
+                ? `${prefix}-follow_up_at-error`
+                : `${prefix}-follow-up-help`
+            }
+          />
+          <p id={`${prefix}-follow-up-help`} className="muted">
+            A date shown in My applications for you to check manually. Email and
+            device reminders are not sent.
+          </p>
         </div>
         <Button type="submit" disabled={busy}>
           {busy ? 'Saving update…' : 'Save my update'}

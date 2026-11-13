@@ -150,3 +150,17 @@ current. This choice affects suggestions only. Your applications, saved searches
 and alert settings keep their separate controls. Dismissing never sends or
 withdraws an application. If a request fails, use the displayed refresh control
 to read your current choice before trying again.
+
+## Save a role and plan a follow-up
+
+Open a job and choose **Save job** to keep it in your private **Saved jobs** list.
+A saved role may expire, and supplemental references remain unverified.
+The shortlist keeps the availability warning and source reference; only a currently
+eligible role offers its normal application flow. Remove a saved reference when
+you no longer need it. Saving/removing does not submit, send or withdraw an application.
+
+In **My applications → Track my progress**, record your own stage, private note
+and optional **Personal follow-up date** in your local time. The date appears in
+My applications for you to check manually; email/device reminders are not sent.
+Clear the picker and save to remove the date. Your report remains separate from
+provider receipts, employer decisions and exact-document sending permission.

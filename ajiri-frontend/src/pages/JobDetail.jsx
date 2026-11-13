@@ -1,6 +1,7 @@
 import { apiErrors } from '../lib/errors'
 import FormErrors from '../components/FormErrors'
 import SkillMatchExplanation from '../components/SkillMatchExplanation'
+import SavedJobButton from '../components/SavedJobButton'
 import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import {
@@ -89,6 +90,7 @@ export default function JobDetail() {
         All opportunities
       </Link>
       <Card className="detail-heading">
+        <SavedJobButton jobId={job.id} />
         <div className="job-card-top">
           <span className="company-avatar" aria-hidden="true">
             {job.company_name.slice(0, 2).toUpperCase()}
