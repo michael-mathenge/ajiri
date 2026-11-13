@@ -2094,3 +2094,23 @@ is inferred. AJ83 and the wider MVP2 backlog remain unfinished.
 Full recovery hashes, commands, quota, limitations and data-preserving rollback:
 `reports/MVP2_DEPLOYMENT_2026-11-13.md`. This receipt is a documentation follow-up,
 not a new production runtime activation.
+
+## MVP2 security continuation — 13 November 2026
+
+Michael approved implementation/testing/push/checked merge/deployment of the pending
+MVP2 plan. AJ81 is reconciled Done: authenticated GitHub alert31 now reports fixed,
+fixed_at2026-11-11T11:39:39Z, and the previously reviewed dependency package is in
+the verified d5f2f68 production runtime. No manual advisory dismissal occurred.
+
+AJ87 branch `codex/mvp2-aj87-security` starts from reviewed MVP2 `cee43f4`. Exact
+minimatch11.0.5 overrides cover ESLint and config-array's development-only consumers;
+latest upstream ranges still select vulnerable10. Real lint glob regressions and
+existing helper:5tests passed. Node24.19 locked installation, Oxlint/ESLint,
+159components and build passed. Fresh complete npm audit returned0findings. All38
+regenerated frontend files match the unchanged committed build. Backend check/drift
+passed; corrected full suite passed533tests in276.838s (one existing skip).
+Required CI remains pending. An initial wrong-cwd invocation discovered0tests and
+is not full-suite acceptance.
+
+See `reports/AJ87_SECURITY_2026-11-13.md` for source/registry review, validation,
+temporary override removal and rollback. No newer production activation is claimed.
