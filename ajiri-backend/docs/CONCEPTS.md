@@ -1566,3 +1566,34 @@ preserving legacy values and all three SQLite search triggers. Production order
 remains a consistent private backup/off-server isolated restore, paused writers
 and web, additive migration, preservation checks, then code activation. Production
 rollback retains the columns and new writes; reverse tests use disposable data.
+
+## owner-recommendation-choices
+
+Suggestions are a private view of currently eligible roles, ordered by the same
+listed-skill overlap used by existing scores. There is no minimum score cutoff:
+the70% rule remains an alert threshold. Explicit county/work/experience filters
+use the existing JobFilter contract. Unknown skill metadata still scores0.
+
+A candidate may dismiss a role from this suggestions view and restore it later.
+The choice belongs to the authenticated owner, not an employer. It never changes
+the shared job, browsing/preparation eligibility, an existing application, saved
+search criteria, notification preferences or sending authority. Restoring an
+expired role does not make it eligible. Only owned dismissal history remains
+visible after expiry; new choices require a currently eligible role. With freshness
+enforcement off, new suggestions/choices fail closed.
+
+Revision checks prevent a stale or repeated request from overwriting a newer
+choice. The first explicit choice starts from revision0. SQLite obtains the
+writer slot before creation/update; a database lock returns a generic503, not an
+unchecked replay. A failed UI request requires an explicit authoritative owner
+read before another mutation is enabled. No mutation retries automatically.
+The existing scoped owner-preference throttle budget is reused.
+
+jobs.0020 adds only the RecommendationChoice table and unique(owner, job) relation.
+No historical choice or consent is inferred. Owner erasure cascades this private
+preference; the shared Job remains protected. Verified-owner export includes the
+choice and its job context, excluding other owners' choices. Actual erasure still
+requires the prepared signed journal and all existing verified-request guards.
+Migration order is private recovery, paused writers/web, additive migration, then
+activation. Production rollback retains the table/new choices; reverse tests are
+disposable rehearsals, not instructions to delete personal preferences.

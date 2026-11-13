@@ -137,3 +137,16 @@ with a draft. Leave unknown requirements unstated. Independent staff see these
 facts during review; publication and current closing-date checks still apply.
 Legacy jobs are labelled **Not stated** where facts are missing. Ajiri does not
 infer location, remote work or experience from a candidate's personal traits.
+
+## Control your suggestions
+
+Open **View skill suggestions** from the job list to see current verified roles
+ordered by listed skill overlap. Low scores are included. The normal **Browse all
+jobs** view remains available.
+
+Use **Dismiss suggestion** for an irrelevant role. You can restore it in
+**Dismissed suggestions**; it will return only if its availability is still
+current. This choice affects suggestions only. Your applications, saved searches
+and alert settings keep their separate controls. Dismissing never sends or
+withdraws an application. If a request fails, use the displayed refresh control
+to read your current choice before trying again.

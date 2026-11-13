@@ -75,3 +75,15 @@ recommendation dismissal remains a later slice, and8/10 consented participants
 finding a genuinely current relevant role within5 minutes remains unverified.
 The live source still has no genuine eligible inventory, and no vacancy, employer,
 staff access, email consent or participant was fabricated for production.
+
+## Follow-up browser coverage correction
+
+The owner-choice package subsequently exposed that this package's saved-form
+prefill browser assertions could resolve against the preceding job-list controls
+before navigation completed; saved searches were not explicitly enabled in that
+fixture. The earlier command did pass, but those particular assertions alone did
+not prove destination readiness. The next package enables the disposable fixture
+explicitly and waits for the Saved searches heading before checking all three
+prefilled fields. That corrected expanded journey passed17.041s. Focused component
+and backend saved-filter tests here remain independent evidence. See
+reports/AJ83_OWNER_CHOICES_2026-11-13.md; no historical CI result was rewritten.

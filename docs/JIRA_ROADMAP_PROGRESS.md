@@ -1,5 +1,27 @@
 # Jira roadmap execution
 
+## 13 November: AJ83 private suggestion choices, local verified package
+
+Branch codex/mvp2-aj83-candidate-choices from reviewedMVP2/PR96 merge9db23ab.
+Suggestions rank current roles with the same skill arithmetic, including low scores;
+owner-scoped reversible dismissal does not alter browsing, application progress,
+saved-search criteria, email preferences or sending. Strict optimistic revisions,
+private/no-store responses, explicit read-before-retry UI and owner export/erasure
+integration are covered. jobs.0020 adds only the unique owner/job preference table;
+disposable reverse preserves existing job/application values and search triggers.
+
+Actual full577 Django tests passed302.855s/one existing skip;166 components37.20s;
+five tooling tests4.359s; Node24.19 locked install/both linters/build2.40s;
+check/drift/Ruff/strict schema and safe39-file build synchronization passed.
+Expanded focused12 tests passed9.963s after fixing an erasure fixture that omitted
+required journal preparation. Browser first failed with saved searches off; fixture
+now enables them explicitly and waits for the destination heading, correcting a
+prior prefill coverage gap. Expanded Chromium journey passed17.041s, including
+dismissal/restore, retained normal browse access, actual prefill and accessibility.
+No guard or production flag was relaxed. See reports/AJ83_OWNER_CHOICES_2026-11-13.md.
+Source/build, required CI and release activation remain pending; genuine inventory
+and8/10 consented-person acceptance remain open. Production is still93cf55e.
+
 ## 13 November: AJ83 normalized mobile filters, local verified package
 
 Branch codex/mvp2-aj83-discovery from reviewedMVP2, advanced toc6ae61e after checked

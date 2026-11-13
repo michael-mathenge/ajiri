@@ -236,7 +236,8 @@ class BrowserJourney(LiveServerTestCase):
         self.assertEqual(DeliveryAttempt.objects.count(), 0)
         self.assertEqual(DeliveryDailyBudget.objects.count(), 0)
 
-    @override_settings(JOB_FRESHNESS_ENFORCED=True, EMPLOYER_POSTING_ENABLED=True, PUBLIC_JOB_ORIGIN='https://example.invalid')
+    @override_settings(JOB_FRESHNESS_ENFORCED=True, EMPLOYER_POSTING_ENABLED=True,
+        SAVED_SEARCHES_ENABLED=True, PUBLIC_JOB_ORIGIN='https://example.invalid')
     def test_employer_submission_staff_review_and_withdrawal(self):
         from accounts.models import User
         from jobs.models import EmployerJobDraft
@@ -324,9 +325,22 @@ class BrowserJourney(LiveServerTestCase):
                 expect(page.get_by_label('Maximum required experience (years)',exact=True)).to_have_value('0')
                 audit(self,page,'mobile-normalized-filters-light')
                 page.get_by_role('link',name='Save this search',exact=True).click()
+                expect(page.get_by_role('heading',name='Saved searches',exact=True)).to_be_visible()
                 expect(page.get_by_label('County',exact=True)).to_have_value('nairobi-city')
                 expect(page.get_by_label('Work arrangement',exact=True)).to_have_value('remote')
                 expect(page.get_by_label('Maximum required experience (years)',exact=True)).to_have_value('0')
+                page.goto(self.live_server_url+'/suggestions?county=nairobi-city&work_arrangement=remote&max_experience_years=0')
+                expect(page.get_by_role('heading',name='Synthetic reviewed opportunity',exact=True)).to_be_visible()
+                page.get_by_role('button',name='Dismiss suggestion: Synthetic reviewed opportunity',exact=True).click()
+                dismissed_region=page.get_by_role('region',name='Dismissed suggestions',exact=True)
+                expect(dismissed_region.get_by_role('button',name='Restore suggestion: Synthetic reviewed opportunity',exact=True)).to_be_visible()
+                expect(page.get_by_role('button',name='Dismiss suggestion: Synthetic reviewed opportunity',exact=True)).not_to_be_visible()
+                page.goto(self.live_server_url+f'/jobs/{published_id}')
+                expect(page.get_by_role('heading',name='Synthetic reviewed opportunity',exact=True)).to_be_visible()
+                page.goto(self.live_server_url+'/suggestions?county=nairobi-city&work_arrangement=remote&max_experience_years=0')
+                page.get_by_role('button',name='Restore suggestion: Synthetic reviewed opportunity',exact=True).click()
+                expect(page.get_by_role('button',name='Dismiss suggestion: Synthetic reviewed opportunity',exact=True)).to_be_visible()
+                audit(self,page,'mobile-owner-suggestions-light')
                 page.goto(self.live_server_url+'/employers')
                 expect(page.get_by_text('published',exact=False).first).to_be_visible()
                 audit(self,page,'employer-dashboard-light')

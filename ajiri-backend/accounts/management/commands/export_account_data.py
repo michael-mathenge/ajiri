@@ -18,7 +18,7 @@ from jobs.models import (Application, ApplicationPackage, ApplicationPackageAppr
                          ApplicationSendAuthorization, ApplicationSendAttemptLink,
                          DeliveryAttempt, DeliveryDailyBudget, Job, Notification)
 from profiles.models import Profile, CVWorkspace, CVApproval, AlertConsentEvent
-from jobs.models import SavedSearch, SavedSearchMatch
+from jobs.models import SavedSearch, SavedSearchMatch, RecommendationChoice
 
 
 class Command(BaseCommand):
@@ -68,8 +68,10 @@ class Command(BaseCommand):
         notifications = Notification.objects.filter(user=user)
         jobs = Job.objects.filter(pk__in=applications.values('job_id')).union(
             Job.objects.filter(pk__in=notifications.values('job_id')),
-            Job.objects.filter(pk__in=SavedSearchMatch.objects.filter(search__owner=user).values('job_id')))
+            Job.objects.filter(pk__in=SavedSearchMatch.objects.filter(search__owner=user).values('job_id')),
+            Job.objects.filter(pk__in=RecommendationChoice.objects.filter(owner=user).values('job_id')))
         scopes = [
+            ('recommendation_choice', RecommendationChoice.objects.filter(owner=user)),
             ('saved_search', SavedSearch.objects.filter(owner=user)),
             ('saved_search_match', SavedSearchMatch.objects.filter(search__owner=user)),
             ('profile', Profile.objects.filter(user=user)),

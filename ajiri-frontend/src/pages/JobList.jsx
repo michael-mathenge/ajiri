@@ -4,6 +4,7 @@ import { useSchemaForm } from '../hooks/useSchemaForm'
 import { searchSchema } from '../lib/formSchemas'
 import FormErrors from '../components/FormErrors'
 import VacancyFields from '../components/VacancyFields'
+import RecommendationAction from '../components/RecommendationAction'
 import { useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import {
@@ -64,7 +65,7 @@ function Filters({ register, errors }) {
     </>
   )
 }
-export default function JobList() {
+export default function JobList({ suggestions = false }) {
   // URL state makes filters shareable and preserves them with browser Back.
   // see docs/CONCEPTS.md#url-search-state
   const [params, setParams] = useSearchParams()
@@ -107,7 +108,9 @@ export default function JobList() {
   if (county) query.set('county', county)
   if (workArrangement) query.set('work_arrangement', workArrangement)
   if (maxExperience) query.set('max_experience_years', maxExperience)
-  const { data, loading, error, retry } = useApiQuery(`/jobs/?${query}`)
+  const { data, loading, error, retry } = useApiQuery(
+    `/jobs/${suggestions ? 'suggestions/' : ''}?${query}`
+  )
   const rows = data?.results ?? []
   const vacancyNow = useVacancyClock(rows)
   const currentRows = rows.filter((job) => displayableAt(job, vacancyNow))
@@ -138,10 +141,17 @@ export default function JobList() {
       <section className="page-heading">
         <div>
           <span className="eyebrow">OPPORTUNITIES, WITH YOU IN MIND</span>
-          <h1>Find your next chapter.</h1>
+          <h1>
+            {suggestions ? 'Your job suggestions' : 'Find your next chapter.'}
+          </h1>
           <p className="lead">
-            Explore jobs across Kenya. Start with the skills that make you, you.
+            {suggestions
+              ? 'Current roles ordered by listed skill overlap, with no score cutoff. Dismiss suggestions that are not relevant to you.'
+              : 'Explore jobs across Kenya. Start with the skills that make you, you.'}
           </p>
+          <Link className="inline-link" to={suggestions ? '/' : '/suggestions'}>
+            {suggestions ? 'Browse all jobs' : 'View skill suggestions'}
+          </Link>
         </div>
         <span className="heading-icon">
           <BriefcaseBusiness size={36} aria-hidden="true" />
@@ -231,7 +241,11 @@ export default function JobList() {
       ) : !currentRows.length ? (
         <EmptyState
           title={
-            filtered ? 'No jobs match those filters' : 'No opportunities yet'
+            filtered
+              ? 'No jobs match those filters'
+              : suggestions
+                ? 'No current suggestions'
+                : 'No opportunities yet'
           }
           action={
             filtered && (
@@ -243,7 +257,9 @@ export default function JobList() {
         >
           {filtered
             ? 'Try a broader title or another location.'
-            : 'No listings are available to display. Check back for more openings.'}
+            : suggestions
+              ? 'No current verified roles remain in your suggestions. Check back or review your dismissed suggestions.'
+              : 'No listings are available to display. Check back for more openings.'}
         </EmptyState>
       ) : (
         <>
@@ -308,6 +324,12 @@ export default function JobList() {
                     <ArrowRight size={16} aria-hidden="true" />
                   </Link>
                 </div>
+                {suggestions && (
+                  <RecommendationAction
+                    job={job}
+                    revision={job.choice_revision}
+                  />
+                )}
               </Card>
             ))}
           </div>

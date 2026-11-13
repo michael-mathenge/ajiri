@@ -16,6 +16,7 @@ from jobs.send_views import AuthorizationInput
 from jobs.employer_views import ReviewInput
 from jobs.saved_search_views import SearchInput
 from jobs.application_progress import ProgressInput
+from jobs.recommendation_views import ChoiceInput
 
 
 class LoginInput(serializers.Serializer):
@@ -33,6 +34,7 @@ class ErrorOutput(serializers.Serializer):
 
 
 INPUTS = {
+    ('RecommendationChoiceDetail', 'PATCH'): ChoiceInput,
     ('ApplicationProgressView', 'PATCH'): ProgressInput,
     ('OrganisationReview', 'POST'): ReviewInput,
     ('DraftReview', 'POST'): ReviewInput,
