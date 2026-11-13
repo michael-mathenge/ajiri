@@ -1,5 +1,44 @@
 # Jira roadmap execution
 
+## 14 November: discovery and private follow-up verified deployed
+
+Runtime is9676fc4c89b7aef04461c2ba0bbc9eed060ade45 (PR99), following all six
+exact release-head and merged-main checks. Michael approved only the three named
+old server snapshot files; exact checksums/size/path and before/after inventory
+verified27,006,264bytes removed, all other entries/off-server copies preserved.
+The following-backup capacity gate passed again before staging and after migrations.
+
+Under drained writer/web pause, current43-table data/3triggers/16 private files
+matched completed off-server recovery. Exact clean source was staged; system/drift/
+actual plan passed, with only jobs0019/0020/0021 pending, then all three applied.
+Original rows/permission assignments/triggers/files were preserved; inspected new
+model content types/permission definitions and sequence increments were explicitly
+accounted for. No access grant occurred. New fields null/new preference tables empty.
+
+Read-only owner jobs/CV draft/employer drafts/suggestions/dismissed/shortlist/
+application-list passed. Existing approved CV bytes matched, private/no-store and
+anonymous401; one existing application exposes nullable follow_up_at after reload.
+Saved searches were observedFalse before staging and remainFalse/403; historical
+True reports are not current evidence. Other safety/mail flags unchanged; all33
+production pins match. No personal preference write or mail was performed.
+
+Web re-enabled/reloaded; external health200/HSTS604800 and all42 exact frontend
+files passed. Both scheduled writers independently observed active again. Final
+measured next snapshot/ZIP capacity leaves14,487,499bytes beyond the16MiB reserve;
+retention remains report-only. No fresh unattended/scheduled-ingestion success is
+inferred. AJ84's bounded functionality is deployed; AJ83 still needs genuine current
+inventory and8/10 consented-person acceptance. Whole MVP2 is unfinished. Full receipt:
+reports/MVP2_DISCOVERY_RELEASE_2026-11-14.md. Later evidence-only merges do not imply
+a different activated runtime.
+
+The activation-evidence follow-up from reviewedMVP2/396913c passed actual local
+check/drift/full591tests289.769s (one existing platform skip); explicitNode24.19
+locked npmci/audit0/lint/build1.61s and exact42-file regenerated comparison passed.
+AJ84 is Done with the manual-date/no outbound-reminder scope recorded, original
+proposal retained and suggested5-point sizing clearly separated from a sprint
+estimate. The fresh query now returns16 unfinished non-Epic stories. Required
+evidence-PR CI remains a merge gate; no new runtime is inferred from documentation.
+
 ## 14 November: checked discovery release; activation awaits recovery capacity
 
 PR96/97/98 each passed all six required checks and merged into MVP2 as9db23ab,
