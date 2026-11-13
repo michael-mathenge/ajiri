@@ -32,6 +32,24 @@ executed, verified backup. Existing November readiness/renewal reminders remain.
    deployment, and actual PythonAnywhere account quota. The shared filesystem's
    `df` free space is not the account allowance. Defer on an active operation or
    inadequate snapshot/verification headroom. Never prune backups automatically.
+   The read-only `private_recovery_plan` command makes this peak-space check
+   repeatable. Pass the current account quota/usage in **bytes**, not a rounded
+   historical dashboard value:
+
+   ```bash
+   python manage.py private_recovery_plan \
+     --quota-bytes "$QUOTA_BYTES" --used-bytes "$USED_BYTES"
+   ```
+
+   Expected: JSON with `dry_run: true`, `sufficient: true` and nonnegative
+   `remaining_after_plan_bytes`. It budgets a new data snapshot and transfer ZIP
+   together, including compression expansion, metadata and a16MiB reserve.
+   It never creates or prunes a backup. Insufficient reserve exits unsuccessfully;
+   preserve existing files and resolve capacity before release. New runtime archives
+   or other additional artifacts require an explicit conservative
+   `--extra-snapshot-bytes` allowance; the default plan does not verify runtime
+   recovery. Recheck the same measurements after writers are paused because data
+   and usage can grow between the initial estimate and the actual snapshot.
 3. Record the current web-app and ingestion/sweep workflow states. Pause only
    enabled workflows; wait for existing writer runs to finish. Disable the web app
    only if enabled. Use the existing signed-in PythonAnywhere account and GitHub

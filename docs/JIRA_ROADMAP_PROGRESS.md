@@ -2114,3 +2114,20 @@ is not full-suite acceptance.
 
 See `reports/AJ87_SECURITY_2026-11-13.md` for source/registry review, validation,
 temporary override removal and rollback. No newer production activation is claimed.
+
+### AJ85 recovery-capacity implementation — 13 November 2026
+
+`codex/mvp2-aj85-recovery` starts from reviewed MVP2 and incorporates reviewed AJ87
+merge00ce84f. Added a read-only account-quota peak planner for simultaneous private
+snapshot and transfer ZIP, compression/metadata allowance and16MiB reserve. It stats
+SQLite/journals/private files without opening SQLite or copying/pruning content.
+Default scope excludes new runtime archives; those need separate measured allowance
+and verification. Backup/restore/scheduler completion is never inferred from a plan.
+
+Eleven focused tests and pinned Ruff0.17.4 passed. System/drift and Node24.19 locked
+npmci/lint/build passed; all38 regenerated files match unchanged committed assets.
+Full backend suite passed544tests in258.304s (one existing skip). Required CI and
+fresh production quota evaluation remain pending.
+Existing16-file off-server recovery from the prior deployment remains completed
+evidence. Archived conflicting migration stacks remain reference-only. See
+`reports/AJ85_RECOVERY_READINESS_2026-11-13.md` for limitations and rollback.

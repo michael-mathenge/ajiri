@@ -1486,3 +1486,22 @@ This affects development tooling, not application permissions or user data. Remo
 the temporary override when a reviewed upstream dependency range selects a patched
 matcher itself. Revert the manifest and lockfile together on rollback; never force
 an incompatible graph with npm audit --force or weaken lint rules to obtain a pass.
+
+## private-recovery-capacity
+
+The next private backup needs room for its completed SQLite/media/erasure snapshot
+and its transfer ZIP at the same time. Shared-host filesystem free space is not
+the account's quota. `private_recovery_plan` accepts freshly measured account quota
+and usage in bytes, then measures database/journal and private-file sizes without
+opening SQLite, copying documents, pruning files or changing permissions. It allows
+tar/ZIP metadata, compression expansion and a default 16 MiB operating reserve.
+The erasure ledger estimate includes all regular files conservatively; it does not
+change which entries the real backup is allowed to include.
+
+A successful estimate is not a backup, scheduler run, integrity check or restore.
+Recheck quota and changing inputs under the paused-writer release window, then run
+the existing complete backup, independent off-server hash check and isolated restore.
+The plan excludes a newly created virtualenv archive by default; include a measured
+upper allowance for additional snapshot artifacts explicitly. Runtime rollback still
+needs its separate verification. Insufficient reserve returns a failure without
+deleting anything. Retention remains report-only; resolve capacity before activation.
