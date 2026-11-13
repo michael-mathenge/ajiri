@@ -17,14 +17,14 @@ import {
 } from '../lib/formSchemas'
 import FormErrors from '../components/FormErrors'
 
-function Example({ save }) {
-  const { values, setValues, errors, setErrors, submit } = useSchemaForm(
-    loginSchema,
-    { email: '', password: '' }
-  )
+function Example({ save, schema = loginSchema }) {
+  const { values, setValues, errors, setErrors, submit, validating } =
+    useSchemaForm(schema, { email: '', password: '' })
   return (
     <form
       noValidate
+      aria-label="Example"
+      aria-busy={validating}
       onSubmit={submit(async (data) => {
         try {
           await save(data)
@@ -112,6 +112,112 @@ it('does not submit twice during validation or a pending mutation, and retains e
   )
   expect(screen.getByRole('alert')).toHaveTextContent('Second server message.')
   expect(document.getElementById('example-password-error')).toBeVisible()
+})
+it('waits for an on-demand validator before making exactly one requested mutation', async () => {
+  let resolve
+  const load = vi.fn(
+    () =>
+      new Promise((done) => {
+        resolve = done
+      })
+  )
+  const save = vi.fn()
+  render(<Example save={save} schema={load} />)
+  expect(load).not.toHaveBeenCalled()
+  fireEvent.change(screen.getByLabelText('Email'), {
+    target: { value: 'synthetic@example.invalid' },
+  })
+  fireEvent.change(screen.getByLabelText('Password'), {
+    target: { value: 'synthetic-pass' },
+  })
+  fireEvent.submit(screen.getByRole('form', { name: 'Example' }))
+  fireEvent.submit(screen.getByRole('form', { name: 'Example' }))
+  await waitFor(() => expect(load).toHaveBeenCalledTimes(1))
+  expect(screen.getByRole('form', { name: 'Example' })).toHaveAttribute(
+    'aria-busy',
+    'true'
+  )
+  expect(save).not.toHaveBeenCalled()
+  resolve(loginSchema)
+  await waitFor(() => expect(save).toHaveBeenCalledTimes(1))
+  expect(save).toHaveBeenCalledWith({
+    email: 'synthetic@example.invalid',
+    password: 'synthetic-pass',
+  })
+})
+it('fails closed on a validator download error and waits for an explicit retry', async () => {
+  const load = vi
+    .fn()
+    .mockRejectedValueOnce(new Error('internal download details'))
+    .mockResolvedValue(loginSchema)
+  const save = vi.fn()
+  render(<Example save={save} schema={load} />)
+  fireEvent.change(screen.getByLabelText('Email'), {
+    target: { value: 'synthetic@example.invalid' },
+  })
+  fireEvent.change(screen.getByLabelText('Password'), {
+    target: { value: 'synthetic-pass' },
+  })
+  fireEvent.click(screen.getByRole('button', { name: 'Save' }))
+  expect(await screen.findByRole('alert')).toHaveTextContent(
+    'Could not load form validation. Check your connection and try again.'
+  )
+  expect(screen.getByRole('alert')).not.toHaveTextContent(
+    'internal download details'
+  )
+  expect(screen.getByLabelText('Email')).toHaveValue(
+    'synthetic@example.invalid'
+  )
+  expect(save).not.toHaveBeenCalled()
+  expect(load).toHaveBeenCalledTimes(1)
+  fireEvent.click(screen.getByRole('button', { name: 'Save' }))
+  await waitFor(() => expect(save).toHaveBeenCalledTimes(1))
+  expect(load).toHaveBeenCalledTimes(2)
+})
+it('retains every field error when validation is loaded on demand', async () => {
+  const save = vi.fn()
+  render(<Example save={save} schema={async () => loginSchema} />)
+  fireEvent.click(screen.getByRole('button', { name: 'Save' }))
+  expect(await screen.findByRole('alert')).toHaveTextContent(
+    'Enter a valid email address.'
+  )
+  expect(screen.getByRole('alert')).toHaveTextContent('Password is required.')
+  expect(save).not.toHaveBeenCalled()
+})
+it('requires a new explicit submit when entries change during the validator download', async () => {
+  let resolve
+  const schema = vi.fn(
+    () =>
+      new Promise((done) => {
+        resolve = done
+      })
+  )
+  const save = vi.fn()
+  render(<Example save={save} schema={schema} />)
+  fireEvent.change(screen.getByLabelText('Email'), {
+    target: { value: 'first@example.invalid' },
+  })
+  fireEvent.change(screen.getByLabelText('Password'), {
+    target: { value: 'synthetic-pass' },
+  })
+  fireEvent.click(screen.getByRole('button', { name: 'Save' }))
+  await waitFor(() => expect(schema).toHaveBeenCalledTimes(1))
+  fireEvent.change(screen.getByLabelText('Email'), {
+    target: { value: 'corrected@example.invalid' },
+  })
+  resolve(loginSchema)
+  expect(await screen.findByRole('alert')).toHaveTextContent(
+    'Your form changed while checking.'
+  )
+  expect(save).not.toHaveBeenCalled()
+  schema.mockResolvedValue(loginSchema)
+  fireEvent.click(screen.getByRole('button', { name: 'Save' }))
+  await waitFor(() =>
+    expect(save).toHaveBeenCalledWith({
+      email: 'corrected@example.invalid',
+      password: 'synthetic-pass',
+    })
+  )
 })
 it('requires separate registration agreement and never alters password whitespace', () => {
   const values = {

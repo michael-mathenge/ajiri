@@ -1,5 +1,4 @@
 import { useSchemaForm } from '../hooks/useSchemaForm'
-import { recoverySchema } from '../lib/formSchemas'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import apiClient from '../api/client'
@@ -27,11 +26,18 @@ export default function AccountRecovery({ mode }) {
     errors,
     setErrors,
     submit: validateSubmit,
-  } = useSchemaForm(recoverySchema(mode), {
-    email: '',
-    password: '',
-    password_confirm: '',
-  })
+    validating,
+  } = useSchemaForm(
+    () =>
+      import('../lib/formSchemas').then((module) =>
+        module.recoverySchema(mode)
+      ),
+    {
+      email: '',
+      password: '',
+      password_confirm: '',
+    }
+  )
   const { email, password, password_confirm: confirm } = values
   const [message, setMessage] = useState('')
   const [busy, setBusy] = useState(false)
@@ -80,11 +86,11 @@ export default function AccountRecovery({ mode }) {
   }, [mode, setErrors])
   const missing =
     !done && (reset || verify) && (!link.token || (reset && !link.uid))
-  const submit = async () => {
+  const submit = async (submitted) => {
     if (busy || done || missing || Date.now() < retryAt) return
     setErrors({})
     setMessage('')
-    if (reset && password !== confirm) {
+    if (reset && submitted.password !== submitted.password_confirm) {
       setErrors({ password_confirm: ['Passwords must match.'] })
       return
     }
@@ -98,9 +104,13 @@ export default function AccountRecovery({ mode }) {
             ? 'verification/confirm'
             : 'verification/request'
       const payload = requestReset
-        ? { email, request_id: requestId }
+        ? { email: submitted.email, request_id: requestId }
         : reset
-          ? { ...link, password, password_confirm: confirm }
+          ? {
+              ...link,
+              password: submitted.password,
+              password_confirm: submitted.password_confirm,
+            }
           : verify
             ? { token: link.token }
             : { request_id: requestId }
@@ -179,7 +189,7 @@ export default function AccountRecovery({ mode }) {
           }
           return validateSubmit(submit)(event)
         }}
-        aria-busy={busy}
+        aria-busy={busy || validating}
       >
         {requestReset && (
           <div className="field">
@@ -244,10 +254,15 @@ export default function AccountRecovery({ mode }) {
         <Button
           type="submit"
           disabled={
-            busy || done || missing || verified === true || remaining > 0
+            busy ||
+            validating ||
+            done ||
+            missing ||
+            verified === true ||
+            remaining > 0
           }
         >
-          {busy
+          {busy || validating
             ? 'Please wait…'
             : requestReset
               ? 'Request reset link'

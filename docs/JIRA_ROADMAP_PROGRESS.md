@@ -1,5 +1,23 @@
 # Jira roadmap execution
 
+## 14 November: AJ86 public validation performance follow-up in progress
+
+Production9676fc4 remains verified active; AJ84 is Done. PR101's later evidence-only
+browser job43514052814 passed11journeys but registration's valid three-run TBT
+median251ms exceeded250ms. The actual failure is retained; no metric retry or
+budget/CI relaxation. Isolated codex/mvp2-aj86-deferred-validation from reviewed
+MVP2/396913c defers the unchanged public auth validation module until explicit
+submit, with duplicate-submit protection, busy feedback, retained input and a
+fail-closed accessible download error. Tests/measurements/required checks remain
+pending; no new activation is claimed. See reports/AJ86_PUBLIC_VALIDATION_2026-11-14.md.
+Actual local gates subsequently passed: check/drift/full591backend tests261.992s
+(one platform skip);175components20.58s after correcting the new loader busy-state
+failure; five tooling tests2.787s, both linters, Node24.19 locked install/audit0/build
+1.47s and Ruff. Real Chromium registration/login/private CV/preparation/review passed
+10.398s, proving the validator is absent from initial route requests and loads on
+explicit submit. Safe44-file build synchronization passed. Required CI/Linux metrics
+remain pending; no performance budget is relaxed and runtime9676fc4 is unchanged.
+
 ## 14 November: checked discovery release; activation awaits recovery capacity
 
 PR96/97/98 each passed all six required checks and merged into MVP2 as9db23ab,
