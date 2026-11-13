@@ -1,5 +1,10 @@
 import * as z from 'zod/mini'
 import { validateCV } from './cv'
+import {
+  counties,
+  workArrangements,
+  maxExperienceYears,
+} from './vacancyMetadata'
 
 const text = (max = 255) =>
   z.string().check(z.maxLength(max, `Use ${max} characters or fewer.`))
@@ -76,6 +81,22 @@ export const searchSchema = z.object({
   ),
   location: text(255),
   job_type: z.string(),
+  county: z.optional(z.enum(['', ...counties.map(([value]) => value)])),
+  work_arrangement: z.optional(
+    z.enum(['', ...workArrangements.map(([value]) => value)])
+  ),
+  max_experience_years: z.optional(
+    z
+      .string()
+      .check(
+        z.refine(
+          (value) =>
+            value === '' ||
+            (/^\d+$/.test(value) && Number(value) <= maxExperienceYears),
+          `Use a whole number from 0 to ${maxExperienceYears}, or leave blank.`
+        )
+      )
+  ),
 })
 export const packageSchema = z.object({
   cv_version: required('Approved CV'),

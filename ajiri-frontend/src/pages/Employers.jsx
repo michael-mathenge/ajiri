@@ -2,6 +2,8 @@ import { useRef, useState } from 'react'
 import apiClient from '../api/client'
 import FormErrors from '../components/FormErrors'
 import { apiErrors } from '../lib/errors'
+import VacancyFields from '../components/VacancyFields'
+import { normalizeVacancyValues } from '../lib/vacancyMetadata'
 import { useApiQuery, useApiInvalidation } from '../hooks/useApiQuery'
 import {
   LoadingState,
@@ -33,8 +35,9 @@ export default function Employers() {
     event.preventDefault()
     if (busy) return
     const form = event.currentTarget
-    const values = Object.fromEntries(new FormData(form))
+    let values = Object.fromEntries(new FormData(form))
     if (kind === 'drafts') {
+      values = normalizeVacancyValues(values, true)
       // Keep the same decision on a failed/unknown request so a retry cannot duplicate it.
       // see docs/CONCEPTS.md#ajiri-original-vacancies
       submissionId.current ??= crypto.randomUUID()
@@ -179,6 +182,7 @@ export default function Employers() {
             Description
             <Textarea name="description" required maxLength={12000} />
           </label>
+          <VacancyFields employer prefix="employer" errors={errors} />
           <label className="stack gap-2">
             Requirements
             <Textarea name="requirements" maxLength={6000} />

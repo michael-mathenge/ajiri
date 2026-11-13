@@ -83,6 +83,16 @@ it('keeps the same vacancy decision on an unknown response and changes it only a
   render(<Employers />)
   await screen.findByRole('heading', { name: 'New vacancy' })
   const fill = () => {
+    fireEvent.change(screen.getByLabelText('County'), {
+      target: { value: 'nairobi-city' },
+    })
+    fireEvent.change(screen.getByLabelText('Work arrangement'), {
+      target: { value: 'hybrid' },
+    })
+    fireEvent.change(
+      screen.getByLabelText('Minimum required experience (years)'),
+      { target: { value: '0' } }
+    )
     fireEvent.change(screen.getByLabelText('Job title'), {
       target: { value: 'Synthetic role' },
     })
@@ -107,6 +117,13 @@ it('keeps the same vacancy decision on an unknown response and changes it only a
   await screen.findByText('Outcome unknown. Refresh review status.')
   expect(apiClient.post).toHaveBeenCalledTimes(1)
   const first = apiClient.post.mock.calls[0][1]
+  expect(first).toEqual(
+    expect.objectContaining({
+      county: 'nairobi-city',
+      work_arrangement: 'hybrid',
+      min_experience_years: 0,
+    })
+  )
   expect(first.submission_id).toMatch(/^[0-9a-f-]{36}$/)
   expect(screen.getByLabelText('Job title')).toHaveValue('Synthetic role')
   fireEvent.click(

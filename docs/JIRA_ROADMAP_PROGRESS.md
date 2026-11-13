@@ -1,5 +1,25 @@
 # Jira roadmap execution
 
+## 13 November: AJ83 normalized mobile filters, local verified package
+
+Branch codex/mvp2-aj83-discovery from reviewedMVP2, advanced toc6ae61e after checked
+PR95. Explicit employer county/work arrangement/experience facts now flow through
+independent review, serializers, URL/mobile filtering and identical owner saved
+search/window queries. Unknowns remain null;0 required years is explicit and kept
+when saving. No trait inference,70% browse/apply gate, consent or delivery change.
+jobs.0019 adds nine nullable fields; disposable forward/reverse preserves legacy
+jobs/drafts/searches and all three search triggers. No production migration yet.
+
+Actual check/drift/Ruff/schema passed;565 Django tests passed291.252s with one
+existing skip;164 components passed37.22s; five tooling tests4.207s; Node24.19
+locked npmci/lint/ESLint/build2.37s and safe39-file build synchronization passed.
+Initial local browser import failed for absent optional Playwright; pinned runner
+installed locally, then real employer/review/mobile-filter/accessibility/withdrawal
+journey passed12.581s with provider uncalled. Focused backend19/10 and UI16 checks
+also passed. Source/build commits, required CI and production activation pending.
+Dismissal and consented pilot acceptance remain open. See
+reports/AJ83_NORMALIZED_FILTERS_2026-11-13.md for exact evidence and rollback.
+
 ## 13 November: MVP2 original-source package deployed
 
 AJ80's historical Jira housekeeping also completed:23 descriptive dated titles

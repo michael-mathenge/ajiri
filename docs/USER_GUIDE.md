@@ -116,3 +116,24 @@ decision. Successful publication gives the vacancy its own Ajiri listing; candid
 follow the separate official application instructions. Withdraw it if it closes
 early. Review does not guarantee an employer's conduct, and job seekers never pay
 Ajiri to apply. External feed listings remain separately labelled.
+
+## County, work arrangement and experience filters
+
+On the job list, open **More job filters** on a phone. Combine keywords/location
+and job type with county, remote/on-site/hybrid arrangement and the maximum
+experience a role may require. A zero limit includes roles explicitly requiring
+no prior experience; leaving it blank includes unstated requirements too. Chosen
+county/arrangement filters show only stated matching facts. Clear filters to
+broaden results. A low skill score never stops you browsing or applying to an
+otherwise eligible vacancy.
+
+**Save this search** carries all selected filters into the private saved-search
+form, including zero experience. Each notification channel remains a separate
+choice; saving a search never authorizes or sends email. Existing searches keep
+their current limits unless you edit them explicitly.
+
+Employers may supply county, work arrangement and minimum required experience
+with a draft. Leave unknown requirements unstated. Independent staff see these
+facts during review; publication and current closing-date checks still apply.
+Legacy jobs are labelled **Not stated** where facts are missing. Ajiri does not
+infer location, remote work or experience from a candidate's personal traits.

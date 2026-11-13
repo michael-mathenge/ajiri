@@ -36,6 +36,12 @@ class OrganisationSerializer(serializers.ModelSerializer):
 class DraftSerializer(serializers.ModelSerializer):
     submission_id = serializers.UUIDField(required=False, allow_null=True)
 
+    def validate_county(self, value):
+        return value or None
+
+    def validate_work_arrangement(self, value):
+        return value or None
+
     def validate_application_url(self, value):
         if not safe_http_url(value):
             raise serializers.ValidationError('Use an HTTP or HTTPS application URL without embedded credentials.')
@@ -50,6 +56,9 @@ class DraftSerializer(serializers.ModelSerializer):
             "description",
             "requirements",
             "location",
+            "county",
+            "work_arrangement",
+            "min_experience_years",
             "job_type",
             "application_url",
             "closes_at",
@@ -153,6 +162,8 @@ class DraftList(PrivateEmployerMixin, generics.ListCreateAPIView):
         data = dict(serializer.validated_data)
         data.setdefault('requirements', '')
         data.setdefault('job_type', Job.JobType.FULL_TIME)
+        for field in ('county', 'work_arrangement', 'min_experience_years'):
+            data.setdefault(field, None)
         submission_id = data.get('submission_id')
         if submission_id is None:
             # Existing API clients remain compatible; new UI requests carry a key.
@@ -304,6 +315,9 @@ class DraftReview(PrivateEmployerMixin, APIView):
                     description=draft.description,
                     requirements=draft.requirements,
                     location=draft.location,
+                    county=draft.county,
+                    work_arrangement=draft.work_arrangement,
+                    min_experience_years=draft.min_experience_years,
                     job_type=draft.job_type,
                     source_name="Ajiri employer posting",
                     source_url=f"{base}/jobs/pending-{uuid.uuid4().hex}",

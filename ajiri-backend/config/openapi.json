@@ -1330,6 +1330,64 @@
                 "parameters": [
                     {
                         "in": "query",
+                        "name": "county",
+                        "schema": {
+                            "type": "string",
+                            "nullable": true,
+                            "enum": [
+                                "baringo",
+                                "bomet",
+                                "bungoma",
+                                "busia",
+                                "elgeyo-marakwet",
+                                "embu",
+                                "garissa",
+                                "homa-bay",
+                                "isiolo",
+                                "kajiado",
+                                "kakamega",
+                                "kericho",
+                                "kiambu",
+                                "kilifi",
+                                "kirinyaga",
+                                "kisii",
+                                "kisumu",
+                                "kitui",
+                                "kwale",
+                                "laikipia",
+                                "lamu",
+                                "machakos",
+                                "makueni",
+                                "mandera",
+                                "marsabit",
+                                "meru",
+                                "migori",
+                                "mombasa",
+                                "muranga",
+                                "nairobi-city",
+                                "nakuru",
+                                "nandi",
+                                "narok",
+                                "nyamira",
+                                "nyandarua",
+                                "nyeri",
+                                "samburu",
+                                "siaya",
+                                "taita-taveta",
+                                "tana-river",
+                                "tharaka-nithi",
+                                "trans-nzoia",
+                                "turkana",
+                                "uasin-gishu",
+                                "vihiga",
+                                "wajir",
+                                "west-pokot"
+                            ]
+                        },
+                        "description": "* `baringo` - Baringo\n* `bomet` - Bomet\n* `bungoma` - Bungoma\n* `busia` - Busia\n* `elgeyo-marakwet` - Elgeyo Marakwet\n* `embu` - Embu\n* `garissa` - Garissa\n* `homa-bay` - Homa Bay\n* `isiolo` - Isiolo\n* `kajiado` - Kajiado\n* `kakamega` - Kakamega\n* `kericho` - Kericho\n* `kiambu` - Kiambu\n* `kilifi` - Kilifi\n* `kirinyaga` - Kirinyaga\n* `kisii` - Kisii\n* `kisumu` - Kisumu\n* `kitui` - Kitui\n* `kwale` - Kwale\n* `laikipia` - Laikipia\n* `lamu` - Lamu\n* `machakos` - Machakos\n* `makueni` - Makueni\n* `mandera` - Mandera\n* `marsabit` - Marsabit\n* `meru` - Meru\n* `migori` - Migori\n* `mombasa` - Mombasa\n* `muranga` - Murang'a\n* `nairobi-city` - Nairobi City\n* `nakuru` - Nakuru\n* `nandi` - Nandi\n* `narok` - Narok\n* `nyamira` - Nyamira\n* `nyandarua` - Nyandarua\n* `nyeri` - Nyeri\n* `samburu` - Samburu\n* `siaya` - Siaya\n* `taita-taveta` - Taita Taveta\n* `tana-river` - Tana River\n* `tharaka-nithi` - Tharaka Nithi\n* `trans-nzoia` - Trans Nzoia\n* `turkana` - Turkana\n* `uasin-gishu` - Uasin Gishu\n* `vihiga` - Vihiga\n* `wajir` - Wajir\n* `west-pokot` - West Pokot"
+                    },
+                    {
+                        "in": "query",
                         "name": "job_type",
                         "schema": {
                             "type": "string",
@@ -1347,6 +1405,16 @@
                         "name": "location",
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "max_experience_years",
+                        "schema": {
+                            "type": "integer",
+                            "maximum": 80,
+                            "minimum": 0,
+                            "nullable": true
                         }
                     },
                     {
@@ -1379,6 +1447,20 @@
                         "schema": {
                             "type": "string"
                         }
+                    },
+                    {
+                        "in": "query",
+                        "name": "work_arrangement",
+                        "schema": {
+                            "type": "string",
+                            "nullable": true,
+                            "enum": [
+                                "hybrid",
+                                "on_site",
+                                "remote"
+                            ]
+                        },
+                        "description": "* `on_site` - On-site\n* `hybrid` - Hybrid\n* `remote` - Remote"
                     }
                 ],
                 "tags": [
@@ -7631,6 +7713,59 @@
                     "policy_version"
                 ]
             },
+            "CountyEnum": {
+                "enum": [
+                    "baringo",
+                    "bomet",
+                    "bungoma",
+                    "busia",
+                    "elgeyo-marakwet",
+                    "embu",
+                    "garissa",
+                    "homa-bay",
+                    "isiolo",
+                    "kajiado",
+                    "kakamega",
+                    "kericho",
+                    "kiambu",
+                    "kilifi",
+                    "kirinyaga",
+                    "kisii",
+                    "kisumu",
+                    "kitui",
+                    "kwale",
+                    "laikipia",
+                    "lamu",
+                    "machakos",
+                    "makueni",
+                    "mandera",
+                    "marsabit",
+                    "meru",
+                    "migori",
+                    "mombasa",
+                    "muranga",
+                    "nairobi-city",
+                    "nakuru",
+                    "nandi",
+                    "narok",
+                    "nyamira",
+                    "nyandarua",
+                    "nyeri",
+                    "samburu",
+                    "siaya",
+                    "taita-taveta",
+                    "tana-river",
+                    "tharaka-nithi",
+                    "trans-nzoia",
+                    "turkana",
+                    "uasin-gishu",
+                    "vihiga",
+                    "wajir",
+                    "west-pokot"
+                ],
+                "type": "string",
+                "description": "* `baringo` - Baringo\n* `bomet` - Bomet\n* `bungoma` - Bungoma\n* `busia` - Busia\n* `elgeyo-marakwet` - Elgeyo Marakwet\n* `embu` - Embu\n* `garissa` - Garissa\n* `homa-bay` - Homa Bay\n* `isiolo` - Isiolo\n* `kajiado` - Kajiado\n* `kakamega` - Kakamega\n* `kericho` - Kericho\n* `kiambu` - Kiambu\n* `kilifi` - Kilifi\n* `kirinyaga` - Kirinyaga\n* `kisii` - Kisii\n* `kisumu` - Kisumu\n* `kitui` - Kitui\n* `kwale` - Kwale\n* `laikipia` - Laikipia\n* `lamu` - Lamu\n* `machakos` - Machakos\n* `makueni` - Makueni\n* `mandera` - Mandera\n* `marsabit` - Marsabit\n* `meru` - Meru\n* `migori` - Migori\n* `mombasa` - Mombasa\n* `muranga` - Murang'a\n* `nairobi-city` - Nairobi City\n* `nakuru` - Nakuru\n* `nandi` - Nandi\n* `narok` - Narok\n* `nyamira` - Nyamira\n* `nyandarua` - Nyandarua\n* `nyeri` - Nyeri\n* `samburu` - Samburu\n* `siaya` - Siaya\n* `taita-taveta` - Taita Taveta\n* `tana-river` - Tana River\n* `tharaka-nithi` - Tharaka Nithi\n* `trans-nzoia` - Trans Nzoia\n* `turkana` - Turkana\n* `uasin-gishu` - Uasin Gishu\n* `vihiga` - Vihiga\n* `wajir` - Wajir\n* `west-pokot` - West Pokot"
+            },
             "Draft": {
                 "type": "object",
                 "properties": {
@@ -7659,6 +7794,40 @@
                     "location": {
                         "type": "string",
                         "maxLength": 255
+                    },
+                    "county": {
+                        "nullable": true,
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/CountyEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/BlankEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/NullEnum"
+                            }
+                        ]
+                    },
+                    "work_arrangement": {
+                        "nullable": true,
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/WorkArrangementEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/BlankEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/NullEnum"
+                            }
+                        ]
+                    },
+                    "min_experience_years": {
+                        "type": "integer",
+                        "maximum": 80,
+                        "minimum": 0,
+                        "nullable": true
                     },
                     "job_type": {
                         "$ref": "#/components/schemas/JobTypeEnum"
@@ -7748,6 +7917,40 @@
                         "type": "string",
                         "minLength": 1,
                         "maxLength": 255
+                    },
+                    "county": {
+                        "nullable": true,
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/CountyEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/BlankEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/NullEnum"
+                            }
+                        ]
+                    },
+                    "work_arrangement": {
+                        "nullable": true,
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/WorkArrangementEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/BlankEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/NullEnum"
+                            }
+                        ]
+                    },
+                    "min_experience_years": {
+                        "type": "integer",
+                        "maximum": 80,
+                        "minimum": 0,
+                        "nullable": true
                     },
                     "job_type": {
                         "$ref": "#/components/schemas/JobTypeEnum"
@@ -7853,6 +8056,40 @@
                         "format": "int64",
                         "nullable": true
                     },
+                    "county": {
+                        "nullable": true,
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/CountyEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/BlankEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/NullEnum"
+                            }
+                        ]
+                    },
+                    "work_arrangement": {
+                        "nullable": true,
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/WorkArrangementEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/BlankEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/NullEnum"
+                            }
+                        ]
+                    },
+                    "min_experience_years": {
+                        "type": "integer",
+                        "maximum": 80,
+                        "minimum": 0,
+                        "nullable": true
+                    },
                     "is_salary_negotiable": {
                         "type": "boolean"
                     },
@@ -7949,6 +8186,40 @@
                     },
                     "job_type": {
                         "$ref": "#/components/schemas/JobTypeEnum"
+                    },
+                    "county": {
+                        "nullable": true,
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/CountyEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/BlankEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/NullEnum"
+                            }
+                        ]
+                    },
+                    "work_arrangement": {
+                        "nullable": true,
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/WorkArrangementEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/BlankEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/NullEnum"
+                            }
+                        ]
+                    },
+                    "min_experience_years": {
+                        "type": "integer",
+                        "maximum": 80,
+                        "minimum": 0,
+                        "nullable": true
                     },
                     "salary_min": {
                         "type": "integer",
@@ -8091,6 +8362,11 @@
                     "job_title",
                     "match_score",
                     "sent_email"
+                ]
+            },
+            "NullEnum": {
+                "enum": [
+                    null
                 ]
             },
             "Organisation": {
@@ -8496,6 +8772,34 @@
                             }
                         ]
                     },
+                    "county": {
+                        "nullable": true,
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/CountyEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/NullEnum"
+                            }
+                        ]
+                    },
+                    "work_arrangement": {
+                        "nullable": true,
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/WorkArrangementEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/NullEnum"
+                            }
+                        ]
+                    },
+                    "max_experience_years": {
+                        "type": "integer",
+                        "maximum": 80,
+                        "minimum": 0,
+                        "nullable": true
+                    },
                     "in_app_frequency": {
                         "allOf": [
                             {
@@ -8813,6 +9117,34 @@
                             }
                         ]
                     },
+                    "county": {
+                        "nullable": true,
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/CountyEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/NullEnum"
+                            }
+                        ]
+                    },
+                    "work_arrangement": {
+                        "nullable": true,
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/WorkArrangementEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/NullEnum"
+                            }
+                        ]
+                    },
+                    "max_experience_years": {
+                        "type": "integer",
+                        "maximum": 80,
+                        "minimum": 0,
+                        "nullable": true
+                    },
                     "in_app_frequency": {
                         "allOf": [
                             {
@@ -8868,6 +9200,40 @@
                                 "$ref": "#/components/schemas/BlankEnum"
                             }
                         ]
+                    },
+                    "county": {
+                        "nullable": true,
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/CountyEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/BlankEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/NullEnum"
+                            }
+                        ]
+                    },
+                    "work_arrangement": {
+                        "nullable": true,
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/WorkArrangementEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/BlankEnum"
+                            },
+                            {
+                                "$ref": "#/components/schemas/NullEnum"
+                            }
+                        ]
+                    },
+                    "max_experience_years": {
+                        "type": "integer",
+                        "maximum": 80,
+                        "minimum": 0,
+                        "nullable": true
                     },
                     "in_app_frequency": {
                         "$ref": "#/components/schemas/SavedSearchFrequencyEnum"
@@ -8944,6 +9310,15 @@
                 "required": [
                     "token"
                 ]
+            },
+            "WorkArrangementEnum": {
+                "enum": [
+                    "on_site",
+                    "hybrid",
+                    "remote"
+                ],
+                "type": "string",
+                "description": "* `on_site` - On-site\n* `hybrid` - Hybrid\n* `remote` - Remote"
             }
         },
         "securitySchemes": {

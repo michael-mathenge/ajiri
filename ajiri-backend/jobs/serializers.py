@@ -50,6 +50,7 @@ class JobListSerializer(serializers.ModelSerializer):
         model = Job
         fields = (
             'id', 'title', 'company_name', 'location', 'job_type',
+            'county', 'work_arrangement', 'min_experience_years',
             'salary_min', 'salary_max', 'is_salary_negotiable',
             'match_score', 'posted_at', 'publication', 'display_only', 'display_notice', 'can_apply', 'original_source_url', 'source_name',
         )
@@ -79,6 +80,7 @@ class JobDetailSerializer(JobListSerializer):
         fields = (
             'id', 'title', 'company_name', 'description', 'requirements',
             'location', 'job_type', 'salary_min', 'salary_max',
+            'county', 'work_arrangement', 'min_experience_years',
             'is_salary_negotiable', 'skills_required', 'match_score', 'match_explanation',
             'source_url', 'source_name', 'posted_at', 'publication', 'display_only', 'display_notice', 'can_apply', 'original_source_url',
         )

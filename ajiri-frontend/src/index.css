@@ -388,8 +388,7 @@ textarea.input {
   gap: 1rem;
   align-items: end;
 }
-.search-fields > .field:nth-child(2),
-.search-fields > .field:nth-child(3) {
+.search-fields > .field:not(:first-child) {
   display: none;
 }
 .search-fields.filters-open > .field {
@@ -770,10 +769,9 @@ textarea.input {
     display: none;
   }
   .search-fields {
-    grid-template-columns: 1.4fr 1fr 1fr auto;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
-  .search-fields > .field:nth-child(2),
-  .search-fields > .field:nth-child(3) {
+  .search-fields > .field:not(:first-child) {
     display: flex;
   }
   .filter-toggle {

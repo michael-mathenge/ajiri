@@ -12,6 +12,8 @@ import {
 import { useApiQuery, useApiInvalidation } from '../hooks/useApiQuery'
 import { useVacancyClock, availableAt } from '../hooks/useVacancyClock'
 import { apiErrors } from '../lib/errors'
+import VacancyFields from '../components/VacancyFields'
+import { normalizeVacancyValues } from '../lib/vacancyMetadata'
 
 function Frequency({ name, children, value, error }) {
   return (
@@ -99,7 +101,9 @@ export default function SavedSearches() {
     event.preventDefault()
     if (busy) return
     const form = event.currentTarget
-    const values = Object.fromEntries(new FormData(form))
+    const values = normalizeVacancyValues(
+      Object.fromEntries(new FormData(form))
+    )
     setBusy(true)
     setErrors({})
     setMessage('')
@@ -234,6 +238,11 @@ export default function SavedSearches() {
             <option value="internship">Internship</option>
           </Select>
         </div>
+        <VacancyFields
+          prefix="saved-search"
+          errors={errors}
+          defaults={editing || Object.fromEntries(params)}
+        />
         <Frequency
           name="in_app_frequency"
           value={editing?.in_app_frequency}

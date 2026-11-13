@@ -3,6 +3,7 @@ import { useEffect } from 'react'
 import { useSchemaForm } from '../hooks/useSchemaForm'
 import { searchSchema } from '../lib/formSchemas'
 import FormErrors from '../components/FormErrors'
+import VacancyFields from '../components/VacancyFields'
 import { useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import {
@@ -28,7 +29,7 @@ import {
 import { dateLabel, jobType, salaryLabel } from '../lib/utils'
 import { useVacancyClock, displayableAt } from '../hooks/useVacancyClock'
 
-function Filters({ register }) {
+function Filters({ register, errors }) {
   return (
     <>
       <div className="field">
@@ -59,6 +60,7 @@ function Filters({ register }) {
           <option value="internship">Internship</option>
         </Select>
       </div>
+      <VacancyFields register={register} prefix="filters" errors={errors} />
     </>
   )
 }
@@ -69,15 +71,32 @@ export default function JobList() {
   const title = params.get('q') || params.get('title') || ''
   const location = params.get('location') || ''
   const type = params.get('job_type') || ''
+  const county = params.get('county') || ''
+  const workArrangement = params.get('work_arrangement') || ''
+  const maxExperience = params.get('max_experience_years') || ''
   const {
     form,
     errors: filterErrors,
     submit: validateSubmit,
-  } = useSchemaForm(searchSchema, { title, location, job_type: type })
+  } = useSchemaForm(searchSchema, {
+    title,
+    location,
+    job_type: type,
+    county,
+    work_arrangement: workArrangement,
+    max_experience_years: maxExperience,
+  })
   const { reset } = form
   useEffect(() => {
-    reset({ title, location, job_type: type })
-  }, [title, location, type, reset])
+    reset({
+      title,
+      location,
+      job_type: type,
+      county,
+      work_arrangement: workArrangement,
+      max_experience_years: maxExperience,
+    })
+  }, [title, location, type, county, workArrangement, maxExperience, reset])
   const requestedPage = Number(params.get('page'))
   const page =
     Number.isSafeInteger(requestedPage) && requestedPage > 0 ? requestedPage : 1
@@ -85,6 +104,9 @@ export default function JobList() {
   if (title) query.set(params.has('q') ? 'q' : 'title', title)
   if (location) query.set('location', location)
   if (type) query.set('job_type', type)
+  if (county) query.set('county', county)
+  if (workArrangement) query.set('work_arrangement', workArrangement)
+  if (maxExperience) query.set('max_experience_years', maxExperience)
   const { data, loading, error, retry } = useApiQuery(`/jobs/?${query}`)
   const rows = data?.results ?? []
   const vacancyNow = useVacancyClock(rows)
@@ -96,7 +118,9 @@ export default function JobList() {
     ? profile.skills.length > 0
     : null
   const [showFilters, setShowFilters] = useState(false)
-  const filtered = Boolean(title || location || type)
+  const filtered = Boolean(
+    title || location || type || county || workArrangement || maxExperience
+  )
   const submit = (values) => {
     const next = new URLSearchParams()
     for (const [key, value] of Object.entries(values))
@@ -127,10 +151,10 @@ export default function JobList() {
         <form
           noValidate
           onSubmit={validateSubmit(submit)}
-          key={`${title}|${location}|${type}`}
+          key={`${title}|${location}|${type}|${county}|${workArrangement}|${maxExperience}`}
         >
           <div className={`search-fields ${showFilters ? 'filters-open' : ''}`}>
-            <Filters register={form.register} />
+            <Filters register={form.register} errors={filterErrors} />
             <Button type="submit">
               <Search size={18} aria-hidden="true" />
               Search jobs
@@ -145,7 +169,7 @@ export default function JobList() {
               onClick={() => setShowFilters(!showFilters)}
             >
               <SlidersHorizontal size={16} aria-hidden="true" />
-              {showFilters ? 'Fewer filters' : 'Location & job type'}
+              {showFilters ? 'Fewer filters' : 'More job filters'}
             </Button>
             {filtered && (
               <Button variant="ghost" onClick={() => setParams({})}>
@@ -189,7 +213,14 @@ export default function JobList() {
         </p>
       )}
       <Link
-        to={`/saved-searches?${new URLSearchParams({ q: title, location, job_type: type })}`}
+        to={`/saved-searches?${new URLSearchParams({
+          q: title,
+          location,
+          job_type: type,
+          county,
+          work_arrangement: workArrangement,
+          max_experience_years: maxExperience,
+        })}`}
       >
         Save this search
       </Link>

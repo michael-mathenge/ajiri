@@ -2,6 +2,7 @@ import { useState } from 'react'
 import apiClient from '../api/client'
 import FormErrors from '../components/FormErrors'
 import { apiErrors } from '../lib/errors'
+import { countyLabel, workArrangementLabel } from '../lib/vacancyMetadata'
 import { useApiQuery, useApiInvalidation } from '../hooks/useApiQuery'
 import {
   LoadingState,
@@ -74,6 +75,16 @@ export default function EmployerReview() {
                   </p>
                   <p>{item.description}</p>
                   <p>{item.requirements}</p>
+                  <p>
+                    County: {countyLabel(item.county)} · Work arrangement:{' '}
+                    {workArrangementLabel(item.work_arrangement)}
+                  </p>
+                  <p>
+                    Minimum required experience:{' '}
+                    {item.min_experience_years == null
+                      ? 'Not stated'
+                      : `${item.min_experience_years} years`}
+                  </p>
                   <p>Application URL: {item.application_url}</p>
                 </>
               )}

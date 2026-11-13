@@ -1535,3 +1535,34 @@ The nullable jobs.0018 field preserves existing drafts, review relationships and
 search triggers. Apply it while writers/web are paused before activating new code.
 Production rollback keeps the additive column, decision IDs and new employer records;
 reverse-migration tests are disposable rehearsals, not instructions to discard IDs.
+
+## normalized-vacancy-filters
+
+County, work arrangement and minimum required experience are explicit vacancy
+facts supplied by the employer and shown to the independent reviewer. We never
+guess them from a location string, prose, skills or a candidate's personal traits.
+Old jobs and drafts keep null (not stated); experience0 means explicitly no prior
+experience required, while null is unknown. County names come from the official
+47-county list at https://kdsp.devolution.go.ke/counties. The backend's
+jobs/vacancy_metadata.json is the single vocabulary also bundled by the frontend;
+it requires no runtime metadata download. Whole-year inputs are bounded0–80 as a
+technical validation limit, not an age/eligibility rule or hiring prediction.
+
+An explicitly chosen county/work arrangement excludes unstated facts. A maximum
+required-experience filter includes only stated minimum requirements at or below
+that number, including zero. Without that filter, unknowns remain browseable.
+The70% alert threshold never restricts browsing or preparation. Existing freshness,
+scam review and owner controls still determine eligibility independently.
+
+URL filters, mobile forms, saved preferences and due-window matching use the same
+query fields. Saving retains zero and all chosen bounds; clearing stores null.
+It does not grant email consent, activate transport or infer a candidate outcome.
+Optimistic saved-search revisions and employer retry keys retain their existing
+owner boundaries. Employer keys compare these explicit facts as part of the same
+submission intent. Independent review copies the facts without inferring defaults.
+
+jobs.0019 adds nullable columns to Job, EmployerJobDraft and SavedSearch while
+preserving legacy values and all three SQLite search triggers. Production order
+remains a consistent private backup/off-server isolated restore, paused writers
+and web, additive migration, preservation checks, then code activation. Production
+rollback retains the columns and new writes; reverse tests use disposable data.
