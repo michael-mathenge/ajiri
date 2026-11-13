@@ -1,5 +1,30 @@
 # Jira roadmap execution
 
+## 14 November: checked discovery release; activation awaits recovery capacity
+
+PR96/97/98 each passed all six required checks and merged into MVP2 as9db23ab,
+e31ef17 andc983bed. Release PR99 passed all six exact-head checks and merged to
+main as9676fc4c89b7aef04461c2ba0bbc9eed060ade45; all six merged-main checks also
+passed. Runtime remains93cf55e: no0019/0020/0021 production migration or activation
+has been claimed. The latest feature passed591backend tests/one platform skip,
+171components, five tooling tests and two actual browser journeys21.978s.
+
+Fresh consistent manual snapshot backup-20261113T211254131961Z-19b403ac completed
+under paused web/writers; web and both scheduled writers were restored immediately,
+and external health returned200. Private download checksums and an isolated
+database/all16-file restore passed. The following-backup quota plan then failed
+closed:62,316,544bytes available versus73,744,437required. A concrete one-time
+three-file old server snapshot cleanup is awaiting Michael's separate approval;
+the earlier two-archive approval is not reused. No additional deletion occurred.
+All old off-server raw files and recovery ZIP were independently rehashed.
+
+AJ83 remains In Progress for genuine inventory and the8/10 consented-person pilot;
+AJ84 remains In Progress pending actual verified activation. The pending17-story
+Jira query was reconciled, including archived certificate/backend rehearsal evidence
+and actual scanner/storage/participant/legal/commercial prerequisites. See
+reports/MVP2_DISCOVERY_RELEASE_2026-11-14.md for exact recovery hashes, capacity,
+migration order, unchanged live services and data-preserving rollback.
+
 ## 13 November: AJ84 private shortlist/manual follow-up, local verified package
 
 Branch codex/mvp2-aj84-saved-jobs from checkedMVP2/PR97 mergee31ef17. Idempotent
