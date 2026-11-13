@@ -1,5 +1,38 @@
 # Jira roadmap execution
 
+## 13 November: MVP2 original-source package deployed
+
+AJ80's historical Jira housekeeping also completed:23 descriptive dated titles
+and23 Relates links, with independent readback confirming unchanged source
+comments/IDs/timestamps/counts and Done statuses. No entry was deleted, merged,
+bulk-transitioned or treated as new live acceptance. See
+docs/JIRA_HISTORY_RECONCILIATION.md for the exact preserved mapping.
+
+Reviewed main93cf55e5299e8eb5adab60da215b5fbe1e82d1b4 (PR94) is now the
+verified runtime, replacingd5f2f68. AJ87/PR91, AJ85/PR92 and AJ82/PR93 were
+independent feature branches merged intoMVP2 after six checks each; release94
+and the exact merged main also passed all six. Final application gates:555 Django
+tests/one existing skip,161 components, five tooling tests, both linters, locked
+Node24.19 install/build, schema and migration drift passed.
+
+Only the two specifically approved redundant server archives were removed;
+64,442,246 bytes reclaimed, raw snapshot and all off-server recovery copies retained.
+Fresh paused-writer snapshot backup-20261113T134617405732Z-46a6f54d completed.
+Its10,993,453-byte private download passed independent checksums, off-server copy
+and isolated database/16-file restore before migration0018/activation. All43 old
+tables, three search triggers and media bytes preserved after accounting for the
+two inspected SQLite migration/empty-table counter changes. No old data was restored.
+Next-backup plan passes with16MiB reserve and27,643,851 bytes beyond the plan.
+
+Web re-enabled/reloaded; both writer workflows restored. HTTPS health200/HSTS604800,
+all38 exact production assets and owner jobs/CV/employer/private-document reads
+passed; anonymous document401. No new production employer/job/email. Freshness true;
+posting/public jobs/application and alert email false; existing account mail true.
+Original source is deployed foundation with0 eligible roles/0 employers against
+50/10 targets, not completed AJ82 pilot acceptance or the complete MVP2 backlog.
+See reports/MVP2_ORIGINAL_SOURCE_DEPLOYMENT_2026-11-13.md for revisions, commands,
+failed initial preservation comparisons, recovery hashes, limitations and rollback.
+
 ## 24 October: application pipeline (AJ50 local)
 
 Branch codex/application-pipeline from reviewed main b24b070. Private owner
