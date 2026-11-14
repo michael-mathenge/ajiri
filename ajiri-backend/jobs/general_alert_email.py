@@ -61,7 +61,9 @@ class AlertTransport:
 def deliver(notification_id):
     if not enabled():
         return 'disabled'
-    notification = Notification.objects.select_related('user__profile', 'job').get(pk=notification_id)
+    notification = Notification.objects.select_related('user__profile', 'job').filter(pk=notification_id).first()
+    if notification is None:
+        return 'ineligible'  # A concurrent deletion must not abort the rest of a bounded page.
     previous = DeliveryAttempt.objects.filter(notification=notification).order_by('-created_at').first()
     if previous:
         return previous.state  # Even definite failures require a separately scoped explicit retry.

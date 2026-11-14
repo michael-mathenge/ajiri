@@ -80,3 +80,48 @@ class GeneralSearchTests(fixtures.SearchFixtures, TransactionTestCase):
         self.assertEqual(deliver_due(self.saved.pk), [])
         self.send.assert_not_called()
         self.assertEqual(DeliveryAttempt.objects.count(), 1)
+
+    def test_continuation_skips_old_ineligible_rows_without_recollecting(self):
+        from .general_saved_search_email import deliver_batch, current
+        from .saved_searches import collect_due
+        self.job()
+        self.job()
+        collect_due(self.saved.pk, 'email')
+        identities = list(self.saved.matches.order_by('pk').values_list('pk', flat=True))
+        self.assertEqual(len(identities), 3)
+        with patch('jobs.general_saved_search_email.current',
+                   side_effect=lambda row: row.pk == identities[-1] and current(row)), \
+                patch('jobs.general_saved_search_email.collect_due') as collect:
+            first = deliver_batch(self.saved.pk, limit=1)
+            second = deliver_batch(self.saved.pk, limit=1, cursor=first['next_cursor'])
+            last = deliver_batch(self.saved.pk, limit=1, cursor=second['next_cursor'])
+        self.assertEqual(first['examined'], 1)
+        self.assertFalse(second['exhausted'])
+        self.assertTrue(last['exhausted'])
+        self.assertEqual(last['results'], ['accepted'])
+        self.assertEqual(collect.call_count, 1)
+        self.send.assert_called_once()
+
+    def test_cursor_cannot_cross_search_or_revision(self):
+        from .general_saved_search_email import deliver_batch
+        self.job()
+        first = deliver_batch(self.saved.pk, limit=1)
+        self.assertIsNotNone(first['next_cursor'])
+        other = self.search(email_frequency='daily')
+        with self.assertRaises(ValueError):
+            deliver_batch(other.pk, cursor=first['next_cursor'])
+        SavedSearch.objects.filter(pk=self.saved.pk).update(revision=2)
+        with self.assertRaises(ValueError):
+            deliver_batch(self.saved.pk, cursor=first['next_cursor'])
+        self.send.assert_called_once()
+
+    def test_command_rejects_invalid_programmatic_limit_without_collection(self):
+        from io import StringIO
+        from django.core.management import call_command
+        from django.core.management.base import CommandError
+        for limit in (0, 51, True, '2'):
+            with self.assertRaises(CommandError):
+                call_command('deliver_saved_search_emails', search_id=self.saved.pk,
+                             limit=limit, stdout=StringIO())
+        self.assertFalse(self.saved.matches.exists())
+        self.send.assert_not_called()
