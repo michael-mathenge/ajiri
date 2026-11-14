@@ -13,9 +13,10 @@ export default function EmployerGuide() {
           appears to job seekers.
         </p>
         <p>
-          Employer onboarding is currently a pilot. A verified account email is
-          required to submit; account verification is not yet available for
-          every account.
+          Employer onboarding is a pilot. Verify your current account email
+          before submitting. Onboarding must be confirmed with each pilot
+          employer, and an independent staff reviewer must approve the
+          organisation and vacancy before publication.
         </p>
       </section>
       <Card className="stack">

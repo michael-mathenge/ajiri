@@ -1638,3 +1638,59 @@ document paths/bytes and search triggers. Production order remains verified priv
 recovery, paused writers/web, reviewed additive migration and preservation, then
 activation. Code rollback retains added columns/tables and new personal choices;
 reverse tests use only disposable data.
+
+## vacancy-pilot-readiness
+
+The original-source readiness command reports aggregate inventory, current switches
+and whether general account-security mail configuration validates. It never sends
+mail, creates tokens or changes records. A configured service does not establish
+inbox delivery. One eligible employer role meets the first inventory milestone;
+it does not meet the larger50-role/10-employer target or prove independent private
+pilot evidence. Configuration errors report only a safe state, never their values.
+See `jobs/management/commands/original_source_readiness.py` and the root operating
+guide `../docs/EMPLOYER_REVIEW_PLAN.md`.
+
+## general-application-email
+
+General application mail has its own default-off switch in addition to existing
+application and general account transport gates. The exact reviewed documents,
+recipient, subject, body and reply address remain bound to an immutable personal
+authorization. The shared service claims its durable receipt before handoff. The
+transport rechecks current verified mailbox, vacancy evidence, policy, approval,
+expiry and actual file bytes immediately before one provider call. Existing
+receipts reconcile even after switches are off. Unknown outcomes cannot be retried
+automatically; an explicit retry remains limited to existing definite-failure rules.
+
+## general-alert-email
+
+Match email uses a separate default-off GENERAL_ALERT_EMAIL_ENABLED switch, the
+existing alert switch and the reviewed general account transport configuration.
+It requires active users, exact verified addresses, current explicit consent
+predating the notification, a score of at least 70 and current vacancy evidence.
+In-app choice remains independent. A bounded operator batch shares the existing
+global/alert receipt ledger; any existing receipt blocks another provider call.
+Consent, freshness, mailbox and switches are checked again at handoff. Unsubscribe
+links require confirmation. No automated retry or live scheduler is installed.
+
+## general-saved-search-email
+
+The separately default-off saved-search dispatcher uses existing durable daily or
+weekly windows. Saving a search never grants consent. Real HTTPS delivery requires
+current explicit consent covering the window, a verified address, current search
+revision/frequency and fresh job evidence. Each match is linked to the shared
+notification receipt, so overlapping searches and ordinary match alerts cannot
+repeat a provider handoff. A crash before recording the match link reconciles the
+already durable notification receipt. Quota/unknown outcomes never rewind a window
+or automatically retry the provider. No live scheduler is activated.
+
+## deferred-private-query-cache
+
+Public screens do not use the private server-data cache. Load its provider only
+for a signed-in session. Each account transition (including another tab's storage
+event) mounts a new keyed provider and clears/cancels the old cache on unmount.
+This keeps private rows out of the next account and removes unused cache code from
+initial login/register downloads. Existing JWT cookies, token interceptors, read
+retry limits and explicit mutation behavior are unchanged. A failed lazy download
+uses the existing page recovery boundary; it must not retry a user mutation.
+Frontend source is `../ajiri-frontend/src/components/PrivateQueryProvider.jsx`
+(relative to the backend root).

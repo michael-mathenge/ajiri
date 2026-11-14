@@ -515,6 +515,9 @@ class BrowserJourney(LiveServerTestCase):
             context.route('**/*', lambda route: route.continue_()
                 if route.request.url.startswith(self.live_server_url + '/') else route.abort())
             page = context.new_page()
+            private_cache_requests = []
+            context.on('request', lambda request: private_cache_requests.append(True)
+                if '/assets/PrivateQueryProvider-' in request.url else None)
             validation_requests = []
             context.on('request', lambda request: validation_requests.append(True)
                 if '/assets/formSchemas-' in request.url else None)
@@ -533,11 +536,13 @@ class BrowserJourney(LiveServerTestCase):
             page.get_by_role('button', name='Register', exact=True).click()
             expect(page.get_by_text('Account created. Log in to continue.')).to_be_visible()
             self.assertTrue(validation_requests, 'Explicit registration must load and run the validator.')
+            self.assertEqual(private_cache_requests, [], 'Signed-out onboarding must not load the private cache.')
             audit(self, page, 'login-light')
             page.get_by_label('Email address', exact=True).fill('browser@example.invalid')
             page.get_by_label('Password', exact=True).fill('Synthetic!Forest-82-Clouds')
             page.get_by_role('button', name='Log in', exact=True).click()
             expect(page.get_by_role('heading', name='Find your next chapter.')).to_be_visible()
+            self.assertTrue(private_cache_requests, 'Signed-in reads must load the isolated private cache.')
             audit(self, page, 'jobs-light')
             page.goto(self.live_server_url + '/profile')
             page.get_by_label('Professional headline', exact=True).fill('Synthetic developer')

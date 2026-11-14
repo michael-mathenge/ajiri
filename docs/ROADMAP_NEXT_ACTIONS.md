@@ -1,3 +1,29 @@
+# Current next actions — 14 November 2026
+
+Runtime c88da83 is verified deployed; receipt PR104 merged into MVP2. The current
+phase is vacancy-pilot readiness, independent engineering, then scanner/hosting
+**decision package only**. Historical instructions below are retained as dated
+evidence and do not supersede the current user authorization or release ledger.
+
+- First live milestone:1genuine employer/1independently reviewed eligible vacancy;
+  larger targets remain50roles/10employers. Currently0/0; no participants confirmed.
+- Account-security mail is enabled in account_security mode and configuration
+  validates. Genuine outside-employer onboarding remains unverified; do not rebuild
+  the adapter or describe it as owner-only configuration.
+- Posting, public vacancies, saved searches and application/alert sending remain off;
+  freshness stays on. Reuse existing implementation and archived stage2 evidence.
+- Follow EMPLOYER_REVIEW_PLAN.md and the blank private PILOT_EVIDENCE_TEMPLATE.md.
+  Complete independent engineering while participant/service gates remain blocked.
+- Recheck capacity before every release: the11:56UTC read-only measurement left
+  1884077bytes beyond the next snapshot/ZIP/16MiBreserve plan. No new deletion is
+  authorised. Dashboard expiry was independently rechecked as30November2026.
+- AJ52/79/47/48: assess scanner/private storage/PostgreSQL/durable workers without
+  provisioning, purchasing or transmitting real files. Payments/analytics stay out.
+  See [the decision package](SCANNER_HOSTING_DECISION_2026-11-14.md) and
+  [normal delivery reconciliation](NORMAL_DELIVERY_READINESS.md).
+
+## Historical action entry point
+
 # Pending work â€” 11 November 2026
 
 This is the current action entry point. Completed evidence belongs in

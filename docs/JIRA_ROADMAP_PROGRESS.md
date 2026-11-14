@@ -1,5 +1,145 @@
 # Jira roadmap execution
 
+## 14 November: public onboarding performance gate correction
+
+PR108 first1ed83ed passed five checks/11browser journeys but login TBT251ms failed
+the unchanged250msbudget (Linux43602973332). No metric rerun or relaxed gate.
+Public shell previously initialized the private cache. A signed-in lazy provider
+now keeps it off public first load, resets per session and clears/cancels old reads.
+JWT/interceptor/server permission behavior is unchanged. Bothlinters,177components
+28.21s, build2.61s and11real Chromium journeys74.607s passed after the fix. Actual
+network assertions verify deferred cache loading; account-isolation tests remain.
+Build47files/indexc1a069b2ec992fbb5714a2a7a017e01b0337ac0fdd33df9b2dd53aa3e9a42448,
+mainJS362.34kB versus395.30kB. Linux corrected-head checks/activation still pending.
+See reports/AJ86_PRIVATE_CACHE_LOADING_2026-11-14.md for retained failure/evidence.
+
+
+## 14 November: current public employer onboarding guide
+
+Branch codex/mvp2-employer-guide-current corrects the public guide's historical
+verification-availability claim: current mailbox verification, genuine pilot
+onboarding and independent organisation/vacancy review remain separate. The
+corresponding old owner-only claims in USER_GUIDE were corrected in checked PR107.
+PR107 final4a596a1 passed all six checks and mergedMVP2 as260521b. No participant,
+posting/publication, staff grant or normal sending is activated.
+
+Actual guide package gates: check/drift;611tests302.848s(one existing platform
+skip); Node24.19 locked npmci358/audit0, bothlinters,175components23.01s, build
+1.55s then formatting correction/rebuild2.42s. Prettier check passed after the
+initial changed-file warning. Real Chromium public mobile-viewport accessibility
+in both themes passed1journey14.265s with external requests blocked; this is not
+manual Android/iOS acceptance. Regenerated44files match dist exactly; removed only
+32obsolete tracked asset paths. Generated build is the package's last commit.
+Index SHA2561e62cc7d3949a8ab876e1c9fdde30d50c5add78ac9c9ec73bc174c6886a39b14.
+No schema/dependency/backend behavior change. RequiredCI/release/deployment pending.
+
+
+## 14 November: next-phase reviewed source integration
+
+PR105 passed all six checks and merged MVP2 as4eab005; PR106 passed all six
+checks on675e7a1 and merged as387a0bf. PR107 integrates that reviewed source;
+its only conflict was two progress headings, both retained. Backend/frontend
+source is byte-identical to reviewed PR106. Local full611tests297.040s and its
+all-six CI result remain valid source evidence; this merged head must pass its
+own required checks. Runtime remainsc88da83 until a separately checked release.
+
+
+## 14 November: scanner and hosting decision package
+
+Branch codex/mvp2-scanner-hosting-decision reviews archive974dc6d and current
+production capacity/expiry. docs/SCANNER_HOSTING_DECISION_2026-11-14.md compares
+free/current hosting, paid-host bridge and an EU VM/private-object candidate, with
+primary-source costs, quote limitations, private processing destinations, scanner
+freshness/legacy policy, actual-host tests and staged data-preserving cutover.
+No service selected/purchased/provisioned, no real file transfer or infrastructure
+change. Indexed Hetzner quote page returned404; its rate is indicative only.
+Archive queue0018 conflicts with current0018: later work needs a new additive
+migration, never wholesale reuse. No live scanner/storage/queue claim.
+
+Mandatory local gates on reviewed pilot-readiness baseline: check/drift;594tests
+311.032s(one existing platform skip); Node24.19 locked npmci358/audit0, lint/build
+1.70s and44-file regenerated committed-build comparison passed. No frontend bytes,
+schema, dependency or runtime configuration changed. RequiredCI/merge pending.
+
+## 14 November: focused normal delivery reconciliation
+
+PR73 is confirmed closed/unmerged at38bf953; only its three normal transports,
+commands/tests, default-off settings and dispatcher hooks were ported onto reviewed
+MVP2. Newer filters/ownership/migrations are preserved. No new migration, dependency,
+endpoint, scheduler, ingestion change or activation. original_source_readiness
+reports all three new switches separately. See docs/NORMAL_DELIVERY_READINESS.md.
+
+Local Ruff/check/drift passed;608tests270.573s(one existing skip) before integrating
+checked PR105; final combined611tests297.040s(one existing skip), plus30affected
+regressions4.701s passed. Original
+13adapter tests passed;17targeted tests2.864s after finding/fixing a programmatic
+batch-limit bypass and correcting a fixture county slug. Node24.19 locked npmci358/
+audit0, lint/build1.57s and44-file exact regenerated build comparison passed.
+No passing live-service claims: all normal sending/search switches stay disabled.
+Push/requiredCI/merge/deployment remain pending; actual results follow.
+
+
+## 14 November: genuine vacancy pilot readiness package
+
+Branch codex/mvp2-pilot-readiness extends the existing aggregate command with
+first1role/1employer inventory, safe general account-mail configuration status,
+current switches and explicit external evidence limitations. No endpoint, sending,
+tokens, receipts or writes. Fresh11:56UTC production inspection on c88da83 confirmed
+ACCOUNT_SECURITY_EMAIL_ENABLED=True, REAL_EMAIL_ENABLED=True, account_security
+mode and valid configuration; outside-employer inbox/onboarding remains unverified.
+Posting/public/saved-search/application-alert switches remainFalse; freshnessTrue.
+Capacity461045760used with margin/75825152available; next-plan remainder1884077.
+Dashboard expiry independently observed30November2026. Operating guides/template
+now separate first milestone, larger50/10target and8/10candidate pilot.
+
+Actual local gates: Ruff/check/migration drift passed;594tests294.024s(one existing
+platform skip), targeted13tests0.490s. Node24.19 locked npmci358/audit0, lint/build
+1.70s and44-file regenerated build comparison passed. Initial npmci sandboxEPERM
+was corrected by the authorized normal escalation; no gate was skipped. No frontend
+source/build byte changes and no migrations. Push/CI/merge and deployment pending.
+
+
+## 14 November: public validation performance release verified live
+
+Runtime c88da83070b2e491a3f2df2601a6efaaed08374f (PR103) passed all six release-head
+and merged-main checks. Fresh private off-server recovery and isolated16-file
+restore completed before staging. Michael approved exactly three duplicate raw
+files (28034360bytes) in backup-20261113T134617405732Z-46a6f54d; exact path/hash/size,
+ZIP members and before/after inventory verified only these were removed. Retained
+ZIP/all other entries/all off-server copies/newer snapshots remain. Capacity passed
+before and after staging, including the following backup/ZIP/16MiB reserve.
+
+No migrations or dependency installation. All45tables, three search triggers,
+16private files and safety flags matched recovery before and after staging.
+All33 pins and owner-only direct view/private CV-byte checks passed; anonymous
+access denied. Web re-enabled/reloaded and both writer workflows observed active.
+External health200, HSTS604800 and all44 exact live build hashes passed. No real
+send, personal mutation or fake vacancies. Lab TBT login/register110/101ms is not
+field-p75/pilot acceptance. AJ86 remains In Progress;16non-Epic items unfinished.
+Receipt package: check/drift and591backend tests288.705s(one existing skip), locked
+Node24.19 npm ci/lint/build2.13s and44-file committed build comparison passed.
+See reports/MVP2_PUBLIC_VALIDATION_DEPLOYMENT_2026-11-14.md for recovery, cleanup,
+capacity, activation and rollback evidence. Earlier checkpoints below are historical.
+
+
+## 14 November: public validation release merged; fresh restore complete
+
+PR101's integrated head29425a5 passed all six checks and merged into MVP2 as95198a6.
+Release PR103 passed all six exact-head checks and merged to main asc88da83070b2e491a3f2df2601a6efaaed08374f.
+All six merged-main checks passed. Actual activation remains pending; runtime is still9676fc4.
+Fresh database changes required a new consistent snapshot, not reuse of older data:
+backup-20261114T103614144596Z-cea25a60 completed under drained writer/web pause,
+then existing service/writers were restored and health200. Private off-server ZIP/
+manifest hashes, SQLite integrity and isolated16-file restoration all passed.
+
+Retained snapshot/ZIP leaves25178195bytes short of following-backup reserve. Only
+three older raw copies totaling28034360bytes in backup-20261113T134617405732Z-46a6f54d
+are proposed, with exact server/off-server hashes and matching same-folder retained
+ZIP independently verified. Earlier approval covered a different snapshot; the new
+specific approval is now recorded, but UI input contention blocked execution before any deletion. All off-server recovery and
+both newer server snapshots remain. See reports/MVP2_PUBLIC_VALIDATION_DEPLOYMENT_2026-11-14.md
+for actual recovery hashes, capacity, activation prerequisites and rollback.
+
 ## 14 November: checked AJ86 public-form improvement merged into MVP2
 
 PR102 passed all six exact-head checks on b711ff7 and merged into MVP2 as

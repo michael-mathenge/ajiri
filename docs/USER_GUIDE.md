@@ -9,7 +9,8 @@ may be empty: unverified or expired vacancies are hidden, never invented.
 1. **Register and log in.** Read the draft privacy notice and make the registration
    choice explicitly. Use your own email. Check spam if you requested an account
    security link; a generic success message is not evidence of inbox delivery.
-   The current production email pilot is restricted to its configured owner.
+   Account verification/reset mail is configured in production; a real outside
+   employer must still confirm successful current onboarding and inbox delivery.
 2. **Save your profile.** Add contact information and skills. With no skills, Ajiri
    asks you to add them; a match percentage describes shared listed skills and is
    not an employer decision or a restriction on browsing/applying.
@@ -62,6 +63,13 @@ download/external-submission journey while broader sending remains closed.
 
 ## Saved searches
 
+Current production availability (14 November 2026): saved searches are disabled.
+The instructions below describe the implemented feature when enabled; saving never
+opts you into email. Posting/public vacancies and application/alert sending also
+remain disabled. Account verification/reset mail is configured; outside-employer
+onboarding still requires genuine acceptance evidence.
+
+
 The deployed release adds **Saved searches** to navigation and **Save this search**
 to job results. Save keywords, location and job type; choose Off, Daily or Every
 seven days independently for in-app results and email preferences. Both start
@@ -76,8 +84,10 @@ checks. See [saved searches](SAVED_SEARCHES.md) for limits and release status.
 
 ## Employer vacancies and availability
 
-The reviewed employer workflow is deployed. General employer onboarding still
-depends on expanding the owner-only account-email pilot. Open **Post a job**,
+The reviewed employer workflow is deployed. Posting/publication are currently
+disabled while genuine employers and independent review are prepared. General
+account-security mail is configured; outside-employer onboarding still needs
+actual acceptance evidence. When posting is enabled, open **Post a job**,
 submit your organisation, then enter the vacancy, official
 application URL and closing date/time. Your current account email must be verified.
 A separate staff reviewer checks the organisation and vacancy before publication.
@@ -164,3 +174,5 @@ and optional **Personal follow-up date** in your local time. The date appears in
 My applications for you to check manually; email/device reminders are not sent.
 Clear the picker and save to remove the date. Your report remains separate from
 provider receipts, employer decisions and exact-document sending permission.
+
+For the genuine first-employer pilot, operators follow [the current review procedure](EMPLOYER_REVIEW_PLAN.md). The blank evidence template must be completed only in private operational storage.

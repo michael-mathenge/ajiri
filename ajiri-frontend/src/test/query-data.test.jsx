@@ -1,3 +1,5 @@
+import { render as bareRender } from '@testing-library/react'
+import * as queryClients from '../api/queryClient'
 import { beforeEach, expect, it, vi } from 'vitest'
 import { act, fireEvent, render, screen, waitFor } from './test-utils'
 import { createApiQueryClient, retryRead } from '../api/queryClient'
@@ -198,4 +200,48 @@ it('refreshes skill matches after a successful profile save', async () => {
     screen.queryByRole('link', { name: 'Add skills to see matches' })
   ).not.toBeInTheDocument()
   expect(apiClient.patch).toHaveBeenCalledTimes(1)
+})
+
+it('does not initialize a private cache for a signed-out public screen', async () => {
+  const create = vi.spyOn(queryClients, 'createApiQueryClient')
+  apiClient.get.mockResolvedValue({ data: { name: 'New private account' } })
+  const view = bareRender(
+    <AuthProvider>
+      <Session />
+    </AuthProvider>
+  )
+  expect(
+    screen.getByRole('button', { name: 'Enter next account' })
+  ).toBeVisible()
+  expect(create).not.toHaveBeenCalled()
+  fireEvent.click(screen.getByRole('button', { name: 'Enter next account' }))
+  expect(await screen.findByText('New private account')).toBeVisible()
+  expect(create).toHaveBeenCalledTimes(1)
+  view.unmount()
+  create.mockRestore()
+})
+
+it('aborts a pending private read when leaving the account', async () => {
+  localStorage.setItem('access_token', 'synthetic-pending-session')
+  let complete
+  apiClient.get.mockImplementation(
+    () =>
+      new Promise((resolve) => {
+        complete = resolve
+      })
+  )
+  bareRender(
+    <AuthProvider>
+      <Session />
+    </AuthProvider>
+  )
+  await waitFor(() => expect(apiClient.get).toHaveBeenCalledTimes(1))
+  const signal = apiClient.get.mock.calls[0][1].signal
+  fireEvent.click(screen.getByRole('button', { name: 'Leave account' }))
+  expect(signal.aborted).toBe(true)
+  await act(async () => complete({ data: { name: 'Late private response' } }))
+  expect(screen.queryByText('Late private response')).not.toBeInTheDocument()
+  expect(
+    screen.getByRole('button', { name: 'Enter next account' })
+  ).toBeVisible()
 })
