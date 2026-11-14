@@ -1649,3 +1649,36 @@ it does not meet the larger50-role/10-employer target or prove independent priva
 pilot evidence. Configuration errors report only a safe state, never their values.
 See `jobs/management/commands/original_source_readiness.py` and the root operating
 guide `../docs/EMPLOYER_REVIEW_PLAN.md`.
+
+## general-application-email
+
+General application mail has its own default-off switch in addition to existing
+application and general account transport gates. The exact reviewed documents,
+recipient, subject, body and reply address remain bound to an immutable personal
+authorization. The shared service claims its durable receipt before handoff. The
+transport rechecks current verified mailbox, vacancy evidence, policy, approval,
+expiry and actual file bytes immediately before one provider call. Existing
+receipts reconcile even after switches are off. Unknown outcomes cannot be retried
+automatically; an explicit retry remains limited to existing definite-failure rules.
+
+## general-alert-email
+
+Match email uses a separate default-off GENERAL_ALERT_EMAIL_ENABLED switch, the
+existing alert switch and the reviewed general account transport configuration.
+It requires active users, exact verified addresses, current explicit consent
+predating the notification, a score of at least 70 and current vacancy evidence.
+In-app choice remains independent. A bounded operator batch shares the existing
+global/alert receipt ledger; any existing receipt blocks another provider call.
+Consent, freshness, mailbox and switches are checked again at handoff. Unsubscribe
+links require confirmation. No automated retry or live scheduler is installed.
+
+## general-saved-search-email
+
+The separately default-off saved-search dispatcher uses existing durable daily or
+weekly windows. Saving a search never grants consent. Real HTTPS delivery requires
+current explicit consent covering the window, a verified address, current search
+revision/frequency and fresh job evidence. Each match is linked to the shared
+notification receipt, so overlapping searches and ordinary match alerts cannot
+repeat a provider handoff. A crash before recording the match link reconciles the
+already durable notification receipt. Quota/unknown outcomes never rewind a window
+or automatically retry the provider. No live scheduler is activated.
