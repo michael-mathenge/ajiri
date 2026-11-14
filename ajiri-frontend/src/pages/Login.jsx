@@ -1,5 +1,4 @@
 import { useSchemaForm } from '../hooks/useSchemaForm'
-import { loginSchema } from '../lib/formSchemas'
 import FormErrors from '../components/FormErrors'
 import { apiErrors, rateLimitMessage } from '../lib/errors'
 import { useState } from 'react'
@@ -9,26 +8,24 @@ import apiClient from '../api/client'
 import { useAuth } from '../hooks/useAuth'
 import { Button, Card, Input } from '../components/ui'
 
+const loadLoginSchema = () =>
+  import('../lib/formSchemas').then((module) => module.loginSchema)
+
 export default function Login() {
-  const { values, setValues, errors, setErrors, submit } = useSchemaForm(
-    loginSchema,
-    { email: '', password: '' }
-  )
+  const { values, setValues, errors, setErrors, submit, validating } =
+    useSchemaForm(loadLoginSchema, { email: '', password: '' })
   const { email, password } = values
   const [visible, setVisible] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const { setSignedIn } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
-  const handleSubmit = async () => {
+  const handleSubmit = async (submitted) => {
     if (submitting) return
     setErrors({})
     setSubmitting(true)
     try {
-      const { data } = await apiClient.post('/accounts/login/', {
-        email,
-        password,
-      })
+      const { data } = await apiClient.post('/accounts/login/', submitted)
       localStorage.setItem('access_token', data.access)
       setSignedIn(true)
       const from = location.state?.from
@@ -101,7 +98,7 @@ export default function Login() {
           noValidate
           onSubmit={(event) => submit(handleSubmit)(event)}
           className="stack mt-8"
-          aria-busy={submitting}
+          aria-busy={submitting || validating}
         >
           <div className="field">
             <label htmlFor="email">Email address</label>
@@ -147,8 +144,12 @@ export default function Login() {
             </div>
           </div>
           <FormErrors errors={errors} prefix="login" />
-          <Button type="submit" className="w-full" disabled={submitting}>
-            {submitting ? 'Logging in…' : 'Log in'}
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={submitting || validating}
+          >
+            {validating ? 'Checking…' : submitting ? 'Logging in…' : 'Log in'}
             <ArrowRight size={18} aria-hidden="true" />
           </Button>
         </form>

@@ -1,5 +1,4 @@
 import { useSchemaForm } from '../hooks/useSchemaForm'
-import { registerSchema } from '../lib/formSchemas'
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import apiClient from '../api/client'
@@ -7,18 +6,19 @@ import FormErrors from '../components/FormErrors'
 import { apiErrors } from '../lib/errors'
 import { Button, Input } from '../components/ui'
 
+const loadRegisterSchema = () =>
+  import('../lib/formSchemas').then((module) => module.registerSchema)
+
 export default function Register() {
-  const { values, setValues, errors, setErrors, submit } = useSchemaForm(
-    registerSchema,
-    {
+  const { values, setValues, errors, setErrors, submit, validating } =
+    useSchemaForm(loadRegisterSchema, {
       full_name: '',
       email: '',
       phone_number: '',
       password: '',
       privacy_consent: false,
       privacy_policy_version: 'privacy-draft-v1',
-    }
-  )
+    })
   const [submitting, setSubmitting] = useState(false)
   const navigate = useNavigate()
   const fields = [
@@ -27,12 +27,12 @@ export default function Register() {
     ['phone_number', 'Phone number', 'tel', 'tel'],
     ['password', 'Password', 'password', 'new-password'],
   ]
-  const handleSubmit = async () => {
+  const handleSubmit = async (submitted) => {
     if (submitting) return
     setErrors({})
     setSubmitting(true)
     try {
-      await apiClient.post('/accounts/register/', values)
+      await apiClient.post('/accounts/register/', submitted)
       navigate('/login', { state: { registered: true } })
     } catch (error) {
       setErrors(
@@ -53,7 +53,7 @@ export default function Register() {
         noValidate
         onSubmit={(event) => submit(handleSubmit)(event)}
         className="form-card"
-        aria-busy={submitting}
+        aria-busy={submitting || validating}
       >
         <FormErrors
           errors={errors}
@@ -106,8 +106,12 @@ export default function Register() {
             enable email alerts or authorize job applications.
           </span>
         </label>
-        <Button type="submit" disabled={submitting}>
-          {submitting ? 'Creating account…' : 'Register'}
+        <Button type="submit" disabled={submitting || validating}>
+          {validating
+            ? 'Checking…'
+            : submitting
+              ? 'Creating account…'
+              : 'Register'}
         </Button>
       </form>
       <p className="status-text">
