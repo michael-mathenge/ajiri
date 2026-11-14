@@ -62,6 +62,13 @@ download/external-submission journey while broader sending remains closed.
 
 ## Saved searches
 
+Current production availability (14 November 2026): saved searches are disabled.
+The instructions below describe the implemented feature when enabled; saving never
+opts you into email. Posting/public vacancies and application/alert sending also
+remain disabled. Account verification/reset mail is configured; outside-employer
+onboarding still requires genuine acceptance evidence.
+
+
 The deployed release adds **Saved searches** to navigation and **Save this search**
 to job results. Save keywords, location and job type; choose Off, Daily or Every
 seven days independently for in-app results and email preferences. Both start
@@ -164,3 +171,5 @@ and optional **Personal follow-up date** in your local time. The date appears in
 My applications for you to check manually; email/device reminders are not sent.
 Clear the picker and save to remove the date. Your report remains separate from
 provider receipts, employer decisions and exact-document sending permission.
+
+For the genuine first-employer pilot, operators follow [the current review procedure](EMPLOYER_REVIEW_PLAN.md). The blank evidence template must be completed only in private operational storage.

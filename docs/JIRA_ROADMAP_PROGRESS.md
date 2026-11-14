@@ -1,5 +1,25 @@
 # Jira roadmap execution
 
+## 14 November: genuine vacancy pilot readiness package
+
+Branch codex/mvp2-pilot-readiness extends the existing aggregate command with
+first1role/1employer inventory, safe general account-mail configuration status,
+current switches and explicit external evidence limitations. No endpoint, sending,
+tokens, receipts or writes. Fresh11:56UTC production inspection on c88da83 confirmed
+ACCOUNT_SECURITY_EMAIL_ENABLED=True, REAL_EMAIL_ENABLED=True, account_security
+mode and valid configuration; outside-employer inbox/onboarding remains unverified.
+Posting/public/saved-search/application-alert switches remainFalse; freshnessTrue.
+Capacity461045760used with margin/75825152available; next-plan remainder1884077.
+Dashboard expiry independently observed30November2026. Operating guides/template
+now separate first milestone, larger50/10target and8/10candidate pilot.
+
+Actual local gates: Ruff/check/migration drift passed;594tests294.024s(one existing
+platform skip), targeted13tests0.490s. Node24.19 locked npmci358/audit0, lint/build
+1.70s and44-file regenerated build comparison passed. Initial npmci sandboxEPERM
+was corrected by the authorized normal escalation; no gate was skipped. No frontend
+source/build byte changes and no migrations. Push/CI/merge and deployment pending.
+
+
 ## 14 November: public validation performance release verified live
 
 Runtime c88da83070b2e491a3f2df2601a6efaaed08374f (PR103) passed all six release-head
