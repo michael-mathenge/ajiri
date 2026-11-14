@@ -1,6 +1,4 @@
-import { Suspense, useEffect, useState } from 'react'
-import { QueryClientProvider } from '@tanstack/react-query'
-import { createApiQueryClient } from '../api/queryClient'
+import { lazy, Suspense, useEffect, useState } from 'react'
 import {
   Link,
   Navigate,
@@ -23,38 +21,43 @@ import { Button, LoadingState } from './ui'
 import { useToast } from '../hooks/useToast'
 import { AuthContext, useAuth } from '../hooks/useAuth'
 
+const PrivateQueryProvider = lazy(() => import('./PrivateQueryProvider'))
+
 export function AuthProvider({ children }) {
-  const [queryClient, setQueryClient] = useState(createApiQueryClient)
-  const [signedIn, setSignedIn] = useState(() =>
-    Boolean(localStorage.getItem('access_token'))
-  )
+  const [session, setSession] = useState(() => ({
+    signedIn: Boolean(localStorage.getItem('access_token')),
+    revision: 0,
+  }))
+  const setSignedIn = (signedIn) => {
+    // A new keyed provider drops private reads before another account can render.
+    // see docs/CONCEPTS.md#deferred-private-query-cache
+    setSession((current) => ({ signedIn, revision: current.revision + 1 }))
+  }
   useEffect(() => {
     const changedAccount = (event) => {
       if (event.key !== null && event.key !== 'access_token') return
-      queryClient.clear()
-      setQueryClient(createApiQueryClient())
-      setSignedIn(event.key !== null && Boolean(event.newValue))
+      setSession((current) => ({
+        signedIn: event.key !== null && Boolean(event.newValue),
+        revision: current.revision + 1,
+      }))
     }
     window.addEventListener('storage', changedAccount)
     return () => window.removeEventListener('storage', changedAccount)
-  }, [queryClient])
+  }, [])
   // The API still validates tokens. This state only keeps navigation in sync.
   // see docs/CONCEPTS.md#protected-routes
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthContext.Provider
-        value={{
-          signedIn,
-          setSignedIn: (value) => {
-            queryClient.clear()
-            setQueryClient(createApiQueryClient())
-            setSignedIn(value)
-          },
-        }}
-      >
-        {children}
-      </AuthContext.Provider>
-    </QueryClientProvider>
+    <AuthContext.Provider value={{ signedIn: session.signedIn, setSignedIn }}>
+      {session.signedIn ? (
+        <Suspense fallback={<LoadingState label="Loading account" />}>
+          <PrivateQueryProvider key={session.revision}>
+            {children}
+          </PrivateQueryProvider>
+        </Suspense>
+      ) : (
+        children
+      )}
+    </AuthContext.Provider>
   )
 }
 export function ProtectedRoute() {

@@ -1,5 +1,39 @@
 # Jira roadmap execution
 
+## 14 November: public onboarding performance gate correction
+
+PR108 first1ed83ed passed five checks/11browser journeys but login TBT251ms failed
+the unchanged250msbudget (Linux43602973332). No metric rerun or relaxed gate.
+Public shell previously initialized the private cache. A signed-in lazy provider
+now keeps it off public first load, resets per session and clears/cancels old reads.
+JWT/interceptor/server permission behavior is unchanged. Bothlinters,177components
+28.21s, build2.61s and11real Chromium journeys74.607s passed after the fix. Actual
+network assertions verify deferred cache loading; account-isolation tests remain.
+Build47files/indexc1a069b2ec992fbb5714a2a7a017e01b0337ac0fdd33df9b2dd53aa3e9a42448,
+mainJS362.34kB versus395.30kB. Linux corrected-head checks/activation still pending.
+See reports/AJ86_PRIVATE_CACHE_LOADING_2026-11-14.md for retained failure/evidence.
+
+
+## 14 November: current public employer onboarding guide
+
+Branch codex/mvp2-employer-guide-current corrects the public guide's historical
+verification-availability claim: current mailbox verification, genuine pilot
+onboarding and independent organisation/vacancy review remain separate. The
+corresponding old owner-only claims in USER_GUIDE were corrected in checked PR107.
+PR107 final4a596a1 passed all six checks and mergedMVP2 as260521b. No participant,
+posting/publication, staff grant or normal sending is activated.
+
+Actual guide package gates: check/drift;611tests302.848s(one existing platform
+skip); Node24.19 locked npmci358/audit0, bothlinters,175components23.01s, build
+1.55s then formatting correction/rebuild2.42s. Prettier check passed after the
+initial changed-file warning. Real Chromium public mobile-viewport accessibility
+in both themes passed1journey14.265s with external requests blocked; this is not
+manual Android/iOS acceptance. Regenerated44files match dist exactly; removed only
+32obsolete tracked asset paths. Generated build is the package's last commit.
+Index SHA2561e62cc7d3949a8ab876e1c9fdde30d50c5add78ac9c9ec73bc174c6886a39b14.
+No schema/dependency/backend behavior change. RequiredCI/release/deployment pending.
+
+
 ## 14 November: next-phase reviewed source integration
 
 PR105 passed all six checks and merged MVP2 as4eab005; PR106 passed all six
