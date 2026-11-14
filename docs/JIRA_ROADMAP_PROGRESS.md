@@ -1,5 +1,15 @@
 # Jira roadmap execution
 
+## 14 November: next-phase reviewed source integration
+
+PR105 passed all six checks and merged MVP2 as4eab005; PR106 passed all six
+checks on675e7a1 and merged as387a0bf. PR107 integrates that reviewed source;
+its only conflict was two progress headings, both retained. Backend/frontend
+source is byte-identical to reviewed PR106. Local full611tests297.040s and its
+all-six CI result remain valid source evidence; this merged head must pass its
+own required checks. Runtime remainsc88da83 until a separately checked release.
+
+
 ## 14 November: scanner and hosting decision package
 
 Branch codex/mvp2-scanner-hosting-decision reviews archive974dc6d and current
@@ -16,6 +26,23 @@ Mandatory local gates on reviewed pilot-readiness baseline: check/drift;594tests
 311.032s(one existing platform skip); Node24.19 locked npmci358/audit0, lint/build
 1.70s and44-file regenerated committed-build comparison passed. No frontend bytes,
 schema, dependency or runtime configuration changed. RequiredCI/merge pending.
+
+## 14 November: focused normal delivery reconciliation
+
+PR73 is confirmed closed/unmerged at38bf953; only its three normal transports,
+commands/tests, default-off settings and dispatcher hooks were ported onto reviewed
+MVP2. Newer filters/ownership/migrations are preserved. No new migration, dependency,
+endpoint, scheduler, ingestion change or activation. original_source_readiness
+reports all three new switches separately. See docs/NORMAL_DELIVERY_READINESS.md.
+
+Local Ruff/check/drift passed;608tests270.573s(one existing skip) before integrating
+checked PR105; final combined611tests297.040s(one existing skip), plus30affected
+regressions4.701s passed. Original
+13adapter tests passed;17targeted tests2.864s after finding/fixing a programmatic
+batch-limit bypass and correcting a fixture county slug. Node24.19 locked npmci358/
+audit0, lint/build1.57s and44-file exact regenerated build comparison passed.
+No passing live-service claims: all normal sending/search switches stay disabled.
+Push/requiredCI/merge/deployment remain pending; actual results follow.
 
 
 ## 14 November: genuine vacancy pilot readiness package
