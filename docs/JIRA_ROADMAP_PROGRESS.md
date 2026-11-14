@@ -9,7 +9,8 @@ No migration, API, scheduler, ingestion or production flag change.
 
 Actual focused21tests passed3.008s, including original adapter tests and new
 progress/deletion/scope/shape/limit cases. Ruff and check/drift passed. Full backend
-gate is running; do not infer its success or production activation. Node24.19
+gate passed618tests531.248s(one existing platform skip); the later added cursor
+shape test passed in the21-test focused run. No production activation is inferred. Node24.19
 locked npmci358/audit0, lint/build3.60s passed; all47 regenerated files match the
 committed build exactly. Full gate/CI/merge/release outcomes follow separately.
 
