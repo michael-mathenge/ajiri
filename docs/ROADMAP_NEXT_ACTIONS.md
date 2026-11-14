@@ -19,6 +19,8 @@ evidence and do not supersede the current user authorization or release ledger.
   authorised. Dashboard expiry was independently rechecked as30November2026.
 - AJ52/79/47/48: assess scanner/private storage/PostgreSQL/durable workers without
   provisioning, purchasing or transmitting real files. Payments/analytics stay out.
+  See [the decision package](SCANNER_HOSTING_DECISION_2026-11-14.md) and
+  [normal delivery reconciliation](NORMAL_DELIVERY_READINESS.md).
 
 ## Historical action entry point
 

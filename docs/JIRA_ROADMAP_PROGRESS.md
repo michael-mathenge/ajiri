@@ -1,5 +1,32 @@
 # Jira roadmap execution
 
+## 14 November: next-phase reviewed source integration
+
+PR105 passed all six checks and merged MVP2 as4eab005; PR106 passed all six
+checks on675e7a1 and merged as387a0bf. PR107 integrates that reviewed source;
+its only conflict was two progress headings, both retained. Backend/frontend
+source is byte-identical to reviewed PR106. Local full611tests297.040s and its
+all-six CI result remain valid source evidence; this merged head must pass its
+own required checks. Runtime remainsc88da83 until a separately checked release.
+
+
+## 14 November: scanner and hosting decision package
+
+Branch codex/mvp2-scanner-hosting-decision reviews archive974dc6d and current
+production capacity/expiry. docs/SCANNER_HOSTING_DECISION_2026-11-14.md compares
+free/current hosting, paid-host bridge and an EU VM/private-object candidate, with
+primary-source costs, quote limitations, private processing destinations, scanner
+freshness/legacy policy, actual-host tests and staged data-preserving cutover.
+No service selected/purchased/provisioned, no real file transfer or infrastructure
+change. Indexed Hetzner quote page returned404; its rate is indicative only.
+Archive queue0018 conflicts with current0018: later work needs a new additive
+migration, never wholesale reuse. No live scanner/storage/queue claim.
+
+Mandatory local gates on reviewed pilot-readiness baseline: check/drift;594tests
+311.032s(one existing platform skip); Node24.19 locked npmci358/audit0, lint/build
+1.70s and44-file regenerated committed-build comparison passed. No frontend bytes,
+schema, dependency or runtime configuration changed. RequiredCI/merge pending.
+
 ## 14 November: focused normal delivery reconciliation
 
 PR73 is confirmed closed/unmerged at38bf953; only its three normal transports,
