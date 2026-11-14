@@ -1,5 +1,46 @@
 # Jira roadmap execution
 
+## 14 November: public validation performance release verified live
+
+Runtime c88da83070b2e491a3f2df2601a6efaaed08374f (PR103) passed all six release-head
+and merged-main checks. Fresh private off-server recovery and isolated16-file
+restore completed before staging. Michael approved exactly three duplicate raw
+files (28034360bytes) in backup-20261113T134617405732Z-46a6f54d; exact path/hash/size,
+ZIP members and before/after inventory verified only these were removed. Retained
+ZIP/all other entries/all off-server copies/newer snapshots remain. Capacity passed
+before and after staging, including the following backup/ZIP/16MiB reserve.
+
+No migrations or dependency installation. All45tables, three search triggers,
+16private files and safety flags matched recovery before and after staging.
+All33 pins and owner-only direct view/private CV-byte checks passed; anonymous
+access denied. Web re-enabled/reloaded and both writer workflows observed active.
+External health200, HSTS604800 and all44 exact live build hashes passed. No real
+send, personal mutation or fake vacancies. Lab TBT login/register110/101ms is not
+field-p75/pilot acceptance. AJ86 remains In Progress;16non-Epic items unfinished.
+Receipt package: check/drift and591backend tests288.705s(one existing skip), locked
+Node24.19 npm ci/lint/build2.13s and44-file committed build comparison passed.
+See reports/MVP2_PUBLIC_VALIDATION_DEPLOYMENT_2026-11-14.md for recovery, cleanup,
+capacity, activation and rollback evidence. Earlier checkpoints below are historical.
+
+
+## 14 November: public validation release merged; fresh restore complete
+
+PR101's integrated head29425a5 passed all six checks and merged into MVP2 as95198a6.
+Release PR103 passed all six exact-head checks and merged to main asc88da83070b2e491a3f2df2601a6efaaed08374f.
+All six merged-main checks passed. Actual activation remains pending; runtime is still9676fc4.
+Fresh database changes required a new consistent snapshot, not reuse of older data:
+backup-20261114T103614144596Z-cea25a60 completed under drained writer/web pause,
+then existing service/writers were restored and health200. Private off-server ZIP/
+manifest hashes, SQLite integrity and isolated16-file restoration all passed.
+
+Retained snapshot/ZIP leaves25178195bytes short of following-backup reserve. Only
+three older raw copies totaling28034360bytes in backup-20261113T134617405732Z-46a6f54d
+are proposed, with exact server/off-server hashes and matching same-folder retained
+ZIP independently verified. Earlier approval covered a different snapshot; the new
+specific approval is now recorded, but UI input contention blocked execution before any deletion. All off-server recovery and
+both newer server snapshots remain. See reports/MVP2_PUBLIC_VALIDATION_DEPLOYMENT_2026-11-14.md
+for actual recovery hashes, capacity, activation prerequisites and rollback.
+
 ## 14 November: checked AJ86 public-form improvement merged into MVP2
 
 PR102 passed all six exact-head checks on b711ff7 and merged into MVP2 as
