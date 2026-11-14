@@ -62,6 +62,9 @@ class Command(BaseCommand):
             'saved_searches_enabled': settings.SAVED_SEARCHES_ENABLED,
             'application_email_enabled': settings.APPLICATION_EMAIL_ENABLED,
             'alert_email_enabled': settings.ALERT_EMAIL_ENABLED,
+            'general_application_email_enabled': settings.GENERAL_APPLICATION_EMAIL_ENABLED,
+            'general_alert_email_enabled': settings.GENERAL_ALERT_EMAIL_ENABLED,
+            'saved_search_email_enabled': settings.SAVED_SEARCH_EMAIL_ENABLED,
             'configuration_blockers': blockers,
             'external_verification': 'not_established_by_this_command',
             'required_private_evidence': [

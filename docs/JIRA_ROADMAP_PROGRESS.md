@@ -1,5 +1,23 @@
 # Jira roadmap execution
 
+## 14 November: focused normal delivery reconciliation
+
+PR73 is confirmed closed/unmerged at38bf953; only its three normal transports,
+commands/tests, default-off settings and dispatcher hooks were ported onto reviewed
+MVP2. Newer filters/ownership/migrations are preserved. No new migration, dependency,
+endpoint, scheduler, ingestion change or activation. original_source_readiness
+reports all three new switches separately. See docs/NORMAL_DELIVERY_READINESS.md.
+
+Local Ruff/check/drift passed;608tests270.573s(one existing skip) before integrating
+checked PR105; final combined611tests297.040s(one existing skip), plus30affected
+regressions4.701s passed. Original
+13adapter tests passed;17targeted tests2.864s after finding/fixing a programmatic
+batch-limit bypass and correcting a fixture county slug. Node24.19 locked npmci358/
+audit0, lint/build1.57s and44-file exact regenerated build comparison passed.
+No passing live-service claims: all normal sending/search switches stay disabled.
+Push/requiredCI/merge/deployment remain pending; actual results follow.
+
+
 ## 14 November: genuine vacancy pilot readiness package
 
 Branch codex/mvp2-pilot-readiness extends the existing aggregate command with
