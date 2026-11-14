@@ -1138,6 +1138,15 @@ for recorded consent, and incomplete CV drafts remain saveable before approval.
 Account links and passwords stay in component memory. No sending or approval is
 triggered by validation. Dialog code loads with job/application pages and toast controls load on demand to preserve
 the public mobile download budget.
+Public login, registration and account recovery download their validation module
+on the first explicit submit, while the existing submit guard blocks duplicate
+requests. The form reports busy while it waits. A download failure retains inputs,
+shows an accessible error and requires another explicit submit; it never bypasses
+validation or starts an API mutation. Other forms can still supply an already
+loaded schema. If fields change while validation is pending, the mutation stops
+and requires another explicit submit; a delayed validator cannot reuse an old
+agreement or edited destination. Handlers receive the validated snapshot. This
+changes when browser code loads, not consent or server rules.
 
 ## api-version-contract
 

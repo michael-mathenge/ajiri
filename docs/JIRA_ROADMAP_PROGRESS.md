@@ -1,5 +1,18 @@
 # Jira roadmap execution
 
+## 14 November: checked AJ86 public-form improvement merged into MVP2
+
+PR102 passed all six exact-head checks on b711ff7 and merged into MVP2 as
+b48d5e5b7dd32c0b64d71374735e590bfc4a34c6. Linux43516747325 measured login/register
+three-run TBT110/101ms, versus earlier242/251ms, and initial transfer474740/472854
+bytes versus498966/496063. LCP3958.58/3857.40ms, performance84/87, CLS0.09965/0.06225,
+zero trace retries: all unchanged lab budgets passed. These are lab observations,
+not field-p75 or consented-person acceptance. Prior PR101's251ms failure is retained.
+The evidence branch integrates reviewed MVP2 without discarding either progress
+history. Runtime remains9676fc4 until a separately checked release, fresh recovery
+and real activation; the44-file deferred-validation build is not yet deployed.
+
+
 ## 14 November: discovery and private follow-up verified deployed
 
 Runtime is9676fc4c89b7aef04461c2ba0bbc9eed060ade45 (PR99), following all six
@@ -38,6 +51,25 @@ AJ84 is Done with the manual-date/no outbound-reminder scope recorded, original
 proposal retained and suggested5-point sizing clearly separated from a sprint
 estimate. The fresh query now returns16 unfinished non-Epic stories. Required
 evidence-PR CI remains a merge gate; no new runtime is inferred from documentation.
+
+## 14 November: AJ86 public validation performance follow-up in progress
+
+Production9676fc4 remains verified active; AJ84 is Done. PR101's later evidence-only
+browser job43514052814 passed11journeys but registration's valid three-run TBT
+median251ms exceeded250ms. The actual failure is retained; no metric retry or
+budget/CI relaxation. Isolated codex/mvp2-aj86-deferred-validation from reviewed
+MVP2/396913c defers the unchanged public auth validation module until explicit
+submit, with duplicate-submit protection, busy feedback, retained input and a
+fail-closed accessible download error. Tests/measurements/required checks remain
+pending; no new activation is claimed. See reports/AJ86_PUBLIC_VALIDATION_2026-11-14.md.
+Actual local gates subsequently passed: check/drift/full591backend tests261.992s
+(one platform skip);175components20.58s after correcting the new loader busy-state
+failure; five tooling tests2.787s, both linters, Node24.19 locked install/audit0/build
+1.47s and Ruff. Real Chromium registration/login/private CV/preparation/review passed
+10.398s, proving the validator is absent from initial route requests and loads on
+explicit submit. Safe44-file build synchronization passed. Required CI/Linux metrics
+remain pending; no performance budget is relaxed and runtime9676fc4 is unchanged.
+
 
 ## 14 November: checked discovery release; activation awaits recovery capacity
 

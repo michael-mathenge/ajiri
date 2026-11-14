@@ -83,6 +83,15 @@ inventory remain unfinished. No whole-MVP2 completion is claimed.
 
 ## Activation-evidence validation
 
+The first PR101 attempt e0bd503 passed five checks and all11 browser journeys,
+but its register mobile median TBT251ms exceeded250ms. The gate was not bypassed
+or rerun just to obtain green. Separate PR102 deferred public validators, retained
+fail-closed/explicit-submit behavior and passed all six checks; its reviewed
+MVP2 merge b48d5e5 is integrated into this evidence branch. Actual new Linux
+medians are login110/register101ms and all unchanged budgets passed. See
+reports/AJ86_PUBLIC_VALIDATION_2026-11-14.md. Production remains9676fc4 until the
+separate performance release actually activates. Both histories are preserved.
+
 The activation-evidence follow-up uses isolated
 `codex/mvp2-discovery-activation-evidence` from reviewed MVP2/PR100 merge396913c.
 Actual local mandatory gates passed: system check; no migration drift; full591
