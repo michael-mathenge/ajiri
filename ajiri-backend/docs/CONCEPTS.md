@@ -1638,3 +1638,14 @@ document paths/bytes and search triggers. Production order remains verified priv
 recovery, paused writers/web, reviewed additive migration and preservation, then
 activation. Code rollback retains added columns/tables and new personal choices;
 reverse tests use only disposable data.
+
+## vacancy-pilot-readiness
+
+The original-source readiness command reports aggregate inventory, current switches
+and whether general account-security mail configuration validates. It never sends
+mail, creates tokens or changes records. A configured service does not establish
+inbox delivery. One eligible employer role meets the first inventory milestone;
+it does not meet the larger50-role/10-employer target or prove independent private
+pilot evidence. Configuration errors report only a safe state, never their values.
+See `jobs/management/commands/original_source_readiness.py` and the root operating
+guide `../docs/EMPLOYER_REVIEW_PLAN.md`.

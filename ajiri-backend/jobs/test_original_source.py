@@ -6,6 +6,8 @@ import uuid
 from django.contrib.auth import get_user_model
 from django.core.management import call_command
 from django.test import TestCase, override_settings
+from django.test.utils import CaptureQueriesContext
+from django.db import connection
 from django.utils import timezone
 from rest_framework.test import APIClient
 
@@ -142,3 +144,49 @@ class OriginalSourceTests(TestCase):
         with override_settings(JOB_FRESHNESS_ENFORCED=False):
             call_command('original_source_readiness', stdout=output)
         self.assertEqual(json.loads(output.getvalue())['eligible_original_roles'], 0)
+
+    @override_settings(ACCOUNT_SECURITY_EMAIL_ENABLED=True, REAL_EMAIL_ENABLED=True,
+                       EMAIL_DELIVERY_MODE='account_security', ACCOUNT_EMAIL_TEST_CAPTURE=False,
+                       EMAIL_BACKEND='django.core.mail.backends.console.EmailBackend',
+                       EMAIL_PLATFORM_FROM='sender@example.invalid', BREVO_API_KEY='synthetic-private-key',
+                       BREVO_TIMEOUT_SECONDS=10, ACCOUNT_LINK_ORIGIN='https://example.invalid')
+    def test_configured_mail_is_not_reported_as_verified_onboarding(self):
+        output = StringIO()
+        with CaptureQueriesContext(connection) as queries:
+            call_command('original_source_readiness', stdout=output)
+        self.assertTrue(all(q['sql'].lstrip().upper().startswith('SELECT') for q in queries))
+        data = json.loads(output.getvalue())
+        self.assertEqual(data['account_security_mail'], 'configured_not_delivery_verified')
+        self.assertEqual(data['external_verification'], 'not_established_by_this_command')
+        self.assertIn('first_reviewed_vacancy_missing', data['configuration_blockers'])
+        for private in ('synthetic-private-key', 'sender@example.invalid', self.owner.email, self.organisation.name):
+            self.assertNotIn(private, output.getvalue())
+
+    @override_settings(ACCOUNT_SECURITY_EMAIL_ENABLED=True, REAL_EMAIL_ENABLED=False,
+                       EMAIL_DELIVERY_MODE='synthetic-sensitive-invalid-mode')
+    def test_invalid_mail_configuration_reports_only_a_safe_state(self):
+        output = StringIO()
+        call_command('original_source_readiness', stdout=output)
+        data = json.loads(output.getvalue())
+        self.assertEqual(data['account_security_mail'], 'misconfigured')
+        self.assertIn('general_account_mail_unavailable', data['configuration_blockers'])
+        self.assertNotIn('synthetic-sensitive', output.getvalue())
+
+    def test_first_vacancy_inventory_does_not_complete_larger_pilot_or_override_switches(self):
+        job = Job.objects.create(title='Synthetic first role', company_name='Synthetic', description='Synthetic',
+                                 source_url='https://example.invalid/first')
+        publication = JobPublication.objects.create(job=job, origin='employer', status='published',
+            organisation=self.organisation, closes_at=timezone.now() + timedelta(days=1))
+        output = StringIO()
+        with override_settings(EMPLOYER_POSTING_ENABLED=False, PUBLIC_JOBS_ENABLED=False):
+            call_command('original_source_readiness', stdout=output)
+        data = json.loads(output.getvalue())
+        self.assertTrue(data['first_vacancy_inventory_met'])
+        self.assertFalse(data['inventory_targets_met'])
+        self.assertIn('posting_disabled', data['configuration_blockers'])
+        self.assertIn('publication_disabled', data['configuration_blockers'])
+        publication.closes_at = timezone.now() - timedelta(seconds=1)
+        publication.save()
+        output = StringIO()
+        call_command('original_source_readiness', stdout=output)
+        self.assertFalse(json.loads(output.getvalue())['first_vacancy_inventory_met'])
