@@ -1682,3 +1682,15 @@ notification receipt, so overlapping searches and ordinary match alerts cannot
 repeat a provider handoff. A crash before recording the match link reconciles the
 already durable notification receipt. Quota/unknown outcomes never rewind a window
 or automatically retry the provider. No live scheduler is activated.
+
+## deferred-private-query-cache
+
+Public screens do not use the private server-data cache. Load its provider only
+for a signed-in session. Each account transition (including another tab's storage
+event) mounts a new keyed provider and clears/cancels the old cache on unmount.
+This keeps private rows out of the next account and removes unused cache code from
+initial login/register downloads. Existing JWT cookies, token interceptors, read
+retry limits and explicit mutation behavior are unchanged. A failed lazy download
+uses the existing page recovery boundary; it must not retry a user mutation.
+Frontend source is `../ajiri-frontend/src/components/PrivateQueryProvider.jsx`
+(relative to the backend root).

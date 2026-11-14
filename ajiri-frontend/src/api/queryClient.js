@@ -1,6 +1,6 @@
 import { QueryClient } from '@tanstack/react-query'
 
-// Keep private data in memory only; AuthProvider clears it on account changes.
+// Keep private data in memory only; The session provider clears it on account changes.
 // see docs/CONCEPTS.md#query-data-layer
 export function retryRead(failureCount, error) {
   const status = error?.response?.status

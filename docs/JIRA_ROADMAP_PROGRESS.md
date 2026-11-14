@@ -1,5 +1,19 @@
 # Jira roadmap execution
 
+## 14 November: public onboarding performance gate correction
+
+PR108 first1ed83ed passed five checks/11browser journeys but login TBT251ms failed
+the unchanged250msbudget (Linux43602973332). No metric rerun or relaxed gate.
+Public shell previously initialized the private cache. A signed-in lazy provider
+now keeps it off public first load, resets per session and clears/cancels old reads.
+JWT/interceptor/server permission behavior is unchanged. Bothlinters,177components
+28.21s, build2.61s and11real Chromium journeys74.607s passed after the fix. Actual
+network assertions verify deferred cache loading; account-isolation tests remain.
+Build47files/indexc1a069b2ec992fbb5714a2a7a017e01b0337ac0fdd33df9b2dd53aa3e9a42448,
+mainJS362.34kB versus395.30kB. Linux corrected-head checks/activation still pending.
+See reports/AJ86_PRIVATE_CACHE_LOADING_2026-11-14.md for retained failure/evidence.
+
+
 ## 14 November: current public employer onboarding guide
 
 Branch codex/mvp2-employer-guide-current corrects the public guide's historical
