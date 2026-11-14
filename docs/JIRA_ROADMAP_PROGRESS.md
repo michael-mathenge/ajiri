@@ -1,5 +1,23 @@
 # Jira roadmap execution
 
+## 14 November: scanner and hosting decision package
+
+Branch codex/mvp2-scanner-hosting-decision reviews archive974dc6d and current
+production capacity/expiry. docs/SCANNER_HOSTING_DECISION_2026-11-14.md compares
+free/current hosting, paid-host bridge and an EU VM/private-object candidate, with
+primary-source costs, quote limitations, private processing destinations, scanner
+freshness/legacy policy, actual-host tests and staged data-preserving cutover.
+No service selected/purchased/provisioned, no real file transfer or infrastructure
+change. Indexed Hetzner quote page returned404; its rate is indicative only.
+Archive queue0018 conflicts with current0018: later work needs a new additive
+migration, never wholesale reuse. No live scanner/storage/queue claim.
+
+Mandatory local gates on reviewed pilot-readiness baseline: check/drift;594tests
+311.032s(one existing platform skip); Node24.19 locked npmci358/audit0, lint/build
+1.70s and44-file regenerated committed-build comparison passed. No frontend bytes,
+schema, dependency or runtime configuration changed. RequiredCI/merge pending.
+
+
 ## 14 November: genuine vacancy pilot readiness package
 
 Branch codex/mvp2-pilot-readiness extends the existing aggregate command with
