@@ -1694,3 +1694,12 @@ retry limits and explicit mutation behavior are unchanged. A failed lazy downloa
 uses the existing page recovery boundary; it must not retry a user mutation.
 Frontend source is `../ajiri-frontend/src/components/PrivateQueryProvider.jsx`
 (relative to the backend root).
+
+## bounded-delivery-continuation
+
+Manual email commands examine a bounded page, including rows currently ineligible.
+A signed opaque continuation records the last examined ID and initial upper ID;
+new inserts wait for the next fresh pass. Saved-search cursors also bind the search
+and revision. Cursors do not grant consent or authorize sending. Resume explicitly
+with --cursor; restart without it to reconsider earlier rows. Receipt, consent,
+freshness and budget checks still run at handoff. No automatic scheduler is added.

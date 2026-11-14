@@ -7,7 +7,6 @@ import uuid
 from urllib.parse import urlencode
 
 from django.conf import settings
-from django.db.models import F
 from django.utils.crypto import salted_hmac
 
 from accounts.general_email import configuration
@@ -15,7 +14,8 @@ from profiles.alert_consent import eligible, unsubscribe_token
 from .brevo_transport import BrevoTransport, Result
 from .delivery_service import DeliveryError, DeliveryService
 from .freshness import job_is_eligible
-from .models import DeliveryAttempt, Notification, SavedSearchMatch
+from .models import DeliveryAttempt, Notification, SavedSearchMatch, SavedSearch
+from .delivery_batches import decode, page, report, validate_limit
 from .saved_searches import collect_due
 
 
@@ -58,13 +58,31 @@ class SearchTransport:
 
 
 def deliver_due(search_id, *, at=None):
+    # Preserve the list-returning contract used by existing callers.
+    return deliver_batch(search_id, at=at)['results']
+
+
+def deliver_batch(search_id, *, at=None, cursor=None, limit=50):
+    validate_limit(limit)
+    search = SavedSearch.objects.filter(pk=search_id).first()
+    if search is None:
+        if cursor:
+            raise ValueError('Invalid or stale delivery cursor.')
+        return dict(report([], 0, None), results=[])
+    scope = f'saved-search:{search.pk}:{search.revision}'
+    decode(cursor, scope)  # Reject another owner/search/revision before collection or handoff.
     if not enabled():
-        return []
-    collect_due(search_id, 'email', at=at)
+        return dict(report([], 0, None), results=[])
+    if not cursor:
+        collect_due(search_id, 'email', at=at)
     rows = SavedSearchMatch.objects.select_related('search__owner__profile', 'job').filter(
-        search_id=search_id, channel='email', email_attempt__isnull=True, revision=F('search__revision'))
+        search_id=search_id, channel='email', email_attempt__isnull=True, revision=search.revision, search__revision=search.revision)
+    identities, continuation = page(rows, scope, cursor, limit)
     outcomes = []
-    for row in rows.order_by('pk')[:50]:
+    for identity in identities:
+        row = rows.filter(pk=identity).first()
+        if row is None:
+            continue
         if not current(row):
             continue
         user = row.search.owner
@@ -93,4 +111,4 @@ def deliver_due(search_id, *, at=None):
         if attempt.state == 'accepted':
             Notification.objects.filter(pk=notification.pk).update(sent_email=True)
         outcomes.append(attempt.state)
-    return outcomes
+    return dict(report(outcomes, len(identities), continuation), results=outcomes)

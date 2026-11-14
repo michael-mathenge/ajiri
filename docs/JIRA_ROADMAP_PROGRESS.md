@@ -1,3 +1,18 @@
+# Delivery reliability implementation — 14 November 2026
+
+Feature branch codex/mvp2-delivery-progress starts from reviewed main ef1c102 and
+includes checked MVP2 receipt95ee729. Signed keyset continuation fixes bounded
+match/search batches that repeatedly examined the same ineligible rows. Search
+cursors bind UUID/revision; initial upper IDs defer new inserts to a fresh pass.
+The current delivery/ledger guards and existing list-returning callers remain.
+No migration, API, scheduler, ingestion or production flag change.
+
+Actual focused21tests passed3.008s, including original adapter tests and new
+progress/deletion/scope/shape/limit cases. Ruff and check/drift passed. Full backend
+gate is running; do not infer its success or production activation. Node24.19
+locked npmci358/audit0, lint/build3.60s passed; all47 regenerated files match the
+committed build exactly. Full gate/CI/merge/release outcomes follow separately.
+
 # Jira roadmap execution
 
 ## 14 November: vacancy-pilot readiness release verified live
