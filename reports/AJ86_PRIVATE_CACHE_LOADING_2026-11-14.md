@@ -1,5 +1,11 @@
 # Deferred private query cache — 14 November 2026
 
+Current outcome: corrected6ecb14b passed all six checks; PR108merged84394e1.
+Release PR109passed six head/main checks and ef1c102is verified deployed.
+See MVP2_VACANCY_READINESS_DEPLOYMENT_2026-11-14.md for actual Linux medians and
+activation evidence. The preparation/failure notes below retain their checkpoint.
+
+
 PR108 first head1ed83ed passed backend3.12/3.13/3.14, frontend and quality.
 Actual Linux run43602973332 passed11browser journeys but failed the unchanged
 mobile budget: login TBT251ms against250ms. Register230ms passed. Login/register

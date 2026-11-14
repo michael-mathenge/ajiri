@@ -1,5 +1,36 @@
 # Jira roadmap execution
 
+## 14 November: vacancy-pilot readiness release verified live
+
+Exact runtime ef1c102ccf4f2d5c64353b7698a8fc4a7374b3e4 (PR109), all six release-head
+and all six merged-main checks passed. PR105/106/107/108 were individually checked
+and merged into MVP2. Safe aggregate readiness/current guides/private evidence
+template, default-off normal transports and decision-only hosting assessment are
+shipped. Initial PR108loginTBT251msfailure retained; product cache loading fixed,
+corrected Linux medians160/181ms and all unchanged budgets passed. No field claim.
+
+Today's completed consistent recovery/off-server copy/isolated16-media restore was
+independently reverified, then fresh paused comparisons proved all45tables/three
+triggers/16files/absent ledger unchanged before and after staging/smoke. This
+qualified snapshot reuse; no redundant new snapshot/download or deletion. No
+migrations/dependencies. Post-staging capacity passed461844480used/75026432available/
+73941075required,1085357beyond full next-backup plan. All33pins/private CVbytes and
+owner direct reads passed; disabled commands returned no changes. Fresh WSGI
+configuration reproduction preserves account_security/freshness and all eight
+closed gates. Web re-enabled/reloaded, both writer workflows independentlyactive.
+External14:45:04UTC health200/HSTS604800/all47exact files/three private anonymous401
+checks passed. Runtime indexc1a069b2ec992fbb5714a2a7a017e01b0337ac0fdd33df9b2dd53aa3e9a42448.
+
+Receipt local gates:611tests278.415s(one existing skip), check/drift, Node24.19
+locked npmci/lint/build1.60s and47-file exact comparison. After product fix177
+components28.21s and11Chromium journeys74.607s passed. No normal real send, manual
+ingestion, fake vacancy, staff grant or infrastructure provisioning.16stories
+still unfinished; actual participants/normal delivery/engine/host gates remain.
+See reports/MVP2_VACANCY_READINESS_DEPLOYMENT_2026-11-14.md for full evidence.
+Earlier checkpoints below remain historical; documentation-only follow-up merges
+do not change this activated runtime.
+
+
 ## 14 November: public onboarding performance gate correction
 
 PR108 first1ed83ed passed five checks/11browser journeys but login TBT251ms failed
