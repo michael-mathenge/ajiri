@@ -1,3 +1,29 @@
+# Dormant delivery queue implementation — 14 November 2026
+
+codex/mvp2-dormant-queue includes checked PR111 merge88080fc. Focused archived
+queue/outbox code was reconciled against current adapters; matching/sweep/public
+HTTP producer hooks were excluded. New additive jobs0022 follows0021, never the
+conflicting archived0018. Saved-search tasks bind revision and exact due window;
+publisher timeout cannot overwrite a fast worker settlement. Default queue flag
+False; no scheduler, worker, normal sending or infrastructure activation.
+
+Initial targeted run exposed two fixture assumptions (historical generated_cv
+field; another legitimately past-due search window). Corrected fixtures passed
+24tests7.543s. The final full suite, including fast-worker and registered-disabled
+handler regressions, passed636tests294.056s(one existing platform skip). Check,
+migration drift and Ruff passed. Node24.19 locked npmci358/audit0, lint/build1.82s
+passed;47 regenerated files exactly match committed assets. Populated migration
+rehearsal preserved all old tables/rows, relationships, private document bytes and
+all3search triggers. No production migration or activation is inferred yet.
+
+PR111 exact38da502 passed all6checks and mergedMVP2 as88080fc. Queue package CI,
+checked release and production outcomes remain separate. Read-only production
+capacity16:49:57UTC:461877248used including1MiBmargin,74993664available,
+73941075required for full next snapshot+transfer+16MiBreserve,1052589remaining;
+actualsourceef1c102 and queued environment flagdisabled. Recheck while paused and
+after staging; no backup deletion authorized or performed. AJ17/26/43/48 remain
+open for real normal-path/hosted acceptance.
+
 # Delivery reliability implementation — 14 November 2026
 
 Feature branch codex/mvp2-delivery-progress starts from reviewed main ef1c102 and
