@@ -62,7 +62,7 @@ def deliver_due(search_id, *, at=None):
     return deliver_batch(search_id, at=at)['results']
 
 
-def deliver_batch(search_id, *, at=None, cursor=None, limit=50):
+def deliver_batch(search_id, *, at=None, cursor=None, limit=50, window_end=None):
     validate_limit(limit)
     search = SavedSearch.objects.filter(pk=search_id).first()
     if search is None:
@@ -70,6 +70,8 @@ def deliver_batch(search_id, *, at=None, cursor=None, limit=50):
             raise ValueError('Invalid or stale delivery cursor.')
         return dict(report([], 0, None), results=[])
     scope = f'saved-search:{search.pk}:{search.revision}'
+    if window_end is not None:
+        scope += ':' + window_end.isoformat()
     decode(cursor, scope)  # Reject another owner/search/revision before collection or handoff.
     if not enabled():
         return dict(report([], 0, None), results=[])
@@ -77,6 +79,8 @@ def deliver_batch(search_id, *, at=None, cursor=None, limit=50):
         collect_due(search_id, 'email', at=at)
     rows = SavedSearchMatch.objects.select_related('search__owner__profile', 'job').filter(
         search_id=search_id, channel='email', email_attempt__isnull=True, revision=search.revision, search__revision=search.revision)
+    if window_end is not None:
+        rows = rows.filter(window_end=window_end)
     identities, continuation = page(rows, scope, cursor, limit)
     outcomes = []
     for identity in identities:

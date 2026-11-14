@@ -25,3 +25,10 @@ def sweep_job_matches_task():
     """
     result = sweep_all_active_jobs_for_matches()
     return result
+
+@shared_task(name='jobs.run_delivery_task', acks_late=True, reject_on_worker_lost=True,
+    ignore_result=True, max_retries=0)
+def run_delivery_task(identity):
+    # Minimal reference only; no producer/schedule is activated by registration.
+    from .delivery_queue import execute
+    return execute(identity)
