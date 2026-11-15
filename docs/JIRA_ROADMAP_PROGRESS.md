@@ -1,4 +1,88 @@
+# Queue reconciliation follow-up — 15 November 2026
+
+Final review found an existing saved-search window's definite failure could be
+mislabelled succeeded once no unsent rows remained. The worker now reconciles
+that failure as dead before collecting/sending. Regression confirms no repeated
+handoff. Actual retained verification:17queue tests5.831s; full637tests265.345s
+(one existing platform skip), check/drift/Ruff passed. Frontend source/build is
+unchanged from the verified Node24.19 locked ci/lint/build47-file comparison.
+PR112 must pass all six checks on this corrected head before merge. No production
+activation, normal send, queue worker or new recovery snapshot is claimed here.
+
+# Dormant delivery queue implementation — 14 November 2026
+
+codex/mvp2-dormant-queue includes checked PR111 merge88080fc. Focused archived
+queue/outbox code was reconciled against current adapters; matching/sweep/public
+HTTP producer hooks were excluded. New additive jobs0022 follows0021, never the
+conflicting archived0018. Saved-search tasks bind revision and exact due window;
+publisher timeout cannot overwrite a fast worker settlement. Default queue flag
+False; no scheduler, worker, normal sending or infrastructure activation.
+
+Initial targeted run exposed two fixture assumptions (historical generated_cv
+field; another legitimately past-due search window). Corrected fixtures passed
+24tests7.543s. The final full suite, including fast-worker and registered-disabled
+handler regressions, passed636tests294.056s(one existing platform skip). Check,
+migration drift and Ruff passed. Node24.19 locked npmci358/audit0, lint/build1.82s
+passed;47 regenerated files exactly match committed assets. Populated migration
+rehearsal preserved all old tables/rows, relationships, private document bytes and
+all3search triggers. No production migration or activation is inferred yet.
+
+PR111 exact38da502 passed all6checks and mergedMVP2 as88080fc. Queue package CI,
+checked release and production outcomes remain separate. Read-only production
+capacity16:49:57UTC:461877248used including1MiBmargin,74993664available,
+73941075required for full next snapshot+transfer+16MiBreserve,1052589remaining;
+actualsourceef1c102 and queued environment flagdisabled. Recheck while paused and
+after staging; no backup deletion authorized or performed. AJ17/26/43/48 remain
+open for real normal-path/hosted acceptance.
+
+# Delivery reliability implementation — 14 November 2026
+
+Feature branch codex/mvp2-delivery-progress starts from reviewed main ef1c102 and
+includes checked MVP2 receipt95ee729. Signed keyset continuation fixes bounded
+match/search batches that repeatedly examined the same ineligible rows. Search
+cursors bind UUID/revision; initial upper IDs defer new inserts to a fresh pass.
+The current delivery/ledger guards and existing list-returning callers remain.
+No migration, API, scheduler, ingestion or production flag change.
+
+Actual focused21tests passed3.008s, including original adapter tests and new
+progress/deletion/scope/shape/limit cases. Ruff and check/drift passed. Full backend
+gate passed618tests531.248s(one existing platform skip); the later added cursor
+shape test passed in the21-test focused run. No production activation is inferred. Node24.19
+locked npmci358/audit0, lint/build3.60s passed; all47 regenerated files match the
+committed build exactly. Full gate/CI/merge/release outcomes follow separately.
+
 # Jira roadmap execution
+
+## 14 November: vacancy-pilot readiness release verified live
+
+Exact runtime ef1c102ccf4f2d5c64353b7698a8fc4a7374b3e4 (PR109), all six release-head
+and all six merged-main checks passed. PR105/106/107/108 were individually checked
+and merged into MVP2. Safe aggregate readiness/current guides/private evidence
+template, default-off normal transports and decision-only hosting assessment are
+shipped. Initial PR108loginTBT251msfailure retained; product cache loading fixed,
+corrected Linux medians160/181ms and all unchanged budgets passed. No field claim.
+
+Today's completed consistent recovery/off-server copy/isolated16-media restore was
+independently reverified, then fresh paused comparisons proved all45tables/three
+triggers/16files/absent ledger unchanged before and after staging/smoke. This
+qualified snapshot reuse; no redundant new snapshot/download or deletion. No
+migrations/dependencies. Post-staging capacity passed461844480used/75026432available/
+73941075required,1085357beyond full next-backup plan. All33pins/private CVbytes and
+owner direct reads passed; disabled commands returned no changes. Fresh WSGI
+configuration reproduction preserves account_security/freshness and all eight
+closed gates. Web re-enabled/reloaded, both writer workflows independentlyactive.
+External14:45:04UTC health200/HSTS604800/all47exact files/three private anonymous401
+checks passed. Runtime indexc1a069b2ec992fbb5714a2a7a017e01b0337ac0fdd33df9b2dd53aa3e9a42448.
+
+Receipt local gates:611tests278.415s(one existing skip), check/drift, Node24.19
+locked npmci/lint/build1.60s and47-file exact comparison. After product fix177
+components28.21s and11Chromium journeys74.607s passed. No normal real send, manual
+ingestion, fake vacancy, staff grant or infrastructure provisioning.16stories
+still unfinished; actual participants/normal delivery/engine/host gates remain.
+See reports/MVP2_VACANCY_READINESS_DEPLOYMENT_2026-11-14.md for full evidence.
+Earlier checkpoints below remain historical; documentation-only follow-up merges
+do not change this activated runtime.
+
 
 ## 14 November: public onboarding performance gate correction
 

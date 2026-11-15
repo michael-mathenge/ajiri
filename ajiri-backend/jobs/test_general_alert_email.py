@@ -114,3 +114,62 @@ class GeneralAlertTests(TransactionTestCase):
                 call_command('deliver_match_emails', limit=limit, stdout=StringIO())
         self.send.assert_not_called()
         self.assertFalse(DeliveryAttempt.objects.exists())
+
+    def test_continuation_reaches_eligible_notification_after_stale_rows(self):
+        import json
+        self.publication.confirmed_at = timezone.now()-timedelta(days=2)
+        self.publication.save()
+        job = Job.objects.create(title='Later eligible', company_name='Synthetic',
+            description='Synthetic', source_url='https://example.invalid/later', source_name='test')
+        JobPublication.objects.create(job=job, origin='rss', status='published',
+            confirmed_at=timezone.now(), closes_at=timezone.now()+timedelta(days=1))
+        later = Notification.objects.create(user=self.user, job=job, match_score=70)
+        output = StringIO()
+        call_command('deliver_match_emails', limit=1, stdout=output)
+        first = json.loads(output.getvalue())
+        self.assertEqual(first['examined'], 1)
+        self.assertEqual(first['outcomes'], {'ineligible': 1})
+        self.assertFalse(first['exhausted'])
+        self.send.assert_not_called()
+        output = StringIO()
+        call_command('deliver_match_emails', limit=1, cursor=first['next_cursor'], stdout=output)
+        last = json.loads(output.getvalue())
+        self.assertTrue(last['exhausted'])
+        self.assertEqual(last['outcomes'], {'accepted': 1})
+        later.refresh_from_db()
+        self.assertTrue(later.sent_email)
+        self.send.assert_called_once()
+
+    def test_page_snapshot_handles_deletion_and_defers_new_inserts(self):
+        from .delivery_batches import page
+        def notification(number):
+            job = Job.objects.create(title=f'Synthetic {number}', company_name='Synthetic',
+                description='Synthetic', source_url=f'https://example.invalid/{number}')
+            return Notification.objects.create(user=self.user, job=job, match_score=70)
+        second, third = notification(2), notification(3)
+        rows = Notification.objects.all()
+        first, cursor = page(rows, 'test', None, 1)
+        self.assertEqual(first, [self.notification.pk])
+        second.delete()
+        inserted = notification(4)
+        identities, cursor = page(rows, 'test', cursor, 1)
+        self.assertEqual(identities, [third.pk])
+        self.assertIsNone(cursor)
+        self.assertNotIn(inserted.pk, identities)
+
+    def test_bad_or_cross_scope_cursor_fails_before_provider_or_receipt(self):
+        from django.core.management.base import CommandError
+        from django.core import signing
+        cursor = signing.dumps({'scope': 'another-scope', 'after': 0, 'through': 2},
+                               salt='jobs.delivery-batch.v1')
+        for value in ('invalid', cursor):
+            with self.assertRaises(CommandError):
+                call_command('deliver_match_emails', cursor=value, stdout=StringIO())
+        self.send.assert_not_called()
+        self.assertFalse(DeliveryAttempt.objects.exists())
+
+    def test_concurrent_notification_delete_is_ineligible(self):
+        identity = self.notification.pk
+        self.notification.delete()
+        self.assertEqual(deliver(identity), 'ineligible')
+        self.send.assert_not_called()

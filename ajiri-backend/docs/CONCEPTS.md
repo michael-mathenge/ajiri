@@ -1694,3 +1694,24 @@ retry limits and explicit mutation behavior are unchanged. A failed lazy downloa
 uses the existing page recovery boundary; it must not retry a user mutation.
 Frontend source is `../ajiri-frontend/src/components/PrivateQueryProvider.jsx`
 (relative to the backend root).
+
+## bounded-delivery-continuation
+
+Manual email commands examine a bounded page, including rows currently ineligible.
+A signed opaque continuation records the last examined ID and initial upper ID;
+new inserts wait for the next fresh pass. Saved-search cursors also bind the search
+and revision. Cursors do not grant consent or authorize sending. Resume explicitly
+with --cursor; restart without it to reconsider earlier rows. Receipt, consent,
+freshness and budget checks still run at handoff. No automatic scheduler is added.
+
+## durable-delivery-queue
+
+The disabled-by-default outbox stores target references, not recipients or documents.
+Application authorization, notification and saved-search revision/window identities
+are deduplicated before publishing. The broker carries only a task UUID. Conditional
+three-minute leases allow at most three execution claims; expired exhausted leases
+become dead letters. A stale lease token cannot settle a replacement worker's task.
+Every worker reuses existing delivery receipts before new external IO. Reserved or
+unknown receipts require reconciliation, never an automatic provider retry. Operator
+commands inspect aggregate counts and explicitly publish/recover/reconcile bounded
+work. No producer, periodic schedule or hosted worker is activated by this code.

@@ -55,3 +55,19 @@ No production flag, provider call, scheduler, staff grant or participant consent
 is inferred. Live AJ17/26/43 acceptance remains unfinished. Roll back source with
 new receipts/data retained; disable channel-specific switches, never erase receipts
 or replay ambiguous attempts. No storage cutover or queue activation occurs.
+
+## Bounded continuation follow-up
+
+Match command --limit (default20) and saved-search command --limit (default50)
+accept1-50 and --cursor. Each invocation examines at most that many candidates;
+ineligible/deleted candidates advance the signed continuation, without changing
+consent or fabricating receipts. JSON output contains examined, aggregate outcomes,
+next_cursor and exhausted. Pass the returned cursor explicitly until exhausted.
+A fresh pass reconsiders previously skipped rows and sees new inserts. This is
+manual keyset progress, not a scheduler or a durable processing guarantee.
+
+Saved-search continuation binds the search UUID and revision; edits require a new
+pass. The initial invocation may collect the existing bounded due window; continuation
+never recollects it. Existing deliver_due callers retain their list return/default
+50-row behavior. All current transport, consent, freshness and ledger checks remain.
+Disabled commands perform no handoff. No normal live send is authorized here.
