@@ -89,9 +89,11 @@ def _run(task):
                                          window_end=task.window_end)
         if rows.filter(email_attempt__state__in=['unknown', 'reserved']).exists():
             return 'unknown'
+        if rows.filter(email_attempt__state='definite_failure').exists():
+            return 'definite_failure'
         if not mail_enabled():
             if rows.exists() and not rows.filter(email_attempt__isnull=True).exists():
-                return 'definite_failure' if rows.filter(email_attempt__state='definite_failure').exists() else 'complete'
+                return 'complete'
             return 'disabled'
         result = deliver_batch(task.search_id, at=task.window_end, window_end=task.window_end)
         outcomes = result['results']

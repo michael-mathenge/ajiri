@@ -249,3 +249,14 @@ class QueuedSearchAndAlertTests(search_fixtures.SearchFixtures, TransactionTestC
         self.assertEqual(execute(task.pk), 'succeeded')
         self.assertEqual(search.matches.count(), first_count)
         self.send.assert_called_once()
+
+    def test_existing_search_failure_is_dead_not_success_and_never_retried(self):
+        from .general_saved_search_email import deliver_batch
+        search = self.search(email_frequency='daily')
+        self.job()
+        task = enqueue('saved_search', search.pk, owner=self.owner)
+        self.send.return_value = Result('definite_failure', failure_category='provider_rejected')
+        self.assertEqual(deliver_batch(search.pk, at=task.window_end, window_end=task.window_end)['results'],
+                         ['definite_failure'])
+        self.assertEqual(execute(task.pk), 'dead')
+        self.send.assert_called_once()
