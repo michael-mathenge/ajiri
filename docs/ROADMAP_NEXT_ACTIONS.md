@@ -1,3 +1,18 @@
+# Current next actions — delivery reliability
+
+Verified production baseline is ef1c102 (release PR109), with documentation receipt
+PR110 merged into MVP2. This phase adds bounded manual alert continuation and the
+dormant delivery outbox/recovery integration; implementation is not activation.
+Keep queue, posting/publication and normal sending off; retain freshness on.
+See NORMAL_DELIVERY_READINESS.md and DORMANT_DELIVERY_QUEUE.md for procedures.
+Recheck live capacity and private off-server restoration before each release;
+last activation left1085357bytes beyond its complete recovery/reserve plan.
+No further deletion authority is assumed. Hosting expiry last observed30November2026.
+First live milestone remains one genuine employer/one independently reviewed role;
+participants, normal inbox acceptance and hosted infrastructure remain external gates.
+
+## Historical phase checkpoint — 14 November 2026
+
 # Current next actions — 14 November 2026
 
 Runtime c88da83 is verified deployed; receipt PR104 merged into MVP2. The current

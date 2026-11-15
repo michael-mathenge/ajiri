@@ -463,3 +463,6 @@ if not re.fullmatch(r'[A-Za-z0-9_-]+/', ADMIN_URL_PATH) or ADMIN_URL_PATH.split(
     'cv-builder', 'login', 'register', 'plans', 'about', 'privacy', 'employers',
     'notifications', 'saved-searches'}:
     raise ImproperlyConfigured('ADMIN_URL_PATH must be a non-reserved single path segment ending in /.')
+
+# see docs/CONCEPTS.md#durable-delivery-queue
+DELIVERY_QUEUE_ENABLED = env_bool('DELIVERY_QUEUE_ENABLED', False)
