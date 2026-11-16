@@ -15,2574 +15,2574 @@ See reports/MVP2_DELIVERY_RELEASE_2026-11-15.md for actual validation, source,
 migration, recovery, cleanup, verification corrections and rollback evidence.
 Documentation-only follow-up merges do not establish a newer activated runtime.
 
-# Queue reconciliation follow-up — 15 November 2026
-
-Final review found an existing saved-search window's definite failure could be
-mislabelled succeeded once no unsent rows remained. The worker now reconciles
-that failure as dead before collecting/sending. Regression confirms no repeated
-handoff. Actual retained verification:17queue tests5.831s; full637tests265.345s
-(one existing platform skip), check/drift/Ruff passed. Frontend source/build is
-unchanged from the verified Node24.19 locked ci/lint/build47-file comparison.
-PR112 must pass all six checks on this corrected head before merge. No production
-activation, normal send, queue worker or new recovery snapshot is claimed here.
-
-# Dormant delivery queue implementation — 14 November 2026
-
-codex/mvp2-dormant-queue includes checked PR111 merge88080fc. Focused archived
-queue/outbox code was reconciled against current adapters; matching/sweep/public
-HTTP producer hooks were excluded. New additive jobs0022 follows0021, never the
-conflicting archived0018. Saved-search tasks bind revision and exact due window;
-publisher timeout cannot overwrite a fast worker settlement. Default queue flag
-False; no scheduler, worker, normal sending or infrastructure activation.
-
-Initial targeted run exposed two fixture assumptions (historical generated_cv
-field; another legitimately past-due search window). Corrected fixtures passed
-24tests7.543s. The final full suite, including fast-worker and registered-disabled
-handler regressions, passed636tests294.056s(one existing platform skip). Check,
-migration drift and Ruff passed. Node24.19 locked npmci358/audit0, lint/build1.82s
-passed;47 regenerated files exactly match committed assets. Populated migration
-rehearsal preserved all old tables/rows, relationships, private document bytes and
-all3search triggers. No production migration or activation is inferred yet.
-
-PR111 exact38da502 passed all6checks and mergedMVP2 as88080fc. Queue package CI,
-checked release and production outcomes remain separate. Read-only production
-capacity16:49:57UTC:461877248used including1MiBmargin,74993664available,
-73941075required for full next snapshot+transfer+16MiBreserve,1052589remaining;
-actualsourceef1c102 and queued environment flagdisabled. Recheck while paused and
-after staging; no backup deletion authorized or performed. AJ17/26/43/48 remain
-open for real normal-path/hosted acceptance.
-
-# Delivery reliability implementation — 14 November 2026
-
-Feature branch codex/mvp2-delivery-progress starts from reviewed main ef1c102 and
-includes checked MVP2 receipt95ee729. Signed keyset continuation fixes bounded
-match/search batches that repeatedly examined the same ineligible rows. Search
-cursors bind UUID/revision; initial upper IDs defer new inserts to a fresh pass.
-The current delivery/ledger guards and existing list-returning callers remain.
-No migration, API, scheduler, ingestion or production flag change.
-
-Actual focused21tests passed3.008s, including original adapter tests and new
-progress/deletion/scope/shape/limit cases. Ruff and check/drift passed. Full backend
-gate passed618tests531.248s(one existing platform skip); the later added cursor
-shape test passed in the21-test focused run. No production activation is inferred. Node24.19
-locked npmci358/audit0, lint/build3.60s passed; all47 regenerated files match the
-committed build exactly. Full gate/CI/merge/release outcomes follow separately.
-
-# Jira roadmap execution
-
-## 14 November: vacancy-pilot readiness release verified live
-
-Exact runtime ef1c102ccf4f2d5c64353b7698a8fc4a7374b3e4 (PR109), all six release-head
-and all six merged-main checks passed. PR105/106/107/108 were individually checked
-and merged into MVP2. Safe aggregate readiness/current guides/private evidence
-template, default-off normal transports and decision-only hosting assessment are
-shipped. Initial PR108loginTBT251msfailure retained; product cache loading fixed,
-corrected Linux medians160/181ms and all unchanged budgets passed. No field claim.
-
-Today's completed consistent recovery/off-server copy/isolated16-media restore was
-independently reverified, then fresh paused comparisons proved all45tables/three
-triggers/16files/absent ledger unchanged before and after staging/smoke. This
-qualified snapshot reuse; no redundant new snapshot/download or deletion. No
-migrations/dependencies. Post-staging capacity passed461844480used/75026432available/
-73941075required,1085357beyond full next-backup plan. All33pins/private CVbytes and
-owner direct reads passed; disabled commands returned no changes. Fresh WSGI
-configuration reproduction preserves account_security/freshness and all eight
-closed gates. Web re-enabled/reloaded, both writer workflows independentlyactive.
-External14:45:04UTC health200/HSTS604800/all47exact files/three private anonymous401
-checks passed. Runtime indexc1a069b2ec992fbb5714a2a7a017e01b0337ac0fdd33df9b2dd53aa3e9a42448.
-
-Receipt local gates:611tests278.415s(one existing skip), check/drift, Node24.19
-locked npmci/lint/build1.60s and47-file exact comparison. After product fix177
-components28.21s and11Chromium journeys74.607s passed. No normal real send, manual
-ingestion, fake vacancy, staff grant or infrastructure provisioning.16stories
-still unfinished; actual participants/normal delivery/engine/host gates remain.
-See reports/MVP2_VACANCY_READINESS_DEPLOYMENT_2026-11-14.md for full evidence.
-Earlier checkpoints below remain historical; documentation-only follow-up merges
-do not change this activated runtime.
-
-
-## 14 November: public onboarding performance gate correction
-
-PR108 first1ed83ed passed five checks/11browser journeys but login TBT251ms failed
-the unchanged250msbudget (Linux43602973332). No metric rerun or relaxed gate.
-Public shell previously initialized the private cache. A signed-in lazy provider
-now keeps it off public first load, resets per session and clears/cancels old reads.
-JWT/interceptor/server permission behavior is unchanged. Bothlinters,177components
-28.21s, build2.61s and11real Chromium journeys74.607s passed after the fix. Actual
-network assertions verify deferred cache loading; account-isolation tests remain.
-Build47files/indexc1a069b2ec992fbb5714a2a7a017e01b0337ac0fdd33df9b2dd53aa3e9a42448,
-mainJS362.34kB versus395.30kB. Linux corrected-head checks/activation still pending.
-See reports/AJ86_PRIVATE_CACHE_LOADING_2026-11-14.md for retained failure/evidence.
-
-
-## 14 November: current public employer onboarding guide
-
-Branch codex/mvp2-employer-guide-current corrects the public guide's historical
-verification-availability claim: current mailbox verification, genuine pilot
-onboarding and independent organisation/vacancy review remain separate. The
-corresponding old owner-only claims in USER_GUIDE were corrected in checked PR107.
-PR107 final4a596a1 passed all six checks and mergedMVP2 as260521b. No participant,
-posting/publication, staff grant or normal sending is activated.
-
-Actual guide package gates: check/drift;611tests302.848s(one existing platform
-skip); Node24.19 locked npmci358/audit0, bothlinters,175components23.01s, build
-1.55s then formatting correction/rebuild2.42s. Prettier check passed after the
-initial changed-file warning. Real Chromium public mobile-viewport accessibility
-in both themes passed1journey14.265s with external requests blocked; this is not
-manual Android/iOS acceptance. Regenerated44files match dist exactly; removed only
-32obsolete tracked asset paths. Generated build is the package's last commit.
-Index SHA2561e62cc7d3949a8ab876e1c9fdde30d50c5add78ac9c9ec73bc174c6886a39b14.
-No schema/dependency/backend behavior change. RequiredCI/release/deployment pending.
-
-
-## 14 November: next-phase reviewed source integration
-
-PR105 passed all six checks and merged MVP2 as4eab005; PR106 passed all six
-checks on675e7a1 and merged as387a0bf. PR107 integrates that reviewed source;
-its only conflict was two progress headings, both retained. Backend/frontend
-source is byte-identical to reviewed PR106. Local full611tests297.040s and its
-all-six CI result remain valid source evidence; this merged head must pass its
-own required checks. Runtime remainsc88da83 until a separately checked release.
-
-
-## 14 November: scanner and hosting decision package
-
-Branch codex/mvp2-scanner-hosting-decision reviews archive974dc6d and current
-production capacity/expiry. docs/SCANNER_HOSTING_DECISION_2026-11-14.md compares
-free/current hosting, paid-host bridge and an EU VM/private-object candidate, with
-primary-source costs, quote limitations, private processing destinations, scanner
-freshness/legacy policy, actual-host tests and staged data-preserving cutover.
-No service selected/purchased/provisioned, no real file transfer or infrastructure
-change. Indexed Hetzner quote page returned404; its rate is indicative only.
-Archive queue0018 conflicts with current0018: later work needs a new additive
-migration, never wholesale reuse. No live scanner/storage/queue claim.
-
-Mandatory local gates on reviewed pilot-readiness baseline: check/drift;594tests
-311.032s(one existing platform skip); Node24.19 locked npmci358/audit0, lint/build
-1.70s and44-file regenerated committed-build comparison passed. No frontend bytes,
-schema, dependency or runtime configuration changed. RequiredCI/merge pending.
-
-## 14 November: focused normal delivery reconciliation
-
-PR73 is confirmed closed/unmerged at38bf953; only its three normal transports,
-commands/tests, default-off settings and dispatcher hooks were ported onto reviewed
-MVP2. Newer filters/ownership/migrations are preserved. No new migration, dependency,
-endpoint, scheduler, ingestion change or activation. original_source_readiness
-reports all three new switches separately. See docs/NORMAL_DELIVERY_READINESS.md.
-
-Local Ruff/check/drift passed;608tests270.573s(one existing skip) before integrating
-checked PR105; final combined611tests297.040s(one existing skip), plus30affected
-regressions4.701s passed. Original
-13adapter tests passed;17targeted tests2.864s after finding/fixing a programmatic
-batch-limit bypass and correcting a fixture county slug. Node24.19 locked npmci358/
-audit0, lint/build1.57s and44-file exact regenerated build comparison passed.
-No passing live-service claims: all normal sending/search switches stay disabled.
-Push/requiredCI/merge/deployment remain pending; actual results follow.
-
-
-## 14 November: genuine vacancy pilot readiness package
-
-Branch codex/mvp2-pilot-readiness extends the existing aggregate command with
-first1role/1employer inventory, safe general account-mail configuration status,
-current switches and explicit external evidence limitations. No endpoint, sending,
-tokens, receipts or writes. Fresh11:56UTC production inspection on c88da83 confirmed
-ACCOUNT_SECURITY_EMAIL_ENABLED=True, REAL_EMAIL_ENABLED=True, account_security
-mode and valid configuration; outside-employer inbox/onboarding remains unverified.
-Posting/public/saved-search/application-alert switches remainFalse; freshnessTrue.
-Capacity461045760used with margin/75825152available; next-plan remainder1884077.
-Dashboard expiry independently observed30November2026. Operating guides/template
-now separate first milestone, larger50/10target and8/10candidate pilot.
-
-Actual local gates: Ruff/check/migration drift passed;594tests294.024s(one existing
-platform skip), targeted13tests0.490s. Node24.19 locked npmci358/audit0, lint/build
-1.70s and44-file regenerated build comparison passed. Initial npmci sandboxEPERM
-was corrected by the authorized normal escalation; no gate was skipped. No frontend
-source/build byte changes and no migrations. Push/CI/merge and deployment pending.
-
-
-## 14 November: public validation performance release verified live
-
-Runtime c88da83070b2e491a3f2df2601a6efaaed08374f (PR103) passed all six release-head
-and merged-main checks. Fresh private off-server recovery and isolated16-file
-restore completed before staging. Michael approved exactly three duplicate raw
-files (28034360bytes) in backup-20261113T134617405732Z-46a6f54d; exact path/hash/size,
-ZIP members and before/after inventory verified only these were removed. Retained
-ZIP/all other entries/all off-server copies/newer snapshots remain. Capacity passed
-before and after staging, including the following backup/ZIP/16MiB reserve.
-
-No migrations or dependency installation. All45tables, three search triggers,
-16private files and safety flags matched recovery before and after staging.
-All33 pins and owner-only direct view/private CV-byte checks passed; anonymous
-access denied. Web re-enabled/reloaded and both writer workflows observed active.
-External health200, HSTS604800 and all44 exact live build hashes passed. No real
-send, personal mutation or fake vacancies. Lab TBT login/register110/101ms is not
-field-p75/pilot acceptance. AJ86 remains In Progress;16non-Epic items unfinished.
-Receipt package: check/drift and591backend tests288.705s(one existing skip), locked
-Node24.19 npm ci/lint/build2.13s and44-file committed build comparison passed.
-See reports/MVP2_PUBLIC_VALIDATION_DEPLOYMENT_2026-11-14.md for recovery, cleanup,
-capacity, activation and rollback evidence. Earlier checkpoints below are historical.
-
-
-## 14 November: public validation release merged; fresh restore complete
-
-PR101's integrated head29425a5 passed all six checks and merged into MVP2 as95198a6.
-Release PR103 passed all six exact-head checks and merged to main asc88da83070b2e491a3f2df2601a6efaaed08374f.
-All six merged-main checks passed. Actual activation remains pending; runtime is still9676fc4.
-Fresh database changes required a new consistent snapshot, not reuse of older data:
-backup-20261114T103614144596Z-cea25a60 completed under drained writer/web pause,
-then existing service/writers were restored and health200. Private off-server ZIP/
-manifest hashes, SQLite integrity and isolated16-file restoration all passed.
-
-Retained snapshot/ZIP leaves25178195bytes short of following-backup reserve. Only
-three older raw copies totaling28034360bytes in backup-20261113T134617405732Z-46a6f54d
-are proposed, with exact server/off-server hashes and matching same-folder retained
-ZIP independently verified. Earlier approval covered a different snapshot; the new
-specific approval is now recorded, but UI input contention blocked execution before any deletion. All off-server recovery and
-both newer server snapshots remain. See reports/MVP2_PUBLIC_VALIDATION_DEPLOYMENT_2026-11-14.md
-for actual recovery hashes, capacity, activation prerequisites and rollback.
-
-## 14 November: checked AJ86 public-form improvement merged into MVP2
-
-PR102 passed all six exact-head checks on b711ff7 and merged into MVP2 as
-b48d5e5b7dd32c0b64d71374735e590bfc4a34c6. Linux43516747325 measured login/register
-three-run TBT110/101ms, versus earlier242/251ms, and initial transfer474740/472854
-bytes versus498966/496063. LCP3958.58/3857.40ms, performance84/87, CLS0.09965/0.06225,
-zero trace retries: all unchanged lab budgets passed. These are lab observations,
-not field-p75 or consented-person acceptance. Prior PR101's251ms failure is retained.
-The evidence branch integrates reviewed MVP2 without discarding either progress
-history. Runtime remains9676fc4 until a separately checked release, fresh recovery
-and real activation; the44-file deferred-validation build is not yet deployed.
-
-
-## 14 November: discovery and private follow-up verified deployed
-
-Runtime is9676fc4c89b7aef04461c2ba0bbc9eed060ade45 (PR99), following all six
-exact release-head and merged-main checks. Michael approved only the three named
-old server snapshot files; exact checksums/size/path and before/after inventory
-verified27,006,264bytes removed, all other entries/off-server copies preserved.
-The following-backup capacity gate passed again before staging and after migrations.
-
-Under drained writer/web pause, current43-table data/3triggers/16 private files
-matched completed off-server recovery. Exact clean source was staged; system/drift/
-actual plan passed, with only jobs0019/0020/0021 pending, then all three applied.
-Original rows/permission assignments/triggers/files were preserved; inspected new
-model content types/permission definitions and sequence increments were explicitly
-accounted for. No access grant occurred. New fields null/new preference tables empty.
-
-Read-only owner jobs/CV draft/employer drafts/suggestions/dismissed/shortlist/
-application-list passed. Existing approved CV bytes matched, private/no-store and
-anonymous401; one existing application exposes nullable follow_up_at after reload.
-Saved searches were observedFalse before staging and remainFalse/403; historical
-True reports are not current evidence. Other safety/mail flags unchanged; all33
-production pins match. No personal preference write or mail was performed.
-
-Web re-enabled/reloaded; external health200/HSTS604800 and all42 exact frontend
-files passed. Both scheduled writers independently observed active again. Final
-measured next snapshot/ZIP capacity leaves14,487,499bytes beyond the16MiB reserve;
-retention remains report-only. No fresh unattended/scheduled-ingestion success is
-inferred. AJ84's bounded functionality is deployed; AJ83 still needs genuine current
-inventory and8/10 consented-person acceptance. Whole MVP2 is unfinished. Full receipt:
-reports/MVP2_DISCOVERY_RELEASE_2026-11-14.md. Later evidence-only merges do not imply
-a different activated runtime.
-
-The activation-evidence follow-up from reviewedMVP2/396913c passed actual local
-check/drift/full591tests289.769s (one existing platform skip); explicitNode24.19
-locked npmci/audit0/lint/build1.61s and exact42-file regenerated comparison passed.
-AJ84 is Done with the manual-date/no outbound-reminder scope recorded, original
-proposal retained and suggested5-point sizing clearly separated from a sprint
-estimate. The fresh query now returns16 unfinished non-Epic stories. Required
-evidence-PR CI remains a merge gate; no new runtime is inferred from documentation.
-
-## 14 November: AJ86 public validation performance follow-up in progress
-
-Production9676fc4 remains verified active; AJ84 is Done. PR101's later evidence-only
-browser job43514052814 passed11journeys but registration's valid three-run TBT
-median251ms exceeded250ms. The actual failure is retained; no metric retry or
-budget/CI relaxation. Isolated codex/mvp2-aj86-deferred-validation from reviewed
-MVP2/396913c defers the unchanged public auth validation module until explicit
-submit, with duplicate-submit protection, busy feedback, retained input and a
-fail-closed accessible download error. Tests/measurements/required checks remain
-pending; no new activation is claimed. See reports/AJ86_PUBLIC_VALIDATION_2026-11-14.md.
-Actual local gates subsequently passed: check/drift/full591backend tests261.992s
-(one platform skip);175components20.58s after correcting the new loader busy-state
-failure; five tooling tests2.787s, both linters, Node24.19 locked install/audit0/build
-1.47s and Ruff. Real Chromium registration/login/private CV/preparation/review passed
-10.398s, proving the validator is absent from initial route requests and loads on
-explicit submit. Safe44-file build synchronization passed. Required CI/Linux metrics
-remain pending; no performance budget is relaxed and runtime9676fc4 is unchanged.
-
-
-## 14 November: checked discovery release; activation awaits recovery capacity
-
-PR96/97/98 each passed all six required checks and merged into MVP2 as9db23ab,
-e31ef17 andc983bed. Release PR99 passed all six exact-head checks and merged to
-main as9676fc4c89b7aef04461c2ba0bbc9eed060ade45; all six merged-main checks also
-passed. Runtime remains93cf55e: no0019/0020/0021 production migration or activation
-has been claimed. The latest feature passed591backend tests/one platform skip,
-171components, five tooling tests and two actual browser journeys21.978s.
-
-Fresh consistent manual snapshot backup-20261113T211254131961Z-19b403ac completed
-under paused web/writers; web and both scheduled writers were restored immediately,
-and external health returned200. Private download checksums and an isolated
-database/all16-file restore passed. The following-backup quota plan then failed
-closed:62,316,544bytes available versus73,744,437required. A concrete one-time
-three-file old server snapshot cleanup is awaiting Michael's separate approval;
-the earlier two-archive approval is not reused. No additional deletion occurred.
-All old off-server raw files and recovery ZIP were independently rehashed.
-
-AJ83 remains In Progress for genuine inventory and the8/10 consented-person pilot;
-AJ84 remains In Progress pending actual verified activation. The pending17-story
-Jira query was reconciled, including archived certificate/backend rehearsal evidence
-and actual scanner/storage/participant/legal/commercial prerequisites. See
-reports/MVP2_DISCOVERY_RELEASE_2026-11-14.md for exact recovery hashes, capacity,
-migration order, unchanged live services and data-preserving rollback.
-
-## 13 November: AJ84 private shortlist/manual follow-up, local verified package
-
-Branch codex/mvp2-aj84-saved-jobs from checkedMVP2/PR97 mergee31ef17. Idempotent
-owner-only saved-role references retain dates, provenance and unverified/expired
-warnings without changing browse/preparation/alert eligibility. AJ50 personal
-stage/note/revision now optionally stores a manual follow-up date; explicit null
-clears, older-client omission preserves, and sending/uncertain receipts/approved
-documents remain independent. Private export and prepared-journal erasure include
-only owned data. Additive jobs.0021 preserves old rows/documents/search triggers.
-
-Actual full591 Django tests passed286.935s (one existing skip); final171 components
-passed27.34s; five tooling tests3.992s; Node24.19 locked install/both linters/build
-2.34s; check/drift/Ruff/strict schema and safe42-file synchronization passed.
-Initial schema annotation warning was corrected using the generator's media-type
-mapping, not suppressed. Focused14 API/schema/privacy tests9.540s and initial8 UI
-tests6.64s passed; two actual Chromium save/remove/focus/date/reload journeys passed
-21.978s with no provider call. No production action or new mail consent occurred.
-See reports/AJ84_SHORTLIST_FOLLOW_UP_2026-11-13.md. Exact-head CI, checked release,
-fresh private recovery/migrations and live verification remain pending; runtime93cf55e.
-
-## 13 November: AJ83 private suggestion choices, local verified package
-
-Branch codex/mvp2-aj83-candidate-choices from reviewedMVP2/PR96 merge9db23ab.
-Suggestions rank current roles with the same skill arithmetic, including low scores;
-owner-scoped reversible dismissal does not alter browsing, application progress,
-saved-search criteria, email preferences or sending. Strict optimistic revisions,
-private/no-store responses, explicit read-before-retry UI and owner export/erasure
-integration are covered. jobs.0020 adds only the unique owner/job preference table;
-disposable reverse preserves existing job/application values and search triggers.
-
-Actual full577 Django tests passed302.855s/one existing skip;166 components37.20s;
-five tooling tests4.359s; Node24.19 locked install/both linters/build2.40s;
-check/drift/Ruff/strict schema and safe39-file build synchronization passed.
-Expanded focused12 tests passed9.963s after fixing an erasure fixture that omitted
-required journal preparation. Browser first failed with saved searches off; fixture
-now enables them explicitly and waits for the destination heading, correcting a
-prior prefill coverage gap. Expanded Chromium journey passed17.041s, including
-dismissal/restore, retained normal browse access, actual prefill and accessibility.
-No guard or production flag was relaxed. See reports/AJ83_OWNER_CHOICES_2026-11-13.md.
-Source/build, required CI and release activation remain pending; genuine inventory
-and8/10 consented-person acceptance remain open. Production is still93cf55e.
-
-## 13 November: AJ83 normalized mobile filters, local verified package
-
-Branch codex/mvp2-aj83-discovery from reviewedMVP2, advanced toc6ae61e after checked
-PR95. Explicit employer county/work arrangement/experience facts now flow through
-independent review, serializers, URL/mobile filtering and identical owner saved
-search/window queries. Unknowns remain null;0 required years is explicit and kept
-when saving. No trait inference,70% browse/apply gate, consent or delivery change.
-jobs.0019 adds nine nullable fields; disposable forward/reverse preserves legacy
-jobs/drafts/searches and all three search triggers. No production migration yet.
-
-Actual check/drift/Ruff/schema passed;565 Django tests passed291.252s with one
-existing skip;164 components passed37.22s; five tooling tests4.207s; Node24.19
-locked npmci/lint/ESLint/build2.37s and safe39-file build synchronization passed.
-Initial local browser import failed for absent optional Playwright; pinned runner
-installed locally, then real employer/review/mobile-filter/accessibility/withdrawal
-journey passed12.581s with provider uncalled. Focused backend19/10 and UI16 checks
-also passed. Source/build commits, required CI and production activation pending.
-Dismissal and consented pilot acceptance remain open. See
-reports/AJ83_NORMALIZED_FILTERS_2026-11-13.md for exact evidence and rollback.
-
-## 13 November: MVP2 original-source package deployed
-
-AJ80's historical Jira housekeeping also completed:23 descriptive dated titles
-and23 Relates links, with independent readback confirming unchanged source
-comments/IDs/timestamps/counts and Done statuses. No entry was deleted, merged,
-bulk-transitioned or treated as new live acceptance. See
-docs/JIRA_HISTORY_RECONCILIATION.md for the exact preserved mapping.
-
-Reviewed main93cf55e5299e8eb5adab60da215b5fbe1e82d1b4 (PR94) is now the
-verified runtime, replacingd5f2f68. AJ87/PR91, AJ85/PR92 and AJ82/PR93 were
-independent feature branches merged intoMVP2 after six checks each; release94
-and the exact merged main also passed all six. Final application gates:555 Django
-tests/one existing skip,161 components, five tooling tests, both linters, locked
-Node24.19 install/build, schema and migration drift passed.
-
-Only the two specifically approved redundant server archives were removed;
-64,442,246 bytes reclaimed, raw snapshot and all off-server recovery copies retained.
-Fresh paused-writer snapshot backup-20261113T134617405732Z-46a6f54d completed.
-Its10,993,453-byte private download passed independent checksums, off-server copy
-and isolated database/16-file restore before migration0018/activation. All43 old
-tables, three search triggers and media bytes preserved after accounting for the
-two inspected SQLite migration/empty-table counter changes. No old data was restored.
-Next-backup plan passes with16MiB reserve and27,643,851 bytes beyond the plan.
-
-Web re-enabled/reloaded; both writer workflows restored. HTTPS health200/HSTS604800,
-all38 exact production assets and owner jobs/CV/employer/private-document reads
-passed; anonymous document401. No new production employer/job/email. Freshness true;
-posting/public jobs/application and alert email false; existing account mail true.
-Original source is deployed foundation with0 eligible roles/0 employers against
-50/10 targets, not completed AJ82 pilot acceptance or the complete MVP2 backlog.
-See reports/MVP2_ORIGINAL_SOURCE_DEPLOYMENT_2026-11-13.md for revisions, commands,
-failed initial preservation comparisons, recovery hashes, limitations and rollback.
-
-## 24 October: application pipeline (AJ50 local)
-
-Branch codex/application-pipeline from reviewed main b24b070. Private owner
-progress/note updates use bounded optimistic revisions, never submission/send
-permission. Receipt labels distinguish provider acceptance, unknown/reserved,
-failed attempts, user-reported external submission and legacy unverified email.
-Query-cache updates let later server receipts replace the saved progress row.
-Additive jobs.0015 preserves snapshots and infers no personal/employer outcome.
-
-Actual gates: full434 Django tests passed365.125s (one platform skip); initial
-focused10 passed1.066s, plus cross-owner receipt regression covered by full suite.
-Components141 passed62.01s; Node24.19 locked install audited364/zero vulnerabilities,
-lint/ESLint/Ruff and build2.00s passed. Exact source and36 generated files verified.
-Strict offline schema passed; new Chromium save/reload journey passed31.108s with
-axe and no provider/email/ledger effects. Initial component run140 had one old
-CV-focus timing failure; corrected to await the same required effect. New form
-button required explicit submit type; click regression now passes. All nine
-browser journeys passed246.544s; exact strict schema regeneration passed. Final
-CI/release remain pending; source is not deployed acceptance.
-
-PR49 closed queue first scope merged b24b070 after all six checks passed in
-CI40047364994. Payment and queue remain inactive test integrations, not live
-financial/worker services. Production remains c628ec0 pending this release batch.
-
-## 24 October: closed queue integration (local AJ48 first scope)
-
-Branch codex/queue-test-integration includes minimal immutable owner/authorization
-envelopes and an inline fake acknowledgement executor. Current dispatch reloads
-permissions/documents and reuses the existing authorization, delivery and quota
-ledger. Duplicate messages and unknown receipts never create a new provider key.
-No broker, worker registration, production task or environment activation; constant
-DELIVERY_QUEUE_TEST_CAPTURE stays false. Nine focused tests passed3.711s.
-Initial invalid fixture assumptions were corrected without weakening checks.
-Full423 suite passed329.895s (one platform skip); system/drift/Ruff passed.
-CI/release pending. Node24.19 locked install audited364/zero vulnerabilities;
-lint/build2.01s and exact unchanged36-file comparison passed.
-
-PR48 payment lab merged at c76ee8d after all six checks passed, CI40046293103.
-No payment route or subscription is active; production remains c628ec0.
-AJ47 real PostgreSQL/object-storage rehearsal is unverified: Docker Linux daemon
-was unavailable in a read-only image inventory. No Docker service or hosting was
-started/changed. Continue independent work; do not claim a fake target as Postgres.
-
-## 24 October 2026: offline payment first scope (local)
-
-Branch codex/payment-test-contracts, based on reviewed main9aa2ada. AJ44-46
-remain provisional live integrations. PAYMENTS_TEST_CONTRACT.md records merchant
-ownership, sandbox access, commercial/privacy and reconciliation prerequisites.
-No merchant, credentials, payer data, real transaction, route, migration, premium
-account or recurring charge is created. Synthetic KES100/30days is not an offer.
-
-The memory-only lab tests server-owned amounts, owner isolation, concurrent
-idempotent starts, unknown handoff/no reinitiation, callback hints without
-authority, matching query evidence, unique receipts, expiry/refund and interrupted
-receipt commits. Twelve focused tests passed0.007s; all-backend Ruff passed.
-Node24.19 npm ci audited364/zero vulnerabilities; lint and build1.98s passed;
-all36 generated bytes match unchanged committed build. Check/drift passed.
-Full414 suite passed327.067s (one platform skip); CI/release pending; fake tests are not a Daraja sandbox pass
-or production financial/durable-transaction verification.
-
-## 24 October 2026: saved-search first scope deployed (AJ-43)
-
-Full live Jira query returned53 issues. AJ27 reconciled to Done using PR44/45
-browser evidence; AJ43 remains In Progress for real email acceptance. Fourteen
-stories remain unfinished, excluding seven parent epics; backlog is not complete.
-
-PR46 source d2c7ba5 and final frontend build fb96186 merged at
-c628ec00466b1dd9168f77b7afafea6d50cca7e8 after all six checks passed in
-CI40044422744. This SHA is verified deployed. Owner-only saved preferences,
-revision-checked edits, bounded Nairobi windows, current-job filters and private
-export are live. Both frequencies start Off. Email integration is closed to
-memory tests; saving preferences never grants consent or sends email.
-
-Actual local verification: full402 Django tests passed304.617s, one known platform
-skip; focused22 passed29.660s; components137 passed83.06s; eight Chromium journeys
-passed193.183s including axe, with no real provider calls. Node24.19 npm ci
-audited364/zero vulnerabilities; Oxlint explicit-source paths, ESLint, hook-safety,
-Ruff, check/drift and strict offline JSON schema passed. Build2.41s; post-commit
-rebuild2.77s matched all36 generated files. Sandbox temporary-storage failures and
-an initial UUID alias-fixture error were resolved and are not passing evidence.
-
-Fresh pre-migration backup-20261024T002343024971Z-526617e8 passed server hashes,
-exact-member ZIP checksum/CRC, private off-server copy and isolated restoration
-(13 media files,224960 bytes). Receipt retained outside Git; encryption unverified.
-ZIP SHA256: d2273b961ed4f21a3e1295d4313f52531bf4a73539e79b9f2d01c67a4eb5e232.
-Actual quota387.0/512MB before pause,399.7 after retained snapshot/bundle. No pruning.
-Writers restored during download; additive jobs.0014 applied in a second short
-pause before activation. System/drift and empty migration plan passed. Web app
-enabled and ingestion/sweep workflows restored active. HTTPS health200/HSTS300,
-clean source, exact live HTML/saved-search bundle and authenticated page/API passed.
-SAVED_SEARCHES_ENABLED true; memory capture/application email false; freshness true.
-No owner preference, personal consent, real mail or employer publication created.
-
-Rollback: disable saved searches, retain additive tables and newer writes, keep
-freshness enforced. Do not restore an old database over later user activity.
-AJ17/26 sending, AJ42 public activation, AJ53 general onboarding and AJ44-52
-first-scope integrations remain unfinished. See SAVED_SEARCHES.md and
-PROVISIONAL_BACKLOG_REQUIREMENTS.md. Existing checkout/user work is untouched.
-
-20 October 2026. Source: [AJ board 34](https://michaelmathenge.atlassian.net/jira/software/projects/AJ/boards/34/backlog).
-Baseline: remote main and recorded deployed release
-`647449851c98f5b22e0419db673f2500c86d1e86`.
-Working branch: `codex/jira-roadmap`, isolated checkout `.worktrees/jira-roadmap`.
-
-Michael approved implementation, tests, documentation, push, merge and deployment
-of the defined backlog. For provisional AJ-42 through AJ-52, he selected concrete
-requirements and test integrations first. Do not represent those as live services.
-The complete Jira project query returned 52 issues with `isLast=true`.
-
-## Current local work
-
-- AGENTS.md now links the backlog and records the current authorization and backup
-  guideline. The original checkout's other uncommitted files remain untouched.
-- AJ-37: owner-only dismissed-application restoration preserves original files and
-  text, blocks missing files and unresolved/accepted delivery, and supersedes old
-  sending authorization. Added an explicit client action and regressions.
-- AJ-37 source is ready for its local commit; no push, merge or deployment of this batch has occurred.
-
-## Actual verification
-
-Using the existing Python 3.12 virtualenv, with `DEBUG=True`,
-`PYTHON_DOTENV_DISABLED=1`, `REAL_EMAIL_ENABLED=False`:
-
-```text
-python manage.py check                         passed
-python manage.py makemigrations --check --dry-run   no changes
-python manage.py test jobs.test_lifecycle --noinput  14 passed
-python manage.py test --noinput                281 run, OK, 1 Windows skip
-```
-
-Resume verification: both additional authorization/ambiguous-delivery restoration
-regressions passed. Full suite rerun: **283 tests, OK, one Windows skip**, 192.020s.
-The first focused attempt exposed a synthetic fixture without original application
-files; the fixture now supplies them, preserving the production missing-file guard.
-
-Explicit Node 24.19, locked npm installation: 180 packages installed, zero audit
-findings; `npm run lint`, `npm run test -- --run` (99 tests), and `npm run build`
-passed. The generated build has NOT yet been copied into committed frontend_build.
-Commit source/review evidence first, then the generated frontend build last.
-
-## AJ-12 platform response supplied by Michael
-
-PythonAnywhere confirms standard Django/WSGI receives native
-`wsgi.url_scheme='https'` for HTTPS. Client-supplied X-Forwarded-Proto headers,
-including duplicates and comma-separated values, are stripped. Keep
-`SECURE_PROXY_SSL_HEADER=None`; do not enable proxy-header trust.
-
-Before activation, verify a real HTTPS request reports secure through the actual
-WSGI application. Then activate:
-
-```text
-SECURE_SSL_REDIRECT=True
-SECURE_HSTS_SECONDS=300
-SECURE_HSTS_INCLUDE_SUBDOMAINS=False
-SECURE_HSTS_PRELOAD=False
-```
-
-Keep host Force HTTPS enabled. Verify no loop, HTTPS HSTS header, ordinary
-authentication/profile/download use and spoofed-header behavior. Roll back only
-the changed redirect/HSTS settings and reload if verification fails; never restore
-the database for a configuration rollback. This response resolves platform
-assurance, but live verification and activation remain pending.
-
-## Remaining execution
-
-Continue defined AJ-17 and AJ-24 through AJ-41; reconcile existing functionality
-against each actual criterion. AJ-8–AJ-11, AJ-13–AJ-16 and AJ-18–AJ-23 are currently
-Done in Jira; AJ-12 and AJ-17 are In Progress. Existing account emails do not
-complete application/alert sending. Renewed expiry is recorded as 19 November 2026.
-
-Implement and verify automated private backups with off-server recovery; document
-machine availability and platform constraints honestly. Retention remains report
-only. Simplify developer/user onboarding after feature changes settle. Housekeeping
-must inspect references and preserve private data, backups, stash, Docker lesson
-files, coverage and original checkout changes. No cleanup has yet been performed.
-
-## Resumed execution results
-
-AJ-37 committed locally as 7382c79 (source) and bb3c4b2 (build). All 283 backend
-tests passed (one Windows skip); 99 frontend tests passed. Not yet merged/deployed.
-
-AJ-24: explicit draft-policy agreement, additive profiles.0006_privacy_notice,
-owner-visible read-only evidence, public draft notice and UI. Focused 16 backend
-tests passed; full suite 286 passed with one Windows skip (426.804s) after isolating
-a historical migration regression to its fixed target instead of future leaf nodes.
-No production privacy migration has been applied yet. New frontend gate: 100 tests,
-lint and repeated build passed using explicit Node 24.19. The final locked install
-passed in .verification/frontend; original worktree reinstall hit a Windows-locked
-native Tailwind binary, which was preserved. Lint used the original source path
-explicitly because the verification folder is Git-ignored. The CV focus regression
-now awaits the animation-frame effect rather than asserting synchronously.
-Tailwind scanning is explicitly limited to src so nested checkout/build folders
-cannot add unrelated CSS; repeated verification builds matched their asset names.
-
-A newly published npm advisory affected transitive follow-redirects 1.16.0
-(GHSA-q3jh-wrc6-jgq8 / GHSA-8r9p-f939-6h3c). Patched only its version, resolved URL
-and integrity to 1.16.1, preserving other lockfile entries/platform metadata.
-After patch, npm audit reported zero findings; this is advisory matching, not proof
-that browser Ajiri credentials were exploitable through a Node-only redirect path.
-
-AJ-12 completed in production on unchanged source 6474498: native secure recognition
-verified, original WSGI restored, Django redirect True and HSTS 300 activated without
-proxy trust/subdomains/preload. Live header/loop/spoof checks passed; owner reads
-and private download passed. Only deliberate check --deploy W005/W021 remain.
-Jira Done status was reread and confirmed. See HTTPS_ACTIVATION_20261020.md.
-
-Backup automation verify-and-copy-ajiri-daily-backup created ACTIVE for 10:00 Nairobi
-daily, using the documented private snapshot/off-server/restore procedure and
-failure reporting. Its first scheduled run remains UNVERIFIED. No always-on
-PythonAnywhere scheduler or disk-encryption guarantee is claimed.
-
-README/SETUP simplified; USER_GUIDE and operator backup guidelines added. Verified
-unused social sprite removed; no private/user data or original Docker lesson
-removed. See HOUSEKEEPING_REVIEW.md. AJ-31/38/41 decisions recorded in
-ROADMAP_SPIKE_DECISIONS.md; local staging setup/verification is in progress.
-
-## Release #27 completed (overnight 20–21 October Nairobi)
-
-PR #27 head 1afa17d61ff0baf06ba6a456f84e137ef964ab99 passed all four checks, then
-merged as cc731976de13a5b5d561739def8dd93a26f70bff. All four merge checks passed too.
-That exact release is now deployed. Fresh paused-writer snapshot:
-backup-20261020T205514252995Z-8ba8d533; server and independent private local restore
-verified (12 media files, 212184 bytes). Only profiles.0006_privacy_notice applied;
-every pre-existing row value and unset historical consent was preserved. No runtime
-requirements changed and no pip install was required. Web app and both previously
-active workflows resumed and reread active. Live asset bytes match the release;
-health/login/register/privacy/applications 200 with HSTS300. Live invalid registration
-400, anonymous restore401 and missing-CSRF refresh403; owner profile read200.
-Normal ingestion succeeded: https://github.com/michael-mathenge/ajiri/actions/runs/39497734521
-Private rollout/rollback receipt is alongside the off-server backup. No real
-production account/document/authorization was created for QA. Browser registration
-agreement verified unchecked after an old tab reload. The obsolete lazy-chunk blank
-page observed before that reload has a regression/recovery boundary in the next batch.
-
-Jira AJ-12/24/37/31/38/41 are Done and statuses were reread. AJ-31/38/41 are decision
-spikes, not claims of live public SEO or Swahili. Remaining defined features stay open.
-
-## Operations batch deployed — 21 October 2026
-
-PR #28 passed all four required checks and merged as
-`93da1161f4a955ab0d3a3f9d5468e24a2bf5d31a`. Production is verified at that
-revision. Fresh paused-writer backup `backup-20261020T213134403490Z-4c4cdc48`
-passed server and independent private off-server restoration:12 files/212184 bytes.
-No requirements delta, pip install or migrations. System check, migration drift
-and empty migration plan passed before activation. Live health/login/register/privacy
-returned200/HSTS300; served index/assets match pinned bytes; authenticated profile,
-jobs and applications reads200. App and both previously active workflows resumed.
-Rollback: stage cc731976 and reload, retaining current database/media/configuration.
-No database restoration is required for this code-only rollback.
-
-Read-only release planner passed on the clean c2d5b48 checkout: no pending source
-migrations or production requirements change. The final generated build was committed
-last. The following records describe the package's actual verification.
-
-Branch codex/jira-operations starts at deployed cc731976. Isolated staging image
-builds, fresh-volume migrations and localhost:8001 health passed. UID10001,
-/data/db.sqlite3, no baked .env, real mail off and empty ingestion credential verified;
-original localhost:8000 learning container preserved. Full Linux suite reached
-296 tests OK, with no Windows symlink skip. Final allowlisted image also passed all 296 tests (79.426s), no skips.
-See OPERATIONS_ROADMAP_REVIEW.md. Native focused backup/preflight tests:20 passed. Repaired
-concurrency scenario was run five separate times successfully; an initial repeated
-label command was deduplicated by Django and is not counted as five runs.
-
-The SQLite last-slot test now accepts only documented no-handoff busy exhaustion,
-then reconciles the same losing key after workers finish and still proves exactly
-one provider call/attempt/quota claim. Added deterministic exhausted-lock regression.
-No automatic provider retries or delivery-service policy changes.
-
-Reusable verify_private_backup validates completion, hashes, SQLite and bounded safe
-archive inventory, and optionally restores into a new private folder only. Its
-actual independent local restore of the private release snapshot passed:12 files.
-Container path guards now recognize a packaged /app without treating its parent /
-as all application data; missing Git provenance explicitly records unverified.
-Fresh .env example fixes blank mail backend and local trusted-origin setup.
-Read-only release_preflight validates clean exact SHA, reviewed migration delta and
-build references; actual clean-checkout execution occurs after its package commit.
-No fetch/install/migration/activation is performed by that planner.
-
-Frontend locked install/lint/102 tests/build passed in the isolated Node24.19 runner.
-New render boundary offers explicit reload for obsolete lazy chunks, without echoing
-exception text, clearing authentication or retrying mutations. The final build is committed
-as the last package commit (c2d5b48). Historical Checkpoint2 checklist is archived, not deleted.
-Provisional AJ-42–AJ-52 requirements prepared; test integrations and live services are
-not claimed complete. Daily backup scheduling is active; first scheduled run pending.
-
-## Account export package — local, 21 October 2026
-
-Branch codex/jira-account-privacy from93da116 adds the operator-only
-export_account_data command, not a public endpoint or account erasure. Six focused
-tests pass; full native Django suite302 OK with one Windows symlink skip (173.220s).
-System check and migration drift passed. Explicit Node24.19 locked installation,
-lint,102 component tests and verification build passed; no frontend source changed.
-No production user export, deletion or real email was performed. See
-ACCOUNT_DATA_OPERATIONS.md. AJ-25 remains unfinished until erasure, partial-file
-failure/retry and restore-ledger replay are implemented/tested.
-
-PR28 post-merge CI and normal ingestion both succeeded. Ingestion evidence:
-https://github.com/michael-mathenge/ajiri/actions/runs/39501474386
-AJ-35 and AJ-36 were marked Done and reread after deployed evidence.
-
-
-## Alert consent package — local, 21 October 2026
-
-Continues codex/jira-account-privacy. Adds explicit choice evidence and confirmation
-UI, a purpose-bound30-day confirmed unsubscribe, authoritative ledger reservation
-checks and new-profile email-OFF default. Existing values are not backfilled.
-Legacy profile email payloads fail with an actionable field400 instead of silently
-claiming consent. In-app remains independent. Console matching no longer marks
-emails sent; live alert transport stays disconnected pending its owner pilot.
-See ALERT_CONSENT_OPERATIONS.md for server order and rollback constraints.
-
-Focused backend45 tests passed before final migration/late-revocation additions.
-Initial frontend regressions exposed obsolete profile fixtures; corrected mocks and
-separate-choice assertions then passed11 focused tests. Final locked Node24.19
-install/lint/all105 component tests/build passed. Final Linux suite310 tests passed
-in80.766s, no skips. System check and migration drift passed again. The earlier
-native308-test run failed the obsolete profile-preference journey payload; the
-updated fixture and all new tests are included in the successful Linux310 run.
-No production consent was inferred or recorded and no real alert email sent.
-
-
-## PR29 deployed — 21 October2026
-
-Merged/deployed4fa75b5541b6998767b90d97e5e6dfe659840280 after all four PR and
-post-merge CI checks passed. Fresh backup085718Z-d9b17894 passed server/off-server
-isolated restore:12 files/212184 bytes. Only profiles.0007 applied; no pip install.
-SQLite reordered profile columns; positional comparison was replaced with explicit
-column-name comparison. Every historical row value was preserved; only one model
-content type/four permissions plus migration history were added. No inferred consent.
-Live health/login/unsubscribe200/HSTS300 and exact index/assets passed; owner
-profile/jobs/applications reads200 and legacy consent status false. App and both
-prior-active workflows resumed and reread active. Normal ingestion succeeded:
-https://github.com/michael-mathenge/ajiri/actions/runs/39573917686
-No production consent, export, erasure or email was created for QA.
-
-## Verified erasure package — in progress locally
-
-Branch codex/jira-account-erasure from4fa75b5. Dry-run-first verified requests,
-signed private prepared/completed journal, dependency-ordered row cleanup,
-explicit session/JWT removal, resumable private-file cleanup and old-snapshot
-replay. Shared jobs/skills/global quotas remain. Actual owner erasure/legal checks
-remain per-request prerequisites, not broad feature authorization.
-
-Focused28 backend tests passed after correcting synthetic destination/sender
-fixtures and explicitly handling SimpleJWT's retained OutstandingToken rows.
-Backup automatically includes a bounded erasure-ledger.zip when its configured
-private directory exists; verifier checks hashes/members and isolated extraction.
-No keys/environment files are copied. Daily automation prompt updated conditionally;
-no actual user erasure or production ledger was created. Full Linux321 tests passed
-(107.867s), no skips; system check/migration drift passed. Explicit Node24.19
-locked install/lint/105 component tests/build passed; generated bytes exactly match
-the committed build. No new dependency or migration. AJ-25/26 are In Progress;
-AJ-26 still requires gated real transport/pilot and unsubscribe footer integration.
-
-
-## PR30 deployed — 21 October2026
-
-Required PR/postmerge CI checks passed; deployed9efd1f0fb99b7d8b66180c1e4b6ed6ac8705501b.
-Fresh snapshot092614Z-bb36a5ed passed server/offserver isolated restore12 files212184
-bytes. No migrations/dependency install. Live health/login/unsubscribe200/HSTS300,
-index exact; owner profile/jobs/applications/alert-preferences reads200. Backup and
-erasure inventory dry runs passed with no journal/account mutation. Writers restored
-to prior active states and verified. Normal ingestion succeeded:
-https://github.com/michael-mathenge/ajiri/actions/runs/39577369558
-AJ-25 completed from implementation/test/deployment evidence; actual user erasure
-still requires a specific verified request and legal/recovery prerequisites.
-
-## Owner alert pilot — local, not activated
-
-Branch codex/jira-alert-delivery from9efd1f0. Default-off synthetic owner-only
-Brevo bridge with shared budgets, stable per-notification receipt, signed unsubscribe
-footer and final consent/configuration recheck. Hidden inactive synthetic fixtures;
-normal ingestion cannot send. Profile UI distinguishes saved consent from disabled
-mail delivery. No production fixture, consent or email created. See OWNER_ALERT_PILOT.md.
-Focused13 tests passed before the final late-revocation regression. Final Node24.19
-locked install/lint/106 component tests/build passed. Full Linux328 tests passed
-(115.572s), no skips; system check and migration drift passed. No new dependencies
-or migrations. Owner consent and actual inbox/unsubscribe evidence remain pending.
-
-## PR31 deployed and owner alert pilot — 21 October 2026
-
-Deployed40c1ea0507b8c39fff604dc2601eb8fd48ea9b0e after four required PR checks
-passed. Snapshot094933Z-aee31c01 passed server/off-server isolated restore,
-12 media files/212184 bytes. No migration or dependency install. The owner personally
-saved current verified-address consent. One hidden synthetic notification was
-handed to Brevo once; provider acceptance and subsequent owner inbox confirmation
-were recorded separately. Owner confirmed successful unsubscribe; production
-read-only checks verified the unsubscribe event, preference/eligibility false and
-ALERT_EMAIL_ENABLED=False. No real job/employer message was sent. Link-preview
-no-effect behavior has automated coverage but no independent live observation.
-AJ-17/AJ-26 remain In Progress: normal alert/application sending is disconnected.
-
-## AJ-27 browser acceptance package — in progress
-
-Branch codex/jira-browser-journey from40c1ea0. Optional pinned Playwright runner
-drives the committed React client and disposable Django live server at a mobile
-viewport. Covers registration/login, profile, explicit CV approval/selection,
-private downloads, application preparation/review and no provider/ledger effects.
-Managed sending remains untested/unavailable; AJ-27 is not complete.
-
-21 October commands: native `manage.py check` and `makemigrations --check --dry-run`
-passed; `manage.py test --noinput`:328 tests OK in221.061s, one Windows symlink skip.
-Node24.19 `npm ci --offline`, lint,106 component tests and build passed; hash comparison
-found zero committed-build mismatches. No frontend bytes changed. Browser dependency
-installation stalled downloading the official38.7MB Windows wheel; explicit browser
-run is UNVERIFIED locally until installation succeeds. The ordinary suite deliberately
-does not discover the optional module. Michael separately approved the additive
-isolated browser CI job; existing four required checks remain unchanged. CI result
-must be recorded before merge. No runtime dependency, migration or sending change.
-
-First Linux browser run reached the job selection step and exposed an incorrect
-test assumption: the approved current CV is intentionally displayed by default.
-The test now clears that selection, verifies preparation is disabled, then selects
-the displayed approved version and submits explicitly. Product behavior is unchanged.
-The corrected browser job passed on Linux at b02d2b7 in run39599872379. AJ-27 stays
-In Progress because successful managed sending is not implemented/covered. Local
-Windows browser execution remains UNVERIFIED; CI evidence is recorded separately.
-
-## PR32 merged — browser acceptance
-
-Merged0fa07d58b59069881903c9e160cdb6accf122fe8 after all five checks passed on
-final head a6ae1ac. Post-merge run39600606759 also passed all five checks. This
-test/documentation-only package needs no production reload; production source
-remains40c1ea0 pending a functional release. AJ-27 stays In Progress for managed
-sending coverage. The first failed browser notification was superseded by the
-corrected green runs, not ignored or bypassed.
-
-## AJ-28/AJ-30 quality baseline — in progress locally
-
-Branch codex/jira-quality-baseline from0fa07d5. Adds optional pinned development
-requirements, Ruff correctness scope, ESLint, changed-file Prettier hooks (opt-in,
-no Git hook/config installation), branch coverage and an explicitly nonblocking
-legacy mypy report. Unexpected checker failure still fails; three wrapper regression
-tests passed. One Node hook-safety test passed (bad syntax/formatting/outside path,
-no automatic file rewriting). Node24.19 locked install/Oxlint/ESLint/106 component
-tests/build passed; build bytes and runtime lock versions are unchanged. Ruff
-passed across backend and tooling. CI quality job separately approved by Michael.
-
-First full native coverage run:328 tests, one failure and one Windows skip in268.778s.
-The failing concurrency test used mutable helper preflight during concurrent dispatch
-and wrongly required immediate success despite the service's documented bounded
-SQLite no-send busy response. Workers now use the same frozen service request;
-only the exact busy response is permitted, only with one durable receipt/provider
-call/quota reservation. Reconciliation after workers finish must read that same
-receipt without another handoff. Both concurrency regressions passed in five
-independent coverage runs. Full coverage rerun/report pending. DeliveryService,
-auth, sending eligibility, runtime dependencies and production were not changed.
-The full rerun passed328 tests in252.999s with one Windows symlink skip; report/XML
-were generated in the ignored verification directory. Initial combined coverage
-was88.85%; final reporting excludes the synthetic cv_test_helpers fixture and is88.82%.
-No production code was excluded to raise the result. Native mypy/pre-commit remain
-UNVERIFIED while their large tool downloads finish; the approved CI job must verify
-them and retain reports before merge. New author/committer identity will be checked.
-
-Subsequent verification: native pre-commit config validation passed; mypy ran and
-reported199 legacy findings (nonblocking, not clean). All six PR33 jobs passed at
-ab48abc in run39614901653, including the new quality job. Linux coverage88.96%,
-197 legacy type findings. API verified the finalized quality-reports artifact
-ID12351314400,14469 bytes, expiry28 October2026. Ruff/ESLint/changed-file hooks and
-all safety regressions passed in CI. No hook installation/Git configuration mutation.
-The temporary Linux download helper was stopped; Docker lesson/user data preserved.
-
-## PR33 post-merge verification
-
-Merged20939e35f9d9a47494868056b728027318bd7fed. All six post-merge checks
-passed; AJ-28 and AJ-30 updated to Done from this evidence. Development tooling
-only; recorded production remains40c1ea0, with no unnecessary reload.
-
-## AJ-29 accessibility and performance — in progress
-
-Branch codex/jira-accessibility-budgets from20939e3. Michael explicitly approved
-extending the existing browser CI job, locked Node test tools and sanitized
-seven-day reports. Adds axe rules on the synthetic application journey and public
-light/dark pages; no production account, mail or private document audit. Lighthouse
-uses three mobile runs per public page and checks each median against measured
-initial budgets. Raw Lighthouse reports stay local; only numeric summaries upload.
-
-Actual local commands: system check and makemigrations --check --dry-run passed.
-Node24.19 npm ci passed (360 packages, audit zero vulnerabilities); Oxlint, ESLint,
-one hook-safety test,106 component tests and build passed. Rebuilt bytes match
-committed frontend_build; no generated change exists to commit. Ruff passed.
-Three malformed-report/budget regressions passed. Measurement-only Lighthouse
-reported a skip; the subsequent enforcing test passed in91.159 seconds. Login and
-register median performance81/81, LCP3673/3714ms; this is a regression baseline,
-not a good-vitals claim. Local axe remains UNVERIFIED without its optional Python
-browser SDK; approved Linux CI must execute it before merge.
-
-The first full backend attempt hit Windows sandbox temp-directory permission
-errors (confirmed with a focused export test); it was stopped. The full synthetic
-suite is rerunning with normal filesystem access. No runtime dependencies,
-production configuration, database migrations or sending activation are changed.
-Full backend rerun passed331 tests in259.710s, one known Windows symlink skip.
-Pre-commit configuration and changed package JSON formatting also passed.
-
-## First browser CI findings and local repairs
-
-Run39619837635 correctly failed on brand/job-link accessible names that omitted
-visible words and inline links distinguishable only by colour. Accessible names
-now include those visible words, the brand text has an actual word separator,
-and ordinary inline links are underlined. Axe rules are unchanged. The complete
-local browser suite subsequently passed (two tests,20.841s), including14 axe scans
-and the full synthetic register/CV/application review journey. This supersedes the
-earlier unavailable local-browser result. No sending occurred.
-
-The same Linux run failed to execute Lighthouse before reporting a measurement;
-it is NOT a budget pass. Sanitized execution diagnostics now strip URLs and paths
-before logs; a regression verifies that stripping. Raw reports remain local.
-The backend rerun passed332 tests in262.432s, one known Windows skip. Linux
-Lighthouse execution remains unresolved until the next CI result.
-Final frontend rerun passed108 component tests, Oxlint, ESLint and the hook-safety
-test. System check/migration drift and Ruff passed after the fixes. The frontend
-build now changes for the demonstrated accessibility repairs and will be committed
-last, replacing only verified generated assets. No runtime library versions changed.
-
-## AJ-29 merged and CI acceptance complete
-
-PR34 merged8d84a2e85caea3d032f88bd860be9e43f6e2906a after all six checks
-passed on f623f05. Post-merge all six also passed. Linux browser suite:three tests
-OK in80.821s; sanitized artifact12354702670,1004 bytes, SHA256
-34beca13d94528fe029b118c5edd158cbbbedb64e5281559b1e94d27dd8b75e8,
-expiry28 October2026. Initial Lighthouse launch failure did not recur on final or
-post-merge runs; its cause is unknown. No budget was relaxed. Local enforcing
-Lighthouse after the UI repairs also passed in101.407s. AJ-29 is Done for its CI
-acceptance; accompanying label/link fixes await production release. Production
-remains40c1ea0. Rebuilt final client bytes were independently reproduced exactly.
-
-## AJ-32 query data layer — local verification in progress
-
-Branch codex/jira-query-data-layer from8d84a2e. TanStack Query5.104.5 replaces the
-custom read hook on six existing page types. API paths key shared/cancelable reads;
-cache is memory-only,30s fresh/five-minute inactive expiry. Writes invalidate reads;
-no automatic mutation retry. Same/cross-tab account changes discard cached private
-data. Axios auth interceptors/cookies and sending authorization semantics unchanged.
-On-demand document review/reconciliation remains explicitly fresh.
-
-Locked Node24.19 npm ci passed362 packages/audit zero. Oxlint/ESLint,113 component
-tests (including five cache isolation/retry regressions), hook safety and build
-passed. Added a further user-facing skill-save/match refresh regression; final
-component rerun pending. An initial component run caught invalidation hooks in the
-wrong review/send wrapper scope; corrected in the actual session components and
-all existing review/send regressions then passed. Backend system check/migration
-drift passed; full suite and real-browser/axe/Lighthouse gates are running.
-Full backend suite passed332 tests in272.260s with one known Windows skip.
-Final component suite passed114 tests, including actual skill-save/match refresh.
-The browser journey's two tests/14 axe scans passed, but its combined run failed
-on Lighthouse NO_NAVSTART trace recording (not a budget result). Added one explicitly
-recorded fresh-browser retry for that upstream recording error only, bounded once
-per suite. Regression assertions reject further retries, successful results and
-other error codes; no performance limits or app-mutation retry rules changed.
-The focused guards and enforcing performance rerun are in progress.
-Focused report/trace guards plus enforcing mobile performance passed five tests
-in104.908s. Exactly one NO_NAVSTART trace retry occurred and was recorded; all
-three valid measurements per page still met unchanged budgets. No other errors
-or metric failures are retried. The complete browser journey/axe portion had
-already passed in the combined attempt; its performance failure was explicit.
-
-## PR35 deployed — 21 October 2026
-
-Merged46c7ea7c41ddad6831d5399af289385bc7d38da8 after all six checks passed
-on2d36957; all six post-merge checks also passed. GitHub's required Python3.12
-status briefly lagged successful job completion; one rerun was requested and the
-actual required status became green before merge. Official GitHub status reported
-a concurrent pull-request/webhook delay incident; no gate was bypassed.
-
-Private snapshot backup-20261021T152829703338Z-5ad371d9 from40c1ea0 completed with
-writers paused; both workflow states and the enabled web app were promptly restored
-before download. Server and independent local verification checked hashes, SQLite
-integrity, safe archive inventory and isolated restoration:13 media files/224960bytes.
-The off-server copy and sanitized receipt are retained under the owner's private
-AjiriBackups directory. Bundle SHA256:
-6766aa886e20dbce7c2ab8a2597fa6b35a5069f897bcbc60c9f69d56be369895.
-No retained data was pruned; erasure ledger was not present in this snapshot.
-
-A second short writer pause staged exactly46c7ea7 after source-clean/ancestor guards.
-The first staging attempt safely stopped outside the Git repository; explicit cd
-and workon corrected the console context before any checkout. release_preflight:
-no expected migrations, pip_install_required=false. Production system check passed,
-no migration drift, no planned operations. Native HTTPS/proxy-header-None/HSTS300/
-subdomains-off/preload-off and alert flag OFF were asserted. Reloaded web app;
-live health returned200, and login HTML plus referenced assets matched release
-bytes exactly. Original enabled web app and active ingest/sweep workflows restored.
-
-Public browser smoke shows the new Ajiri Kenya accessible home label and login
-screen. After the owner signed in, jobs, profile, CV builder and applications
-loaded successfully. Uploaded and approved CV downloads were nonempty valid DOCX
-archives. No profile edits, approvals or sending actions were performed. Ingest
-and sweep workflows were independently confirmed active. AJ-32 moved to Done.
-No password was requested in chat. Rollback: pause writers, return source to40c1ea0, check/reload and
-restore prior writer states; retain live data and existing private configuration.
-No migration reversal or routine old-database restoration is needed.
-
-## AJ-33 forms � local verification in progress
-
-Branch codex/jira-forms-validation from deployed/fetched46c7ea7. All nine form
-elements now use React Hook Form7.90.0 and Zod4.6.7 Mini through a shared resolver.
-Incomplete CV drafts, explicit approvals, alert choice replay and all server
-messages are retained. Native-validation replacement exposed a partial-date gap;
-schema date validation and its regression corrected it. Async validation exposed
-a cooldown timing race; an immediate recovery guard plus shared duplicate-submit
-lock prevents delayed/duplicate requests. Login pending-state test now awaits
-validation before asserting its disabled state. Initial full component run failed
-three tests, then a second caught the date issue; focused CV/schema19 tests pass.
-Final full gates running. Backend check and migration drift pass; no migrations.
-Dialog primitives moved into private screen chunks to retain unchanged mobile
-performance budgets. No production activation or live email for this package yet.
-
-AJ-33 final gates: system check passed; no migration drift; full Django332 tests
-OK/one known Windows skip,275.562s. Explicit Node24.19 locked npmci364 audited
-packages/zero vulnerabilities. Oxlint against real source, ESLint, hook safety,
-Prettier changed-file checks and123 component tests pass. Ruff and hook config
-validation pass. Public bundle first failed transfer budget at516410/513498bytes;
-dialog splitting alone was insufficient. On-demand toast primitives corrected the
-actual cause without changing limits; notification display/dismissal regression
-passes. Final three Chromium/axe/performance tests pass; login/register medians:
-79/77performance,4005.551/4029.118ms LCP,137/185.5ms TBT,CLS0,483000/480088bytes,
-zero trace retries. Subsequent build matches exact committed-target bytes.
-No schema migrations, server dependencies, auth-interceptor, ingestion or CI edits.
-
-## AJ-34 API contract � local implementation
-
-Separate branch codex/jira-api-schema from46c7ea7 while PR36 runs CI. Additive
-/api/v1 aliases reuse exact existing callbacks; ingestion/sweep stay legacy-only.
-Reviewed static JSON is published at /api/schema; drf-spectacular0.30.0 and pinned
-support libraries are offline-only extras, not production dependencies. Strict
-generation first exposed six annotation warnings; offline model/field/operation
-annotations resolved all without runtime view edits. Generation uses an isolated
-in-memory database and fails on warnings/drift. Four focused compatibility tests
-pass, including real-CSRF cross-version login/refresh and anonymous denial.
-An initial full-suite command from the repository root discovered zero tests;
-that is not a passing full suite. Correct backend-directory run is in progress.
-CI edit was separately approved by Michael and adds strict generation/drift checking
-to the existing quality job; all six check names remain unchanged.
-
-AJ-34 base fast-forwarded to the CI-verified PR36 merge925cff9; no history rewrite.
-Saved API documentation additions were retained while Git restored native line
-endings for the fast-forward. No stash or original-checkout changes. Full Django
-suite336 tests passed/one known Windows skip in296.448s. System/migration-drift
-checks pass. Strict schema generation and independent byte-drift check pass against
-an empty in-memory database. Four new compatibility tests passed; aliases reuse
-every legacy callback and protect private data. Node24.19 lockednpmci364 audited
-packages/zero vulnerabilities, lint,123 component tests and build pass. Canonical
-source hashes match the isolated runner; generated build matches committed bytes.
-No frontend changes in this package. Ruff and hook configuration validation pass.
-No migrations or production dependency changes. Source-only contract contains no
-user records; custom response-object typing limits are explicitly documented.
-
-## AJ-39 keyword search � local implementation
-
-Branch codex/jira-job-search initially925cff9, then fast-forwarded to reviewed
-PR37 merge5ad44a1. Six focused backend tests pass in1.157s and two client tests
-pass. Additive0011 indexes five job text fields with synchronized triggers; rollback
-and rebuild retain original/newer job rows. Search uses bounded literal-prefix
-terms and weighted BM25; existing title/location/type/skill filters remain.
-Read-only production capability check confirms SQLite3.37.2/FTS5 enabled; no source
-activation or migration yet. Real-data timing/relevance acceptance remains pending
-release. Planned threshold and bounded known-title smoke are in JOB_SEARCH.md.
-
-AJ-39 full gates: system check passed, migration drift none; full Django342 tests
-OK/one known Windows skip in268.494s. Node24.19 lockednpmci364 audited/zero
-vulnerabilities; Oxlint/ESLint, hook safety,126 component tests and build pass.
-Six focused search tests pass, including1,001 jobs and rollback; three keyword
-client regressions pass. Ruff, schema validation/drift and Prettier pass. Real
-Chromium/14 axe scans/unchanged mobile budgets: three tests pass in116.729s.
-Source corresponds to the isolated runner; subsequent generated bytes match.
-Mobile medians (login/register):
-{"login": {"cls": 0.0621810541848939, "lcp_ms": 3948.4527999999996, "performance": 80.0, "tbt_ms": 102.5, "trace_retries": 0, "transfer_bytes": 483169}, "register": {"cls": 0, "lcp_ms": 3941.0499999999997, "performance": 79.0, "tbt_ms": 112.5, "trace_retries": 0, "transfer_bytes": 480257}}
-
-No production0011 migration or real-data benchmark yet; release acceptance remains pending.
-
-## AJ-40 installability/offline � local implementation
-
-Branch codex/jira-pwa-basics fast-forwarded from5ad44a1 to reviewed PR38 merge
-5f1fcc33f40fd18335becc29bbfdf07648fb40dd. Only byte-verified generated build extras
-were removed before the fast-forward; public source, original checkouts, Git
-configuration/stash and verification builds retained. AJ-40 acceptance was updated
-under existing Jira authorization because Chrome removed Lighthouse's PWA category.
-A timeout was reconciled by reading Jira; the edit had saved and was not repeated.
-
-Manifest,192/512 PNG briefcase icons, secure production-only registration and
-a generic public offline fallback added without dependencies/hosting changes.
-Only four explicit public assets are cached; API/media/admin/static/non-GET and
-other-origin traffic bypasses the worker. No account data or job payload cache.
-Focused assets/native Chromium installability/offline/private-cache/axe/retirement
-tests pass: three tests in3.813s. Earlier retirement assertions ran before
-asynchronous browser cleanup completed; explicit awaited state polling corrected
-the test without weakening cache assertions. A local-only middleware fixture
-models retirement bytes at the original SW URL for browser-internal updates.
-An unrelated synthetic cache survives. Full combined-main gates are next.
-Manual Android/iOS installation is UNVERIFIED; no production worker activation yet.
-
-22 October verification: the four browser journey/performance tests passed (112.907s). API contract drift after Windows checkout was line endings only: normalized bytes and parsed JSON matched. Added an explicit LF artifact rule; strict byte comparison remains unchanged. Native phone installation remains unverified.
-
-AJ-40 final local gates (22 October): strict offline schema validation/byte drift,
-Django system check and migration drift pass. Full Django suite: 344 tests in
-244.390s, OK with one known Windows skip. Node 24.19 locked installation (364
-audited, zero vulnerabilities), Oxlint/ESLint, hook-safety, 126 component tests,
-Prettier and build pass. Ruff across backend/scripts, pre-commit configuration
-and three release-script unit tests pass. Isolated runner/source correspondence
-and all 32 generated build files match. Four real browser/performance tests pass
-in 112.907s, including offline axe and worker retirement; no trace retries.
-Lighthouse login/register medians: score 78/78, LCP 4158.259/4152.536ms,
-TBT 134/128.5ms, CLS 0/0.03643, transfer 484615/481703 bytes; unchanged budgets.
-No new runtime dependency or migration. Generated frontend is committed last.
-Production remains 46c7ea7 until the separately verified batch activation.
-
-## 22 October batch activation and search follow-up
-
-PR #39 merged at 084e4e3a97dccf5941ccdf40a3ee7d65812b2df8 after all six
-checks passed for 9c95f69990d37abf2785c82a7b3380a0e8716a77. PRs #36–#39
-are now deployed. Preflight identified only jobs.0011_job_full_text_search and
-pip_install_required=false. Actual check/drift passed; migrate jobs 0011 applied
-successfully and subsequent plan was empty. HTTPS health/HSTS300, v1 health,
-exact released HTML/assets/schema and all six PWA resources passed. A transient
-502 during worker startup cleared after the normal reload; health then passed.
-Authenticated jobs (877), keyword python (14 results), profile and owner uploaded
-CV download passed; downloaded DOCX checked structurally without content inspection.
-Security and alert-off flags preserved. Both writer workflows were restored active.
-
-Actual account quota was 326.1/512 MB before backup. Fresh complete snapshot
-backup-20261022T002304830379Z-8c22008e was verified on-server and independently
-off-server with SQLite integrity and safe isolated restoration:13 files/224960 bytes.
-Bundle971905 bytes, SHA256
-0ecd0664654822d837bd5d7a44c7212d6b1315240ae3014f114210761aa2bc6f.
-Sanitized receipt/private copy retained outside Git. Writers resumed before download.
-No retained backup was deleted. Rollback keeps additive index/newer writes; retire
-PWA at original /sw.js as documented rather than simply deleting the worker.
-
-Production read-only benchmark (20 runs/query): active877; sampled-title top5 recall
-12/12. Median/p95 ms:15.473/27.267,33.215/84.179,120.579/243.216,3.040/3.695.
-The third broad query exceeded the working200ms p95 target; AJ-39 stays open.
-Follow-up branch codex/jira-search-tuning replaces correlated per-row MATCH with
-one parameterized FTS join, preserving BM25 weights and stable tie-breakers.
-All six focused tests pass (0.440s). The 1001-row regression now checks the actual
-ORM plan has one virtual-table scan, no correlated scan and no duplicate rows.
-Full gates and repeated production measurement are pending for this follow-up.
-
-Read-only candidate-join production measurement (no files/config/data changed,
-20 runs per fixed query) returned the same14/20/20/20 rows. Median/p95ms:
-1.921/2.250,2.404/2.723,20.425/24.546,2.226/2.503. This supports the focused
-query fix but is not a claim that the candidate source is already deployed.
-For this package, Node24.19 locked npmci364 audit/zero vulnerabilities, lint,
-126 components and build pass; all32 generated files remain byte-identical.
-Strict schema/drift and Ruff pass. Full Django result pending.
-
-Search-tuning final local gates: full Django344 tests OK/one known Windows skip in261.554s; system check and migration drift pass. Node24.19 locked npmci/lint/126 components/build pass, all32 generated files unchanged. Strict schema drift, Ruff, pre-commit configuration and three release-script unit tests pass. No migration, dependency, frontend or hosting change.
-
-## Search tuning activation and Lighthouse tracing follow-up —22 October
-
-PR40 head5355b268de11539761519ef3a283134fc396b423 passed all six required checks;
-merged/deployed0678f404008ccb5c989ee7175f44b86c5a390b3f. Fresh consistent snapshot
-backup-20261022T004104447568Z-eb8b978a independently verified off-server, including
-SQLite integrity and isolated13-file/224960-byte media restoration. ZIP3226588
-bytes/SHA2566ad06d3189844e6be8cdb1eb0ddae61085a413a9fd4b6da658e340206d7155de;
-private receipt outsideGit. Writers resumed during download and restored again
-after activation. Preflight: no migrations/pip install; check/drift/plan pass.
-Deployed20-run median/p95ms:2.172/2.624,2.850/3.618,23.104/26.591,2.369/2.623.
-All below200ms; sampled-title recall12/12 on877 jobs. HTTPS/HSTS300/v1 health,
-unchanged HTML and authenticated python14-results smoke pass. AJ39 markedDone.
-Normal ingestion run39700541409 succeeded after the original index migration.
-
-Post-merge main browser run39699269065 failed NO_NAVSTART; one job rerun also
-failed. Main run39701044424 failed the same trace error. Five other main checks
-passed; both reviewed PR heads had all six checks green. These are not metric
-passes. Upstream issue https://github.com/GoogleChrome/lighthouse/issues/15382
-records missing main-thread trace events, but the cause here is not yet proven.
-Follow-up codex/jira-lighthouse-tracing captures local synthetic trace assets and
-uploads only allowlisted event counts plus parsed public browser version through
-the existing summary artifact. No raw trace, URLs, event args or source uploaded;
-no workflow edits, budget relaxation or additional retry. A unit regression checks
-that private synthetic args/event names/IDs cannot enter diagnostics. Diagnostics
-are evidence collection, not a claimed root-cause fix. Managed sending remains off.
-
-Tracing diagnostics local gates: five focused guard tests pass; full Django345
-tests OK/one known Windows skip in267.008s, check/drift/schema/Ruff pass. Real
-Chromium journey plus unchanged performance budgets: four tests pass128.565s,
-zero trace retries. Login/register medians:score77/77,LCP4145.900/4192.518ms,
-TBT157/154.5ms,CLS0/0,transfer483521/481677bytes. Node24.19 lockednpmci364/zero
-vulnerabilities,lint,126components/build pass. This native run did not reproduce
-NO_NAVSTART; diagnostics remain collection capability, not a proven repair.
-
-## AJ17/AJ27 synthetic managed sending integration — local preparation
-
-Branch codex/jira-managed-send-pilot, base034f2a70562d9fe2a5620d39013b866ad4ac74c3
-(PR41 diagnostics merged after six green checks; no production activation needed
-for test-only diagnostics). Production remains0678f40. New route is off by default
-and reuses account owner configuration/shared ledger; only inactive synthetic jobs,
-exact verified owner recipient/Reply-To, two approved DOCX bytes, no copies/redirects.
-Preparation command defaults to dry-run, creates an idempotent blank hidden draft
-only with --create, never document approval/authorization/mail. Public job/matching
-rules remain unchanged. Narrow inactive-job editing is permitted only for the
-configured verified owner pilot; ordinary closed jobs remain blocked.
-
-Initial fixture failures exposed the normal active-job edit gate and a cached
-Profile verification relation. The narrow pilot gate preserves inactive public
-exclusion, and eligibility now reads current Profile evidence. All eight focused
-HTTP tests passed3.630s, including pending concurrent replay/one provider call,
-unknown outcome, off-mode/no credential reads, final owner revocation, shared
-budget exhaustion and non-owner/real-job rejection. Additional preparation/browser
-checks and full final gates remain pending. Two component wording assertions were
-updated after removing false unconditional 'no email from this page' wording;
-all126 then passed, with default-off behavior assertions retained.
-No real provider call, production flag, migration, push or pilot activation yet.
-
-Managed-pilot final gates: nine focused HTTP/command regressions pass3.213s.
-Full final Django354 tests OK/one known Windows skip237.099s; system/migration
-drift and strict offline schema byte check pass. Explicit Node24.19 lockednpmci
-364 audit/zero vulnerabilities,Oxlint/ESLint,126components,hook-safety,Prettier,
-build pass. Ruff/pre-commit configuration/three release-script unit tests pass.
-Real new send journey passes8.503s with fake provider only. Combined five browser
-journey/performance tests passed140.515s, but logged one unexpected CV-list500.
-Strengthened both authenticated journeys to assert no500 responses and settle
-pending requests before context teardown. Repeated combined suite passed132.826s
-with no server-error responses; no production defect is inferred from that earlier
-unexplained log. Mobile medians login/register:score77/77,LCP4172.948/4186.079ms,
-TBT146.5/154.5ms,CLS0/0,transfer484589/481677bytes,zero trace retries; budgets unchanged.
-Source/isolated-runner and32 generated files match; subsequent build matches bytes.
-Generated frontend is final package commit. No real inbox delivery claimed.
-
-
-## Resumption - 23 October 2026
-
-Remote main remains8d0b276 (PR42). Read-only PythonAnywhere console confirms
-clean deployed0678f40; PR42 is not deployed. Actual account quota360.9/512MB.
-Ingestion and sweep were found disabled from the interrupted release; both were
-restored to their recorded prior active states and independently confirmed active.
-No code/database activation or real application email occurred during recovery.
-
-AJ42 continues on codex/jira-public-jobs, base8d0b276. Seven focused synthetic
-public-page/sitemap/privacy tests pass0.304s; system check and migration drift
-pass. An initial template encoding defect was fixed. Publication remains off.
-Node24.19 retained runtime: locked npmci364 audit/zero vulnerabilities,126 component
-tests and build pass; explicit source lint, ESLint and hook-safety test pass.
-Initial sandboxed backend run produced storage errors and stalled; interrupted,
-not counted as a pass. Full suite restarted with ordinary temporary permissions.
-No new commit, push or deployment yet. See docs/PUBLIC_JOBS.md.
-
-AJ42 final local gate: full Django361 tests OK/one known Windows skip265.815s
-with ordinary temporary-folder permissions. Strict offline schema bytes pass.
-Frontend source matches the verification copy after CRLF normalization and all32
-build files match byte-for-byte. No frontend changes or generated-build commit
-needed for this backend-only package. Public rollout remains disabled pending
-the newly approved shared freshness and employer-review implementation.
-Michael approved hiding unverified RSS jobs, mandatory employer deadlines/staff
-review and no seeker application charges; see docs/JOB_TRUST_AND_FRESHNESS.md.
-
-
-### 23 October 2026 - vacancy trust/employer package (local, unreleased)
-
-Approved policy: hide unverified RSS entries; independent staff review of employer
-and vacancy, mandatory closing date, no seeker application payment. Shared
-eligibility now protects listing/detail, matching, alerts and new preparation.
-Unknown old entries archive as unverified; RSS evidence has a 24-hour maximum age.
-Additive jobs.0012/0013 preserve records. A demonstrated SQLite table-rebuild
-search-trigger loss was fixed by making the optional application URL nullable;
-migration/search regressions passed. No historical migration was changed.
-
-Actual gates: manage.py check and makemigrations --check --dry-run passed;
-manage.py test --noinput passed 378 tests in 331.276s, one platform skip.
-Node 24.19 locked installation was retained; all 132 components passed in 68.63s.
-Oxlint/ESLint passed after removing an unused import. Vite build passed in 2.53s;
-34 generated files were checked against the isolated dist. Offline schema
-generation/validation with --fail-on-warn passed; Ruff and diff whitespace passed.
-The first employer browser run used the wrong login label; its locator was
-corrected to the actual accessible label. Final browser/CI/deployment pending.
-
-A fresh source-0678f404 private snapshot, exact off-server ZIP, member hashes and
-isolated SQLite/media restore were verified before release work; writers were
-restored before local download. Receipt is outside Git. This fallback is not
-evidence that the unattended daily automation executed a new snapshot.
-
-Final employer/browser gate: all seven journeys passed in 187.825s, including
-independent staff approval, correct application portal, owner withdrawal and
-48 concurrent authenticated reads. Source matches the tested frontend runner.
-PR43 merged at 31f445c after all six checks passed on ac0dfb1. The current
-feature branch will integrate that prerequisite before its own required-check PR.
-Mobile performance and remote deployment are still pending.
-
-
-
-PR43 browser CI39938811588 failed a job-detail500 during the registration/CV
-journey; the other five checks passed. No merge or deployment performed. Added
-synthetic-only database exception class/SQLite-code diagnostics without messages,
-queries, URLs or personal data. Local focused browser journey passes36.250s; this
-did not reproduce the intermittent failure and is not a claimed root-cause fix.
-Full backend361 tests pass/one known Windows skip302.676s after this test change.
-
-Second PR43 browser run39941160882 failed cv-version-list500; database-only
-diagnostics were empty, so a database-lock cause is not established. Expanded
-synthetic diagnostics to allowlisted exception kinds and repository-relative
-source line references only; no exception messages or local variables. Local
-focused journey passes34.732s; full backend361 tests pass/one skip278.705s.
-Root cause remains unverified; merge stays gated on all checks.
-
-All four local browser journeys pass126.183s. Added immediate sanitized logging
-capture so errors before a final browser assertion are still observable. A focused
-privacy regression passes0.582s and verifies that exception messages and absolute
-paths never enter these synthetic diagnostics. Production logging is unchanged.
-Full backend361/one skip278.705s remains the package baseline; required CI will
-rerun the final harness. No merge on a failed browser check.
-
-
-### 23 October 2026 - browser database isolation (local, unreleased)
-
-PR #43 browser failures exposed SQLite error 21 under threaded HTTP.
-The browser-only runner now allocates a disposable file database, preserving
-normal unit-test discovery. Five existing browser journeys passed in 139.130s;
-a separate 48-request/four-worker authenticated-read regression passed in 2.419s.
-The initial local rerun lacked AJIRI_FRONTEND_TOOLS and failed accessibility
-setup; corrected to the existing locked tool directory before the passing run.
-No HTTP assertions, provider assertions, budgets or CI check names were relaxed.
-Full backend verification and remote CI remain pending for this revision.
-
-Final local runner gates: manage.py check and makemigrations --check --dry-run
-passed; full ordinary Django discovery passed 361 tests in 303.252s (one known
-platform skip). Ruff and git diff --check passed. No frontend source changed;
-the previously verified locked install/lint/components/build remain unchanged.
-
-Local performance gate is UNVERIFIED: browser_tests.performance failed after
-145.138s with NO_NAVSTART, including its one allowed fresh-process trace retry.
-A recorded trace contained navigationStart but Lighthouse rejected the capture;
-no metric or budget pass is claimed. Sanitized local evidence remains under
-.verification/performance. Required Linux CI must produce valid passing results
-before merging/deployment. Integration with reviewed main changed only this
-evidence log; tested feature runtime source and browser harness are unchanged.
-
-PR44 initial quality job failed its changed-file Prettier check; corrected
-seven source files. The earlier CLI check ignored files beneath .verification;
-the corrected check targeted all 13 actual source files with an explicit empty
-ignore file. All matched files passed; rebuilding preserved all 34 generated
-bytes exactly. No functionality/assertion/CI changes. Required CI rerun pending.
-
-
-### 23 October 2026 - AJ53 production activation verified
-
-PR44 merged after all six checks passed at c7a00bc; source deployed is
-2a301f049cdcb66920cd71abd0b00a4fea24c35a. CI40011465224 browser/performance
-ran eight tests in 96.909s and passed. Local Lighthouse failure is retained.
-Fresh snapshot backup-20261023T193233766316Z-2688f170 was verified server-side,
-then exact-member ZIP SHA, private off-server copy and isolated restore passed
-(13 files,224960 media bytes). Private receipt retained outside Git. Writers
-restored before download; no retention deletion. Actual quota before pause was
-373.3/512 MB. Release ZIP SHA256:
-13117020fd8649203de7aa98d56b96313a6a9548e9eb17fe7f6f966006b9f2a9.
-
-Applied additive jobs.0012/0013 before re-enabling requests. Check, migration
-drift and empty migration plan passed; all three search triggers remain. Strict
-freshness and reviewed posting enabled; anonymous publication remains disabled.
-979 jobs retained; 977 historical active rows archived as availability_not_verified;
-zero eligible vacancies. No claim that these were individually proven expired.
-HTTPS health200/HSTS300, exact index and two employer chunks, clean deployed
-checkout, authenticated empty jobs list and employer form/review notice passed.
-The current signed-in account has no applications; extra real historical-document
-download could not be exercised. Automated document/ownership tests passed.
-Both workflow states restored active and web app enabled. No real employer review,
-application send or broadened email pilot occurred. Current work tracked as AJ53;
-AJ42 stays In Progress because anonymous publication remains gated. Other backlog
-items and general employer onboarding are not claimed complete.
-
-
-### 24 October 2026 � application pipeline deployed; preparation-only repair
-
-PR50 all six checks passed at5824da3 (CI40049180274); deployed source is
-fbae0956f17df25b5d69c9a94f17b9568519e089. Applied jobs.0015 after fresh consistent
-backup backup-20261024T012025757458Z-23b2c6e7. Independent private off-server copy
-and isolated restore passed; ZIP SHA256
-2de7e79dd628aef00c4d9b35a33ef6d2f76821023b0a10ed7f940326e2bf7b6d.
-Legacy application fields/snapshots matched before/after migration. Check/drift,
-empty plan, health200/HSTS300, exact live HTML/application chunk and clean source
-passed. All writers resumed their previous active states. Authenticated list read
-passed but the account had no rows; no real user progress was invented. Local434
-Django/one skip,141 components and nine browser journeys passed as recorded in
-APPLICATION_PIPELINE.md. Payment and inline-queue contracts are included in source,
-not live merchant integrations or a durable worker. Application email stays off.
-
-The attempted sending-enabled reload was rejected by automatic approval review
-before execution: personal document approval and exact send authorization were
-not yet complete. No reload/provider send occurred; persisted sending was returned
-to False. A hidden synthetic draft exists, without new document approvals,
-authorizations, attempts or budget use. The repair branch
-codex/owner-pilot-preparation separates preparation from transport activation.
-Six new regressions plus nine existing dispatch tests passed4.244s. It adds no migration/dependency/frontend change. Initial locked
-Node24.19 install was blocked by Windows sandbox EPERM; dependent tools were
-unavailable in that attempt. Corrected elevated Node24.19 npm ci passed (363 added/364 audited, zero findings);
-lint/ESLint and build2.37s passed. All141 components passed73.08s. Source/runner
-and all36 committed build files matched exactly; no frontend commit is needed.
-Full440 Django tests passed374.277s (one known platform skip); manage.py check,
-makemigrations --check --dry-run, Ruff and strict offline schema drift check passed.
-Required CI and deployment remain pending; failed attempts are retained as evidence. No quota pruning occurred.
-
-
-### 24 October 2026 - preparation-only release and AJ49 work
-
-PR51 all six required checks passed at abe049b (CI40083463571); merged/deployed
-source a47c4eedf571daaaf23d9a55658294d7f0dc74e4. Clean source, system/migration-drift
-and empty migration plan passed; no migration was needed. Today's verified private
-release backup/restore was retained. Actual quota414.2/512MB before release; no
-retention deletion. APPLICATION_PILOT_PREPARATION_ENABLED=True and
-APPLICATION_EMAIL_ENABLED=False were explicitly checked before reload. Health200/
-HSTS300 and authenticated synthetic application editor passed. No provider call,
-new delivery allocation or agent-made personal approval occurred. The owner is
-completing the personal gates; a claimed authorization was not found server-side,
-so transport stayed disabled and the exact UI steps were clarified. AJ50 moved
-Done with deployed refined-scope evidence and the manual empty-list limitation.
-
-AJ49 branch codex/job-moderation-reviews starts from reviewed a47c4ee. Existing
-JobAdmin was reconciled as baseline; new single-job reasoned review and protected
-before/after audit are under test. Additive jobs.0016 creates only the audit table.
-No bulk publication or actual moderation decision. See JOB_MODERATION.md; full
-verification, CI, migration/backup and activation remain pending.
-
-
-AJ49 final local gates: manage.py check and makemigrations --check --dry-run passed;
-full451 tests passed379.607s (one known platform skip). Focused11 moderation/migration
-tests passed2.706s; writer-claim and cache-header corrections are described in
-JOB_MODERATION.md. Node24.19 npm ci audited364/zero findings, lint/ESLint and build
-2.17s passed; all36 committed build files matched. All141 components passed81.08s.
-Ruff, strict schema and three hook-safety tests passed. No frontend source change,
-so no generated-build commit. Required remote CI and activation remain pending.
-The owner personally approved pilot package revision2 after corrected synthetic
-email wording was saved as a new immutable revision; authorization is still a
-separate owner action. No agent personal approval, actual send or quota reservation.
-
-
-### 24 October 2026 - AJ49 deployed; AJ51 offline contract
-
-PR52 merged/deployed as bc456497ac84eea5fb3055a887be3aabb857873d after all six checks
-passed at134d254 (CI40085261401). Fresh backup-20261024T102207298247Z-c787f77e was
-verified server-side and independently off server, then isolated-restored17 media
-files/372876 bytes. Bundle SHA256:
-b0086539e1386f17fb7ff1a7275bbfb6d03e5f77de1cd13adac68df728d9a34d.
-Private receipt remains outside Git. Actual quota414.6/512MB before backup and
-427.9 after; no pruning. Both writer workflows and web returned to prior active
-states before download. A second short pause applied only jobs.0016; all previous
-table row values matched except expected migration/content-type/permission metadata.
-No actual job reviewed or staff access granted. Check/drift/empty plan, health200/
-HSTS300, exact live HTML/entry bundle and clean source passed; writers restored.
-AJ49 moved Done for its bounded first scope. Wider appeal/deduplication is separate.
-
-Next branch codex/analytics-test-contract from reviewed bc45649 implements only
-the approved provisional requirements/test-integration step for AJ51. Eight memory
-contract tests passed0.008s; Ruff passed. No production analytics, consent schema,
-SDK, runtime caller or provider has been added. Full gates and remote CI pending.
-Personal application email authorization remains a separate owner action; current
-APPLICATION_EMAIL_ENABLED=False is preserved. Account security email is unchanged.
-
-
-AJ51 local final gates: full459 Django tests passed332.771s (one known platform
-skip), eight focused tests0.008s, check/drift/Ruff/strict schema passed. Node24.19
-locked install audited364/zero findings; lint/ESLint/build1.96s passed. Source/runner
-and all36 committed build files match. No frontend source or build change; previous
-141-component evidence is not relabelled as a fresh run. No migration, SDK, actual
-consent or production collection. Required CI pending. AJ51 remains In Progress.
-
-
-### 24 October 2026 - analytics contract merged; scanning contract under test
-
-PR53 all six required checks passed at d1378b3 (CI40089298387); merged source
-1cf2d5935ac48cee5f9cdd00f3bc3a51a6435dea is not yet deployed. No live analytics
-activation is intended. AJ51 remains In Progress for its genuine live prerequisites.
-Next branch codex/scanner-test-contract was fast-forwarded from bc45649 to reviewed
-1cf2d59 before full verification. It adds only a synthetic memory quarantine and
-fixture scanner behind existing content validation. Eight focused tests passed
-0.056s; Ruff passed. No production file/scanner/transport/route/migration change.
-See SCANNER_TEST_CONTRACT.md. Full gates, CI and code-only release remain pending.
-
-
-Current live Jira reconciliation:12 unfinished non-Epic stories, complete single
-page/no cursor. ROADMAP_NEXT_ACTIONS.md separates live gaps and external gates.
-AJ47 source blocker additionally confirmed: migration0011 rejects non-SQLite;
-no migration history or host change was made. The isolated bootstrap/search/target
-proposal is in STORAGE_MIGRATION_REHEARSAL.md and is not an executed migration.
-
-
-Scanner package local final gates: full467 Django tests passed329.007s (one known
-platform skip); focused eight0.056s, system/drift/Ruff/strict schema passed.
-Node24.19 locked install audited364/zero findings; lint/ESLint/build2.08s passed;
-source/runner and all36 build files matched. No frontend source/build change or
-new component-pass claim. No production scanning, schema/host change or document
-transfer. Required CI and code-only source deployment remain pending. README links
-the short remaining-actions guide; historic reviews remain evidence, not setup.
-
-
-### 24 October 2026 - verified code-only release and final evidence
-
-PR54 all six required checks passed at2860565 (CI40090201927), then merged/deployed
-source b6cc6af6267bb61aaec3a1a4035c61d1e054d6ea. It includes merged PR53 (all six
-checks, CI40089298387). No migration, dependency or frontend change; the verified
-17-file off-server recovery copy/restore from the moderation window remains.
-Production check/drift and empty plan passed. Before reload, sending False and no
-startup caller for either test contract were checked. After reload, health200/
-HSTS300, exact live HTML/entry bundle and clean source passed. No writer pause,
-production collection, scanner I/O or private-file transfer was needed for this
-code-only batch. The earlier workflows/web remain active. Sending is still False;
-the last read found zero active exact pilot authorizations. Revision2 document
-approval alone does not authorize delivery. No actual send or quota reservation.
-
-Current Jira reconciliation remains12 unfinished non-Epic stories, no next page.
-AJ49/AJ50 have deployed bounded-scope evidence; AJ51/AJ52 remain In Progress and
-AJ47 remains To Do. ROADMAP_NEXT_ACTIONS.md lists the implementation/live gates;
-STORAGE_MIGRATION_REHEARSAL.md records the explicit non-SQLite migration guard.
-No hosting change or migration-history edit was made. No actual legal approval,
-credentials, merchant ownership or user consent was invented. Retention is still
-report-only and original dirty checkout, stash/config and Docker lesson preserved.
-
-This final follow-up changes only documentation; runtime source exactly matches
-the already-tested PR54 package (467 local Django tests/one platform skip; locked
-Node24.19 lint/build and36-file match). Required CI will re-run the full gates on
-the evidence commit before merge. Its results are not preclaimed. No second local
-runtime suite is represented as having run for a documentation-only update.
-
-## AJ47 synthetic PostgreSQL rehearsal — 24 October 2026
-
-Branch codex/postgres-data-rehearsal, base 7c624568bbb4c974f62b5a399bb4ddb6b29c00f1.
-Local package; not yet pushed, merged or deployed. No migration/hosting change.
-Raw fixture restores skip automatic profile creation; normal creation honors its database alias.
-Backend check and migration drift passed; full suite: 469 tests, 329.121s, one known platform skip.
-Seven helper tests passed (0.056s), changed-file Ruff and exact OpenAPI generation passed.
-Initial Windows sandbox Temp ACL failures were resolved by elevated isolated reruns.
-Node 24.19.0 npm ci: 363 installed/364 audited, zero vulnerabilities; Oxlint/ESLint passed;
-Vite build 2.54s, all 36 committed build files identical. No frontend changes.
-Actual isolated PostgreSQL 17.11 rehearsal: 34 models, 161 rows, four private files;
-exact canonical values/relationships, microseconds, FK enforcement, sequences,
-owner-only private downloads and unchanged document bytes passed. No email/provider call.
-Final hash: 142cffa8a232026d864a32c41cd0e384c8df2ee878ab5eff87ac2e35b7179260.
-Source unchanged; no PostgreSQL migration history marked applied. Target network none,
-no host mounts/ports; verified exact ID/label before removal. Only synthetic data used.
-Initial invalid fixture policy corrected; JSON timestamp precision loss fixed with regression.
-Historical PostgreSQL migrations, search parity, object storage, interruption recovery
-and production cutover remain unverified. AJ47 unfinished. Signal rollback is source-only.
-See STORAGE_MIGRATION_REHEARSAL.md. Existing production flags and storage unchanged.
-
-### PR56 verified release
-
-Commit ae160fb882fe57563ce14cde3769309089588b70 passed all six required checks
-in CI40093755045. PR56 merged and deployed/reloaded at
-d940b9f7f86acb3770dddc067aefec3e47d24812 on 24 October 2026.
-Production system check, migration drift and empty migration plan passed;
-HTTPS health200/HSTS300, exact live HTML/entry bundle and clean source passed.
-Application sending False, preparation True and public publication False were verified.
-No schema/data migration, storage cutover or real email occurred. Retained same-day
-backup was reverified (17 files/372876 bytes); its off-server isolated restore receipt
-remains complete. No fresh snapshot or unattended-backup success is inferred.
-AJ47 moved to In Progress with comment10062, not Done. All twelve unfinished
-non-Epic issues remain; actual migration/object storage and personal sending gates
-are unresolved. Original checkout AGENTS hash stayed884B35161A8906E6A881C948D2BA4DF4BB7D29390DB68625DC25B3AF21734C02.
-Only the dedicated synthetic target was removed after exact ID/label verification.
-The latest docs-only followup has no runtime changes; local suite results above
-belong to ae160fb, not a freshly repeated docs-only suite.
-
-## AJ48 actual local Redis/Celery rehearsal — 24 October 2026
-
-Branch codex/queue-broker-rehearsal from reviewed main9a0ce3d531b80cfc26bac3bc8a213fb2806c212b.
-No production task/caller, migration, hosting/CI or runtime requirements change.
-Pinned official Redis image (actual8.10.2), separate Celery5.6.3 worker and synthetic
-SQLite/private files tested a hard exit73 after a durable accepted receipt and before
-acknowledgement. Explicit expired-lease restore and duplicate execution reused the
-same receipt: one captured handoff/attempt/budget; withdrawn authorization denied.
-No real email. Initial denial exception was unclassified by the harness; corrected
-without changing runtime validation. Target network none, loopback-only broker,
-no host ports/mounts; exact created ID/label checked before its removal.
-Backend check/drift passed; full469 tests passed345.569s with one known platform skip.
-Eight helper tests passed0.105s; changed-script Ruff and reviewed OpenAPI match passed.
-Explicit Node24.19.0 locked npm ci installed363/audited364, zero vulnerabilities;
-Oxlint/ESLint passed, Vite build2.08s and all36 committed build files identical.
-No fresh component/manual browser pass is claimed; unchanged runtime covered by suite.
-Local source pending push/CI/release at this entry. AJ48 remains In Progress:
-production target, broker/host crash durability, natural recovery/DLQ operations,
-uncertain provider IO and live sending remain unverified. Rollback removes only the
-unused lab, retaining all authorization/receipt evidence. See QUEUE_BROKER_REHEARSAL.md.
-
-### PR58 merged and production source verified
-
-f2982419467439767f19707b7dcfbef041672958 passed all six required checks in
-CI40095199385. PR58 merged as1c26416493b5808e35e268e00520a7e25378c718.
-Production source synced after verifying no runtime/frontend/CI change (backend docs
-excluded); no reload/worker activation was needed. Runtime remains the verified
-PR56 fixture fix. System check/empty migration plan and health200/HSTS300/exact live
-HTML/entry bundle/clean source passed. One initial Bash history-expansion failure
-prevented the command from running; single-quoting the Git exclusion fixed it.
-No database migration, worker/broker provisioning or real email. AJ48 remains
-In Progress (local evidence comment10064). Pilot active/unexpired authorization
-count remained0, so application sending remains off. The source/docs followup
-records these observed results; it does not claim a new local full-suite execution.
-
-## Application review next-step guidance — 25 October 2026
-
-Branch codex/application-review-guidance from reviewed main5a9a6df92346ef9269cedd65749eb0aafdf30a08.
-The latest approved email package now places separate permission controls above long
-CV/letter previews, with focus after personal document approval and a return button.
-Historical/external/unapproved revisions offer no new permission step. No plan GET,
-authorization POST or sending is triggered automatically. Documents and consent unchanged.
-Actual gates: backend check/drift passed; full469 tests passed333.267s (one platform
-skip). Focused11 review tests passed7.94s; full144 components/25 files passed35.22s.
-Eight helper tests passed0.075s; reviewed OpenAPI matched. Explicit Node24.19.0
-npm ci installed363/audited364, zero vulnerabilities; Oxlint/ESLint passed;
-Vite production build passed2.73s. Source/docs and generated build are separate
-commits, build last. Earlier interrupted runs had no final result and are not passes.
-CI/merge/deployment pending at this entry. Production sending remains disabled;
-this usability repair does not complete AJ17. Rollback is source/build only, no
-migration or document/approval data rollback. USER_GUIDE documents the separate steps.
-
-### PR60 release and live UI verification — 25 October 2026
-
-Source6f3638d plus final generated-build commit7eed242 passed all six checks in
-CI40184233326. PR60 merged and deployed/reloaded26261635ccf97c7f69616136258d71032d40fa95.
-Production check/drift/empty migration plan, sendingFalse/preparationTrue/publicationFalse,
-health200/HSTS300, exact HTML/entry/new Applications bundle and clean source passed.
-Authenticated synthetic application revision2 showed its existing personal document
-approval and the new email-plan controls above previews. The bottom return button
-focused the next-step heading. No approval, authorization or send was performed.
-A screenshot proof is local outside Git. User-facing instructions are in USER_GUIDE.
-
-Fresh consistent backup20261025T101626687618Z-edc12560 completed after actual429.4/512MB
-quota and10,633,356 input bytes were checked; no operation conflicts or active/queued
-writer runs. Both previously active workflows and enabled web app were restored
-before download. Server verification and independent exact-member ZIP/hash/member
-checks, SQLite integrity and isolated17-file/372876-byte restore passed off server.
-Bundle3,794,467 bytes; SHA2563dd1f5800634dad0bd2938857331192f1f7abfca4fc0df8ffb5fc9aea7807e64.
-The optional erasure ledger was absent. Sanitized receipt is outside Git, retention
-report-only; no backup deleted. This was a release fallback after the scheduled
-console-access failure, not proof of unattended scheduled success. User reconnected
-the console before the successful run; no security control was bypassed.
-
-JiraAJ17 comment10066 records deployment and remains In Progress. Broader sending
-and personal exact-plan authorization remain unfinished. Documentation-only followup
-records observed release evidence; it does not claim another local full-suite run.
-
-## Owner pilot and automatic queue recovery - 25 October 2026
-
-Production source078c50a: Michael personally approved/authorized revision2, clicked
-Send and confirmed inbox arrival and correct file content. Two DOCX attachments
-were visible; this does not independently prove both were opened. One accepted
-application receipt had no failure category; Brevo showed Sent/Delivered. Sending
-was disabled/reloaded and fresh configuration reported False. Authorization closed;
-no repeated send. JiraAJ17 comments10068/10069 retain evidence. Broader sending is off.
-
-All12 unfinished non-Epic Jira descriptions were reconciled with existing approved
-requirements, preserving historical text, summaries and In Progress. Direct issue
-readback verified all12; stale search-index output did not trigger repeated writes.
-Michael selected continued isolated test integrations; no live provider approval,
-credentials, legal review or personal consent was inferred.
-
-Branch codex/queue-natural-recovery from fetched main078c50a. Actual isolated
-Redis/Celery Docker run passed automatic replacement-worker lease recovery without
-restore_visible: hard exit73, same accepted receipt on redelivery/duplicate, one
-captured handoff, zero duplicate/real email calls, one reservation and withdrawal
-denial. Exact dedicated container identity/label checked before removal. Broker/host
-failure, uncertain provider IO and production worker remain unverified.
-
-Actual gates: manage.py check and makemigrations --check passed;469 Django tests
-passed639.296s (one platform skip); eight helper tests passed0.075s; script Ruff
-passed. Node24.19.0 npm ci installed363/audited364, zero findings. Directory-based
-lint initially found no files in the ignored runner; npm run lint -- --no-ignore
-with all explicit JS/JSX/MJS paths and npm run lint:eslint passed.144 components in
-25 files passed38.36s; build passed3.42s. Tracked frontend source matched the runner;
-all36 generated files matched frontend_build. No frontend/build commit required.
-No migration, dependency, CI, hosting or runtime change. Push/CI/merge/source sync
-pending at this entry. Rollback removes unused lab change only, preserving data,
-receipts and sending-off state. Existing progress-file bytes were preserved when
-appending this record because its historical encoding is not consistently UTF-8.
-
-## Queue broker restart and uncertain-IO crash - 25 October 2026
-
-Branch codex/queue-broker-restart from fetched main929ff47. Optional lab mode verifies
-AOF/always-fsync, pauses for the exact labelled test broker to receive SIGKILL/start,
-and verifies its server run ID changed. Actual isolated Redis8.10.2/Celery5.6.3 run
-passed automatic redelivery, same accepted receipt, one reservation/captured handoff,
-zero duplicate/real email calls and withdrawal denial. Internal network, synthetic
-AOF volume and exact broker labels/identities were verified before removal.
-
-A second actual worker-process test exits74 inside captured transport after its
-fsynced side-effect counter but before receipt settlement. Redelivery and explicit
-duplicate returned the same unresolved reserved receipt, with empty provider ID and
-resolved timestamp; one captured handoff/reservation remained, no repeated IO.
-Separate network-none broker identity verified before removal. No actual provider,
-production worker, hosting or existing data was involved. Host/disk failure, real
-provider uncertainty reconciliation, dead-letter operations and target remain open.
-
-Gates: isolated Python3.12 Docker manage.py check/makemigrations --check and full469
-Django tests passed150.268s (no skips). Initial read-only image DB path failed before
-tests; corrected test-only DATABASES name to /tmp/gates.sqlite3 on tmpfs and reran
-all gates. Nine helper regressions passed1.806s including arbitrary broker denial;
-changed-script Ruff passed. Node24.19 locked npm ci installed363/audited364, zero
-findings; complete explicit-file Oxlint and lint:eslint passed; build2.42s passed,
-all36 committed assets/source matched. Frontend unchanged; prior144-component
-result is historical regression evidence, not another current component run.
-No migration/dependency/CI/frontend/runtime activation. Push/CI/merge/source sync
-pending at this entry. Rollback removes only unused lab additions, preserving
-production data/receipts and disabled application sending.
-
-## Queue crash release and real scanner fixture - 25 October 2026
-
-PR63 passed all six CI checks on9c08cf2 (CI40220731557), merged f18d5b2 and production
-source synchronized. Diff contained only unused scripts/tests/docs; no migration,
-reload or queue activation. Production clean source/health200 observed. JiraAJ48
-comment10072 records broker-process/uncertain captured-IO proof and remaining gates.
-
-Branch codex/scanner-engine-rehearsal from fetched mainf18d5b2. Actual official
-ClamAV1.5.4 pinned digest751df8dc649cc977696f107c80db4960b6317a7cb511aebc8066f3b91db6b631
-ran offline against generated harmless bytes/custom SHA256 signature: matched1,
-unmatched0, missing database2. No vendor definitions, EICAR, real malware, private
-files, network or production caller. Bounded unprivileged/no-capability/read-only
-container and exact generated label cleanup passed. Initial shell run failed on
-Windows text-mode CRLF translation; byte input fixed it and a regression covers LF.
-
-Actual gates: fresh tracked-source Python3.12 Docker check/drift and469 Django tests
-passed203.060s (no skips).13 helper tests passed2.397s; changed-script Ruff passed.
-Explicit Node24.19 npm ci installed363/audited364/zero findings; complete explicit-file
-Oxlint/ESLint passed; build2.38s passed, tracked frontend source/all36 assets matched.
-No frontend change; previous144-component result remains historical, not a new run.
-No migration/dependency/CI/hosting/runtime change. Push/CI/merge/source sync pending
-at this entry. Rollback removes only unused lab. Existing uploads are still not
-malware-scanned; vendor definition freshness, durable quarantine, actual target,
-legacy-file and processing/privacy decisions remain open. See SCANNER_ENGINE_REHEARSAL.md.
-
-
-## Scanner release, scheduled backup and storage interruption - 26 October 2026
-
-PR64 all six exact-head checks passed2606f93 (CI40222439337); merged82e098f and
-production source synchronized without migration/reload/runtime activation.
-Django check passed. Independent public health HEAD returned200/HSTS300 after a
-browser-control interruption left a separate read-only terminal health command
-unfinished. No scanner was enabled. Later console input became unresponsive;
-source remains82e098f until console access is restored. No service was paused.
-
-The daily heartbeat completed a fresh snapshot20261026T085214873536Z-92dbbbc4 from
-f18d5b2. Both prior-active writer workflows and web were restored before download.
-Server verification, independent ZIP/member/hash checks, SQLite integrity and
-isolated17-file/372876-byte restore passed off server; receipt is private outside
-Git. Archive3,803,837 bytes; SHA256e93bfeb60be7c8f740a43bbe1040ee049a326821013d4d2cb8a7aa3bd4192a32.
-Ledger absent per manifest; no erasure/replay or retention deletion. This is a
-verified fresh scheduled backup, not a release fallback. Actual quota444.2 to457.9
-of512MB. No encryption claim. BACKUP_AUTOMATION.md records the verified run.
-
-Branch codex/storage-interruption-rehearsal from fetched main82e098f. Real isolated
-PostgreSQL17.11 run injected an exception after ten target saves: every target row
-rolled back. Retry matched161 rows/34 models, full datetime precision, constraints,
-sequences/profile signal alias and unchanged source. Controlled media-copy failure
-after one whole file resumed by hash reuse plus three copies; four document bytes,
-private downloads and ownership denial matched. No real mail/provider/budget action.
-Dedicated no-port/no-host-mount tmpfs PostgreSQL removed after exact ID/label check.
-Host/power/disk failure, partial-file recovery, object storage, historical schema/
-search and production switchover remain unverified.
-
-Actual gates: Linux Python3.12 manage.py check/makemigrations --check and469 Django
-tests passed210.803s (no skips).16 helper tests passed1.521s; changed-script Ruff
-passed. Node24.19 locked npm ci installed363/audited364, zero findings; complete
-explicit-file Oxlint/ESLint passed; build2.85s passed. No frontend source change;
-all36 assets/source comparison is required before commit. No new component run
-claimed. No migration/dependency/CI/hosting/runtime change. Push/CI/merge/source
-sync pending at this entry; rollback removes unused lab only and preserves data.
-
-
-## Public showcase and employer-review plan — 26 October 2026
-
-Branch codex/showcase-launch from fetched main87b7ac3 (PR68). Anonymous root/about
-introduces actual CV capabilities without private/job API requests; members keep
-jobs as home. Added CV navigation and public employer guide. Private routes remain
-protected. No job publication, mail activation, schema/dependency/CI/hosting change.
-PythonAnywhere is the current host; Daraja/commercial decisions come last. See
-SHOWCASE_RELEASE.md and EMPLOYER_REVIEW_PLAN.md; genuine employer review and general
-verification delivery remain live prerequisites, not synthetic acceptance.
-
-Actual local gates: Windows Python3.12 manage.py check and makemigrations --check
---dry-run passed; full469 Django tests passed336.000s (one platform skip).
-Node24.19 npm ci installed363/audited364/zero findings. Full152 component tests
-passed27.85s. Initial lazy-import assertions timed out under full-suite contention;
-focused17 tests passed, then bounded five-second label/message assertions passed
-without weakening checks. Default Oxlint discovery excluded the ignored runner;
-complete explicit source paths with --no-ignore passed, as did ESLint.
-Production build passed2.06s; all38 generated assets matched copied build bytes.
-Ruff/diff whitespace passed. Real Chromium public/private-boundary, light/dark
-public axe and registration-CV-approval-download-application-review tests passed:
-3 tests114.121s, synthetic data, temporary private storage, no provider/ledger sends.
-CV generation/download occurs before verification in that existing real journey.
-Push, exact-head CI, merge and deployment are pending at this entry.
-Rollback is previous reviewed source/build plus reload; preserve all data.
-
-CI40337924489 passed five checks but Linux Chromium demonstrated signed-in nav
-horizontal overflow at1100px after adding CV builder. Windows Chromium had passed;
-the Linux failure remains valid evidence. Permit desktop nav links to wrap within
-the available width (min-width0); retain the failing overflow assertion unchanged.
-No CI workflow or API change. Corrected build/browser/CI results follow.
-Corrected local Chromium boundary/axe tests passed2 tests86.889s; build2.32s passed. The Linux-specific regression still requires the new exact-head CI run.
-
-
-## Verified showcase release — 26 October 2026
-
-PR69 corrected head14c5c00756ce3a2d3afd28ab337c616a2f7b1590 passed all six
-required checks (CI40352854606). Linux browser/performance:11 tests105.738s OK;
-the1100px overflow assertion passed unchanged. Merged/deployed runtime source is
-d91da4752a887bc38429cbb88c3b201c61974a8b. Generated build was the final frontend
-commit; a repeated final build and all38 live public files matched reviewed bytes.
-New authors/committers used configured noreply identities. No new dependencies,
-migration, CI change or hosting configuration change.
-
-Before staging: clean production checkout, no active data operation/in-flight
-writer, actual quota458.3/512MB. Database mtime08:36UTC and newest media24October
-predated the26October08:52UTC consistent snapshot. Reused today's verified recovery
-copy rather than duplicating unchanged data; off-server DB/media hashes and read-only
-SQLite integrity were rechecked, with complete isolated-restore receipt. Both prior
-active writers were paused and enabled web briefly disabled for checkout. Production
-check/drift passed and migrate --plan showed no operations. Web re-enabled/reloaded;
-HTTP health200/HSTS300 passed. Both prior-active workflows were restored active.
-
-Live about/employer-guide rendered, authenticated jobs remained home, CV builder
-loaded existing data and existing approved private CV downloaded successfully.
-No approval/document edits, employer contact or sending occurred. Normal authenticated
-browser verification can rotate tokens/write auth records after activation; no
-unchanged-live-database-byte claim is made. Source stayed clean. Application sending
-and anonymous vacancy publication remain disabled. Rollback is87b7ac3 source/build
-plus reload, retaining all newer data and security/freshness protections.
-
-Live Jira reconciliation still returned12 unfinished non-Epic issues, no next page.
-AJ17/26/43 need broader delivery acceptance; AJ42/53 need genuine public-vacancy/
-employer onboarding evidence; AJ44–46 are deferred commercial/Daraja decisions;
-AJ47/48/51/52 retain documented live storage/worker/analytics/scanner prerequisites.
-PythonAnywhere is selected now; no infrastructure cutover is needed for this showcase.
-See SHOWCASE_RELEASE.md and EMPLOYER_REVIEW_PLAN.md. This documentation-only follow-up
-retains the deployed runtime/build; it introduces no new product activation.
-
-## Inactive backend continuation - 31 October 2026
-
-Branch codex/backend-inactive-20261031 from fetched main624c378. Current Michael
-limits supersede earlier deployment authorization: no deployment, production
-migrations, live mail/financial calls or runtime flag changes. Original dirty
-checkout and prior worktrees preserved; per-command safe.directory only.
-
-Added separately default-off ACCOUNT_SECURITY_EMAIL_ENABLED/account_security
-mode for account verification/reset via existing Brevo HTTPS/shared ledger.
-Active mailbox/configuration/recipient rechecked at handoff, no attachments or
-extra recipients. Existing account/global budgets and unknown-handoff blockers
-preserved. Owner pilot/auth cookies/schema unchanged. No real delivery claimed.
-
-Actual Python3.12.6: check passed; makemigrations --check --dry-run no changes;
-full475 tests passed406.627s, one existing platform skip. Focused30 tests passed
-2.783s. Synthetic accounts/provider interception only. PYTHON_DOTENV_DISABLED=1.
-Exact portable Node24.19.0 official SHA256 matched
-57f71ab3652e797d84acddc79c81cc9ff1c6ddb2a1974cdb83f00fee9bff4c73.
-Repeated npm ci installed363/audited364; five advisories (four moderate, one high:
-follow-redirects; moderate ESLint-related). No dependency changes included.
-npm run lint, explicit all-source Oxlint --no-ignore and ESLint passed; build
-passed2.32s; all38 committed/generated files matched. Initial bundled24.22.1
-installation superseded by repeated required checks on exact24.19.0.
-Optional Ruff/OpenAPI checks unavailable: missing ruff/drf_spectacular in the
-existing environment. CI has not run. No frontend package or new migration.
-Rollback: disable new switch, preserve account/budget/receipt data and prior mode.
-
-AJ-79 certificate ticket already existed; reused rather than duplicated. Created
-AJ-80 proposal for23 generic Update issues AJ-54-AJ-76, originals unchanged.
-No story marked Done from this account prerequisite. See DECISIONS_PENDING.md
-and docs/BACKEND_ACTIVATION_CHECKLIST.md. Remaining normal application/alert mail,
-certificates/scanner/analytics/queue/storage/payments implementation remains open.
-
-## MVP1 exact-candidate verification — 31 October 2026
-
-Approved release scope is account-security email only,PR72,branch
-codex/review-01-account-email. Broad PR71 is reference only;d8a4239 passed all six
-checks in CI41217043158 and is not the MVP1 release candidate.
-
-Exactec57336 local pinned Django6.1.2 full475 tests passed358.988s,one existing
-skip;external-I/O audit recorded zero connection attempts. Node24.19 locked
-install/lint,152 component tests in26 files (32.31s) and build2.01s passed;all38
-committed/generated files matched. Backend check/drift,Ruff and OpenAPI passed.
-
-PR72 CI41240872454 found a timing-dependent pre-existing saved-search fixture:
-backend3.13 and quality full-suite coverage failed expected50/actual0 near Nairobi
-midnight;backend3.12/3.14 were matrix-cancelled,not independent failures. The
-fixture placed samples two days ago plus10minutes,which can cross the last
-completed weekly boundary. Only this test now uses samples three days ago;
-production windows/freshness/limits remain unchanged. Focused22 tests passed
-26.171s;explicit frozen23:55/00:05 Nairobi regressions each passed (1.222/1.291s).
-Full pinned suite/remote rerun pending;not claimed verified until both finish.
-
-No migrations,feature,dependency,frontend,CI,hosting or production-data change in
-this correction. No deployment/flags/live sending occurred. PythonAnywhere is
-signed out;current quota,backup/restore and actual source/settings preflight remain
-unverified until owner signs in privately. All excluded feature activation stays off.
-
-## Owner inbox evidence reconfirmed — 1 November 2026
-
-Michael reconfirmed owner inbox delivery in this chat. This corroborates the
-25 October owner synthetic application pilot evidence already recorded above:
-owner inbox arrival and correct attachment content, with sending disabled and
-reloaded afterwards. It does not establish a new sending run or broader rollout.
-No mailbox address or message contents are retained here. AJ-17 comment 10171
-records this confirmation; status remains In Progress for the separately scoped
-normal-transport acceptance. No production access or live sending occurred.
-
-## Display-only feed discovery — 1 November 2026
-
-Local branch codex/job-feed-display is based on reviewed main 3408565.
-The dirty original checkout, stash and Git configuration were preserved.
-This package remains uncommitted for review; nothing was pushed, merged or
-deployed. No production access, settings activation, live sending or migration
-occurred. The only Jira change was Michael's separately requested AJ-17 inbox
-confirmation (comment 10171); no feed ticket or acceptance was invented.
-
-First wrote docs/JOB_FEED_DISPLAY_OPTIONS.md: recommend A; compare B at 14 days
-and C hidden. JOB_FEED_DISPLAY_ENABLED defaults off. Authenticated list/detail
-queries alone gain labelled feed discovery with original source/date and no
-application or document actions. Known closure, scam, inactive, employer and
-unexplained archive cases remain excluded. Missing/stale availability archives
-are display candidates only. Shared eligibility, all application/sending guards,
-alerts, saved-search selection/email, employer publishing and public pages remain
-unchanged. Existing external-submission reporting remains a user report, not mail.
-
-Verification used Python 3.12.6 / Django 6.1.2 from the existing isolated
-backend-inactive-20261031/.tooling/parity-venv and portable Node 24.19.0.
-Commands/results:
-- manage.py check: passed, no issues.
-- manage.py makemigrations --check --dry-run: passed, no changes detected.
-- Full manage.py test --noinput via runpy with socket.connect, DNS and SMTP
-  blocked by a Python audit hook: 500 tests passed in 346.348s; one existing skip.
-- Final manage.py test jobs.test_feed_display --noinput: 28 passed in 28.440s.
-  Includes flag-on regressions for alert pilot, saved-search email and employer
-  decisions; positive/negative eligibility, direct application/package/email-send
-  rejection, filtering/pagination, scams, public pages and SELECT-only counts.
-- Node 24.19 npm ci --offline --no-audit --no-fund: 363 locked packages installed
-  from the owner's cache. Initial sandbox-local cache attempt failed ENOTCACHED;
-  the owner cache retry passed. No fresh vulnerability scan was performed.
-- npm run lint: passed. Full npm test -- --run: 155 passed in 27 files (41.61s).
-- Deadline-specific final frontend checks and regenerated build results follow below.
-- Schema dependencies were absent from the pinned runtime. Installed nine cached
-  tooling packages into ignored .verification/schema, without changing shared
-  environments; spectacular --validate --fail-on-warn and scripts/check_api_schema.py
-  passed. Reviewed OpenAPI adds four read-only job fields. An unnecessary broader
-  tooling download was stopped; optional Ruff remains unavailable (No module named
-  ruff / offline wheel unavailable), so no Ruff pass is claimed.
-
-The read-only manage.py job_feed_display_counts command returns aggregate totals
-for a single evaluation time, including display-off/on and recent candidates; its
-test rejected every non-SELECT query. No production counts were queried. See
-docs/JOB_FEED_DISPLAY_OPTIONS.md for local and owner-run production commands.
-Rollback is disabling JOB_FEED_DISPLAY_ENABLED; no database changes need reversal.
-Remote CI and production verification are intentionally out of scope.
-
-Final frontend lint passed; focused feed/list/detail/deadline suite passed all14
-tests in4files (7.74s). Node24.19 final build passed in2.16s. Regenerated
-frontend_build and verified all38 files by SHA256 with no extra files. No commits
-were made, so there is no build commit or remote CI result to claim.
-
-## Documentation housekeeping — 1 November 2026
-
-Superseding recorded release evidence was reconciled from
-`codex/backend-inactive-20261031`'s MVP1 execution report: PR72 source3408565 was
-deployed with zero migrations, account-security mail configured and other MVP1
-feature exclusions off; last observed quota482.4/512MB and expiry30November.
-PR73 stage2 head38bf953 has recorded all-six-check CI success but remains separate
-from deployment. These are existing records, not new remote or production checks.
-
-Six superseded active documents were archived with matching pre-replacement
-SHA256; current entry points and one ordered pending-work list replace duplicated
-onboarding, obsolete questions and completed proposal text. Seventeen dated
-checkpoint/release records were labelled historical. Read-only Jira returned14
-open non-Epic issues (13 In Progress, AJ80 To Do; no next page); all are covered
-in ROADMAP_NEXT_ACTIONS.md. Existing inactive implementations are referenced by
-branch rather than described as missing or deployed. See HOUSEKEEPING_REVIEW.md.
-
-Documentation-only local changes; existing uncommitted feed work and original
-checkout preserved. No Jira write, sync script, production access, push, merge,
-service activation, migration or data/backup deletion. Only documentation checks
-are run for this follow-up; earlier runtime-test results retain their dated scope.
-
-Housekeeping verification passed: six archive copies matched reviewed3408565
-content after newline normalization;83 local Markdown targets in18 active/index
-documents existed;all14 live Jira keys appeared in the action list;git diff --check
-exited0. Runtime behavior was unchanged by this documentation pass.
-
-
-## Historical documents consolidated and originals deleted — 1 November 2026
-
-Michael explicitly requested consolidation and deletion in both checkouts, preserving
-unrelated work. docs/MAINTENANCE_HISTORY.md now contains one maintenance guide,
-completed-work summary, pending snapshot and expandable dated records. Removed13
-obsolete originals in the older checkout and32 historical/archive files in the
-reviewed worktree; no separate archive copies remain. Four maintained screenshot
-guides were retained; links were repaired. All37 detail sections remain, both copies
-match, all45 selected originals are absent,96 local targets/90 record links checked,
-and git diff --check passed in both trees. Final reference SHA256 0ba400a0b6cd9f2585ef9e72d9cedb9ad16d71698fcde4a8a57ce4c1980ca6e2.
-Documentation-only changes; no runtime source, private data, backup, stash or Git
-configuration deletion. No production access, sending, push or merge.
-
-
-## Cleanup and HTTPS reconfirmation — 1 November 2026
-
-AJ12 Stage B live health/HSTS300 reconfirmed15:14EAT; Jira comment10172 and current
-acceptance description updated, status reread Done. No hosting setting/source change.
-Original checkout work preserved in stash1eafb40a; delivery-concurrency docs25ad1cfb
-and job-trust reportsf9f50a72 stashed and both worktrees verified clean. Main has only
-safety ignores modified; duplicate ignore entries removed, protections retained.
-21 server snapshots identified; four retained backups passed server checks with
-matching off-server manifests and17-file isolated-restore checks. Latest local tar
-was browser-decompressed, verified by its recorded uncompressed hash. Venv backup
-and seven restore folders were already absent. Exact17older snapshot plan prepared;
-permanent deletion still pending browser at-action confirmation. Off-server copies
-unchanged. Detailed state/restore commands in MAINTENANCE_HISTORY.md.
-
-
-## Approved snapshot pruning completed — 1 November 2026
-
-Michael supplied explicit at-action confirmation to delete the17older on-server
-backup-* directories. Exact inventory/path/symlink guards, retained manifest hashes
-and full read-only verification passed before deletion. At12:33:36UTC
-(15:33:36EAT),17snapshots were removed,114760909 logical bytes (~109.4MiB).
-Receipt /home/Mathenge/ajiri-private-backups/prune-receipt-20261101T123336Z.json
-is complete/mode0600. Independent post-check found four backup-* snapshots, all17
-approved targets absent, four retained backup verifications passed, and zero
-restore/venv-backup folders. These latter folders were already absent before this
-turn; no new deletion of them is claimed. Off-server copies/other backup types
-were untouched. Dashboard storage now228.7/512MB (45%used), superseding482.4.
-The first console input attempt did not execute; a read-only probe had a syntax
-error; the corrected guarded command completed and was independently verified.
-No source/configuration/service activation, deployment, sending, push or merge.
-One-time deletion approval does not change automatic retention policy. Current
-maintenance guide, next actions, open decisions and backup guide were updated.
-
-## Default-off feed display and durable maintenance release — 1 November 2026
-
-Michael authorized pushing, reviewed merging, MVP1 deployment and removal of
-verified stale branches on 1 November, superseding the earlier release restriction.
-The preceding entries remain dated evidence; their no-push statements are historical.
-The single historical reference is now maintenance/HISTORY.md, with current entry
-points in maintenance/README.md and docs/README.md. An additional 26 completed
-reviews/decisions were consolidated with original hashes and their originals removed.
-A check of 65 Markdown files found no missing local link targets.
-
-Final local checks on the release package:
-- Pinned Python 3.12: manage.py check passed; makemigrations --check --dry-run
-  reported no changes; full suite ran 503 tests in 600.325s, OK with one skipped.
-  A Python audit hook blocked network resolution/connect and SMTP connections.
-- Node v24.19.0: npm ci --offline --no-audit --no-fund installed 363 locked packages;
-  automatic oxlint traversal of the hidden verification directory found no files.
-  Re-running npm run lint with explicit relative source paths and --no-ignore passed;
-  npm run lint:eslint and changed-file Prettier checks passed.
-- Frontend: 155 tests across 27 files passed; quality-script test passed; build passed
-  in 2.68s. All 38 frontend_build files matched the fresh build by SHA256, with no extras.
-- Reviewed OpenAPI generated bytes matched. Ruff 0.17.1 correctness checks passed.
-  No model, migration, freshness, eligibility or sending-policy changes were made.
-
-Fourteen clean main-contained worktrees were unregistered. Eight Windows-locked
-native cache files were isolated in .worktrees/.locked-remnants; they require the
-owning runtime to exit before physical deletion. Five useful checkouts, the external
-npm checkout and all existing stashes remain preserved. Exact bounded inventory and
-removal records are in maintenance/evidence/. Remote CI, merge and deployment must
-be verified against the eventual exact release SHA; local results alone are not
-production acceptance. JOB_FEED_DISPLAY_ENABLED stays default-off for Michael.
-
-
-## PR74 deployed; maintenance closeout — 1 November 2026
-
-PR74 source7758b5b plus final generated-build commit69423a3 merged as
-2a4dfdf05f5371e61e13e7a68b3009993fdd0a2a. All six checks passed on both the
-PR head (run41322887530) and merged main (run41323225515). Main was
-fast-forwarded in the original checkout; all five named stashes were preserved.
-
-Deployment pause started15:55:09UTC; ingestion/sweep were disabled, no queued or
-running workflows or other manage.py/Celery writers were found, and web was disabled.
-The database had changed, so a fresh consistent snapshot was taken:
-backup-20261101T155600665941Z-4a2ccbe5. Server verification passed. A private
-6,835,624-byte ZIP downloaded successfully; SHA256
-436efcd4b2622fd785f11dd6a50936b8795f45a7030e014c7a1511bc9690a82d matched.
-Off-server isolated restore verified SQLite integrity and17files/372876bytes.
-The new private copy's33entries were restricted to owner/SYSTEM/Administrators.
-Four previously retained snapshots and every off-server copy were preserved;
-no ongoing automatic pruning policy was inferred.
-
-Clean production checkout moved3408565 to2a4dfdf. Release planner confirmed no
-migration or dependency changes and frontend index SHA256
-b5ba62006d0c5d47937491468ecb6f6a177a98a2a2c2964388928b7c25fe03e5.
-Django check/drift passed; migration plan was empty; live DB hash stayed unchanged.
-Web was re-enabled/reloaded and both prior workflows restored by15:59:19UTC
-(4m10s). At16:01UTC health returned200/statusok/HSTS300/no-store-private;
-index, entry JS/CSS and job list/detail chunks matched committed hashes. Login200,
-unauthenticated jobs/private CV401, disabled sitemap/direct media404. The first CV
-probe used a nonexistent route (404); the configured route correctly returned401.
-
-Read-only whitelist settings confirmed feed displayFalse, freshnessTrue,
-account-securityTrue/account_security mode, application/alert emailFalse,
-saved-search/employer/publicFalse. No .env was read or edited. Michael enables the
-feed switch privately; production counts and signed-in activation smoke remain his
-next steps. Automatic approval review rejected the combined counts call (reserved
-for Michael) and later manual ingest dispatch (extra live write); neither executed.
-The web/settings checks were completed separately and workflow states reread active.
-A subsequent successful scheduled ingestion was not observed.
-
-Fifteen completed worktrees were unregistered. Nine Windows-locked native caches
-were isolated under .worktrees/.locked-remnants; no shared runtime was terminated.
-Four useful internal checkouts and the external npm checkout remain. Deleted99local
-and47remote stale refs: initial96/46 main-contained tips, the deployed feed branch,
-and two exact duplicate local aliases. Remote deletion used expected-tip leases;
-open PR65/66/67/71/73, unfinished stages, unique work, backup refs and stash remain.
-
-The current action list and maintenance guide now describe these completed results.
-This closeout changes documentation only; application/build source is identical to
-2a4dfdf. Reuse the recorded503backend/155frontend tests, Node24.19 locked install,
-lint/build/schema/Ruff checks for that unchanged source; the closeout PR still must
-pass required remote checks. No fresh passing result is inferred from a queued check.
-The Jira report compares against the13:19EAT baseline and queues only new AJ15
-backup-cleanup progress. AJ12 comment10172 and AJ17 comment10171 were already
-recorded directly and are not duplicated. tools/jira_sync.py was never executed
-or changed; three existing cache entries and private configuration were preserved.
-
-Rollback for the feed application remains source3408565 plus reload, preserving
-current data/receipts. Disabling JOB_FEED_DISPLAY_ENABLED rolls back optional browse
-visibility; it is already off. No schema rollback or old-data restoration is needed.
-
-## Responsive topbar, private counts instructions and HSTS — 1 November 2026
-
-On isolated codex/responsive-topbar from reviewed d964a7a, reproduced the member
-navigation defect in Chromium: at1843px logout wrapped50px below the other links.
-The new browser regression failed against the prior build, then passed after the
-CSS fix. Header now uses an explicit full-width grid: collapsed column below1100,
-separate navigation row at medium desktop widths, and a complete wide-screen row
-at1440+. Brand/theme/menu retain stable positions, labels stay whole, inline body
-links remain underlined, and every visible header control stays at least44px high.
-Guest/light and member/dark views passed nine widths320,360,390,768,1024,1100,
-1280,1440,1843, including overflow, overlap, mobile menu visibility and wide-row
-alignment. Test traffic uses a disposable local DB and aborts external requests.
-
-Actual checks: Python3.12 manage.py check and migration drift passed; full503tests
-ran397.005s, OK with one skip and network/SMTP blocked. Node24.19 locked npm ci
-installed363packages; lint/ESLint passed,155tests across27files passed, Prettier
-formatted the changed CSS, and final build passed2.13s. All38generated files matched.
-Ruff0.17.1 passed. The first optional browser install selected a3.13 native wheel;
-its import failed under3.12. Reinstalled into a separate ignored target explicitly
-using pinned3.12, then browser regression passed. No production dependency change.
-
-HSTS one-key exception was explicitly approved by Michael. Production
-SECURE_HSTS_SECONDS changed300 to604800 with all other bytes and file mode
-preserved; no contents/credentials printed or copied. Check passed before reload;
-HTTPS health at17:08:56UTC returned200/statusok/max-age=604800, no subdomains/preload.
-No database, job eligibility, sending or feed-display setting changed. This is a
-configuration rollout on source d964a7a, not evidence that the local topbar is live.
-
-Documentation growth was measured: older checkout20tracked docs, reviewed-main
-107before cleanup,58after51historical removals and two entry documents. Remaining
-feature/runbook guides are current references, not pending work. Updated the existing
-index and activation guides; no new top-level document was added for this package.
-The counts traceback used systemPython3.13 and failed importing Celery before Django
-could discover commands. Existing hosting console now showed ajiri3.12.8 and import
-Celery ok. Documented absolute /home/Mathenge/.virtualenvs/ajiri/bin/python commands;
-no system installation, production counts, ingestion or sending was performed.
-
-Michael reconfirmed clearly warned browse-only rows may be shown at eligible0.
-The private guide explains eligible versus supplemental_unverified/browse_on,
-owner-run one-key activation and reload, and unchanged freshness/sending boundaries.
-The code default staysFalse; the agent did not change the display setting. Owner
-reported AJ15 sync applied successfully; retain dedup cache and do not repeat it.
-Remote exact-head checks and a verified deployment are still required for the
-new header. Generated frontend_build must remain the final frontend-package commit.
-
-## 2 November 2026: supplemental browsing admin package (release pending)
-
-Baseline main/production supplied by Michael: 12878e1a3e51f62c3c7d1ced3f13948fd1b7190e.
-Work is isolated on codex/supplemental-admin-20261101; original main and its
-untracked reports/tools remain preserved. No production setting or job row was
-changed. Supplemental activation remains exclusively Michael's action.
-
-Phase 1 recovered complete counts at 2026-11-01T17:09:00.356422+00:00: total 1823,
-scam_flagged 12, eligible 0, supplemental_unverified 1808, browse_off 0, browse_on
-1808, supplemental_posted_within_14_days 1372. Old browsing had no age cap and
-allowed missing posted dates. Michael's read-only production query confirmed
-JOB_FEED_DISPLAY_ENABLED=false. Residual IDs 1, 779, 980 are inactive pilot rows
-(deployment-check, ajiri-owner-alert-pilot, ajiri-owner-application-pilot), null
-posted dates and no publication. Retain/exclude them; no data repair is needed.
-Production /admin/ returned 302 to /admin/login/?next=/admin/ on 1 November.
-
-Implemented the disabled admin singleton, protected singleton ID constraint,
-superuser-only controls, atomic actor/old/new audit, read-only audit admin, bounded
-60-second fail-closed cache and emergency force-off. Retired environment-enable
-input is never read. The named inclusive 14-day posted-date window excludes null,
-future and older dates. List/detail/ordinary search retain availability warnings;
-outbound labels say availability not verified. Existing HTTP(S), new-tab and
-noopener/noreferrer safeguards remain. Skill scores remain; supplemental rows
-create no notifications or saved-search matches and enter no alerts/public pages,
-sitemap or JobPosting metadata. Application/document/send eligibility stays strict.
-
-Cookie defaults were already secure in production; no HTTPS/CORS/JWT/hosting
-configuration was changed. Admin login now has shared hashed-IP counters and
-fail-closed storage handling. The configurable single admin segment defaults to
-admin/; a private override makes the old route 404. No secret/provider flag is
-exposed. Existing maintenance documentation covers owner activation, audit,
-backup/quota, smoke checks, rollback, private route and console account recovery,
-plus general account-security email prerequisites without enabling or sending it.
-
-Checks so far: manage.py check and makemigrations --check --dry-run passed. Final
-full Python 3.12 suite passed 518 tests in 411.731s (one platform skip). The
-strengthened exact-pilot/off-mode/audited-rollback tests also passed (10 tests).
-Node 24.19 npm ci installed locked dependencies; lint, ESLint, 155 frontend tests
-across 27 files and frontend quality hooks passed. Ruff 0.17.1, unchanged OpenAPI
-contract and 16 helper tests passed. Runtime/development backend pins match the
-existing Python environment exactly; no dependency or lockfile change. npm reported
-the lockfile's five advisories (four moderate, one high); no automatic upgrades.
-The first sandboxed npm installation could not access the registry; the authorized
-network-enabled retry succeeded. UTF-8 documentation writing was corrected before
-review. A first standalone migration harness reused stale loader state; the
-corrected fresh-loader rehearsal passed forward/reverse/forward on an isolated
-synthetic database, preserving 34 existing tables and all three search triggers,
-integrity ok, singleton off. No production restoration or reverse migration ran.
-
-Final frontend build passed in 2.94s; all 38 generated files match dist bytes.
-Eleven real Chromium journeys passed in 83.246s on the synthetic database. The
-optional local Lighthouse suite was not run; Linux CI performance is still a
-required gate. Read-only production inspection on 2 November confirmed clean
-12878e1 source and Secure session/CSRF cookies. Computer Use then stopped on a
-browser-URL confidence guard; no further browser input was attempted.
-
-PR79 merged source144cfa94938d72cdb3823f44fb6ed0a45cde5ae1 and final generated-build
-commit71b8e35e7b0981db78f5532728b4872a873cd583 as reviewed main
-e7d78b40ac4ed2b9ff6737dba36f379a67846625. All six checks passed on the exact PR
-head in [CI41412455707](https://github.com/michael-mathenge/ajiri/actions/runs/41412455707)
-and merged main in [CI41412928813](https://github.com/michael-mathenge/ajiri/actions/runs/41412928813),
-including Linux browser/performance. Fetched main matches that merge, and its
-tree is identical to the tested PR head. Both commits use Michael's configured
-noreply author/committer identity. A clean isolated reviewed-main checkout passed
-release_preflight.py with exactly jobs.0017_job_browsing_settings and no required
-production dependency install. No historical migration, CI, JWT or CORS change.
-
-Fresh read-only HTTPS verification returned health200/statusok/HSTS604800,
-admin302 to login, and frontend HTML exactly matching baseline12878e1. Production
-remains on that baseline; the new admin menu is not yet live. Computer Use stopped
-itself on a Windows browser-URL confidence guard, so no subsequent UI input,
-writer pause, new snapshot, migration, setting edit or deployment was attempted.
-The prior owner-confirmed production display flag is false; the new singleton's
-disabled state is proven synthetically, not yet in production. Do not claim that
-the retired flag is ignored by the old production runtime.
-
-Required remaining release work: current quota/service states, a fresh verified
-private backup and off-server isolated restore, jobs.0017 while requests are paused
-before new code serves, restored prior writer states, and exact deployed/main,
-asset/private-access and effective-off verification. Michael alone activates the
-new admin switch. This entry is merged-source evidence, not deployment proof.
-No manual ingestion, live email, Daraja, charging, public activation, backup/branch
-pruning or Jira sync was run. Supplemental work needs a verified Jira key; do not
-invent one or mark related sending/public stories Done from synthetic tests.
-
-## 3 November 2026: default-off deployment completed; source survey follows
-
-Production moved from clean12878e1a3e51f62c3c7d1ced3f13948fd1b7190e to exact
-reviewed main86cdf39430b1a1a87c3bb66656dacff78d3f51b1. All six exact-target checks
-passed in [CI41414160973](https://github.com/michael-mathenge/ajiri/actions/runs/41414160973).
-Requirements were unchanged; no installation or dependency change was performed.
-Ingestion/sweep call paths do not read the new tables. Both active workflows were
-paused and no queued/running/requested/waiting/pending runs remained.
-
-Dashboard quota before backup was278.4/512MB;19,198,092input bytes and
-143,901,232bytes conservative reserve fit244,957,184available bytes. No pruning.
-With web disabled and no other app commands, fresh snapshot
-backup-20261103T170555929762Z-72930371 passed manifest hashes, SQLite integrity and
-17-file/372,876-byte media validation. Web and both workflows were restored before
-download. The exact private ZIP and manifest hashes were independently checked
-off-server and an isolated17-file restore passed, with a private receipt retained
-outside Git. The manifest declares no erasure ledger included. No credentials,
-private data or backup files enter this commit. The Windows browser URL-confidence
-guard interrupted earlier access; no bypass occurred. Michael subsequently opened
-and expressly selected the in-app PythonAnywhere session, where work continued.
-
-Before staging, a second writer pause confirmed unchanged database mtime, no WAL,
-identical current media bytes versus the backup and no competing app commands.
-The exact source was staged while web requests remained disabled. Actual
-release_preflight.py, manage.py check, makemigrations --check --dry-run and
-migrate --plan passed, with only jobs.0017_job_browsing_settings pending. Migration
-applied successfully before web activation. All40existing tables retained their
-old values (Django migration/content-type/permission metadata gained only additive
-rows); all three search triggers were unchanged; SQLite integrity remained ok.
-
-After re-enable/reload, health200/HSTS604800, exact live frontend HTML and all30
-asset files passed. Admin login GET200 contained its CSRF/login form; no credentials
-were submitted. Deployed HEAD equals current remote main and source is clean.
-At2026-11-03T17:52:25.718467UTC, singleton ID1 was false, the application's
-supplemental_browsing_enabled() and normal browse query were off, no retired enable
-setting existed, audit count was0and browse count0. No pending migrations remained.
-Both writer workflows were verified active again. Their next naturally scheduled
-post-release outcomes were not yet observed; no manual run was dispatched. Final
-dashboard quota304.4/512MB; expiry remains30November. No settings, personal data,
-sending, Daraja, charging, public activation, retention deletion or Jira sync occurred.
-
-Source rollback is12878e1a3e51f62c3c7d1ced3f13948fd1b7190e with additive schema
-retained. Verify the retired enable flag is still false before reloading old code;
-never reverse0017or replace the live database. Console throttle recovery remains
-the documented dedicated caches['admin_login'].clear(), not a password reset or
-permission change; it was not executed. Owner activation and the post-activation
-audit remain pending Michael's separate action/time.
-
-The subsequent SELECT-only isolated-copy survey reconstructed all1,808original
-non-scam active rows at the recorded1November cutoff: one source,1,104recent now,
-977archived and831unverified, none with stored closing evidence. The current
-100-entry feed has37nonempty explicit future GMT expiryDate values; current code
-ignores that field. Seven match newer stored rows and30are not stored; none match
-the original cohort. Three structured source-page validThrough checks corroborate
-the calendar dates, with an earlier midnight in the feed retained conservatively.
-The publisher permits automatic advert durations, so its structured listing expiry
-is not yet an established employer application deadline. The tested helper remains
-disconnected from eligibility; accepted verified gains remain zero.
-See JOB_FEED_DISPLAY_OPTIONS.md for per-source counts, conditional0–37opportunity,
-quality findings and the recommendation to combine a narrow adapter with genuine
-employer-direct evidence. No live row was relabelled, no ingestion was triggered.
-
-The preparation-only parser is isolated on codex/myjobmag-expiry-evidence-20261103 from
-86cdf39. It accepts only the observed MyJobMag host/name contract and explicit
-GMT/numeric-offset timestamps, rejecting absent/ambiguous/invalid values. No
-deadline() or record() caller is added; tests enforce that expiry alone cannot
-publish a job or replace existing closing evidence. Existing
-ISO precedence, archives, earlier deadlines, source closure and eligibility remain.
-Eleven focused synthetic tests passed. Full local gates and PR CI are recorded
-below when complete; this source proposal must not be merged or deployed for this
-task. Original checkout/untracked reports/tools, lockfiles, stash and Git config
-were preserved. No Jira action was performed.
-
-Local final gates: Python3.12 manage.py check and makemigrations --check --dry-run
-passed; full Django suite529tests in498.195seconds, one platform skip. Ruff0.17.1
-passed for the complete backend/scripts. Explicit existing Node24.19.0 locked
-npm ci, oxlint, ESLint,155tests/27files and build passed; all38dist files match
-committed frontend_build bytes, so there is no frontend package delta or build
-commit. npm retained the lockfile's five advisories (four moderate, one high);
-no dependency upgrade or lockfile edit occurred. The default runtime had advanced
-to24.22.1; verification used the discovered retained24.19.0runtime. The first local
-quality command found Ruff absent and stopped before the suite; the pinned checker
-was installed only in the ignored worktree verification directory, and its corrected
-check passed. Existing Python/global Node environments were not replaced. PR checks
-remain separately recorded evidence; no source merge/deployment is authorized here.
-Those first gate results cover the earlier source head. After source-semantics
-review, the final proposal was narrowed to parsing preparation with no eligibility
-integration. Final focused/full checks are rerun and recorded separately.
-
-Final preparation-only gates passed: check, makemigrations --check --dry-run,
-repository Ruff0.17.1,11focused tests in0.050seconds and529full Django tests in
-394.201seconds (one platform skip). Frontend source/dependencies/build are unchanged
-from the successful explicit Node24.19verification above. Draft PR81 remains
-unmerged and undeployed; final-head CI is checked separately. No parser helper is
-called by the production deadline/record path, so this proposal adds zero verified
-inventory until a genuine closing-deadline contract and separate integration exist.
-
-## MVP1 closeout and MVP2 planning — 11 November 2026
-
-Local main fast-forwarded to reviewed e682cac, matching the latest available
-4November deployment receipt; no fresh runtime/deployment claim. Twenty stale local
-and seven remote development branches were preserved by27exact tip tags and a
-verified owner-private complete Git bundle before removal. Worktrees were clean
-and detached at their existing commits; all files and five stashes remain. Four
-active Dependabot branches/PRs67/82/83/84 remain. PR71/73 closed with archive notes,
-not merged. Released jobs.0017 conflicts with the archived analytics0017; MVP2 must
-port focused packages onto main with fresh additive migration design.
-
-Jira:34Done stories assigned released MVP1;13unfinished stories moved to unreleased
-MVP2/backlog with status In Progress and concrete remaining-gate comments. AJ80 and
-all23Update histories retained. AJ81–86 are six To Do readiness/product proposals.
-MVP2's20items were ranked with dependency/security readiness and real inventory
-first. Six epics now In Progress; frontend/API epicAJ7 Done from its five completed
-children. Expired active Sprint4 closed only after its six remaining issues were
-confirmed Done; no sprint started, new dates invented or issue history deleted.
-Direct mutation receipts:reports/JIRA_MVP2_UPDATES_2026-11-11.json.
-
-Pinned Django6.1.2 check/drift and full529tests passed387.531s,one existing skip,
-zero external network/DNS/SMTP audit attempts. Node24.19 locked install,lint,
-155frontend tests/27files (19.54s) and build (1.35s) passed;38committed build files
-matched. Ruff/OpenAPI passed. Remote planning-PR checks are pending until observed.
-Known high follow-redirects alert31 remains open;AJ81/PR82 retain its targeted fix
-for separate reviewed verification. No dependencies/lockfiles/CI/hosting/schema/
-feature code,production flags,data or backups changed. .gitignore protects the
-private .recovery directory. See docs/MVP2_PROPOSAL.md and the closeout report for
-benchmarks,recommended core/conditional scope,targets,hashes and recovery commands.
-
-Additional isolated Git restore verified archived refs/baseline and caught that
-bundle --all captures only the current refs/stash,not older stash reflog entries.
-All five original stashes remained intact. Added five local-only stash recovery
-tags and a separate owner-private bundle; isolated restore verified all5stash
-commit objects. No stash/private history was pushed. Both bundle SHA256 values
-and commands are recorded in reports/MVP1_CLOSEOUT_2026-11-11.md.
-
-## Dependabot resolution package — 11 November 2026
-
-Current task authorizes handling the four remaining remote dependency branches.
-Original67/82/83/84heads were archived and verified under
-archive/dependabot-20261111/pr-<number>. PR67 was closed with actual resolver and
-installed-distribution evidence: updated Celery5.7 requiresdateutil2.9.0.post0,
-so3.0.0cannot compose with84. No forced/no-deps install;the compatible pin remains.
-The other three PRs are consolidated on codex/dependabot-closeout-20261111 and
-must not be closed as superseded until the replacement passes six CI checks and
-merges. PR83's old failed job explicitly showed stale committed frontend assets;
-the regenerated build is committed last,not bypassed in CI.
-
-The actual new graph installed in a separatePython3.12environment;pip check passed.
-Django6.1.3check/drift and529tests passed323.847s,one existing skip,zero external
-I/O audit attempts. Node24.19locked npm ci,Oxlint/ESLint,155tests/27files (18.63s),
-helper test and Vite8.3.6build (1.43s) passed. Ruff0.17.4/OpenAPI and16repository
-helper tests passed. Mypy2.4.1executed with309nonblocking legacy findings,not clean.
-Fresh online npm audit:0high/critical,3moderate development nodes;production-only
-audit0. Follow-redirects1.16.2security patch retained. AJ87tracks compatible removal
-of the ESLint/config-array/minimatch advisory rather than an unreviewed override
-or downgrade. No application logic,auth/cookie/CORS,ingestion,migrations or CI
-workflow change;no production deployment,flag change,live mail/charging or data
-mutation. Repository pins change toDjango6.1.3;production remains last verified6.1.2.
-See reports/DEPENDABOT_REVIEW_2026-11-11.md for explanations,root causes and rollback.
-
-## MVP2 implementation start — 11 November 2026
-
-Michael explicitly selected `MVP2` as the integration branch, superseding the
-proposal's main-only branch recommendation. Created from fetched reviewed
-`origin/main` at `a8f11fd728aeb0fbe4ff5d62027b7c64712f8a66` and published to
-`origin/MVP2`. Original main checkout and unrelated untracked work preserved.
-Feature branches start from reviewed MVP2; feature PRs target MVP2. Release to
-main remains a separate checked PR. No production deployment is implied.
-
-First slice of AJ83: `codex/mvp2-aj83-matching` adds private job-detail skill
-explanations, matched/missing labels, distinct no-job/no-profile-skills states and
-a link to the existing profile editor. It preserves score calculation, the 70%
-alert-only threshold, source/deadline labels and independent application eligibility.
-No schema migration, new source ingestion, telemetry or sending activation.
-
-Commands/results: explicit portable Node24.19.0; `npm ci --no-audit --no-fund
---cache C:\dev\ajiri\.npm-cache` passed after incomplete offline caches failed.
-`npm run lint`, `npm run lint:eslint`, `npm run test -- --run` (159 tests/28 files),
-`npm run test:quality` (one helper) and `npm run build` (2.25s) passed. Prettier
-formatted the three touched frontend files. Ruff0.17.4 full backend/scripts passed.
-
-Local backend parity is UNVERIFIED: retained Python3.12 environments point to a
-missing base python.exe. Global Python3.13 lacks DRF. A fresh pinned virtualenv
-installation stalled downloading the cp313 lxml6.1.3 wheel, including a bounded
-retry. A supplementary Python3.13 run preloaded globally installed lxml6.0.2,
-yaml/jsonschema and used retained dependency libraries (Django6.1.3). Four new
-`jobs.test_match_explanation` tests passed in4.740s; reviewed OpenAPI regenerated
-successfully. `manage.py check`, `makemigrations --check --dry-run` and full suite
-were also started with that supplementary environment; full results and exact
-pinned CI remain pending at source commit. Do not call this a pinned local pass.
-The browser journey now checks a 33% explanation and preparation, with axe audit;
-browser/performance acceptance also requires CI. Generated frontend_build is
-committed separately after source as the last frontend-package commit.
-
-AJ83 is In Progress, not Done. Normalized location/remote/experience filters,
-preferences/dismissals and consented usability pilot remain. Genuine inventory,
-recovery-capacity and other MVP2 prerequisites remain separate open work. No
-production quota, backup, runtime or pilot result was established by this slice.
-Rollback: reviewed revert of source plus matching built assets; preserve data and
-freshness settings. PR/check evidence must be recorded before integration.
-
-### AJ83 verification receipt — supersedes pending checks above
-
-Feature source `aa4c82b` and last frontend-package build `b3b2801` were pushed in
-[PR88](https://github.com/michael-mathenge/ajiri/pull/88), base `MVP2`.
-All six exact-head checks passed in
-[CI43090219416](https://github.com/michael-mathenge/ajiri/actions/runs/43090219416):
-backend Python3.12/3.13/3.14, frontend, browser/performance and quality. This includes
-the new real-browser low-score explanation/preparation/axe regression and committed
-build consistency. No claim of manual phone review or consented pilot success.
-
-Fresh isolated Python3.13.17 runtime installation subsequently completed using the
-actual requirements.txt pins (Django6.1.3, lxml6.1.3). `python -m pip check`,
-`python manage.py check`, `python manage.py makemigrations --check --dry-run` and
-`python manage.py test --noinput` passed:533tests in218.504s, one existing skip.
-Full suite ran outside the filesystem sandbox to permit existing hard-link tests.
-This supersedes the earlier supplementary full-suite failure (one failure/six
-errors): three private-media tests hit sandbox WinError5 creating hard links and
-four subprocess checks lacked retained dependencies. That failed run remains
-historical failed evidence; it was not a passing pinned run. Local Python3.12 is
-still unavailable, with the pinned3.12 pass provided by CI.
-
-This receipt is a documentation-only follow-up package after the frontend source
-and final generated-build commits. Its corrected head must pass all six checks
-again before merge; the final merge/check receipt will also be retained on AJ83.
-Integration into MVP2 is distinct from a release to main or production. No source
-or data deployment, migration, provider send, pilot or production verification.
-
-### MVP2 first production activation — 13 November 2026
-
-PR88 merged into `MVP2` as `3e37c47`; release PR89 merged to main as
-`d5f2f6871276434569df10ffb153cb8591a9a7df`. All six exact merged-head checks passed
-in CI43094746515, including a successful rerun after the first browser job's
-artifact-upload service error (the test step had passed). Fresh pinned local full
-release suite: 533 tests/258.239s, one existing skip; earlier frontend gates and exact
-38-file committed-build comparison also passed.
-
-PythonAnywhere now runs that exact release, replacing `e682cac`. The previously
-unfinished private off-server download and isolated restore are complete. The
-11 November consistent snapshot still matched the production database and all
-16 private files under the fresh 13 November writer/web pause. Verified previous
-virtualenv recovery was retained. Exact source staging, offline pinned dependency
-installation, pip/system/drift checks and actual migration plan passed with no
-migrations. Database/media bytes, SQLite integrity/search triggers and feature
-flags were preserved; all 33 runtime pins match, including Django6.1.3.
-
-Web re-enable/reload completed. Post-reload public health200/HSTS604800 and all
-38 exact live frontend files passed. Read-only production authenticated view checks
-passed for jobs (empty), CV draft and existing private approved CV bytes; anonymous
-CV download401. No second active account or currently visible job existed for the
-additional cross-owner/live explanation journey. Ingest/sweep are restored active;
-Michael explicitly authorized one manual ingest after automatic review blocked
-its initial dispatch, and Ingest43425203368 succeeded. No mail/pilot acceptance
-is inferred. AJ83 and the wider MVP2 backlog remain unfinished.
-
-Full recovery hashes, commands, quota, limitations and data-preserving rollback:
-`reports/MVP2_DEPLOYMENT_2026-11-13.md`. This receipt is a documentation follow-up,
-not a new production runtime activation.
-
-## MVP2 security continuation — 13 November 2026
-
-Michael approved implementation/testing/push/checked merge/deployment of the pending
-MVP2 plan. AJ81 is reconciled Done: authenticated GitHub alert31 now reports fixed,
-fixed_at2026-11-11T11:39:39Z, and the previously reviewed dependency package is in
-the verified d5f2f68 production runtime. No manual advisory dismissal occurred.
-
-AJ87 branch `codex/mvp2-aj87-security` starts from reviewed MVP2 `cee43f4`. Exact
-minimatch11.0.5 overrides cover ESLint and config-array's development-only consumers;
-latest upstream ranges still select vulnerable10. Real lint glob regressions and
-existing helper:5tests passed. Node24.19 locked installation, Oxlint/ESLint,
-159components and build passed. Fresh complete npm audit returned0findings. All38
-regenerated frontend files match the unchanged committed build. Backend check/drift
-passed; corrected full suite passed533tests in276.838s (one existing skip).
-Required CI remains pending. An initial wrong-cwd invocation discovered0tests and
-is not full-suite acceptance.
-
-See `reports/AJ87_SECURITY_2026-11-13.md` for source/registry review, validation,
-temporary override removal and rollback. No newer production activation is claimed.
-
-### AJ85 recovery-capacity implementation — 13 November 2026
-
-`codex/mvp2-aj85-recovery` starts from reviewed MVP2 and incorporates reviewed AJ87
-merge00ce84f. Added a read-only account-quota peak planner for simultaneous private
-snapshot and transfer ZIP, compression/metadata allowance and16MiB reserve. It stats
-SQLite/journals/private files without opening SQLite or copying/pruning content.
-Default scope excludes new runtime archives; those need separate measured allowance
-and verification. Backup/restore/scheduler completion is never inferred from a plan.
-
-Eleven focused tests and pinned Ruff0.17.4 passed. System/drift and Node24.19 locked
-npmci/lint/build passed; all38 regenerated files match unchanged committed assets.
-Full backend suite passed544tests in258.304s (one existing skip). Required CI and
-fresh production quota evaluation remain pending.
-Existing16-file off-server recovery from the prior deployment remains completed
-evidence. Archived conflicting migration stacks remain reference-only. See
-`reports/AJ85_RECOVERY_READINESS_2026-11-13.md` for limitations and rollback.
-
-### AJ82 approved original-source direction — 13 November 2026
-
-Michael directed Ajiri to be its own original vacancy source. AJ82's description
-now preserves the historical multi-source proposal beneath superseding acceptance:
-genuine employer-submitted originals, independent review, canonical Ajiri identities,
-safe retry handling and source-readiness diagnostics. The three-external-feed target
-is superseded;50genuine roles/10employers remain pilot targets, not observed counts.
-
-`codex/mvp2-aj82-original-source` incorporates reviewed MVP2 `fbd8834` (AJ87 and AJ85
-both merged after all six checks). Nullable unique jobs.0018 submission IDs provide
-same-owner/exact-intent200replay,201new and409collision/changed intent; they never
-authorize publication. Legacy clients/rows retain compatibility. Original publisher
-metadata derives from employer provenance, with the official application destination
-kept separate. Existing authority/deadline/independent review/withdrawal gates remain.
-
-Focused original-source/migration11 and combined freshness24 passed; focused UI11,
-all161components,5quality helpers, Node24.19 locked install/lint/ESLint/build, pinned
-Ruff, system/drift and strict OpenAPI generation/comparison passed. Full backend
-passed555tests in261.722s (one existing skip). New lost-response browser regression,
-required CI and production activation are pending. See
-`reports/AJ82_ORIGINAL_SOURCE_2026-11-13.md` for actual results and the
-backup -> staging ->0018migration -> activation/data-preserving rollback order.
+# Queue reconciliation follow-up � 15 November 2026
+
+Final review found an existing saved-search window's definite failure could be
+mislabelled succeeded once no unsent rows remained. The worker now reconciles
+that failure as dead before collecting/sending. Regression confirms no repeated
+handoff. Actual retained verification:17queue tests5.831s; full637tests265.345s
+(one existing platform skip), check/drift/Ruff passed. Frontend source/build is
+unchanged from the verified Node24.19 locked ci/lint/build47-file comparison.
+PR112 must pass all six checks on this corrected head before merge. No production
+activation, normal send, queue worker or new recovery snapshot is claimed here.
+
+# Dormant delivery queue implementation � 14 November 2026
+
+codex/mvp2-dormant-queue includes checked PR111 merge88080fc. Focused archived
+queue/outbox code was reconciled against current adapters; matching/sweep/public
+HTTP producer hooks were excluded. New additive jobs0022 follows0021, never the
+conflicting archived0018. Saved-search tasks bind revision and exact due window;
+publisher timeout cannot overwrite a fast worker settlement. Default queue flag
+False; no scheduler, worker, normal sending or infrastructure activation.
+
+Initial targeted run exposed two fixture assumptions (historical generated_cv
+field; another legitimately past-due search window). Corrected fixtures passed
+24tests7.543s. The final full suite, including fast-worker and registered-disabled
+handler regressions, passed636tests294.056s(one existing platform skip). Check,
+migration drift and Ruff passed. Node24.19 locked npmci358/audit0, lint/build1.82s
+passed;47 regenerated files exactly match committed assets. Populated migration
+rehearsal preserved all old tables/rows, relationships, private document bytes and
+all3search triggers. No production migration or activation is inferred yet.
+
+PR111 exact38da502 passed all6checks and mergedMVP2 as88080fc. Queue package CI,
+checked release and production outcomes remain separate. Read-only production
+capacity16:49:57UTC:461877248used including1MiBmargin,74993664available,
+73941075required for full next snapshot+transfer+16MiBreserve,1052589remaining;
+actualsourceef1c102 and queued environment flagdisabled. Recheck while paused and
+after staging; no backup deletion authorized or performed. AJ17/26/43/48 remain
+open for real normal-path/hosted acceptance.
+
+# Delivery reliability implementation � 14 November 2026
+
+Feature branch codex/mvp2-delivery-progress starts from reviewed main ef1c102 and
+includes checked MVP2 receipt95ee729. Signed keyset continuation fixes bounded
+match/search batches that repeatedly examined the same ineligible rows. Search
+cursors bind UUID/revision; initial upper IDs defer new inserts to a fresh pass.
+The current delivery/ledger guards and existing list-returning callers remain.
+No migration, API, scheduler, ingestion or production flag change.
+
+Actual focused21tests passed3.008s, including original adapter tests and new
+progress/deletion/scope/shape/limit cases. Ruff and check/drift passed. Full backend
+gate passed618tests531.248s(one existing platform skip); the later added cursor
+shape test passed in the21-test focused run. No production activation is inferred. Node24.19
+locked npmci358/audit0, lint/build3.60s passed; all47 regenerated files match the
+committed build exactly. Full gate/CI/merge/release outcomes follow separately.
+
+# Jira roadmap execution
+
+## 14 November: vacancy-pilot readiness release verified live
+
+Exact runtime ef1c102ccf4f2d5c64353b7698a8fc4a7374b3e4 (PR109), all six release-head
+and all six merged-main checks passed. PR105/106/107/108 were individually checked
+and merged into MVP2. Safe aggregate readiness/current guides/private evidence
+template, default-off normal transports and decision-only hosting assessment are
+shipped. Initial PR108loginTBT251msfailure retained; product cache loading fixed,
+corrected Linux medians160/181ms and all unchanged budgets passed. No field claim.
+
+Today's completed consistent recovery/off-server copy/isolated16-media restore was
+independently reverified, then fresh paused comparisons proved all45tables/three
+triggers/16files/absent ledger unchanged before and after staging/smoke. This
+qualified snapshot reuse; no redundant new snapshot/download or deletion. No
+migrations/dependencies. Post-staging capacity passed461844480used/75026432available/
+73941075required,1085357beyond full next-backup plan. All33pins/private CVbytes and
+owner direct reads passed; disabled commands returned no changes. Fresh WSGI
+configuration reproduction preserves account_security/freshness and all eight
+closed gates. Web re-enabled/reloaded, both writer workflows independentlyactive.
+External14:45:04UTC health200/HSTS604800/all47exact files/three private anonymous401
+checks passed. Runtime indexc1a069b2ec992fbb5714a2a7a017e01b0337ac0fdd33df9b2dd53aa3e9a42448.
+
+Receipt local gates:611tests278.415s(one existing skip), check/drift, Node24.19
+locked npmci/lint/build1.60s and47-file exact comparison. After product fix177
+components28.21s and11Chromium journeys74.607s passed. No normal real send, manual
+ingestion, fake vacancy, staff grant or infrastructure provisioning.16stories
+still unfinished; actual participants/normal delivery/engine/host gates remain.
+See reports/MVP2_VACANCY_READINESS_DEPLOYMENT_2026-11-14.md for full evidence.
+Earlier checkpoints below remain historical; documentation-only follow-up merges
+do not change this activated runtime.
+
+
+## 14 November: public onboarding performance gate correction
+
+PR108 first1ed83ed passed five checks/11browser journeys but login TBT251ms failed
+the unchanged250msbudget (Linux43602973332). No metric rerun or relaxed gate.
+Public shell previously initialized the private cache. A signed-in lazy provider
+now keeps it off public first load, resets per session and clears/cancels old reads.
+JWT/interceptor/server permission behavior is unchanged. Bothlinters,177components
+28.21s, build2.61s and11real Chromium journeys74.607s passed after the fix. Actual
+network assertions verify deferred cache loading; account-isolation tests remain.
+Build47files/indexc1a069b2ec992fbb5714a2a7a017e01b0337ac0fdd33df9b2dd53aa3e9a42448,
+mainJS362.34kB versus395.30kB. Linux corrected-head checks/activation still pending.
+See reports/AJ86_PRIVATE_CACHE_LOADING_2026-11-14.md for retained failure/evidence.
+
+
+## 14 November: current public employer onboarding guide
+
+Branch codex/mvp2-employer-guide-current corrects the public guide's historical
+verification-availability claim: current mailbox verification, genuine pilot
+onboarding and independent organisation/vacancy review remain separate. The
+corresponding old owner-only claims in USER_GUIDE were corrected in checked PR107.
+PR107 final4a596a1 passed all six checks and mergedMVP2 as260521b. No participant,
+posting/publication, staff grant or normal sending is activated.
+
+Actual guide package gates: check/drift;611tests302.848s(one existing platform
+skip); Node24.19 locked npmci358/audit0, bothlinters,175components23.01s, build
+1.55s then formatting correction/rebuild2.42s. Prettier check passed after the
+initial changed-file warning. Real Chromium public mobile-viewport accessibility
+in both themes passed1journey14.265s with external requests blocked; this is not
+manual Android/iOS acceptance. Regenerated44files match dist exactly; removed only
+32obsolete tracked asset paths. Generated build is the package's last commit.
+Index SHA2561e62cc7d3949a8ab876e1c9fdde30d50c5add78ac9c9ec73bc174c6886a39b14.
+No schema/dependency/backend behavior change. RequiredCI/release/deployment pending.
+
+
+## 14 November: next-phase reviewed source integration
+
+PR105 passed all six checks and merged MVP2 as4eab005; PR106 passed all six
+checks on675e7a1 and merged as387a0bf. PR107 integrates that reviewed source;
+its only conflict was two progress headings, both retained. Backend/frontend
+source is byte-identical to reviewed PR106. Local full611tests297.040s and its
+all-six CI result remain valid source evidence; this merged head must pass its
+own required checks. Runtime remainsc88da83 until a separately checked release.
+
+
+## 14 November: scanner and hosting decision package
+
+Branch codex/mvp2-scanner-hosting-decision reviews archive974dc6d and current
+production capacity/expiry. docs/SCANNER_HOSTING_DECISION_2026-11-14.md compares
+free/current hosting, paid-host bridge and an EU VM/private-object candidate, with
+primary-source costs, quote limitations, private processing destinations, scanner
+freshness/legacy policy, actual-host tests and staged data-preserving cutover.
+No service selected/purchased/provisioned, no real file transfer or infrastructure
+change. Indexed Hetzner quote page returned404; its rate is indicative only.
+Archive queue0018 conflicts with current0018: later work needs a new additive
+migration, never wholesale reuse. No live scanner/storage/queue claim.
+
+Mandatory local gates on reviewed pilot-readiness baseline: check/drift;594tests
+311.032s(one existing platform skip); Node24.19 locked npmci358/audit0, lint/build
+1.70s and44-file regenerated committed-build comparison passed. No frontend bytes,
+schema, dependency or runtime configuration changed. RequiredCI/merge pending.
+
+## 14 November: focused normal delivery reconciliation
+
+PR73 is confirmed closed/unmerged at38bf953; only its three normal transports,
+commands/tests, default-off settings and dispatcher hooks were ported onto reviewed
+MVP2. Newer filters/ownership/migrations are preserved. No new migration, dependency,
+endpoint, scheduler, ingestion change or activation. original_source_readiness
+reports all three new switches separately. See docs/NORMAL_DELIVERY_READINESS.md.
+
+Local Ruff/check/drift passed;608tests270.573s(one existing skip) before integrating
+checked PR105; final combined611tests297.040s(one existing skip), plus30affected
+regressions4.701s passed. Original
+13adapter tests passed;17targeted tests2.864s after finding/fixing a programmatic
+batch-limit bypass and correcting a fixture county slug. Node24.19 locked npmci358/
+audit0, lint/build1.57s and44-file exact regenerated build comparison passed.
+No passing live-service claims: all normal sending/search switches stay disabled.
+Push/requiredCI/merge/deployment remain pending; actual results follow.
+
+
+## 14 November: genuine vacancy pilot readiness package
+
+Branch codex/mvp2-pilot-readiness extends the existing aggregate command with
+first1role/1employer inventory, safe general account-mail configuration status,
+current switches and explicit external evidence limitations. No endpoint, sending,
+tokens, receipts or writes. Fresh11:56UTC production inspection on c88da83 confirmed
+ACCOUNT_SECURITY_EMAIL_ENABLED=True, REAL_EMAIL_ENABLED=True, account_security
+mode and valid configuration; outside-employer inbox/onboarding remains unverified.
+Posting/public/saved-search/application-alert switches remainFalse; freshnessTrue.
+Capacity461045760used with margin/75825152available; next-plan remainder1884077.
+Dashboard expiry independently observed30November2026. Operating guides/template
+now separate first milestone, larger50/10target and8/10candidate pilot.
+
+Actual local gates: Ruff/check/migration drift passed;594tests294.024s(one existing
+platform skip), targeted13tests0.490s. Node24.19 locked npmci358/audit0, lint/build
+1.70s and44-file regenerated build comparison passed. Initial npmci sandboxEPERM
+was corrected by the authorized normal escalation; no gate was skipped. No frontend
+source/build byte changes and no migrations. Push/CI/merge and deployment pending.
+
+
+## 14 November: public validation performance release verified live
+
+Runtime c88da83070b2e491a3f2df2601a6efaaed08374f (PR103) passed all six release-head
+and merged-main checks. Fresh private off-server recovery and isolated16-file
+restore completed before staging. Michael approved exactly three duplicate raw
+files (28034360bytes) in backup-20261113T134617405732Z-46a6f54d; exact path/hash/size,
+ZIP members and before/after inventory verified only these were removed. Retained
+ZIP/all other entries/all off-server copies/newer snapshots remain. Capacity passed
+before and after staging, including the following backup/ZIP/16MiB reserve.
+
+No migrations or dependency installation. All45tables, three search triggers,
+16private files and safety flags matched recovery before and after staging.
+All33 pins and owner-only direct view/private CV-byte checks passed; anonymous
+access denied. Web re-enabled/reloaded and both writer workflows observed active.
+External health200, HSTS604800 and all44 exact live build hashes passed. No real
+send, personal mutation or fake vacancies. Lab TBT login/register110/101ms is not
+field-p75/pilot acceptance. AJ86 remains In Progress;16non-Epic items unfinished.
+Receipt package: check/drift and591backend tests288.705s(one existing skip), locked
+Node24.19 npm ci/lint/build2.13s and44-file committed build comparison passed.
+See reports/MVP2_PUBLIC_VALIDATION_DEPLOYMENT_2026-11-14.md for recovery, cleanup,
+capacity, activation and rollback evidence. Earlier checkpoints below are historical.
+
+
+## 14 November: public validation release merged; fresh restore complete
+
+PR101's integrated head29425a5 passed all six checks and merged into MVP2 as95198a6.
+Release PR103 passed all six exact-head checks and merged to main asc88da83070b2e491a3f2df2601a6efaaed08374f.
+All six merged-main checks passed. Actual activation remains pending; runtime is still9676fc4.
+Fresh database changes required a new consistent snapshot, not reuse of older data:
+backup-20261114T103614144596Z-cea25a60 completed under drained writer/web pause,
+then existing service/writers were restored and health200. Private off-server ZIP/
+manifest hashes, SQLite integrity and isolated16-file restoration all passed.
+
+Retained snapshot/ZIP leaves25178195bytes short of following-backup reserve. Only
+three older raw copies totaling28034360bytes in backup-20261113T134617405732Z-46a6f54d
+are proposed, with exact server/off-server hashes and matching same-folder retained
+ZIP independently verified. Earlier approval covered a different snapshot; the new
+specific approval is now recorded, but UI input contention blocked execution before any deletion. All off-server recovery and
+both newer server snapshots remain. See reports/MVP2_PUBLIC_VALIDATION_DEPLOYMENT_2026-11-14.md
+for actual recovery hashes, capacity, activation prerequisites and rollback.
+
+## 14 November: checked AJ86 public-form improvement merged into MVP2
+
+PR102 passed all six exact-head checks on b711ff7 and merged into MVP2 as
+b48d5e5b7dd32c0b64d71374735e590bfc4a34c6. Linux43516747325 measured login/register
+three-run TBT110/101ms, versus earlier242/251ms, and initial transfer474740/472854
+bytes versus498966/496063. LCP3958.58/3857.40ms, performance84/87, CLS0.09965/0.06225,
+zero trace retries: all unchanged lab budgets passed. These are lab observations,
+not field-p75 or consented-person acceptance. Prior PR101's251ms failure is retained.
+The evidence branch integrates reviewed MVP2 without discarding either progress
+history. Runtime remains9676fc4 until a separately checked release, fresh recovery
+and real activation; the44-file deferred-validation build is not yet deployed.
+
+
+## 14 November: discovery and private follow-up verified deployed
+
+Runtime is9676fc4c89b7aef04461c2ba0bbc9eed060ade45 (PR99), following all six
+exact release-head and merged-main checks. Michael approved only the three named
+old server snapshot files; exact checksums/size/path and before/after inventory
+verified27,006,264bytes removed, all other entries/off-server copies preserved.
+The following-backup capacity gate passed again before staging and after migrations.
+
+Under drained writer/web pause, current43-table data/3triggers/16 private files
+matched completed off-server recovery. Exact clean source was staged; system/drift/
+actual plan passed, with only jobs0019/0020/0021 pending, then all three applied.
+Original rows/permission assignments/triggers/files were preserved; inspected new
+model content types/permission definitions and sequence increments were explicitly
+accounted for. No access grant occurred. New fields null/new preference tables empty.
+
+Read-only owner jobs/CV draft/employer drafts/suggestions/dismissed/shortlist/
+application-list passed. Existing approved CV bytes matched, private/no-store and
+anonymous401; one existing application exposes nullable follow_up_at after reload.
+Saved searches were observedFalse before staging and remainFalse/403; historical
+True reports are not current evidence. Other safety/mail flags unchanged; all33
+production pins match. No personal preference write or mail was performed.
+
+Web re-enabled/reloaded; external health200/HSTS604800 and all42 exact frontend
+files passed. Both scheduled writers independently observed active again. Final
+measured next snapshot/ZIP capacity leaves14,487,499bytes beyond the16MiB reserve;
+retention remains report-only. No fresh unattended/scheduled-ingestion success is
+inferred. AJ84's bounded functionality is deployed; AJ83 still needs genuine current
+inventory and8/10 consented-person acceptance. Whole MVP2 is unfinished. Full receipt:
+reports/MVP2_DISCOVERY_RELEASE_2026-11-14.md. Later evidence-only merges do not imply
+a different activated runtime.
+
+The activation-evidence follow-up from reviewedMVP2/396913c passed actual local
+check/drift/full591tests289.769s (one existing platform skip); explicitNode24.19
+locked npmci/audit0/lint/build1.61s and exact42-file regenerated comparison passed.
+AJ84 is Done with the manual-date/no outbound-reminder scope recorded, original
+proposal retained and suggested5-point sizing clearly separated from a sprint
+estimate. The fresh query now returns16 unfinished non-Epic stories. Required
+evidence-PR CI remains a merge gate; no new runtime is inferred from documentation.
+
+## 14 November: AJ86 public validation performance follow-up in progress
+
+Production9676fc4 remains verified active; AJ84 is Done. PR101's later evidence-only
+browser job43514052814 passed11journeys but registration's valid three-run TBT
+median251ms exceeded250ms. The actual failure is retained; no metric retry or
+budget/CI relaxation. Isolated codex/mvp2-aj86-deferred-validation from reviewed
+MVP2/396913c defers the unchanged public auth validation module until explicit
+submit, with duplicate-submit protection, busy feedback, retained input and a
+fail-closed accessible download error. Tests/measurements/required checks remain
+pending; no new activation is claimed. See reports/AJ86_PUBLIC_VALIDATION_2026-11-14.md.
+Actual local gates subsequently passed: check/drift/full591backend tests261.992s
+(one platform skip);175components20.58s after correcting the new loader busy-state
+failure; five tooling tests2.787s, both linters, Node24.19 locked install/audit0/build
+1.47s and Ruff. Real Chromium registration/login/private CV/preparation/review passed
+10.398s, proving the validator is absent from initial route requests and loads on
+explicit submit. Safe44-file build synchronization passed. Required CI/Linux metrics
+remain pending; no performance budget is relaxed and runtime9676fc4 is unchanged.
+
+
+## 14 November: checked discovery release; activation awaits recovery capacity
+
+PR96/97/98 each passed all six required checks and merged into MVP2 as9db23ab,
+e31ef17 andc983bed. Release PR99 passed all six exact-head checks and merged to
+main as9676fc4c89b7aef04461c2ba0bbc9eed060ade45; all six merged-main checks also
+passed. Runtime remains93cf55e: no0019/0020/0021 production migration or activation
+has been claimed. The latest feature passed591backend tests/one platform skip,
+171components, five tooling tests and two actual browser journeys21.978s.
+
+Fresh consistent manual snapshot backup-20261113T211254131961Z-19b403ac completed
+under paused web/writers; web and both scheduled writers were restored immediately,
+and external health returned200. Private download checksums and an isolated
+database/all16-file restore passed. The following-backup quota plan then failed
+closed:62,316,544bytes available versus73,744,437required. A concrete one-time
+three-file old server snapshot cleanup is awaiting Michael's separate approval;
+the earlier two-archive approval is not reused. No additional deletion occurred.
+All old off-server raw files and recovery ZIP were independently rehashed.
+
+AJ83 remains In Progress for genuine inventory and the8/10 consented-person pilot;
+AJ84 remains In Progress pending actual verified activation. The pending17-story
+Jira query was reconciled, including archived certificate/backend rehearsal evidence
+and actual scanner/storage/participant/legal/commercial prerequisites. See
+reports/MVP2_DISCOVERY_RELEASE_2026-11-14.md for exact recovery hashes, capacity,
+migration order, unchanged live services and data-preserving rollback.
+
+## 13 November: AJ84 private shortlist/manual follow-up, local verified package
+
+Branch codex/mvp2-aj84-saved-jobs from checkedMVP2/PR97 mergee31ef17. Idempotent
+owner-only saved-role references retain dates, provenance and unverified/expired
+warnings without changing browse/preparation/alert eligibility. AJ50 personal
+stage/note/revision now optionally stores a manual follow-up date; explicit null
+clears, older-client omission preserves, and sending/uncertain receipts/approved
+documents remain independent. Private export and prepared-journal erasure include
+only owned data. Additive jobs.0021 preserves old rows/documents/search triggers.
+
+Actual full591 Django tests passed286.935s (one existing skip); final171 components
+passed27.34s; five tooling tests3.992s; Node24.19 locked install/both linters/build
+2.34s; check/drift/Ruff/strict schema and safe42-file synchronization passed.
+Initial schema annotation warning was corrected using the generator's media-type
+mapping, not suppressed. Focused14 API/schema/privacy tests9.540s and initial8 UI
+tests6.64s passed; two actual Chromium save/remove/focus/date/reload journeys passed
+21.978s with no provider call. No production action or new mail consent occurred.
+See reports/AJ84_SHORTLIST_FOLLOW_UP_2026-11-13.md. Exact-head CI, checked release,
+fresh private recovery/migrations and live verification remain pending; runtime93cf55e.
+
+## 13 November: AJ83 private suggestion choices, local verified package
+
+Branch codex/mvp2-aj83-candidate-choices from reviewedMVP2/PR96 merge9db23ab.
+Suggestions rank current roles with the same skill arithmetic, including low scores;
+owner-scoped reversible dismissal does not alter browsing, application progress,
+saved-search criteria, email preferences or sending. Strict optimistic revisions,
+private/no-store responses, explicit read-before-retry UI and owner export/erasure
+integration are covered. jobs.0020 adds only the unique owner/job preference table;
+disposable reverse preserves existing job/application values and search triggers.
+
+Actual full577 Django tests passed302.855s/one existing skip;166 components37.20s;
+five tooling tests4.359s; Node24.19 locked install/both linters/build2.40s;
+check/drift/Ruff/strict schema and safe39-file build synchronization passed.
+Expanded focused12 tests passed9.963s after fixing an erasure fixture that omitted
+required journal preparation. Browser first failed with saved searches off; fixture
+now enables them explicitly and waits for the destination heading, correcting a
+prior prefill coverage gap. Expanded Chromium journey passed17.041s, including
+dismissal/restore, retained normal browse access, actual prefill and accessibility.
+No guard or production flag was relaxed. See reports/AJ83_OWNER_CHOICES_2026-11-13.md.
+Source/build, required CI and release activation remain pending; genuine inventory
+and8/10 consented-person acceptance remain open. Production is still93cf55e.
+
+## 13 November: AJ83 normalized mobile filters, local verified package
+
+Branch codex/mvp2-aj83-discovery from reviewedMVP2, advanced toc6ae61e after checked
+PR95. Explicit employer county/work arrangement/experience facts now flow through
+independent review, serializers, URL/mobile filtering and identical owner saved
+search/window queries. Unknowns remain null;0 required years is explicit and kept
+when saving. No trait inference,70% browse/apply gate, consent or delivery change.
+jobs.0019 adds nine nullable fields; disposable forward/reverse preserves legacy
+jobs/drafts/searches and all three search triggers. No production migration yet.
+
+Actual check/drift/Ruff/schema passed;565 Django tests passed291.252s with one
+existing skip;164 components passed37.22s; five tooling tests4.207s; Node24.19
+locked npmci/lint/ESLint/build2.37s and safe39-file build synchronization passed.
+Initial local browser import failed for absent optional Playwright; pinned runner
+installed locally, then real employer/review/mobile-filter/accessibility/withdrawal
+journey passed12.581s with provider uncalled. Focused backend19/10 and UI16 checks
+also passed. Source/build commits, required CI and production activation pending.
+Dismissal and consented pilot acceptance remain open. See
+reports/AJ83_NORMALIZED_FILTERS_2026-11-13.md for exact evidence and rollback.
+
+## 13 November: MVP2 original-source package deployed
+
+AJ80's historical Jira housekeeping also completed:23 descriptive dated titles
+and23 Relates links, with independent readback confirming unchanged source
+comments/IDs/timestamps/counts and Done statuses. No entry was deleted, merged,
+bulk-transitioned or treated as new live acceptance. See
+docs/JIRA_HISTORY_RECONCILIATION.md for the exact preserved mapping.
+
+Reviewed main93cf55e5299e8eb5adab60da215b5fbe1e82d1b4 (PR94) is now the
+verified runtime, replacingd5f2f68. AJ87/PR91, AJ85/PR92 and AJ82/PR93 were
+independent feature branches merged intoMVP2 after six checks each; release94
+and the exact merged main also passed all six. Final application gates:555 Django
+tests/one existing skip,161 components, five tooling tests, both linters, locked
+Node24.19 install/build, schema and migration drift passed.
+
+Only the two specifically approved redundant server archives were removed;
+64,442,246 bytes reclaimed, raw snapshot and all off-server recovery copies retained.
+Fresh paused-writer snapshot backup-20261113T134617405732Z-46a6f54d completed.
+Its10,993,453-byte private download passed independent checksums, off-server copy
+and isolated database/16-file restore before migration0018/activation. All43 old
+tables, three search triggers and media bytes preserved after accounting for the
+two inspected SQLite migration/empty-table counter changes. No old data was restored.
+Next-backup plan passes with16MiB reserve and27,643,851 bytes beyond the plan.
+
+Web re-enabled/reloaded; both writer workflows restored. HTTPS health200/HSTS604800,
+all38 exact production assets and owner jobs/CV/employer/private-document reads
+passed; anonymous document401. No new production employer/job/email. Freshness true;
+posting/public jobs/application and alert email false; existing account mail true.
+Original source is deployed foundation with0 eligible roles/0 employers against
+50/10 targets, not completed AJ82 pilot acceptance or the complete MVP2 backlog.
+See reports/MVP2_ORIGINAL_SOURCE_DEPLOYMENT_2026-11-13.md for revisions, commands,
+failed initial preservation comparisons, recovery hashes, limitations and rollback.
+
+## 24 October: application pipeline (AJ50 local)
+
+Branch codex/application-pipeline from reviewed main b24b070. Private owner
+progress/note updates use bounded optimistic revisions, never submission/send
+permission. Receipt labels distinguish provider acceptance, unknown/reserved,
+failed attempts, user-reported external submission and legacy unverified email.
+Query-cache updates let later server receipts replace the saved progress row.
+Additive jobs.0015 preserves snapshots and infers no personal/employer outcome.
+
+Actual gates: full434 Django tests passed365.125s (one platform skip); initial
+focused10 passed1.066s, plus cross-owner receipt regression covered by full suite.
+Components141 passed62.01s; Node24.19 locked install audited364/zero vulnerabilities,
+lint/ESLint/Ruff and build2.00s passed. Exact source and36 generated files verified.
+Strict offline schema passed; new Chromium save/reload journey passed31.108s with
+axe and no provider/email/ledger effects. Initial component run140 had one old
+CV-focus timing failure; corrected to await the same required effect. New form
+button required explicit submit type; click regression now passes. All nine
+browser journeys passed246.544s; exact strict schema regeneration passed. Final
+CI/release remain pending; source is not deployed acceptance.
+
+PR49 closed queue first scope merged b24b070 after all six checks passed in
+CI40047364994. Payment and queue remain inactive test integrations, not live
+financial/worker services. Production remains c628ec0 pending this release batch.
+
+## 24 October: closed queue integration (local AJ48 first scope)
+
+Branch codex/queue-test-integration includes minimal immutable owner/authorization
+envelopes and an inline fake acknowledgement executor. Current dispatch reloads
+permissions/documents and reuses the existing authorization, delivery and quota
+ledger. Duplicate messages and unknown receipts never create a new provider key.
+No broker, worker registration, production task or environment activation; constant
+DELIVERY_QUEUE_TEST_CAPTURE stays false. Nine focused tests passed3.711s.
+Initial invalid fixture assumptions were corrected without weakening checks.
+Full423 suite passed329.895s (one platform skip); system/drift/Ruff passed.
+CI/release pending. Node24.19 locked install audited364/zero vulnerabilities;
+lint/build2.01s and exact unchanged36-file comparison passed.
+
+PR48 payment lab merged at c76ee8d after all six checks passed, CI40046293103.
+No payment route or subscription is active; production remains c628ec0.
+AJ47 real PostgreSQL/object-storage rehearsal is unverified: Docker Linux daemon
+was unavailable in a read-only image inventory. No Docker service or hosting was
+started/changed. Continue independent work; do not claim a fake target as Postgres.
+
+## 24 October 2026: offline payment first scope (local)
+
+Branch codex/payment-test-contracts, based on reviewed main9aa2ada. AJ44-46
+remain provisional live integrations. PAYMENTS_TEST_CONTRACT.md records merchant
+ownership, sandbox access, commercial/privacy and reconciliation prerequisites.
+No merchant, credentials, payer data, real transaction, route, migration, premium
+account or recurring charge is created. Synthetic KES100/30days is not an offer.
+
+The memory-only lab tests server-owned amounts, owner isolation, concurrent
+idempotent starts, unknown handoff/no reinitiation, callback hints without
+authority, matching query evidence, unique receipts, expiry/refund and interrupted
+receipt commits. Twelve focused tests passed0.007s; all-backend Ruff passed.
+Node24.19 npm ci audited364/zero vulnerabilities; lint and build1.98s passed;
+all36 generated bytes match unchanged committed build. Check/drift passed.
+Full414 suite passed327.067s (one platform skip); CI/release pending; fake tests are not a Daraja sandbox pass
+or production financial/durable-transaction verification.
+
+## 24 October 2026: saved-search first scope deployed (AJ-43)
+
+Full live Jira query returned53 issues. AJ27 reconciled to Done using PR44/45
+browser evidence; AJ43 remains In Progress for real email acceptance. Fourteen
+stories remain unfinished, excluding seven parent epics; backlog is not complete.
+
+PR46 source d2c7ba5 and final frontend build fb96186 merged at
+c628ec00466b1dd9168f77b7afafea6d50cca7e8 after all six checks passed in
+CI40044422744. This SHA is verified deployed. Owner-only saved preferences,
+revision-checked edits, bounded Nairobi windows, current-job filters and private
+export are live. Both frequencies start Off. Email integration is closed to
+memory tests; saving preferences never grants consent or sends email.
+
+Actual local verification: full402 Django tests passed304.617s, one known platform
+skip; focused22 passed29.660s; components137 passed83.06s; eight Chromium journeys
+passed193.183s including axe, with no real provider calls. Node24.19 npm ci
+audited364/zero vulnerabilities; Oxlint explicit-source paths, ESLint, hook-safety,
+Ruff, check/drift and strict offline JSON schema passed. Build2.41s; post-commit
+rebuild2.77s matched all36 generated files. Sandbox temporary-storage failures and
+an initial UUID alias-fixture error were resolved and are not passing evidence.
+
+Fresh pre-migration backup-20261024T002343024971Z-526617e8 passed server hashes,
+exact-member ZIP checksum/CRC, private off-server copy and isolated restoration
+(13 media files,224960 bytes). Receipt retained outside Git; encryption unverified.
+ZIP SHA256: d2273b961ed4f21a3e1295d4313f52531bf4a73539e79b9f2d01c67a4eb5e232.
+Actual quota387.0/512MB before pause,399.7 after retained snapshot/bundle. No pruning.
+Writers restored during download; additive jobs.0014 applied in a second short
+pause before activation. System/drift and empty migration plan passed. Web app
+enabled and ingestion/sweep workflows restored active. HTTPS health200/HSTS300,
+clean source, exact live HTML/saved-search bundle and authenticated page/API passed.
+SAVED_SEARCHES_ENABLED true; memory capture/application email false; freshness true.
+No owner preference, personal consent, real mail or employer publication created.
+
+Rollback: disable saved searches, retain additive tables and newer writes, keep
+freshness enforced. Do not restore an old database over later user activity.
+AJ17/26 sending, AJ42 public activation, AJ53 general onboarding and AJ44-52
+first-scope integrations remain unfinished. See SAVED_SEARCHES.md and
+PROVISIONAL_BACKLOG_REQUIREMENTS.md. Existing checkout/user work is untouched.
+
+20 October 2026. Source: [AJ board 34](https://michaelmathenge.atlassian.net/jira/software/projects/AJ/boards/34/backlog).
+Baseline: remote main and recorded deployed release
+`647449851c98f5b22e0419db673f2500c86d1e86`.
+Working branch: `codex/jira-roadmap`, isolated checkout `.worktrees/jira-roadmap`.
+
+Michael approved implementation, tests, documentation, push, merge and deployment
+of the defined backlog. For provisional AJ-42 through AJ-52, he selected concrete
+requirements and test integrations first. Do not represent those as live services.
+The complete Jira project query returned 52 issues with `isLast=true`.
+
+## Current local work
+
+- AGENTS.md now links the backlog and records the current authorization and backup
+  guideline. The original checkout's other uncommitted files remain untouched.
+- AJ-37: owner-only dismissed-application restoration preserves original files and
+  text, blocks missing files and unresolved/accepted delivery, and supersedes old
+  sending authorization. Added an explicit client action and regressions.
+- AJ-37 source is ready for its local commit; no push, merge or deployment of this batch has occurred.
+
+## Actual verification
+
+Using the existing Python 3.12 virtualenv, with `DEBUG=True`,
+`PYTHON_DOTENV_DISABLED=1`, `REAL_EMAIL_ENABLED=False`:
+
+```text
+python manage.py check                         passed
+python manage.py makemigrations --check --dry-run   no changes
+python manage.py test jobs.test_lifecycle --noinput  14 passed
+python manage.py test --noinput                281 run, OK, 1 Windows skip
+```
+
+Resume verification: both additional authorization/ambiguous-delivery restoration
+regressions passed. Full suite rerun: **283 tests, OK, one Windows skip**, 192.020s.
+The first focused attempt exposed a synthetic fixture without original application
+files; the fixture now supplies them, preserving the production missing-file guard.
+
+Explicit Node 24.19, locked npm installation: 180 packages installed, zero audit
+findings; `npm run lint`, `npm run test -- --run` (99 tests), and `npm run build`
+passed. The generated build has NOT yet been copied into committed frontend_build.
+Commit source/review evidence first, then the generated frontend build last.
+
+## AJ-12 platform response supplied by Michael
+
+PythonAnywhere confirms standard Django/WSGI receives native
+`wsgi.url_scheme='https'` for HTTPS. Client-supplied X-Forwarded-Proto headers,
+including duplicates and comma-separated values, are stripped. Keep
+`SECURE_PROXY_SSL_HEADER=None`; do not enable proxy-header trust.
+
+Before activation, verify a real HTTPS request reports secure through the actual
+WSGI application. Then activate:
+
+```text
+SECURE_SSL_REDIRECT=True
+SECURE_HSTS_SECONDS=300
+SECURE_HSTS_INCLUDE_SUBDOMAINS=False
+SECURE_HSTS_PRELOAD=False
+```
+
+Keep host Force HTTPS enabled. Verify no loop, HTTPS HSTS header, ordinary
+authentication/profile/download use and spoofed-header behavior. Roll back only
+the changed redirect/HSTS settings and reload if verification fails; never restore
+the database for a configuration rollback. This response resolves platform
+assurance, but live verification and activation remain pending.
+
+## Remaining execution
+
+Continue defined AJ-17 and AJ-24 through AJ-41; reconcile existing functionality
+against each actual criterion. AJ-8–AJ-11, AJ-13–AJ-16 and AJ-18–AJ-23 are currently
+Done in Jira; AJ-12 and AJ-17 are In Progress. Existing account emails do not
+complete application/alert sending. Renewed expiry is recorded as 19 November 2026.
+
+Implement and verify automated private backups with off-server recovery; document
+machine availability and platform constraints honestly. Retention remains report
+only. Simplify developer/user onboarding after feature changes settle. Housekeeping
+must inspect references and preserve private data, backups, stash, Docker lesson
+files, coverage and original checkout changes. No cleanup has yet been performed.
+
+## Resumed execution results
+
+AJ-37 committed locally as 7382c79 (source) and bb3c4b2 (build). All 283 backend
+tests passed (one Windows skip); 99 frontend tests passed. Not yet merged/deployed.
+
+AJ-24: explicit draft-policy agreement, additive profiles.0006_privacy_notice,
+owner-visible read-only evidence, public draft notice and UI. Focused 16 backend
+tests passed; full suite 286 passed with one Windows skip (426.804s) after isolating
+a historical migration regression to its fixed target instead of future leaf nodes.
+No production privacy migration has been applied yet. New frontend gate: 100 tests,
+lint and repeated build passed using explicit Node 24.19. The final locked install
+passed in .verification/frontend; original worktree reinstall hit a Windows-locked
+native Tailwind binary, which was preserved. Lint used the original source path
+explicitly because the verification folder is Git-ignored. The CV focus regression
+now awaits the animation-frame effect rather than asserting synchronously.
+Tailwind scanning is explicitly limited to src so nested checkout/build folders
+cannot add unrelated CSS; repeated verification builds matched their asset names.
+
+A newly published npm advisory affected transitive follow-redirects 1.16.0
+(GHSA-q3jh-wrc6-jgq8 / GHSA-8r9p-f939-6h3c). Patched only its version, resolved URL
+and integrity to 1.16.1, preserving other lockfile entries/platform metadata.
+After patch, npm audit reported zero findings; this is advisory matching, not proof
+that browser Ajiri credentials were exploitable through a Node-only redirect path.
+
+AJ-12 completed in production on unchanged source 6474498: native secure recognition
+verified, original WSGI restored, Django redirect True and HSTS 300 activated without
+proxy trust/subdomains/preload. Live header/loop/spoof checks passed; owner reads
+and private download passed. Only deliberate check --deploy W005/W021 remain.
+Jira Done status was reread and confirmed. See HTTPS_ACTIVATION_20261020.md.
+
+Backup automation verify-and-copy-ajiri-daily-backup created ACTIVE for 10:00 Nairobi
+daily, using the documented private snapshot/off-server/restore procedure and
+failure reporting. Its first scheduled run remains UNVERIFIED. No always-on
+PythonAnywhere scheduler or disk-encryption guarantee is claimed.
+
+README/SETUP simplified; USER_GUIDE and operator backup guidelines added. Verified
+unused social sprite removed; no private/user data or original Docker lesson
+removed. See HOUSEKEEPING_REVIEW.md. AJ-31/38/41 decisions recorded in
+ROADMAP_SPIKE_DECISIONS.md; local staging setup/verification is in progress.
+
+## Release #27 completed (overnight 20–21 October Nairobi)
+
+PR #27 head 1afa17d61ff0baf06ba6a456f84e137ef964ab99 passed all four checks, then
+merged as cc731976de13a5b5d561739def8dd93a26f70bff. All four merge checks passed too.
+That exact release is now deployed. Fresh paused-writer snapshot:
+backup-20261020T205514252995Z-8ba8d533; server and independent private local restore
+verified (12 media files, 212184 bytes). Only profiles.0006_privacy_notice applied;
+every pre-existing row value and unset historical consent was preserved. No runtime
+requirements changed and no pip install was required. Web app and both previously
+active workflows resumed and reread active. Live asset bytes match the release;
+health/login/register/privacy/applications 200 with HSTS300. Live invalid registration
+400, anonymous restore401 and missing-CSRF refresh403; owner profile read200.
+Normal ingestion succeeded: https://github.com/michael-mathenge/ajiri/actions/runs/39497734521
+Private rollout/rollback receipt is alongside the off-server backup. No real
+production account/document/authorization was created for QA. Browser registration
+agreement verified unchecked after an old tab reload. The obsolete lazy-chunk blank
+page observed before that reload has a regression/recovery boundary in the next batch.
+
+Jira AJ-12/24/37/31/38/41 are Done and statuses were reread. AJ-31/38/41 are decision
+spikes, not claims of live public SEO or Swahili. Remaining defined features stay open.
+
+## Operations batch deployed — 21 October 2026
+
+PR #28 passed all four required checks and merged as
+`93da1161f4a955ab0d3a3f9d5468e24a2bf5d31a`. Production is verified at that
+revision. Fresh paused-writer backup `backup-20261020T213134403490Z-4c4cdc48`
+passed server and independent private off-server restoration:12 files/212184 bytes.
+No requirements delta, pip install or migrations. System check, migration drift
+and empty migration plan passed before activation. Live health/login/register/privacy
+returned200/HSTS300; served index/assets match pinned bytes; authenticated profile,
+jobs and applications reads200. App and both previously active workflows resumed.
+Rollback: stage cc731976 and reload, retaining current database/media/configuration.
+No database restoration is required for this code-only rollback.
+
+Read-only release planner passed on the clean c2d5b48 checkout: no pending source
+migrations or production requirements change. The final generated build was committed
+last. The following records describe the package's actual verification.
+
+Branch codex/jira-operations starts at deployed cc731976. Isolated staging image
+builds, fresh-volume migrations and localhost:8001 health passed. UID10001,
+/data/db.sqlite3, no baked .env, real mail off and empty ingestion credential verified;
+original localhost:8000 learning container preserved. Full Linux suite reached
+296 tests OK, with no Windows symlink skip. Final allowlisted image also passed all 296 tests (79.426s), no skips.
+See OPERATIONS_ROADMAP_REVIEW.md. Native focused backup/preflight tests:20 passed. Repaired
+concurrency scenario was run five separate times successfully; an initial repeated
+label command was deduplicated by Django and is not counted as five runs.
+
+The SQLite last-slot test now accepts only documented no-handoff busy exhaustion,
+then reconciles the same losing key after workers finish and still proves exactly
+one provider call/attempt/quota claim. Added deterministic exhausted-lock regression.
+No automatic provider retries or delivery-service policy changes.
+
+Reusable verify_private_backup validates completion, hashes, SQLite and bounded safe
+archive inventory, and optionally restores into a new private folder only. Its
+actual independent local restore of the private release snapshot passed:12 files.
+Container path guards now recognize a packaged /app without treating its parent /
+as all application data; missing Git provenance explicitly records unverified.
+Fresh .env example fixes blank mail backend and local trusted-origin setup.
+Read-only release_preflight validates clean exact SHA, reviewed migration delta and
+build references; actual clean-checkout execution occurs after its package commit.
+No fetch/install/migration/activation is performed by that planner.
+
+Frontend locked install/lint/102 tests/build passed in the isolated Node24.19 runner.
+New render boundary offers explicit reload for obsolete lazy chunks, without echoing
+exception text, clearing authentication or retrying mutations. The final build is committed
+as the last package commit (c2d5b48). Historical Checkpoint2 checklist is archived, not deleted.
+Provisional AJ-42–AJ-52 requirements prepared; test integrations and live services are
+not claimed complete. Daily backup scheduling is active; first scheduled run pending.
+
+## Account export package — local, 21 October 2026
+
+Branch codex/jira-account-privacy from93da116 adds the operator-only
+export_account_data command, not a public endpoint or account erasure. Six focused
+tests pass; full native Django suite302 OK with one Windows symlink skip (173.220s).
+System check and migration drift passed. Explicit Node24.19 locked installation,
+lint,102 component tests and verification build passed; no frontend source changed.
+No production user export, deletion or real email was performed. See
+ACCOUNT_DATA_OPERATIONS.md. AJ-25 remains unfinished until erasure, partial-file
+failure/retry and restore-ledger replay are implemented/tested.
+
+PR28 post-merge CI and normal ingestion both succeeded. Ingestion evidence:
+https://github.com/michael-mathenge/ajiri/actions/runs/39501474386
+AJ-35 and AJ-36 were marked Done and reread after deployed evidence.
+
+
+## Alert consent package — local, 21 October 2026
+
+Continues codex/jira-account-privacy. Adds explicit choice evidence and confirmation
+UI, a purpose-bound30-day confirmed unsubscribe, authoritative ledger reservation
+checks and new-profile email-OFF default. Existing values are not backfilled.
+Legacy profile email payloads fail with an actionable field400 instead of silently
+claiming consent. In-app remains independent. Console matching no longer marks
+emails sent; live alert transport stays disconnected pending its owner pilot.
+See ALERT_CONSENT_OPERATIONS.md for server order and rollback constraints.
+
+Focused backend45 tests passed before final migration/late-revocation additions.
+Initial frontend regressions exposed obsolete profile fixtures; corrected mocks and
+separate-choice assertions then passed11 focused tests. Final locked Node24.19
+install/lint/all105 component tests/build passed. Final Linux suite310 tests passed
+in80.766s, no skips. System check and migration drift passed again. The earlier
+native308-test run failed the obsolete profile-preference journey payload; the
+updated fixture and all new tests are included in the successful Linux310 run.
+No production consent was inferred or recorded and no real alert email sent.
+
+
+## PR29 deployed — 21 October2026
+
+Merged/deployed4fa75b5541b6998767b90d97e5e6dfe659840280 after all four PR and
+post-merge CI checks passed. Fresh backup085718Z-d9b17894 passed server/off-server
+isolated restore:12 files/212184 bytes. Only profiles.0007 applied; no pip install.
+SQLite reordered profile columns; positional comparison was replaced with explicit
+column-name comparison. Every historical row value was preserved; only one model
+content type/four permissions plus migration history were added. No inferred consent.
+Live health/login/unsubscribe200/HSTS300 and exact index/assets passed; owner
+profile/jobs/applications reads200 and legacy consent status false. App and both
+prior-active workflows resumed and reread active. Normal ingestion succeeded:
+https://github.com/michael-mathenge/ajiri/actions/runs/39573917686
+No production consent, export, erasure or email was created for QA.
+
+## Verified erasure package — in progress locally
+
+Branch codex/jira-account-erasure from4fa75b5. Dry-run-first verified requests,
+signed private prepared/completed journal, dependency-ordered row cleanup,
+explicit session/JWT removal, resumable private-file cleanup and old-snapshot
+replay. Shared jobs/skills/global quotas remain. Actual owner erasure/legal checks
+remain per-request prerequisites, not broad feature authorization.
+
+Focused28 backend tests passed after correcting synthetic destination/sender
+fixtures and explicitly handling SimpleJWT's retained OutstandingToken rows.
+Backup automatically includes a bounded erasure-ledger.zip when its configured
+private directory exists; verifier checks hashes/members and isolated extraction.
+No keys/environment files are copied. Daily automation prompt updated conditionally;
+no actual user erasure or production ledger was created. Full Linux321 tests passed
+(107.867s), no skips; system check/migration drift passed. Explicit Node24.19
+locked install/lint/105 component tests/build passed; generated bytes exactly match
+the committed build. No new dependency or migration. AJ-25/26 are In Progress;
+AJ-26 still requires gated real transport/pilot and unsubscribe footer integration.
+
+
+## PR30 deployed — 21 October2026
+
+Required PR/postmerge CI checks passed; deployed9efd1f0fb99b7d8b66180c1e4b6ed6ac8705501b.
+Fresh snapshot092614Z-bb36a5ed passed server/offserver isolated restore12 files212184
+bytes. No migrations/dependency install. Live health/login/unsubscribe200/HSTS300,
+index exact; owner profile/jobs/applications/alert-preferences reads200. Backup and
+erasure inventory dry runs passed with no journal/account mutation. Writers restored
+to prior active states and verified. Normal ingestion succeeded:
+https://github.com/michael-mathenge/ajiri/actions/runs/39577369558
+AJ-25 completed from implementation/test/deployment evidence; actual user erasure
+still requires a specific verified request and legal/recovery prerequisites.
+
+## Owner alert pilot — local, not activated
+
+Branch codex/jira-alert-delivery from9efd1f0. Default-off synthetic owner-only
+Brevo bridge with shared budgets, stable per-notification receipt, signed unsubscribe
+footer and final consent/configuration recheck. Hidden inactive synthetic fixtures;
+normal ingestion cannot send. Profile UI distinguishes saved consent from disabled
+mail delivery. No production fixture, consent or email created. See OWNER_ALERT_PILOT.md.
+Focused13 tests passed before the final late-revocation regression. Final Node24.19
+locked install/lint/106 component tests/build passed. Full Linux328 tests passed
+(115.572s), no skips; system check and migration drift passed. No new dependencies
+or migrations. Owner consent and actual inbox/unsubscribe evidence remain pending.
+
+## PR31 deployed and owner alert pilot — 21 October 2026
+
+Deployed40c1ea0507b8c39fff604dc2601eb8fd48ea9b0e after four required PR checks
+passed. Snapshot094933Z-aee31c01 passed server/off-server isolated restore,
+12 media files/212184 bytes. No migration or dependency install. The owner personally
+saved current verified-address consent. One hidden synthetic notification was
+handed to Brevo once; provider acceptance and subsequent owner inbox confirmation
+were recorded separately. Owner confirmed successful unsubscribe; production
+read-only checks verified the unsubscribe event, preference/eligibility false and
+ALERT_EMAIL_ENABLED=False. No real job/employer message was sent. Link-preview
+no-effect behavior has automated coverage but no independent live observation.
+AJ-17/AJ-26 remain In Progress: normal alert/application sending is disconnected.
+
+## AJ-27 browser acceptance package — in progress
+
+Branch codex/jira-browser-journey from40c1ea0. Optional pinned Playwright runner
+drives the committed React client and disposable Django live server at a mobile
+viewport. Covers registration/login, profile, explicit CV approval/selection,
+private downloads, application preparation/review and no provider/ledger effects.
+Managed sending remains untested/unavailable; AJ-27 is not complete.
+
+21 October commands: native `manage.py check` and `makemigrations --check --dry-run`
+passed; `manage.py test --noinput`:328 tests OK in221.061s, one Windows symlink skip.
+Node24.19 `npm ci --offline`, lint,106 component tests and build passed; hash comparison
+found zero committed-build mismatches. No frontend bytes changed. Browser dependency
+installation stalled downloading the official38.7MB Windows wheel; explicit browser
+run is UNVERIFIED locally until installation succeeds. The ordinary suite deliberately
+does not discover the optional module. Michael separately approved the additive
+isolated browser CI job; existing four required checks remain unchanged. CI result
+must be recorded before merge. No runtime dependency, migration or sending change.
+
+First Linux browser run reached the job selection step and exposed an incorrect
+test assumption: the approved current CV is intentionally displayed by default.
+The test now clears that selection, verifies preparation is disabled, then selects
+the displayed approved version and submits explicitly. Product behavior is unchanged.
+The corrected browser job passed on Linux at b02d2b7 in run39599872379. AJ-27 stays
+In Progress because successful managed sending is not implemented/covered. Local
+Windows browser execution remains UNVERIFIED; CI evidence is recorded separately.
+
+## PR32 merged — browser acceptance
+
+Merged0fa07d58b59069881903c9e160cdb6accf122fe8 after all five checks passed on
+final head a6ae1ac. Post-merge run39600606759 also passed all five checks. This
+test/documentation-only package needs no production reload; production source
+remains40c1ea0 pending a functional release. AJ-27 stays In Progress for managed
+sending coverage. The first failed browser notification was superseded by the
+corrected green runs, not ignored or bypassed.
+
+## AJ-28/AJ-30 quality baseline — in progress locally
+
+Branch codex/jira-quality-baseline from0fa07d5. Adds optional pinned development
+requirements, Ruff correctness scope, ESLint, changed-file Prettier hooks (opt-in,
+no Git hook/config installation), branch coverage and an explicitly nonblocking
+legacy mypy report. Unexpected checker failure still fails; three wrapper regression
+tests passed. One Node hook-safety test passed (bad syntax/formatting/outside path,
+no automatic file rewriting). Node24.19 locked install/Oxlint/ESLint/106 component
+tests/build passed; build bytes and runtime lock versions are unchanged. Ruff
+passed across backend and tooling. CI quality job separately approved by Michael.
+
+First full native coverage run:328 tests, one failure and one Windows skip in268.778s.
+The failing concurrency test used mutable helper preflight during concurrent dispatch
+and wrongly required immediate success despite the service's documented bounded
+SQLite no-send busy response. Workers now use the same frozen service request;
+only the exact busy response is permitted, only with one durable receipt/provider
+call/quota reservation. Reconciliation after workers finish must read that same
+receipt without another handoff. Both concurrency regressions passed in five
+independent coverage runs. Full coverage rerun/report pending. DeliveryService,
+auth, sending eligibility, runtime dependencies and production were not changed.
+The full rerun passed328 tests in252.999s with one Windows symlink skip; report/XML
+were generated in the ignored verification directory. Initial combined coverage
+was88.85%; final reporting excludes the synthetic cv_test_helpers fixture and is88.82%.
+No production code was excluded to raise the result. Native mypy/pre-commit remain
+UNVERIFIED while their large tool downloads finish; the approved CI job must verify
+them and retain reports before merge. New author/committer identity will be checked.
+
+Subsequent verification: native pre-commit config validation passed; mypy ran and
+reported199 legacy findings (nonblocking, not clean). All six PR33 jobs passed at
+ab48abc in run39614901653, including the new quality job. Linux coverage88.96%,
+197 legacy type findings. API verified the finalized quality-reports artifact
+ID12351314400,14469 bytes, expiry28 October2026. Ruff/ESLint/changed-file hooks and
+all safety regressions passed in CI. No hook installation/Git configuration mutation.
+The temporary Linux download helper was stopped; Docker lesson/user data preserved.
+
+## PR33 post-merge verification
+
+Merged20939e35f9d9a47494868056b728027318bd7fed. All six post-merge checks
+passed; AJ-28 and AJ-30 updated to Done from this evidence. Development tooling
+only; recorded production remains40c1ea0, with no unnecessary reload.
+
+## AJ-29 accessibility and performance — in progress
+
+Branch codex/jira-accessibility-budgets from20939e3. Michael explicitly approved
+extending the existing browser CI job, locked Node test tools and sanitized
+seven-day reports. Adds axe rules on the synthetic application journey and public
+light/dark pages; no production account, mail or private document audit. Lighthouse
+uses three mobile runs per public page and checks each median against measured
+initial budgets. Raw Lighthouse reports stay local; only numeric summaries upload.
+
+Actual local commands: system check and makemigrations --check --dry-run passed.
+Node24.19 npm ci passed (360 packages, audit zero vulnerabilities); Oxlint, ESLint,
+one hook-safety test,106 component tests and build passed. Rebuilt bytes match
+committed frontend_build; no generated change exists to commit. Ruff passed.
+Three malformed-report/budget regressions passed. Measurement-only Lighthouse
+reported a skip; the subsequent enforcing test passed in91.159 seconds. Login and
+register median performance81/81, LCP3673/3714ms; this is a regression baseline,
+not a good-vitals claim. Local axe remains UNVERIFIED without its optional Python
+browser SDK; approved Linux CI must execute it before merge.
+
+The first full backend attempt hit Windows sandbox temp-directory permission
+errors (confirmed with a focused export test); it was stopped. The full synthetic
+suite is rerunning with normal filesystem access. No runtime dependencies,
+production configuration, database migrations or sending activation are changed.
+Full backend rerun passed331 tests in259.710s, one known Windows symlink skip.
+Pre-commit configuration and changed package JSON formatting also passed.
+
+## First browser CI findings and local repairs
+
+Run39619837635 correctly failed on brand/job-link accessible names that omitted
+visible words and inline links distinguishable only by colour. Accessible names
+now include those visible words, the brand text has an actual word separator,
+and ordinary inline links are underlined. Axe rules are unchanged. The complete
+local browser suite subsequently passed (two tests,20.841s), including14 axe scans
+and the full synthetic register/CV/application review journey. This supersedes the
+earlier unavailable local-browser result. No sending occurred.
+
+The same Linux run failed to execute Lighthouse before reporting a measurement;
+it is NOT a budget pass. Sanitized execution diagnostics now strip URLs and paths
+before logs; a regression verifies that stripping. Raw reports remain local.
+The backend rerun passed332 tests in262.432s, one known Windows skip. Linux
+Lighthouse execution remains unresolved until the next CI result.
+Final frontend rerun passed108 component tests, Oxlint, ESLint and the hook-safety
+test. System check/migration drift and Ruff passed after the fixes. The frontend
+build now changes for the demonstrated accessibility repairs and will be committed
+last, replacing only verified generated assets. No runtime library versions changed.
+
+## AJ-29 merged and CI acceptance complete
+
+PR34 merged8d84a2e85caea3d032f88bd860be9e43f6e2906a after all six checks
+passed on f623f05. Post-merge all six also passed. Linux browser suite:three tests
+OK in80.821s; sanitized artifact12354702670,1004 bytes, SHA256
+34beca13d94528fe029b118c5edd158cbbbedb64e5281559b1e94d27dd8b75e8,
+expiry28 October2026. Initial Lighthouse launch failure did not recur on final or
+post-merge runs; its cause is unknown. No budget was relaxed. Local enforcing
+Lighthouse after the UI repairs also passed in101.407s. AJ-29 is Done for its CI
+acceptance; accompanying label/link fixes await production release. Production
+remains40c1ea0. Rebuilt final client bytes were independently reproduced exactly.
+
+## AJ-32 query data layer — local verification in progress
+
+Branch codex/jira-query-data-layer from8d84a2e. TanStack Query5.104.5 replaces the
+custom read hook on six existing page types. API paths key shared/cancelable reads;
+cache is memory-only,30s fresh/five-minute inactive expiry. Writes invalidate reads;
+no automatic mutation retry. Same/cross-tab account changes discard cached private
+data. Axios auth interceptors/cookies and sending authorization semantics unchanged.
+On-demand document review/reconciliation remains explicitly fresh.
+
+Locked Node24.19 npm ci passed362 packages/audit zero. Oxlint/ESLint,113 component
+tests (including five cache isolation/retry regressions), hook safety and build
+passed. Added a further user-facing skill-save/match refresh regression; final
+component rerun pending. An initial component run caught invalidation hooks in the
+wrong review/send wrapper scope; corrected in the actual session components and
+all existing review/send regressions then passed. Backend system check/migration
+drift passed; full suite and real-browser/axe/Lighthouse gates are running.
+Full backend suite passed332 tests in272.260s with one known Windows skip.
+Final component suite passed114 tests, including actual skill-save/match refresh.
+The browser journey's two tests/14 axe scans passed, but its combined run failed
+on Lighthouse NO_NAVSTART trace recording (not a budget result). Added one explicitly
+recorded fresh-browser retry for that upstream recording error only, bounded once
+per suite. Regression assertions reject further retries, successful results and
+other error codes; no performance limits or app-mutation retry rules changed.
+The focused guards and enforcing performance rerun are in progress.
+Focused report/trace guards plus enforcing mobile performance passed five tests
+in104.908s. Exactly one NO_NAVSTART trace retry occurred and was recorded; all
+three valid measurements per page still met unchanged budgets. No other errors
+or metric failures are retried. The complete browser journey/axe portion had
+already passed in the combined attempt; its performance failure was explicit.
+
+## PR35 deployed — 21 October 2026
+
+Merged46c7ea7c41ddad6831d5399af289385bc7d38da8 after all six checks passed
+on2d36957; all six post-merge checks also passed. GitHub's required Python3.12
+status briefly lagged successful job completion; one rerun was requested and the
+actual required status became green before merge. Official GitHub status reported
+a concurrent pull-request/webhook delay incident; no gate was bypassed.
+
+Private snapshot backup-20261021T152829703338Z-5ad371d9 from40c1ea0 completed with
+writers paused; both workflow states and the enabled web app were promptly restored
+before download. Server and independent local verification checked hashes, SQLite
+integrity, safe archive inventory and isolated restoration:13 media files/224960bytes.
+The off-server copy and sanitized receipt are retained under the owner's private
+AjiriBackups directory. Bundle SHA256:
+6766aa886e20dbce7c2ab8a2597fa6b35a5069f897bcbc60c9f69d56be369895.
+No retained data was pruned; erasure ledger was not present in this snapshot.
+
+A second short writer pause staged exactly46c7ea7 after source-clean/ancestor guards.
+The first staging attempt safely stopped outside the Git repository; explicit cd
+and workon corrected the console context before any checkout. release_preflight:
+no expected migrations, pip_install_required=false. Production system check passed,
+no migration drift, no planned operations. Native HTTPS/proxy-header-None/HSTS300/
+subdomains-off/preload-off and alert flag OFF were asserted. Reloaded web app;
+live health returned200, and login HTML plus referenced assets matched release
+bytes exactly. Original enabled web app and active ingest/sweep workflows restored.
+
+Public browser smoke shows the new Ajiri Kenya accessible home label and login
+screen. After the owner signed in, jobs, profile, CV builder and applications
+loaded successfully. Uploaded and approved CV downloads were nonempty valid DOCX
+archives. No profile edits, approvals or sending actions were performed. Ingest
+and sweep workflows were independently confirmed active. AJ-32 moved to Done.
+No password was requested in chat. Rollback: pause writers, return source to40c1ea0, check/reload and
+restore prior writer states; retain live data and existing private configuration.
+No migration reversal or routine old-database restoration is needed.
+
+## AJ-33 forms � local verification in progress
+
+Branch codex/jira-forms-validation from deployed/fetched46c7ea7. All nine form
+elements now use React Hook Form7.90.0 and Zod4.6.7 Mini through a shared resolver.
+Incomplete CV drafts, explicit approvals, alert choice replay and all server
+messages are retained. Native-validation replacement exposed a partial-date gap;
+schema date validation and its regression corrected it. Async validation exposed
+a cooldown timing race; an immediate recovery guard plus shared duplicate-submit
+lock prevents delayed/duplicate requests. Login pending-state test now awaits
+validation before asserting its disabled state. Initial full component run failed
+three tests, then a second caught the date issue; focused CV/schema19 tests pass.
+Final full gates running. Backend check and migration drift pass; no migrations.
+Dialog primitives moved into private screen chunks to retain unchanged mobile
+performance budgets. No production activation or live email for this package yet.
+
+AJ-33 final gates: system check passed; no migration drift; full Django332 tests
+OK/one known Windows skip,275.562s. Explicit Node24.19 locked npmci364 audited
+packages/zero vulnerabilities. Oxlint against real source, ESLint, hook safety,
+Prettier changed-file checks and123 component tests pass. Ruff and hook config
+validation pass. Public bundle first failed transfer budget at516410/513498bytes;
+dialog splitting alone was insufficient. On-demand toast primitives corrected the
+actual cause without changing limits; notification display/dismissal regression
+passes. Final three Chromium/axe/performance tests pass; login/register medians:
+79/77performance,4005.551/4029.118ms LCP,137/185.5ms TBT,CLS0,483000/480088bytes,
+zero trace retries. Subsequent build matches exact committed-target bytes.
+No schema migrations, server dependencies, auth-interceptor, ingestion or CI edits.
+
+## AJ-34 API contract � local implementation
+
+Separate branch codex/jira-api-schema from46c7ea7 while PR36 runs CI. Additive
+/api/v1 aliases reuse exact existing callbacks; ingestion/sweep stay legacy-only.
+Reviewed static JSON is published at /api/schema; drf-spectacular0.30.0 and pinned
+support libraries are offline-only extras, not production dependencies. Strict
+generation first exposed six annotation warnings; offline model/field/operation
+annotations resolved all without runtime view edits. Generation uses an isolated
+in-memory database and fails on warnings/drift. Four focused compatibility tests
+pass, including real-CSRF cross-version login/refresh and anonymous denial.
+An initial full-suite command from the repository root discovered zero tests;
+that is not a passing full suite. Correct backend-directory run is in progress.
+CI edit was separately approved by Michael and adds strict generation/drift checking
+to the existing quality job; all six check names remain unchanged.
+
+AJ-34 base fast-forwarded to the CI-verified PR36 merge925cff9; no history rewrite.
+Saved API documentation additions were retained while Git restored native line
+endings for the fast-forward. No stash or original-checkout changes. Full Django
+suite336 tests passed/one known Windows skip in296.448s. System/migration-drift
+checks pass. Strict schema generation and independent byte-drift check pass against
+an empty in-memory database. Four new compatibility tests passed; aliases reuse
+every legacy callback and protect private data. Node24.19 lockednpmci364 audited
+packages/zero vulnerabilities, lint,123 component tests and build pass. Canonical
+source hashes match the isolated runner; generated build matches committed bytes.
+No frontend changes in this package. Ruff and hook configuration validation pass.
+No migrations or production dependency changes. Source-only contract contains no
+user records; custom response-object typing limits are explicitly documented.
+
+## AJ-39 keyword search � local implementation
+
+Branch codex/jira-job-search initially925cff9, then fast-forwarded to reviewed
+PR37 merge5ad44a1. Six focused backend tests pass in1.157s and two client tests
+pass. Additive0011 indexes five job text fields with synchronized triggers; rollback
+and rebuild retain original/newer job rows. Search uses bounded literal-prefix
+terms and weighted BM25; existing title/location/type/skill filters remain.
+Read-only production capability check confirms SQLite3.37.2/FTS5 enabled; no source
+activation or migration yet. Real-data timing/relevance acceptance remains pending
+release. Planned threshold and bounded known-title smoke are in JOB_SEARCH.md.
+
+AJ-39 full gates: system check passed, migration drift none; full Django342 tests
+OK/one known Windows skip in268.494s. Node24.19 lockednpmci364 audited/zero
+vulnerabilities; Oxlint/ESLint, hook safety,126 component tests and build pass.
+Six focused search tests pass, including1,001 jobs and rollback; three keyword
+client regressions pass. Ruff, schema validation/drift and Prettier pass. Real
+Chromium/14 axe scans/unchanged mobile budgets: three tests pass in116.729s.
+Source corresponds to the isolated runner; subsequent generated bytes match.
+Mobile medians (login/register):
+{"login": {"cls": 0.0621810541848939, "lcp_ms": 3948.4527999999996, "performance": 80.0, "tbt_ms": 102.5, "trace_retries": 0, "transfer_bytes": 483169}, "register": {"cls": 0, "lcp_ms": 3941.0499999999997, "performance": 79.0, "tbt_ms": 112.5, "trace_retries": 0, "transfer_bytes": 480257}}
+
+No production0011 migration or real-data benchmark yet; release acceptance remains pending.
+
+## AJ-40 installability/offline � local implementation
+
+Branch codex/jira-pwa-basics fast-forwarded from5ad44a1 to reviewed PR38 merge
+5f1fcc33f40fd18335becc29bbfdf07648fb40dd. Only byte-verified generated build extras
+were removed before the fast-forward; public source, original checkouts, Git
+configuration/stash and verification builds retained. AJ-40 acceptance was updated
+under existing Jira authorization because Chrome removed Lighthouse's PWA category.
+A timeout was reconciled by reading Jira; the edit had saved and was not repeated.
+
+Manifest,192/512 PNG briefcase icons, secure production-only registration and
+a generic public offline fallback added without dependencies/hosting changes.
+Only four explicit public assets are cached; API/media/admin/static/non-GET and
+other-origin traffic bypasses the worker. No account data or job payload cache.
+Focused assets/native Chromium installability/offline/private-cache/axe/retirement
+tests pass: three tests in3.813s. Earlier retirement assertions ran before
+asynchronous browser cleanup completed; explicit awaited state polling corrected
+the test without weakening cache assertions. A local-only middleware fixture
+models retirement bytes at the original SW URL for browser-internal updates.
+An unrelated synthetic cache survives. Full combined-main gates are next.
+Manual Android/iOS installation is UNVERIFIED; no production worker activation yet.
+
+22 October verification: the four browser journey/performance tests passed (112.907s). API contract drift after Windows checkout was line endings only: normalized bytes and parsed JSON matched. Added an explicit LF artifact rule; strict byte comparison remains unchanged. Native phone installation remains unverified.
+
+AJ-40 final local gates (22 October): strict offline schema validation/byte drift,
+Django system check and migration drift pass. Full Django suite: 344 tests in
+244.390s, OK with one known Windows skip. Node 24.19 locked installation (364
+audited, zero vulnerabilities), Oxlint/ESLint, hook-safety, 126 component tests,
+Prettier and build pass. Ruff across backend/scripts, pre-commit configuration
+and three release-script unit tests pass. Isolated runner/source correspondence
+and all 32 generated build files match. Four real browser/performance tests pass
+in 112.907s, including offline axe and worker retirement; no trace retries.
+Lighthouse login/register medians: score 78/78, LCP 4158.259/4152.536ms,
+TBT 134/128.5ms, CLS 0/0.03643, transfer 484615/481703 bytes; unchanged budgets.
+No new runtime dependency or migration. Generated frontend is committed last.
+Production remains 46c7ea7 until the separately verified batch activation.
+
+## 22 October batch activation and search follow-up
+
+PR #39 merged at 084e4e3a97dccf5941ccdf40a3ee7d65812b2df8 after all six
+checks passed for 9c95f69990d37abf2785c82a7b3380a0e8716a77. PRs #36–#39
+are now deployed. Preflight identified only jobs.0011_job_full_text_search and
+pip_install_required=false. Actual check/drift passed; migrate jobs 0011 applied
+successfully and subsequent plan was empty. HTTPS health/HSTS300, v1 health,
+exact released HTML/assets/schema and all six PWA resources passed. A transient
+502 during worker startup cleared after the normal reload; health then passed.
+Authenticated jobs (877), keyword python (14 results), profile and owner uploaded
+CV download passed; downloaded DOCX checked structurally without content inspection.
+Security and alert-off flags preserved. Both writer workflows were restored active.
+
+Actual account quota was 326.1/512 MB before backup. Fresh complete snapshot
+backup-20261022T002304830379Z-8c22008e was verified on-server and independently
+off-server with SQLite integrity and safe isolated restoration:13 files/224960 bytes.
+Bundle971905 bytes, SHA256
+0ecd0664654822d837bd5d7a44c7212d6b1315240ae3014f114210761aa2bc6f.
+Sanitized receipt/private copy retained outside Git. Writers resumed before download.
+No retained backup was deleted. Rollback keeps additive index/newer writes; retire
+PWA at original /sw.js as documented rather than simply deleting the worker.
+
+Production read-only benchmark (20 runs/query): active877; sampled-title top5 recall
+12/12. Median/p95 ms:15.473/27.267,33.215/84.179,120.579/243.216,3.040/3.695.
+The third broad query exceeded the working200ms p95 target; AJ-39 stays open.
+Follow-up branch codex/jira-search-tuning replaces correlated per-row MATCH with
+one parameterized FTS join, preserving BM25 weights and stable tie-breakers.
+All six focused tests pass (0.440s). The 1001-row regression now checks the actual
+ORM plan has one virtual-table scan, no correlated scan and no duplicate rows.
+Full gates and repeated production measurement are pending for this follow-up.
+
+Read-only candidate-join production measurement (no files/config/data changed,
+20 runs per fixed query) returned the same14/20/20/20 rows. Median/p95ms:
+1.921/2.250,2.404/2.723,20.425/24.546,2.226/2.503. This supports the focused
+query fix but is not a claim that the candidate source is already deployed.
+For this package, Node24.19 locked npmci364 audit/zero vulnerabilities, lint,
+126 components and build pass; all32 generated files remain byte-identical.
+Strict schema/drift and Ruff pass. Full Django result pending.
+
+Search-tuning final local gates: full Django344 tests OK/one known Windows skip in261.554s; system check and migration drift pass. Node24.19 locked npmci/lint/126 components/build pass, all32 generated files unchanged. Strict schema drift, Ruff, pre-commit configuration and three release-script unit tests pass. No migration, dependency, frontend or hosting change.
+
+## Search tuning activation and Lighthouse tracing follow-up —22 October
+
+PR40 head5355b268de11539761519ef3a283134fc396b423 passed all six required checks;
+merged/deployed0678f404008ccb5c989ee7175f44b86c5a390b3f. Fresh consistent snapshot
+backup-20261022T004104447568Z-eb8b978a independently verified off-server, including
+SQLite integrity and isolated13-file/224960-byte media restoration. ZIP3226588
+bytes/SHA2566ad06d3189844e6be8cdb1eb0ddae61085a413a9fd4b6da658e340206d7155de;
+private receipt outsideGit. Writers resumed during download and restored again
+after activation. Preflight: no migrations/pip install; check/drift/plan pass.
+Deployed20-run median/p95ms:2.172/2.624,2.850/3.618,23.104/26.591,2.369/2.623.
+All below200ms; sampled-title recall12/12 on877 jobs. HTTPS/HSTS300/v1 health,
+unchanged HTML and authenticated python14-results smoke pass. AJ39 markedDone.
+Normal ingestion run39700541409 succeeded after the original index migration.
+
+Post-merge main browser run39699269065 failed NO_NAVSTART; one job rerun also
+failed. Main run39701044424 failed the same trace error. Five other main checks
+passed; both reviewed PR heads had all six checks green. These are not metric
+passes. Upstream issue https://github.com/GoogleChrome/lighthouse/issues/15382
+records missing main-thread trace events, but the cause here is not yet proven.
+Follow-up codex/jira-lighthouse-tracing captures local synthetic trace assets and
+uploads only allowlisted event counts plus parsed public browser version through
+the existing summary artifact. No raw trace, URLs, event args or source uploaded;
+no workflow edits, budget relaxation or additional retry. A unit regression checks
+that private synthetic args/event names/IDs cannot enter diagnostics. Diagnostics
+are evidence collection, not a claimed root-cause fix. Managed sending remains off.
+
+Tracing diagnostics local gates: five focused guard tests pass; full Django345
+tests OK/one known Windows skip in267.008s, check/drift/schema/Ruff pass. Real
+Chromium journey plus unchanged performance budgets: four tests pass128.565s,
+zero trace retries. Login/register medians:score77/77,LCP4145.900/4192.518ms,
+TBT157/154.5ms,CLS0/0,transfer483521/481677bytes. Node24.19 lockednpmci364/zero
+vulnerabilities,lint,126components/build pass. This native run did not reproduce
+NO_NAVSTART; diagnostics remain collection capability, not a proven repair.
+
+## AJ17/AJ27 synthetic managed sending integration — local preparation
+
+Branch codex/jira-managed-send-pilot, base034f2a70562d9fe2a5620d39013b866ad4ac74c3
+(PR41 diagnostics merged after six green checks; no production activation needed
+for test-only diagnostics). Production remains0678f40. New route is off by default
+and reuses account owner configuration/shared ledger; only inactive synthetic jobs,
+exact verified owner recipient/Reply-To, two approved DOCX bytes, no copies/redirects.
+Preparation command defaults to dry-run, creates an idempotent blank hidden draft
+only with --create, never document approval/authorization/mail. Public job/matching
+rules remain unchanged. Narrow inactive-job editing is permitted only for the
+configured verified owner pilot; ordinary closed jobs remain blocked.
+
+Initial fixture failures exposed the normal active-job edit gate and a cached
+Profile verification relation. The narrow pilot gate preserves inactive public
+exclusion, and eligibility now reads current Profile evidence. All eight focused
+HTTP tests passed3.630s, including pending concurrent replay/one provider call,
+unknown outcome, off-mode/no credential reads, final owner revocation, shared
+budget exhaustion and non-owner/real-job rejection. Additional preparation/browser
+checks and full final gates remain pending. Two component wording assertions were
+updated after removing false unconditional 'no email from this page' wording;
+all126 then passed, with default-off behavior assertions retained.
+No real provider call, production flag, migration, push or pilot activation yet.
+
+Managed-pilot final gates: nine focused HTTP/command regressions pass3.213s.
+Full final Django354 tests OK/one known Windows skip237.099s; system/migration
+drift and strict offline schema byte check pass. Explicit Node24.19 lockednpmci
+364 audit/zero vulnerabilities,Oxlint/ESLint,126components,hook-safety,Prettier,
+build pass. Ruff/pre-commit configuration/three release-script unit tests pass.
+Real new send journey passes8.503s with fake provider only. Combined five browser
+journey/performance tests passed140.515s, but logged one unexpected CV-list500.
+Strengthened both authenticated journeys to assert no500 responses and settle
+pending requests before context teardown. Repeated combined suite passed132.826s
+with no server-error responses; no production defect is inferred from that earlier
+unexplained log. Mobile medians login/register:score77/77,LCP4172.948/4186.079ms,
+TBT146.5/154.5ms,CLS0/0,transfer484589/481677bytes,zero trace retries; budgets unchanged.
+Source/isolated-runner and32 generated files match; subsequent build matches bytes.
+Generated frontend is final package commit. No real inbox delivery claimed.
+
+
+## Resumption - 23 October 2026
+
+Remote main remains8d0b276 (PR42). Read-only PythonAnywhere console confirms
+clean deployed0678f40; PR42 is not deployed. Actual account quota360.9/512MB.
+Ingestion and sweep were found disabled from the interrupted release; both were
+restored to their recorded prior active states and independently confirmed active.
+No code/database activation or real application email occurred during recovery.
+
+AJ42 continues on codex/jira-public-jobs, base8d0b276. Seven focused synthetic
+public-page/sitemap/privacy tests pass0.304s; system check and migration drift
+pass. An initial template encoding defect was fixed. Publication remains off.
+Node24.19 retained runtime: locked npmci364 audit/zero vulnerabilities,126 component
+tests and build pass; explicit source lint, ESLint and hook-safety test pass.
+Initial sandboxed backend run produced storage errors and stalled; interrupted,
+not counted as a pass. Full suite restarted with ordinary temporary permissions.
+No new commit, push or deployment yet. See docs/PUBLIC_JOBS.md.
+
+AJ42 final local gate: full Django361 tests OK/one known Windows skip265.815s
+with ordinary temporary-folder permissions. Strict offline schema bytes pass.
+Frontend source matches the verification copy after CRLF normalization and all32
+build files match byte-for-byte. No frontend changes or generated-build commit
+needed for this backend-only package. Public rollout remains disabled pending
+the newly approved shared freshness and employer-review implementation.
+Michael approved hiding unverified RSS jobs, mandatory employer deadlines/staff
+review and no seeker application charges; see docs/JOB_TRUST_AND_FRESHNESS.md.
+
+
+### 23 October 2026 - vacancy trust/employer package (local, unreleased)
+
+Approved policy: hide unverified RSS entries; independent staff review of employer
+and vacancy, mandatory closing date, no seeker application payment. Shared
+eligibility now protects listing/detail, matching, alerts and new preparation.
+Unknown old entries archive as unverified; RSS evidence has a 24-hour maximum age.
+Additive jobs.0012/0013 preserve records. A demonstrated SQLite table-rebuild
+search-trigger loss was fixed by making the optional application URL nullable;
+migration/search regressions passed. No historical migration was changed.
+
+Actual gates: manage.py check and makemigrations --check --dry-run passed;
+manage.py test --noinput passed 378 tests in 331.276s, one platform skip.
+Node 24.19 locked installation was retained; all 132 components passed in 68.63s.
+Oxlint/ESLint passed after removing an unused import. Vite build passed in 2.53s;
+34 generated files were checked against the isolated dist. Offline schema
+generation/validation with --fail-on-warn passed; Ruff and diff whitespace passed.
+The first employer browser run used the wrong login label; its locator was
+corrected to the actual accessible label. Final browser/CI/deployment pending.
+
+A fresh source-0678f404 private snapshot, exact off-server ZIP, member hashes and
+isolated SQLite/media restore were verified before release work; writers were
+restored before local download. Receipt is outside Git. This fallback is not
+evidence that the unattended daily automation executed a new snapshot.
+
+Final employer/browser gate: all seven journeys passed in 187.825s, including
+independent staff approval, correct application portal, owner withdrawal and
+48 concurrent authenticated reads. Source matches the tested frontend runner.
+PR43 merged at 31f445c after all six checks passed on ac0dfb1. The current
+feature branch will integrate that prerequisite before its own required-check PR.
+Mobile performance and remote deployment are still pending.
+
+
+
+PR43 browser CI39938811588 failed a job-detail500 during the registration/CV
+journey; the other five checks passed. No merge or deployment performed. Added
+synthetic-only database exception class/SQLite-code diagnostics without messages,
+queries, URLs or personal data. Local focused browser journey passes36.250s; this
+did not reproduce the intermittent failure and is not a claimed root-cause fix.
+Full backend361 tests pass/one known Windows skip302.676s after this test change.
+
+Second PR43 browser run39941160882 failed cv-version-list500; database-only
+diagnostics were empty, so a database-lock cause is not established. Expanded
+synthetic diagnostics to allowlisted exception kinds and repository-relative
+source line references only; no exception messages or local variables. Local
+focused journey passes34.732s; full backend361 tests pass/one skip278.705s.
+Root cause remains unverified; merge stays gated on all checks.
+
+All four local browser journeys pass126.183s. Added immediate sanitized logging
+capture so errors before a final browser assertion are still observable. A focused
+privacy regression passes0.582s and verifies that exception messages and absolute
+paths never enter these synthetic diagnostics. Production logging is unchanged.
+Full backend361/one skip278.705s remains the package baseline; required CI will
+rerun the final harness. No merge on a failed browser check.
+
+
+### 23 October 2026 - browser database isolation (local, unreleased)
+
+PR #43 browser failures exposed SQLite error 21 under threaded HTTP.
+The browser-only runner now allocates a disposable file database, preserving
+normal unit-test discovery. Five existing browser journeys passed in 139.130s;
+a separate 48-request/four-worker authenticated-read regression passed in 2.419s.
+The initial local rerun lacked AJIRI_FRONTEND_TOOLS and failed accessibility
+setup; corrected to the existing locked tool directory before the passing run.
+No HTTP assertions, provider assertions, budgets or CI check names were relaxed.
+Full backend verification and remote CI remain pending for this revision.
+
+Final local runner gates: manage.py check and makemigrations --check --dry-run
+passed; full ordinary Django discovery passed 361 tests in 303.252s (one known
+platform skip). Ruff and git diff --check passed. No frontend source changed;
+the previously verified locked install/lint/components/build remain unchanged.
+
+Local performance gate is UNVERIFIED: browser_tests.performance failed after
+145.138s with NO_NAVSTART, including its one allowed fresh-process trace retry.
+A recorded trace contained navigationStart but Lighthouse rejected the capture;
+no metric or budget pass is claimed. Sanitized local evidence remains under
+.verification/performance. Required Linux CI must produce valid passing results
+before merging/deployment. Integration with reviewed main changed only this
+evidence log; tested feature runtime source and browser harness are unchanged.
+
+PR44 initial quality job failed its changed-file Prettier check; corrected
+seven source files. The earlier CLI check ignored files beneath .verification;
+the corrected check targeted all 13 actual source files with an explicit empty
+ignore file. All matched files passed; rebuilding preserved all 34 generated
+bytes exactly. No functionality/assertion/CI changes. Required CI rerun pending.
+
+
+### 23 October 2026 - AJ53 production activation verified
+
+PR44 merged after all six checks passed at c7a00bc; source deployed is
+2a301f049cdcb66920cd71abd0b00a4fea24c35a. CI40011465224 browser/performance
+ran eight tests in 96.909s and passed. Local Lighthouse failure is retained.
+Fresh snapshot backup-20261023T193233766316Z-2688f170 was verified server-side,
+then exact-member ZIP SHA, private off-server copy and isolated restore passed
+(13 files,224960 media bytes). Private receipt retained outside Git. Writers
+restored before download; no retention deletion. Actual quota before pause was
+373.3/512 MB. Release ZIP SHA256:
+13117020fd8649203de7aa98d56b96313a6a9548e9eb17fe7f6f966006b9f2a9.
+
+Applied additive jobs.0012/0013 before re-enabling requests. Check, migration
+drift and empty migration plan passed; all three search triggers remain. Strict
+freshness and reviewed posting enabled; anonymous publication remains disabled.
+979 jobs retained; 977 historical active rows archived as availability_not_verified;
+zero eligible vacancies. No claim that these were individually proven expired.
+HTTPS health200/HSTS300, exact index and two employer chunks, clean deployed
+checkout, authenticated empty jobs list and employer form/review notice passed.
+The current signed-in account has no applications; extra real historical-document
+download could not be exercised. Automated document/ownership tests passed.
+Both workflow states restored active and web app enabled. No real employer review,
+application send or broadened email pilot occurred. Current work tracked as AJ53;
+AJ42 stays In Progress because anonymous publication remains gated. Other backlog
+items and general employer onboarding are not claimed complete.
+
+
+### 24 October 2026 � application pipeline deployed; preparation-only repair
+
+PR50 all six checks passed at5824da3 (CI40049180274); deployed source is
+fbae0956f17df25b5d69c9a94f17b9568519e089. Applied jobs.0015 after fresh consistent
+backup backup-20261024T012025757458Z-23b2c6e7. Independent private off-server copy
+and isolated restore passed; ZIP SHA256
+2de7e79dd628aef00c4d9b35a33ef6d2f76821023b0a10ed7f940326e2bf7b6d.
+Legacy application fields/snapshots matched before/after migration. Check/drift,
+empty plan, health200/HSTS300, exact live HTML/application chunk and clean source
+passed. All writers resumed their previous active states. Authenticated list read
+passed but the account had no rows; no real user progress was invented. Local434
+Django/one skip,141 components and nine browser journeys passed as recorded in
+APPLICATION_PIPELINE.md. Payment and inline-queue contracts are included in source,
+not live merchant integrations or a durable worker. Application email stays off.
+
+The attempted sending-enabled reload was rejected by automatic approval review
+before execution: personal document approval and exact send authorization were
+not yet complete. No reload/provider send occurred; persisted sending was returned
+to False. A hidden synthetic draft exists, without new document approvals,
+authorizations, attempts or budget use. The repair branch
+codex/owner-pilot-preparation separates preparation from transport activation.
+Six new regressions plus nine existing dispatch tests passed4.244s. It adds no migration/dependency/frontend change. Initial locked
+Node24.19 install was blocked by Windows sandbox EPERM; dependent tools were
+unavailable in that attempt. Corrected elevated Node24.19 npm ci passed (363 added/364 audited, zero findings);
+lint/ESLint and build2.37s passed. All141 components passed73.08s. Source/runner
+and all36 committed build files matched exactly; no frontend commit is needed.
+Full440 Django tests passed374.277s (one known platform skip); manage.py check,
+makemigrations --check --dry-run, Ruff and strict offline schema drift check passed.
+Required CI and deployment remain pending; failed attempts are retained as evidence. No quota pruning occurred.
+
+
+### 24 October 2026 - preparation-only release and AJ49 work
+
+PR51 all six required checks passed at abe049b (CI40083463571); merged/deployed
+source a47c4eedf571daaaf23d9a55658294d7f0dc74e4. Clean source, system/migration-drift
+and empty migration plan passed; no migration was needed. Today's verified private
+release backup/restore was retained. Actual quota414.2/512MB before release; no
+retention deletion. APPLICATION_PILOT_PREPARATION_ENABLED=True and
+APPLICATION_EMAIL_ENABLED=False were explicitly checked before reload. Health200/
+HSTS300 and authenticated synthetic application editor passed. No provider call,
+new delivery allocation or agent-made personal approval occurred. The owner is
+completing the personal gates; a claimed authorization was not found server-side,
+so transport stayed disabled and the exact UI steps were clarified. AJ50 moved
+Done with deployed refined-scope evidence and the manual empty-list limitation.
+
+AJ49 branch codex/job-moderation-reviews starts from reviewed a47c4ee. Existing
+JobAdmin was reconciled as baseline; new single-job reasoned review and protected
+before/after audit are under test. Additive jobs.0016 creates only the audit table.
+No bulk publication or actual moderation decision. See JOB_MODERATION.md; full
+verification, CI, migration/backup and activation remain pending.
+
+
+AJ49 final local gates: manage.py check and makemigrations --check --dry-run passed;
+full451 tests passed379.607s (one known platform skip). Focused11 moderation/migration
+tests passed2.706s; writer-claim and cache-header corrections are described in
+JOB_MODERATION.md. Node24.19 npm ci audited364/zero findings, lint/ESLint and build
+2.17s passed; all36 committed build files matched. All141 components passed81.08s.
+Ruff, strict schema and three hook-safety tests passed. No frontend source change,
+so no generated-build commit. Required remote CI and activation remain pending.
+The owner personally approved pilot package revision2 after corrected synthetic
+email wording was saved as a new immutable revision; authorization is still a
+separate owner action. No agent personal approval, actual send or quota reservation.
+
+
+### 24 October 2026 - AJ49 deployed; AJ51 offline contract
+
+PR52 merged/deployed as bc456497ac84eea5fb3055a887be3aabb857873d after all six checks
+passed at134d254 (CI40085261401). Fresh backup-20261024T102207298247Z-c787f77e was
+verified server-side and independently off server, then isolated-restored17 media
+files/372876 bytes. Bundle SHA256:
+b0086539e1386f17fb7ff1a7275bbfb6d03e5f77de1cd13adac68df728d9a34d.
+Private receipt remains outside Git. Actual quota414.6/512MB before backup and
+427.9 after; no pruning. Both writer workflows and web returned to prior active
+states before download. A second short pause applied only jobs.0016; all previous
+table row values matched except expected migration/content-type/permission metadata.
+No actual job reviewed or staff access granted. Check/drift/empty plan, health200/
+HSTS300, exact live HTML/entry bundle and clean source passed; writers restored.
+AJ49 moved Done for its bounded first scope. Wider appeal/deduplication is separate.
+
+Next branch codex/analytics-test-contract from reviewed bc45649 implements only
+the approved provisional requirements/test-integration step for AJ51. Eight memory
+contract tests passed0.008s; Ruff passed. No production analytics, consent schema,
+SDK, runtime caller or provider has been added. Full gates and remote CI pending.
+Personal application email authorization remains a separate owner action; current
+APPLICATION_EMAIL_ENABLED=False is preserved. Account security email is unchanged.
+
+
+AJ51 local final gates: full459 Django tests passed332.771s (one known platform
+skip), eight focused tests0.008s, check/drift/Ruff/strict schema passed. Node24.19
+locked install audited364/zero findings; lint/ESLint/build1.96s passed. Source/runner
+and all36 committed build files match. No frontend source or build change; previous
+141-component evidence is not relabelled as a fresh run. No migration, SDK, actual
+consent or production collection. Required CI pending. AJ51 remains In Progress.
+
+
+### 24 October 2026 - analytics contract merged; scanning contract under test
+
+PR53 all six required checks passed at d1378b3 (CI40089298387); merged source
+1cf2d5935ac48cee5f9cdd00f3bc3a51a6435dea is not yet deployed. No live analytics
+activation is intended. AJ51 remains In Progress for its genuine live prerequisites.
+Next branch codex/scanner-test-contract was fast-forwarded from bc45649 to reviewed
+1cf2d59 before full verification. It adds only a synthetic memory quarantine and
+fixture scanner behind existing content validation. Eight focused tests passed
+0.056s; Ruff passed. No production file/scanner/transport/route/migration change.
+See SCANNER_TEST_CONTRACT.md. Full gates, CI and code-only release remain pending.
+
+
+Current live Jira reconciliation:12 unfinished non-Epic stories, complete single
+page/no cursor. ROADMAP_NEXT_ACTIONS.md separates live gaps and external gates.
+AJ47 source blocker additionally confirmed: migration0011 rejects non-SQLite;
+no migration history or host change was made. The isolated bootstrap/search/target
+proposal is in STORAGE_MIGRATION_REHEARSAL.md and is not an executed migration.
+
+
+Scanner package local final gates: full467 Django tests passed329.007s (one known
+platform skip); focused eight0.056s, system/drift/Ruff/strict schema passed.
+Node24.19 locked install audited364/zero findings; lint/ESLint/build2.08s passed;
+source/runner and all36 build files matched. No frontend source/build change or
+new component-pass claim. No production scanning, schema/host change or document
+transfer. Required CI and code-only source deployment remain pending. README links
+the short remaining-actions guide; historic reviews remain evidence, not setup.
+
+
+### 24 October 2026 - verified code-only release and final evidence
+
+PR54 all six required checks passed at2860565 (CI40090201927), then merged/deployed
+source b6cc6af6267bb61aaec3a1a4035c61d1e054d6ea. It includes merged PR53 (all six
+checks, CI40089298387). No migration, dependency or frontend change; the verified
+17-file off-server recovery copy/restore from the moderation window remains.
+Production check/drift and empty plan passed. Before reload, sending False and no
+startup caller for either test contract were checked. After reload, health200/
+HSTS300, exact live HTML/entry bundle and clean source passed. No writer pause,
+production collection, scanner I/O or private-file transfer was needed for this
+code-only batch. The earlier workflows/web remain active. Sending is still False;
+the last read found zero active exact pilot authorizations. Revision2 document
+approval alone does not authorize delivery. No actual send or quota reservation.
+
+Current Jira reconciliation remains12 unfinished non-Epic stories, no next page.
+AJ49/AJ50 have deployed bounded-scope evidence; AJ51/AJ52 remain In Progress and
+AJ47 remains To Do. ROADMAP_NEXT_ACTIONS.md lists the implementation/live gates;
+STORAGE_MIGRATION_REHEARSAL.md records the explicit non-SQLite migration guard.
+No hosting change or migration-history edit was made. No actual legal approval,
+credentials, merchant ownership or user consent was invented. Retention is still
+report-only and original dirty checkout, stash/config and Docker lesson preserved.
+
+This final follow-up changes only documentation; runtime source exactly matches
+the already-tested PR54 package (467 local Django tests/one platform skip; locked
+Node24.19 lint/build and36-file match). Required CI will re-run the full gates on
+the evidence commit before merge. Its results are not preclaimed. No second local
+runtime suite is represented as having run for a documentation-only update.
+
+## AJ47 synthetic PostgreSQL rehearsal — 24 October 2026
+
+Branch codex/postgres-data-rehearsal, base 7c624568bbb4c974f62b5a399bb4ddb6b29c00f1.
+Local package; not yet pushed, merged or deployed. No migration/hosting change.
+Raw fixture restores skip automatic profile creation; normal creation honors its database alias.
+Backend check and migration drift passed; full suite: 469 tests, 329.121s, one known platform skip.
+Seven helper tests passed (0.056s), changed-file Ruff and exact OpenAPI generation passed.
+Initial Windows sandbox Temp ACL failures were resolved by elevated isolated reruns.
+Node 24.19.0 npm ci: 363 installed/364 audited, zero vulnerabilities; Oxlint/ESLint passed;
+Vite build 2.54s, all 36 committed build files identical. No frontend changes.
+Actual isolated PostgreSQL 17.11 rehearsal: 34 models, 161 rows, four private files;
+exact canonical values/relationships, microseconds, FK enforcement, sequences,
+owner-only private downloads and unchanged document bytes passed. No email/provider call.
+Final hash: 142cffa8a232026d864a32c41cd0e384c8df2ee878ab5eff87ac2e35b7179260.
+Source unchanged; no PostgreSQL migration history marked applied. Target network none,
+no host mounts/ports; verified exact ID/label before removal. Only synthetic data used.
+Initial invalid fixture policy corrected; JSON timestamp precision loss fixed with regression.
+Historical PostgreSQL migrations, search parity, object storage, interruption recovery
+and production cutover remain unverified. AJ47 unfinished. Signal rollback is source-only.
+See STORAGE_MIGRATION_REHEARSAL.md. Existing production flags and storage unchanged.
+
+### PR56 verified release
+
+Commit ae160fb882fe57563ce14cde3769309089588b70 passed all six required checks
+in CI40093755045. PR56 merged and deployed/reloaded at
+d940b9f7f86acb3770dddc067aefec3e47d24812 on 24 October 2026.
+Production system check, migration drift and empty migration plan passed;
+HTTPS health200/HSTS300, exact live HTML/entry bundle and clean source passed.
+Application sending False, preparation True and public publication False were verified.
+No schema/data migration, storage cutover or real email occurred. Retained same-day
+backup was reverified (17 files/372876 bytes); its off-server isolated restore receipt
+remains complete. No fresh snapshot or unattended-backup success is inferred.
+AJ47 moved to In Progress with comment10062, not Done. All twelve unfinished
+non-Epic issues remain; actual migration/object storage and personal sending gates
+are unresolved. Original checkout AGENTS hash stayed884B35161A8906E6A881C948D2BA4DF4BB7D29390DB68625DC25B3AF21734C02.
+Only the dedicated synthetic target was removed after exact ID/label verification.
+The latest docs-only followup has no runtime changes; local suite results above
+belong to ae160fb, not a freshly repeated docs-only suite.
+
+## AJ48 actual local Redis/Celery rehearsal — 24 October 2026
+
+Branch codex/queue-broker-rehearsal from reviewed main9a0ce3d531b80cfc26bac3bc8a213fb2806c212b.
+No production task/caller, migration, hosting/CI or runtime requirements change.
+Pinned official Redis image (actual8.10.2), separate Celery5.6.3 worker and synthetic
+SQLite/private files tested a hard exit73 after a durable accepted receipt and before
+acknowledgement. Explicit expired-lease restore and duplicate execution reused the
+same receipt: one captured handoff/attempt/budget; withdrawn authorization denied.
+No real email. Initial denial exception was unclassified by the harness; corrected
+without changing runtime validation. Target network none, loopback-only broker,
+no host ports/mounts; exact created ID/label checked before its removal.
+Backend check/drift passed; full469 tests passed345.569s with one known platform skip.
+Eight helper tests passed0.105s; changed-script Ruff and reviewed OpenAPI match passed.
+Explicit Node24.19.0 locked npm ci installed363/audited364, zero vulnerabilities;
+Oxlint/ESLint passed, Vite build2.08s and all36 committed build files identical.
+No fresh component/manual browser pass is claimed; unchanged runtime covered by suite.
+Local source pending push/CI/release at this entry. AJ48 remains In Progress:
+production target, broker/host crash durability, natural recovery/DLQ operations,
+uncertain provider IO and live sending remain unverified. Rollback removes only the
+unused lab, retaining all authorization/receipt evidence. See QUEUE_BROKER_REHEARSAL.md.
+
+### PR58 merged and production source verified
+
+f2982419467439767f19707b7dcfbef041672958 passed all six required checks in
+CI40095199385. PR58 merged as1c26416493b5808e35e268e00520a7e25378c718.
+Production source synced after verifying no runtime/frontend/CI change (backend docs
+excluded); no reload/worker activation was needed. Runtime remains the verified
+PR56 fixture fix. System check/empty migration plan and health200/HSTS300/exact live
+HTML/entry bundle/clean source passed. One initial Bash history-expansion failure
+prevented the command from running; single-quoting the Git exclusion fixed it.
+No database migration, worker/broker provisioning or real email. AJ48 remains
+In Progress (local evidence comment10064). Pilot active/unexpired authorization
+count remained0, so application sending remains off. The source/docs followup
+records these observed results; it does not claim a new local full-suite execution.
+
+## Application review next-step guidance — 25 October 2026
+
+Branch codex/application-review-guidance from reviewed main5a9a6df92346ef9269cedd65749eb0aafdf30a08.
+The latest approved email package now places separate permission controls above long
+CV/letter previews, with focus after personal document approval and a return button.
+Historical/external/unapproved revisions offer no new permission step. No plan GET,
+authorization POST or sending is triggered automatically. Documents and consent unchanged.
+Actual gates: backend check/drift passed; full469 tests passed333.267s (one platform
+skip). Focused11 review tests passed7.94s; full144 components/25 files passed35.22s.
+Eight helper tests passed0.075s; reviewed OpenAPI matched. Explicit Node24.19.0
+npm ci installed363/audited364, zero vulnerabilities; Oxlint/ESLint passed;
+Vite production build passed2.73s. Source/docs and generated build are separate
+commits, build last. Earlier interrupted runs had no final result and are not passes.
+CI/merge/deployment pending at this entry. Production sending remains disabled;
+this usability repair does not complete AJ17. Rollback is source/build only, no
+migration or document/approval data rollback. USER_GUIDE documents the separate steps.
+
+### PR60 release and live UI verification — 25 October 2026
+
+Source6f3638d plus final generated-build commit7eed242 passed all six checks in
+CI40184233326. PR60 merged and deployed/reloaded26261635ccf97c7f69616136258d71032d40fa95.
+Production check/drift/empty migration plan, sendingFalse/preparationTrue/publicationFalse,
+health200/HSTS300, exact HTML/entry/new Applications bundle and clean source passed.
+Authenticated synthetic application revision2 showed its existing personal document
+approval and the new email-plan controls above previews. The bottom return button
+focused the next-step heading. No approval, authorization or send was performed.
+A screenshot proof is local outside Git. User-facing instructions are in USER_GUIDE.
+
+Fresh consistent backup20261025T101626687618Z-edc12560 completed after actual429.4/512MB
+quota and10,633,356 input bytes were checked; no operation conflicts or active/queued
+writer runs. Both previously active workflows and enabled web app were restored
+before download. Server verification and independent exact-member ZIP/hash/member
+checks, SQLite integrity and isolated17-file/372876-byte restore passed off server.
+Bundle3,794,467 bytes; SHA2563dd1f5800634dad0bd2938857331192f1f7abfca4fc0df8ffb5fc9aea7807e64.
+The optional erasure ledger was absent. Sanitized receipt is outside Git, retention
+report-only; no backup deleted. This was a release fallback after the scheduled
+console-access failure, not proof of unattended scheduled success. User reconnected
+the console before the successful run; no security control was bypassed.
+
+JiraAJ17 comment10066 records deployment and remains In Progress. Broader sending
+and personal exact-plan authorization remain unfinished. Documentation-only followup
+records observed release evidence; it does not claim another local full-suite run.
+
+## Owner pilot and automatic queue recovery - 25 October 2026
+
+Production source078c50a: Michael personally approved/authorized revision2, clicked
+Send and confirmed inbox arrival and correct file content. Two DOCX attachments
+were visible; this does not independently prove both were opened. One accepted
+application receipt had no failure category; Brevo showed Sent/Delivered. Sending
+was disabled/reloaded and fresh configuration reported False. Authorization closed;
+no repeated send. JiraAJ17 comments10068/10069 retain evidence. Broader sending is off.
+
+All12 unfinished non-Epic Jira descriptions were reconciled with existing approved
+requirements, preserving historical text, summaries and In Progress. Direct issue
+readback verified all12; stale search-index output did not trigger repeated writes.
+Michael selected continued isolated test integrations; no live provider approval,
+credentials, legal review or personal consent was inferred.
+
+Branch codex/queue-natural-recovery from fetched main078c50a. Actual isolated
+Redis/Celery Docker run passed automatic replacement-worker lease recovery without
+restore_visible: hard exit73, same accepted receipt on redelivery/duplicate, one
+captured handoff, zero duplicate/real email calls, one reservation and withdrawal
+denial. Exact dedicated container identity/label checked before removal. Broker/host
+failure, uncertain provider IO and production worker remain unverified.
+
+Actual gates: manage.py check and makemigrations --check passed;469 Django tests
+passed639.296s (one platform skip); eight helper tests passed0.075s; script Ruff
+passed. Node24.19.0 npm ci installed363/audited364, zero findings. Directory-based
+lint initially found no files in the ignored runner; npm run lint -- --no-ignore
+with all explicit JS/JSX/MJS paths and npm run lint:eslint passed.144 components in
+25 files passed38.36s; build passed3.42s. Tracked frontend source matched the runner;
+all36 generated files matched frontend_build. No frontend/build commit required.
+No migration, dependency, CI, hosting or runtime change. Push/CI/merge/source sync
+pending at this entry. Rollback removes unused lab change only, preserving data,
+receipts and sending-off state. Existing progress-file bytes were preserved when
+appending this record because its historical encoding is not consistently UTF-8.
+
+## Queue broker restart and uncertain-IO crash - 25 October 2026
+
+Branch codex/queue-broker-restart from fetched main929ff47. Optional lab mode verifies
+AOF/always-fsync, pauses for the exact labelled test broker to receive SIGKILL/start,
+and verifies its server run ID changed. Actual isolated Redis8.10.2/Celery5.6.3 run
+passed automatic redelivery, same accepted receipt, one reservation/captured handoff,
+zero duplicate/real email calls and withdrawal denial. Internal network, synthetic
+AOF volume and exact broker labels/identities were verified before removal.
+
+A second actual worker-process test exits74 inside captured transport after its
+fsynced side-effect counter but before receipt settlement. Redelivery and explicit
+duplicate returned the same unresolved reserved receipt, with empty provider ID and
+resolved timestamp; one captured handoff/reservation remained, no repeated IO.
+Separate network-none broker identity verified before removal. No actual provider,
+production worker, hosting or existing data was involved. Host/disk failure, real
+provider uncertainty reconciliation, dead-letter operations and target remain open.
+
+Gates: isolated Python3.12 Docker manage.py check/makemigrations --check and full469
+Django tests passed150.268s (no skips). Initial read-only image DB path failed before
+tests; corrected test-only DATABASES name to /tmp/gates.sqlite3 on tmpfs and reran
+all gates. Nine helper regressions passed1.806s including arbitrary broker denial;
+changed-script Ruff passed. Node24.19 locked npm ci installed363/audited364, zero
+findings; complete explicit-file Oxlint and lint:eslint passed; build2.42s passed,
+all36 committed assets/source matched. Frontend unchanged; prior144-component
+result is historical regression evidence, not another current component run.
+No migration/dependency/CI/frontend/runtime activation. Push/CI/merge/source sync
+pending at this entry. Rollback removes only unused lab additions, preserving
+production data/receipts and disabled application sending.
+
+## Queue crash release and real scanner fixture - 25 October 2026
+
+PR63 passed all six CI checks on9c08cf2 (CI40220731557), merged f18d5b2 and production
+source synchronized. Diff contained only unused scripts/tests/docs; no migration,
+reload or queue activation. Production clean source/health200 observed. JiraAJ48
+comment10072 records broker-process/uncertain captured-IO proof and remaining gates.
+
+Branch codex/scanner-engine-rehearsal from fetched mainf18d5b2. Actual official
+ClamAV1.5.4 pinned digest751df8dc649cc977696f107c80db4960b6317a7cb511aebc8066f3b91db6b631
+ran offline against generated harmless bytes/custom SHA256 signature: matched1,
+unmatched0, missing database2. No vendor definitions, EICAR, real malware, private
+files, network or production caller. Bounded unprivileged/no-capability/read-only
+container and exact generated label cleanup passed. Initial shell run failed on
+Windows text-mode CRLF translation; byte input fixed it and a regression covers LF.
+
+Actual gates: fresh tracked-source Python3.12 Docker check/drift and469 Django tests
+passed203.060s (no skips).13 helper tests passed2.397s; changed-script Ruff passed.
+Explicit Node24.19 npm ci installed363/audited364/zero findings; complete explicit-file
+Oxlint/ESLint passed; build2.38s passed, tracked frontend source/all36 assets matched.
+No frontend change; previous144-component result remains historical, not a new run.
+No migration/dependency/CI/hosting/runtime change. Push/CI/merge/source sync pending
+at this entry. Rollback removes only unused lab. Existing uploads are still not
+malware-scanned; vendor definition freshness, durable quarantine, actual target,
+legacy-file and processing/privacy decisions remain open. See SCANNER_ENGINE_REHEARSAL.md.
+
+
+## Scanner release, scheduled backup and storage interruption - 26 October 2026
+
+PR64 all six exact-head checks passed2606f93 (CI40222439337); merged82e098f and
+production source synchronized without migration/reload/runtime activation.
+Django check passed. Independent public health HEAD returned200/HSTS300 after a
+browser-control interruption left a separate read-only terminal health command
+unfinished. No scanner was enabled. Later console input became unresponsive;
+source remains82e098f until console access is restored. No service was paused.
+
+The daily heartbeat completed a fresh snapshot20261026T085214873536Z-92dbbbc4 from
+f18d5b2. Both prior-active writer workflows and web were restored before download.
+Server verification, independent ZIP/member/hash checks, SQLite integrity and
+isolated17-file/372876-byte restore passed off server; receipt is private outside
+Git. Archive3,803,837 bytes; SHA256e93bfeb60be7c8f740a43bbe1040ee049a326821013d4d2cb8a7aa3bd4192a32.
+Ledger absent per manifest; no erasure/replay or retention deletion. This is a
+verified fresh scheduled backup, not a release fallback. Actual quota444.2 to457.9
+of512MB. No encryption claim. BACKUP_AUTOMATION.md records the verified run.
+
+Branch codex/storage-interruption-rehearsal from fetched main82e098f. Real isolated
+PostgreSQL17.11 run injected an exception after ten target saves: every target row
+rolled back. Retry matched161 rows/34 models, full datetime precision, constraints,
+sequences/profile signal alias and unchanged source. Controlled media-copy failure
+after one whole file resumed by hash reuse plus three copies; four document bytes,
+private downloads and ownership denial matched. No real mail/provider/budget action.
+Dedicated no-port/no-host-mount tmpfs PostgreSQL removed after exact ID/label check.
+Host/power/disk failure, partial-file recovery, object storage, historical schema/
+search and production switchover remain unverified.
+
+Actual gates: Linux Python3.12 manage.py check/makemigrations --check and469 Django
+tests passed210.803s (no skips).16 helper tests passed1.521s; changed-script Ruff
+passed. Node24.19 locked npm ci installed363/audited364, zero findings; complete
+explicit-file Oxlint/ESLint passed; build2.85s passed. No frontend source change;
+all36 assets/source comparison is required before commit. No new component run
+claimed. No migration/dependency/CI/hosting/runtime change. Push/CI/merge/source
+sync pending at this entry; rollback removes unused lab only and preserves data.
+
+
+## Public showcase and employer-review plan — 26 October 2026
+
+Branch codex/showcase-launch from fetched main87b7ac3 (PR68). Anonymous root/about
+introduces actual CV capabilities without private/job API requests; members keep
+jobs as home. Added CV navigation and public employer guide. Private routes remain
+protected. No job publication, mail activation, schema/dependency/CI/hosting change.
+PythonAnywhere is the current host; Daraja/commercial decisions come last. See
+SHOWCASE_RELEASE.md and EMPLOYER_REVIEW_PLAN.md; genuine employer review and general
+verification delivery remain live prerequisites, not synthetic acceptance.
+
+Actual local gates: Windows Python3.12 manage.py check and makemigrations --check
+--dry-run passed; full469 Django tests passed336.000s (one platform skip).
+Node24.19 npm ci installed363/audited364/zero findings. Full152 component tests
+passed27.85s. Initial lazy-import assertions timed out under full-suite contention;
+focused17 tests passed, then bounded five-second label/message assertions passed
+without weakening checks. Default Oxlint discovery excluded the ignored runner;
+complete explicit source paths with --no-ignore passed, as did ESLint.
+Production build passed2.06s; all38 generated assets matched copied build bytes.
+Ruff/diff whitespace passed. Real Chromium public/private-boundary, light/dark
+public axe and registration-CV-approval-download-application-review tests passed:
+3 tests114.121s, synthetic data, temporary private storage, no provider/ledger sends.
+CV generation/download occurs before verification in that existing real journey.
+Push, exact-head CI, merge and deployment are pending at this entry.
+Rollback is previous reviewed source/build plus reload; preserve all data.
+
+CI40337924489 passed five checks but Linux Chromium demonstrated signed-in nav
+horizontal overflow at1100px after adding CV builder. Windows Chromium had passed;
+the Linux failure remains valid evidence. Permit desktop nav links to wrap within
+the available width (min-width0); retain the failing overflow assertion unchanged.
+No CI workflow or API change. Corrected build/browser/CI results follow.
+Corrected local Chromium boundary/axe tests passed2 tests86.889s; build2.32s passed. The Linux-specific regression still requires the new exact-head CI run.
+
+
+## Verified showcase release — 26 October 2026
+
+PR69 corrected head14c5c00756ce3a2d3afd28ab337c616a2f7b1590 passed all six
+required checks (CI40352854606). Linux browser/performance:11 tests105.738s OK;
+the1100px overflow assertion passed unchanged. Merged/deployed runtime source is
+d91da4752a887bc38429cbb88c3b201c61974a8b. Generated build was the final frontend
+commit; a repeated final build and all38 live public files matched reviewed bytes.
+New authors/committers used configured noreply identities. No new dependencies,
+migration, CI change or hosting configuration change.
+
+Before staging: clean production checkout, no active data operation/in-flight
+writer, actual quota458.3/512MB. Database mtime08:36UTC and newest media24October
+predated the26October08:52UTC consistent snapshot. Reused today's verified recovery
+copy rather than duplicating unchanged data; off-server DB/media hashes and read-only
+SQLite integrity were rechecked, with complete isolated-restore receipt. Both prior
+active writers were paused and enabled web briefly disabled for checkout. Production
+check/drift passed and migrate --plan showed no operations. Web re-enabled/reloaded;
+HTTP health200/HSTS300 passed. Both prior-active workflows were restored active.
+
+Live about/employer-guide rendered, authenticated jobs remained home, CV builder
+loaded existing data and existing approved private CV downloaded successfully.
+No approval/document edits, employer contact or sending occurred. Normal authenticated
+browser verification can rotate tokens/write auth records after activation; no
+unchanged-live-database-byte claim is made. Source stayed clean. Application sending
+and anonymous vacancy publication remain disabled. Rollback is87b7ac3 source/build
+plus reload, retaining all newer data and security/freshness protections.
+
+Live Jira reconciliation still returned12 unfinished non-Epic issues, no next page.
+AJ17/26/43 need broader delivery acceptance; AJ42/53 need genuine public-vacancy/
+employer onboarding evidence; AJ44–46 are deferred commercial/Daraja decisions;
+AJ47/48/51/52 retain documented live storage/worker/analytics/scanner prerequisites.
+PythonAnywhere is selected now; no infrastructure cutover is needed for this showcase.
+See SHOWCASE_RELEASE.md and EMPLOYER_REVIEW_PLAN.md. This documentation-only follow-up
+retains the deployed runtime/build; it introduces no new product activation.
+
+## Inactive backend continuation - 31 October 2026
+
+Branch codex/backend-inactive-20261031 from fetched main624c378. Current Michael
+limits supersede earlier deployment authorization: no deployment, production
+migrations, live mail/financial calls or runtime flag changes. Original dirty
+checkout and prior worktrees preserved; per-command safe.directory only.
+
+Added separately default-off ACCOUNT_SECURITY_EMAIL_ENABLED/account_security
+mode for account verification/reset via existing Brevo HTTPS/shared ledger.
+Active mailbox/configuration/recipient rechecked at handoff, no attachments or
+extra recipients. Existing account/global budgets and unknown-handoff blockers
+preserved. Owner pilot/auth cookies/schema unchanged. No real delivery claimed.
+
+Actual Python3.12.6: check passed; makemigrations --check --dry-run no changes;
+full475 tests passed406.627s, one existing platform skip. Focused30 tests passed
+2.783s. Synthetic accounts/provider interception only. PYTHON_DOTENV_DISABLED=1.
+Exact portable Node24.19.0 official SHA256 matched
+57f71ab3652e797d84acddc79c81cc9ff1c6ddb2a1974cdb83f00fee9bff4c73.
+Repeated npm ci installed363/audited364; five advisories (four moderate, one high:
+follow-redirects; moderate ESLint-related). No dependency changes included.
+npm run lint, explicit all-source Oxlint --no-ignore and ESLint passed; build
+passed2.32s; all38 committed/generated files matched. Initial bundled24.22.1
+installation superseded by repeated required checks on exact24.19.0.
+Optional Ruff/OpenAPI checks unavailable: missing ruff/drf_spectacular in the
+existing environment. CI has not run. No frontend package or new migration.
+Rollback: disable new switch, preserve account/budget/receipt data and prior mode.
+
+AJ-79 certificate ticket already existed; reused rather than duplicated. Created
+AJ-80 proposal for23 generic Update issues AJ-54-AJ-76, originals unchanged.
+No story marked Done from this account prerequisite. See DECISIONS_PENDING.md
+and docs/BACKEND_ACTIVATION_CHECKLIST.md. Remaining normal application/alert mail,
+certificates/scanner/analytics/queue/storage/payments implementation remains open.
+
+## MVP1 exact-candidate verification — 31 October 2026
+
+Approved release scope is account-security email only,PR72,branch
+codex/review-01-account-email. Broad PR71 is reference only;d8a4239 passed all six
+checks in CI41217043158 and is not the MVP1 release candidate.
+
+Exactec57336 local pinned Django6.1.2 full475 tests passed358.988s,one existing
+skip;external-I/O audit recorded zero connection attempts. Node24.19 locked
+install/lint,152 component tests in26 files (32.31s) and build2.01s passed;all38
+committed/generated files matched. Backend check/drift,Ruff and OpenAPI passed.
+
+PR72 CI41240872454 found a timing-dependent pre-existing saved-search fixture:
+backend3.13 and quality full-suite coverage failed expected50/actual0 near Nairobi
+midnight;backend3.12/3.14 were matrix-cancelled,not independent failures. The
+fixture placed samples two days ago plus10minutes,which can cross the last
+completed weekly boundary. Only this test now uses samples three days ago;
+production windows/freshness/limits remain unchanged. Focused22 tests passed
+26.171s;explicit frozen23:55/00:05 Nairobi regressions each passed (1.222/1.291s).
+Full pinned suite/remote rerun pending;not claimed verified until both finish.
+
+No migrations,feature,dependency,frontend,CI,hosting or production-data change in
+this correction. No deployment/flags/live sending occurred. PythonAnywhere is
+signed out;current quota,backup/restore and actual source/settings preflight remain
+unverified until owner signs in privately. All excluded feature activation stays off.
+
+## Owner inbox evidence reconfirmed — 1 November 2026
+
+Michael reconfirmed owner inbox delivery in this chat. This corroborates the
+25 October owner synthetic application pilot evidence already recorded above:
+owner inbox arrival and correct attachment content, with sending disabled and
+reloaded afterwards. It does not establish a new sending run or broader rollout.
+No mailbox address or message contents are retained here. AJ-17 comment 10171
+records this confirmation; status remains In Progress for the separately scoped
+normal-transport acceptance. No production access or live sending occurred.
+
+## Display-only feed discovery — 1 November 2026
+
+Local branch codex/job-feed-display is based on reviewed main 3408565.
+The dirty original checkout, stash and Git configuration were preserved.
+This package remains uncommitted for review; nothing was pushed, merged or
+deployed. No production access, settings activation, live sending or migration
+occurred. The only Jira change was Michael's separately requested AJ-17 inbox
+confirmation (comment 10171); no feed ticket or acceptance was invented.
+
+First wrote docs/JOB_FEED_DISPLAY_OPTIONS.md: recommend A; compare B at 14 days
+and C hidden. JOB_FEED_DISPLAY_ENABLED defaults off. Authenticated list/detail
+queries alone gain labelled feed discovery with original source/date and no
+application or document actions. Known closure, scam, inactive, employer and
+unexplained archive cases remain excluded. Missing/stale availability archives
+are display candidates only. Shared eligibility, all application/sending guards,
+alerts, saved-search selection/email, employer publishing and public pages remain
+unchanged. Existing external-submission reporting remains a user report, not mail.
+
+Verification used Python 3.12.6 / Django 6.1.2 from the existing isolated
+backend-inactive-20261031/.tooling/parity-venv and portable Node 24.19.0.
+Commands/results:
+- manage.py check: passed, no issues.
+- manage.py makemigrations --check --dry-run: passed, no changes detected.
+- Full manage.py test --noinput via runpy with socket.connect, DNS and SMTP
+  blocked by a Python audit hook: 500 tests passed in 346.348s; one existing skip.
+- Final manage.py test jobs.test_feed_display --noinput: 28 passed in 28.440s.
+  Includes flag-on regressions for alert pilot, saved-search email and employer
+  decisions; positive/negative eligibility, direct application/package/email-send
+  rejection, filtering/pagination, scams, public pages and SELECT-only counts.
+- Node 24.19 npm ci --offline --no-audit --no-fund: 363 locked packages installed
+  from the owner's cache. Initial sandbox-local cache attempt failed ENOTCACHED;
+  the owner cache retry passed. No fresh vulnerability scan was performed.
+- npm run lint: passed. Full npm test -- --run: 155 passed in 27 files (41.61s).
+- Deadline-specific final frontend checks and regenerated build results follow below.
+- Schema dependencies were absent from the pinned runtime. Installed nine cached
+  tooling packages into ignored .verification/schema, without changing shared
+  environments; spectacular --validate --fail-on-warn and scripts/check_api_schema.py
+  passed. Reviewed OpenAPI adds four read-only job fields. An unnecessary broader
+  tooling download was stopped; optional Ruff remains unavailable (No module named
+  ruff / offline wheel unavailable), so no Ruff pass is claimed.
+
+The read-only manage.py job_feed_display_counts command returns aggregate totals
+for a single evaluation time, including display-off/on and recent candidates; its
+test rejected every non-SELECT query. No production counts were queried. See
+docs/JOB_FEED_DISPLAY_OPTIONS.md for local and owner-run production commands.
+Rollback is disabling JOB_FEED_DISPLAY_ENABLED; no database changes need reversal.
+Remote CI and production verification are intentionally out of scope.
+
+Final frontend lint passed; focused feed/list/detail/deadline suite passed all14
+tests in4files (7.74s). Node24.19 final build passed in2.16s. Regenerated
+frontend_build and verified all38 files by SHA256 with no extra files. No commits
+were made, so there is no build commit or remote CI result to claim.
+
+## Documentation housekeeping — 1 November 2026
+
+Superseding recorded release evidence was reconciled from
+`codex/backend-inactive-20261031`'s MVP1 execution report: PR72 source3408565 was
+deployed with zero migrations, account-security mail configured and other MVP1
+feature exclusions off; last observed quota482.4/512MB and expiry30November.
+PR73 stage2 head38bf953 has recorded all-six-check CI success but remains separate
+from deployment. These are existing records, not new remote or production checks.
+
+Six superseded active documents were archived with matching pre-replacement
+SHA256; current entry points and one ordered pending-work list replace duplicated
+onboarding, obsolete questions and completed proposal text. Seventeen dated
+checkpoint/release records were labelled historical. Read-only Jira returned14
+open non-Epic issues (13 In Progress, AJ80 To Do; no next page); all are covered
+in ROADMAP_NEXT_ACTIONS.md. Existing inactive implementations are referenced by
+branch rather than described as missing or deployed. See HOUSEKEEPING_REVIEW.md.
+
+Documentation-only local changes; existing uncommitted feed work and original
+checkout preserved. No Jira write, sync script, production access, push, merge,
+service activation, migration or data/backup deletion. Only documentation checks
+are run for this follow-up; earlier runtime-test results retain their dated scope.
+
+Housekeeping verification passed: six archive copies matched reviewed3408565
+content after newline normalization;83 local Markdown targets in18 active/index
+documents existed;all14 live Jira keys appeared in the action list;git diff --check
+exited0. Runtime behavior was unchanged by this documentation pass.
+
+
+## Historical documents consolidated and originals deleted — 1 November 2026
+
+Michael explicitly requested consolidation and deletion in both checkouts, preserving
+unrelated work. docs/MAINTENANCE_HISTORY.md now contains one maintenance guide,
+completed-work summary, pending snapshot and expandable dated records. Removed13
+obsolete originals in the older checkout and32 historical/archive files in the
+reviewed worktree; no separate archive copies remain. Four maintained screenshot
+guides were retained; links were repaired. All37 detail sections remain, both copies
+match, all45 selected originals are absent,96 local targets/90 record links checked,
+and git diff --check passed in both trees. Final reference SHA256 0ba400a0b6cd9f2585ef9e72d9cedb9ad16d71698fcde4a8a57ce4c1980ca6e2.
+Documentation-only changes; no runtime source, private data, backup, stash or Git
+configuration deletion. No production access, sending, push or merge.
+
+
+## Cleanup and HTTPS reconfirmation — 1 November 2026
+
+AJ12 Stage B live health/HSTS300 reconfirmed15:14EAT; Jira comment10172 and current
+acceptance description updated, status reread Done. No hosting setting/source change.
+Original checkout work preserved in stash1eafb40a; delivery-concurrency docs25ad1cfb
+and job-trust reportsf9f50a72 stashed and both worktrees verified clean. Main has only
+safety ignores modified; duplicate ignore entries removed, protections retained.
+21 server snapshots identified; four retained backups passed server checks with
+matching off-server manifests and17-file isolated-restore checks. Latest local tar
+was browser-decompressed, verified by its recorded uncompressed hash. Venv backup
+and seven restore folders were already absent. Exact17older snapshot plan prepared;
+permanent deletion still pending browser at-action confirmation. Off-server copies
+unchanged. Detailed state/restore commands in MAINTENANCE_HISTORY.md.
+
+
+## Approved snapshot pruning completed — 1 November 2026
+
+Michael supplied explicit at-action confirmation to delete the17older on-server
+backup-* directories. Exact inventory/path/symlink guards, retained manifest hashes
+and full read-only verification passed before deletion. At12:33:36UTC
+(15:33:36EAT),17snapshots were removed,114760909 logical bytes (~109.4MiB).
+Receipt /home/Mathenge/ajiri-private-backups/prune-receipt-20261101T123336Z.json
+is complete/mode0600. Independent post-check found four backup-* snapshots, all17
+approved targets absent, four retained backup verifications passed, and zero
+restore/venv-backup folders. These latter folders were already absent before this
+turn; no new deletion of them is claimed. Off-server copies/other backup types
+were untouched. Dashboard storage now228.7/512MB (45%used), superseding482.4.
+The first console input attempt did not execute; a read-only probe had a syntax
+error; the corrected guarded command completed and was independently verified.
+No source/configuration/service activation, deployment, sending, push or merge.
+One-time deletion approval does not change automatic retention policy. Current
+maintenance guide, next actions, open decisions and backup guide were updated.
+
+## Default-off feed display and durable maintenance release — 1 November 2026
+
+Michael authorized pushing, reviewed merging, MVP1 deployment and removal of
+verified stale branches on 1 November, superseding the earlier release restriction.
+The preceding entries remain dated evidence; their no-push statements are historical.
+The single historical reference is now maintenance/HISTORY.md, with current entry
+points in maintenance/README.md and docs/README.md. An additional 26 completed
+reviews/decisions were consolidated with original hashes and their originals removed.
+A check of 65 Markdown files found no missing local link targets.
+
+Final local checks on the release package:
+- Pinned Python 3.12: manage.py check passed; makemigrations --check --dry-run
+  reported no changes; full suite ran 503 tests in 600.325s, OK with one skipped.
+  A Python audit hook blocked network resolution/connect and SMTP connections.
+- Node v24.19.0: npm ci --offline --no-audit --no-fund installed 363 locked packages;
+  automatic oxlint traversal of the hidden verification directory found no files.
+  Re-running npm run lint with explicit relative source paths and --no-ignore passed;
+  npm run lint:eslint and changed-file Prettier checks passed.
+- Frontend: 155 tests across 27 files passed; quality-script test passed; build passed
+  in 2.68s. All 38 frontend_build files matched the fresh build by SHA256, with no extras.
+- Reviewed OpenAPI generated bytes matched. Ruff 0.17.1 correctness checks passed.
+  No model, migration, freshness, eligibility or sending-policy changes were made.
+
+Fourteen clean main-contained worktrees were unregistered. Eight Windows-locked
+native cache files were isolated in .worktrees/.locked-remnants; they require the
+owning runtime to exit before physical deletion. Five useful checkouts, the external
+npm checkout and all existing stashes remain preserved. Exact bounded inventory and
+removal records are in maintenance/evidence/. Remote CI, merge and deployment must
+be verified against the eventual exact release SHA; local results alone are not
+production acceptance. JOB_FEED_DISPLAY_ENABLED stays default-off for Michael.
+
+
+## PR74 deployed; maintenance closeout — 1 November 2026
+
+PR74 source7758b5b plus final generated-build commit69423a3 merged as
+2a4dfdf05f5371e61e13e7a68b3009993fdd0a2a. All six checks passed on both the
+PR head (run41322887530) and merged main (run41323225515). Main was
+fast-forwarded in the original checkout; all five named stashes were preserved.
+
+Deployment pause started15:55:09UTC; ingestion/sweep were disabled, no queued or
+running workflows or other manage.py/Celery writers were found, and web was disabled.
+The database had changed, so a fresh consistent snapshot was taken:
+backup-20261101T155600665941Z-4a2ccbe5. Server verification passed. A private
+6,835,624-byte ZIP downloaded successfully; SHA256
+436efcd4b2622fd785f11dd6a50936b8795f45a7030e014c7a1511bc9690a82d matched.
+Off-server isolated restore verified SQLite integrity and17files/372876bytes.
+The new private copy's33entries were restricted to owner/SYSTEM/Administrators.
+Four previously retained snapshots and every off-server copy were preserved;
+no ongoing automatic pruning policy was inferred.
+
+Clean production checkout moved3408565 to2a4dfdf. Release planner confirmed no
+migration or dependency changes and frontend index SHA256
+b5ba62006d0c5d47937491468ecb6f6a177a98a2a2c2964388928b7c25fe03e5.
+Django check/drift passed; migration plan was empty; live DB hash stayed unchanged.
+Web was re-enabled/reloaded and both prior workflows restored by15:59:19UTC
+(4m10s). At16:01UTC health returned200/statusok/HSTS300/no-store-private;
+index, entry JS/CSS and job list/detail chunks matched committed hashes. Login200,
+unauthenticated jobs/private CV401, disabled sitemap/direct media404. The first CV
+probe used a nonexistent route (404); the configured route correctly returned401.
+
+Read-only whitelist settings confirmed feed displayFalse, freshnessTrue,
+account-securityTrue/account_security mode, application/alert emailFalse,
+saved-search/employer/publicFalse. No .env was read or edited. Michael enables the
+feed switch privately; production counts and signed-in activation smoke remain his
+next steps. Automatic approval review rejected the combined counts call (reserved
+for Michael) and later manual ingest dispatch (extra live write); neither executed.
+The web/settings checks were completed separately and workflow states reread active.
+A subsequent successful scheduled ingestion was not observed.
+
+Fifteen completed worktrees were unregistered. Nine Windows-locked native caches
+were isolated under .worktrees/.locked-remnants; no shared runtime was terminated.
+Four useful internal checkouts and the external npm checkout remain. Deleted99local
+and47remote stale refs: initial96/46 main-contained tips, the deployed feed branch,
+and two exact duplicate local aliases. Remote deletion used expected-tip leases;
+open PR65/66/67/71/73, unfinished stages, unique work, backup refs and stash remain.
+
+The current action list and maintenance guide now describe these completed results.
+This closeout changes documentation only; application/build source is identical to
+2a4dfdf. Reuse the recorded503backend/155frontend tests, Node24.19 locked install,
+lint/build/schema/Ruff checks for that unchanged source; the closeout PR still must
+pass required remote checks. No fresh passing result is inferred from a queued check.
+The Jira report compares against the13:19EAT baseline and queues only new AJ15
+backup-cleanup progress. AJ12 comment10172 and AJ17 comment10171 were already
+recorded directly and are not duplicated. tools/jira_sync.py was never executed
+or changed; three existing cache entries and private configuration were preserved.
+
+Rollback for the feed application remains source3408565 plus reload, preserving
+current data/receipts. Disabling JOB_FEED_DISPLAY_ENABLED rolls back optional browse
+visibility; it is already off. No schema rollback or old-data restoration is needed.
+
+## Responsive topbar, private counts instructions and HSTS — 1 November 2026
+
+On isolated codex/responsive-topbar from reviewed d964a7a, reproduced the member
+navigation defect in Chromium: at1843px logout wrapped50px below the other links.
+The new browser regression failed against the prior build, then passed after the
+CSS fix. Header now uses an explicit full-width grid: collapsed column below1100,
+separate navigation row at medium desktop widths, and a complete wide-screen row
+at1440+. Brand/theme/menu retain stable positions, labels stay whole, inline body
+links remain underlined, and every visible header control stays at least44px high.
+Guest/light and member/dark views passed nine widths320,360,390,768,1024,1100,
+1280,1440,1843, including overflow, overlap, mobile menu visibility and wide-row
+alignment. Test traffic uses a disposable local DB and aborts external requests.
+
+Actual checks: Python3.12 manage.py check and migration drift passed; full503tests
+ran397.005s, OK with one skip and network/SMTP blocked. Node24.19 locked npm ci
+installed363packages; lint/ESLint passed,155tests across27files passed, Prettier
+formatted the changed CSS, and final build passed2.13s. All38generated files matched.
+Ruff0.17.1 passed. The first optional browser install selected a3.13 native wheel;
+its import failed under3.12. Reinstalled into a separate ignored target explicitly
+using pinned3.12, then browser regression passed. No production dependency change.
+
+HSTS one-key exception was explicitly approved by Michael. Production
+SECURE_HSTS_SECONDS changed300 to604800 with all other bytes and file mode
+preserved; no contents/credentials printed or copied. Check passed before reload;
+HTTPS health at17:08:56UTC returned200/statusok/max-age=604800, no subdomains/preload.
+No database, job eligibility, sending or feed-display setting changed. This is a
+configuration rollout on source d964a7a, not evidence that the local topbar is live.
+
+Documentation growth was measured: older checkout20tracked docs, reviewed-main
+107before cleanup,58after51historical removals and two entry documents. Remaining
+feature/runbook guides are current references, not pending work. Updated the existing
+index and activation guides; no new top-level document was added for this package.
+The counts traceback used systemPython3.13 and failed importing Celery before Django
+could discover commands. Existing hosting console now showed ajiri3.12.8 and import
+Celery ok. Documented absolute /home/Mathenge/.virtualenvs/ajiri/bin/python commands;
+no system installation, production counts, ingestion or sending was performed.
+
+Michael reconfirmed clearly warned browse-only rows may be shown at eligible0.
+The private guide explains eligible versus supplemental_unverified/browse_on,
+owner-run one-key activation and reload, and unchanged freshness/sending boundaries.
+The code default staysFalse; the agent did not change the display setting. Owner
+reported AJ15 sync applied successfully; retain dedup cache and do not repeat it.
+Remote exact-head checks and a verified deployment are still required for the
+new header. Generated frontend_build must remain the final frontend-package commit.
+
+## 2 November 2026: supplemental browsing admin package (release pending)
+
+Baseline main/production supplied by Michael: 12878e1a3e51f62c3c7d1ced3f13948fd1b7190e.
+Work is isolated on codex/supplemental-admin-20261101; original main and its
+untracked reports/tools remain preserved. No production setting or job row was
+changed. Supplemental activation remains exclusively Michael's action.
+
+Phase 1 recovered complete counts at 2026-11-01T17:09:00.356422+00:00: total 1823,
+scam_flagged 12, eligible 0, supplemental_unverified 1808, browse_off 0, browse_on
+1808, supplemental_posted_within_14_days 1372. Old browsing had no age cap and
+allowed missing posted dates. Michael's read-only production query confirmed
+JOB_FEED_DISPLAY_ENABLED=false. Residual IDs 1, 779, 980 are inactive pilot rows
+(deployment-check, ajiri-owner-alert-pilot, ajiri-owner-application-pilot), null
+posted dates and no publication. Retain/exclude them; no data repair is needed.
+Production /admin/ returned 302 to /admin/login/?next=/admin/ on 1 November.
+
+Implemented the disabled admin singleton, protected singleton ID constraint,
+superuser-only controls, atomic actor/old/new audit, read-only audit admin, bounded
+60-second fail-closed cache and emergency force-off. Retired environment-enable
+input is never read. The named inclusive 14-day posted-date window excludes null,
+future and older dates. List/detail/ordinary search retain availability warnings;
+outbound labels say availability not verified. Existing HTTP(S), new-tab and
+noopener/noreferrer safeguards remain. Skill scores remain; supplemental rows
+create no notifications or saved-search matches and enter no alerts/public pages,
+sitemap or JobPosting metadata. Application/document/send eligibility stays strict.
+
+Cookie defaults were already secure in production; no HTTPS/CORS/JWT/hosting
+configuration was changed. Admin login now has shared hashed-IP counters and
+fail-closed storage handling. The configurable single admin segment defaults to
+admin/; a private override makes the old route 404. No secret/provider flag is
+exposed. Existing maintenance documentation covers owner activation, audit,
+backup/quota, smoke checks, rollback, private route and console account recovery,
+plus general account-security email prerequisites without enabling or sending it.
+
+Checks so far: manage.py check and makemigrations --check --dry-run passed. Final
+full Python 3.12 suite passed 518 tests in 411.731s (one platform skip). The
+strengthened exact-pilot/off-mode/audited-rollback tests also passed (10 tests).
+Node 24.19 npm ci installed locked dependencies; lint, ESLint, 155 frontend tests
+across 27 files and frontend quality hooks passed. Ruff 0.17.1, unchanged OpenAPI
+contract and 16 helper tests passed. Runtime/development backend pins match the
+existing Python environment exactly; no dependency or lockfile change. npm reported
+the lockfile's five advisories (four moderate, one high); no automatic upgrades.
+The first sandboxed npm installation could not access the registry; the authorized
+network-enabled retry succeeded. UTF-8 documentation writing was corrected before
+review. A first standalone migration harness reused stale loader state; the
+corrected fresh-loader rehearsal passed forward/reverse/forward on an isolated
+synthetic database, preserving 34 existing tables and all three search triggers,
+integrity ok, singleton off. No production restoration or reverse migration ran.
+
+Final frontend build passed in 2.94s; all 38 generated files match dist bytes.
+Eleven real Chromium journeys passed in 83.246s on the synthetic database. The
+optional local Lighthouse suite was not run; Linux CI performance is still a
+required gate. Read-only production inspection on 2 November confirmed clean
+12878e1 source and Secure session/CSRF cookies. Computer Use then stopped on a
+browser-URL confidence guard; no further browser input was attempted.
+
+PR79 merged source144cfa94938d72cdb3823f44fb6ed0a45cde5ae1 and final generated-build
+commit71b8e35e7b0981db78f5532728b4872a873cd583 as reviewed main
+e7d78b40ac4ed2b9ff6737dba36f379a67846625. All six checks passed on the exact PR
+head in [CI41412455707](https://github.com/michael-mathenge/ajiri/actions/runs/41412455707)
+and merged main in [CI41412928813](https://github.com/michael-mathenge/ajiri/actions/runs/41412928813),
+including Linux browser/performance. Fetched main matches that merge, and its
+tree is identical to the tested PR head. Both commits use Michael's configured
+noreply author/committer identity. A clean isolated reviewed-main checkout passed
+release_preflight.py with exactly jobs.0017_job_browsing_settings and no required
+production dependency install. No historical migration, CI, JWT or CORS change.
+
+Fresh read-only HTTPS verification returned health200/statusok/HSTS604800,
+admin302 to login, and frontend HTML exactly matching baseline12878e1. Production
+remains on that baseline; the new admin menu is not yet live. Computer Use stopped
+itself on a Windows browser-URL confidence guard, so no subsequent UI input,
+writer pause, new snapshot, migration, setting edit or deployment was attempted.
+The prior owner-confirmed production display flag is false; the new singleton's
+disabled state is proven synthetically, not yet in production. Do not claim that
+the retired flag is ignored by the old production runtime.
+
+Required remaining release work: current quota/service states, a fresh verified
+private backup and off-server isolated restore, jobs.0017 while requests are paused
+before new code serves, restored prior writer states, and exact deployed/main,
+asset/private-access and effective-off verification. Michael alone activates the
+new admin switch. This entry is merged-source evidence, not deployment proof.
+No manual ingestion, live email, Daraja, charging, public activation, backup/branch
+pruning or Jira sync was run. Supplemental work needs a verified Jira key; do not
+invent one or mark related sending/public stories Done from synthetic tests.
+
+## 3 November 2026: default-off deployment completed; source survey follows
+
+Production moved from clean12878e1a3e51f62c3c7d1ced3f13948fd1b7190e to exact
+reviewed main86cdf39430b1a1a87c3bb66656dacff78d3f51b1. All six exact-target checks
+passed in [CI41414160973](https://github.com/michael-mathenge/ajiri/actions/runs/41414160973).
+Requirements were unchanged; no installation or dependency change was performed.
+Ingestion/sweep call paths do not read the new tables. Both active workflows were
+paused and no queued/running/requested/waiting/pending runs remained.
+
+Dashboard quota before backup was278.4/512MB;19,198,092input bytes and
+143,901,232bytes conservative reserve fit244,957,184available bytes. No pruning.
+With web disabled and no other app commands, fresh snapshot
+backup-20261103T170555929762Z-72930371 passed manifest hashes, SQLite integrity and
+17-file/372,876-byte media validation. Web and both workflows were restored before
+download. The exact private ZIP and manifest hashes were independently checked
+off-server and an isolated17-file restore passed, with a private receipt retained
+outside Git. The manifest declares no erasure ledger included. No credentials,
+private data or backup files enter this commit. The Windows browser URL-confidence
+guard interrupted earlier access; no bypass occurred. Michael subsequently opened
+and expressly selected the in-app PythonAnywhere session, where work continued.
+
+Before staging, a second writer pause confirmed unchanged database mtime, no WAL,
+identical current media bytes versus the backup and no competing app commands.
+The exact source was staged while web requests remained disabled. Actual
+release_preflight.py, manage.py check, makemigrations --check --dry-run and
+migrate --plan passed, with only jobs.0017_job_browsing_settings pending. Migration
+applied successfully before web activation. All40existing tables retained their
+old values (Django migration/content-type/permission metadata gained only additive
+rows); all three search triggers were unchanged; SQLite integrity remained ok.
+
+After re-enable/reload, health200/HSTS604800, exact live frontend HTML and all30
+asset files passed. Admin login GET200 contained its CSRF/login form; no credentials
+were submitted. Deployed HEAD equals current remote main and source is clean.
+At2026-11-03T17:52:25.718467UTC, singleton ID1 was false, the application's
+supplemental_browsing_enabled() and normal browse query were off, no retired enable
+setting existed, audit count was0and browse count0. No pending migrations remained.
+Both writer workflows were verified active again. Their next naturally scheduled
+post-release outcomes were not yet observed; no manual run was dispatched. Final
+dashboard quota304.4/512MB; expiry remains30November. No settings, personal data,
+sending, Daraja, charging, public activation, retention deletion or Jira sync occurred.
+
+Source rollback is12878e1a3e51f62c3c7d1ced3f13948fd1b7190e with additive schema
+retained. Verify the retired enable flag is still false before reloading old code;
+never reverse0017or replace the live database. Console throttle recovery remains
+the documented dedicated caches['admin_login'].clear(), not a password reset or
+permission change; it was not executed. Owner activation and the post-activation
+audit remain pending Michael's separate action/time.
+
+The subsequent SELECT-only isolated-copy survey reconstructed all1,808original
+non-scam active rows at the recorded1November cutoff: one source,1,104recent now,
+977archived and831unverified, none with stored closing evidence. The current
+100-entry feed has37nonempty explicit future GMT expiryDate values; current code
+ignores that field. Seven match newer stored rows and30are not stored; none match
+the original cohort. Three structured source-page validThrough checks corroborate
+the calendar dates, with an earlier midnight in the feed retained conservatively.
+The publisher permits automatic advert durations, so its structured listing expiry
+is not yet an established employer application deadline. The tested helper remains
+disconnected from eligibility; accepted verified gains remain zero.
+See JOB_FEED_DISPLAY_OPTIONS.md for per-source counts, conditional0–37opportunity,
+quality findings and the recommendation to combine a narrow adapter with genuine
+employer-direct evidence. No live row was relabelled, no ingestion was triggered.
+
+The preparation-only parser is isolated on codex/myjobmag-expiry-evidence-20261103 from
+86cdf39. It accepts only the observed MyJobMag host/name contract and explicit
+GMT/numeric-offset timestamps, rejecting absent/ambiguous/invalid values. No
+deadline() or record() caller is added; tests enforce that expiry alone cannot
+publish a job or replace existing closing evidence. Existing
+ISO precedence, archives, earlier deadlines, source closure and eligibility remain.
+Eleven focused synthetic tests passed. Full local gates and PR CI are recorded
+below when complete; this source proposal must not be merged or deployed for this
+task. Original checkout/untracked reports/tools, lockfiles, stash and Git config
+were preserved. No Jira action was performed.
+
+Local final gates: Python3.12 manage.py check and makemigrations --check --dry-run
+passed; full Django suite529tests in498.195seconds, one platform skip. Ruff0.17.1
+passed for the complete backend/scripts. Explicit existing Node24.19.0 locked
+npm ci, oxlint, ESLint,155tests/27files and build passed; all38dist files match
+committed frontend_build bytes, so there is no frontend package delta or build
+commit. npm retained the lockfile's five advisories (four moderate, one high);
+no dependency upgrade or lockfile edit occurred. The default runtime had advanced
+to24.22.1; verification used the discovered retained24.19.0runtime. The first local
+quality command found Ruff absent and stopped before the suite; the pinned checker
+was installed only in the ignored worktree verification directory, and its corrected
+check passed. Existing Python/global Node environments were not replaced. PR checks
+remain separately recorded evidence; no source merge/deployment is authorized here.
+Those first gate results cover the earlier source head. After source-semantics
+review, the final proposal was narrowed to parsing preparation with no eligibility
+integration. Final focused/full checks are rerun and recorded separately.
+
+Final preparation-only gates passed: check, makemigrations --check --dry-run,
+repository Ruff0.17.1,11focused tests in0.050seconds and529full Django tests in
+394.201seconds (one platform skip). Frontend source/dependencies/build are unchanged
+from the successful explicit Node24.19verification above. Draft PR81 remains
+unmerged and undeployed; final-head CI is checked separately. No parser helper is
+called by the production deadline/record path, so this proposal adds zero verified
+inventory until a genuine closing-deadline contract and separate integration exist.
+
+## MVP1 closeout and MVP2 planning — 11 November 2026
+
+Local main fast-forwarded to reviewed e682cac, matching the latest available
+4November deployment receipt; no fresh runtime/deployment claim. Twenty stale local
+and seven remote development branches were preserved by27exact tip tags and a
+verified owner-private complete Git bundle before removal. Worktrees were clean
+and detached at their existing commits; all files and five stashes remain. Four
+active Dependabot branches/PRs67/82/83/84 remain. PR71/73 closed with archive notes,
+not merged. Released jobs.0017 conflicts with the archived analytics0017; MVP2 must
+port focused packages onto main with fresh additive migration design.
+
+Jira:34Done stories assigned released MVP1;13unfinished stories moved to unreleased
+MVP2/backlog with status In Progress and concrete remaining-gate comments. AJ80 and
+all23Update histories retained. AJ81–86 are six To Do readiness/product proposals.
+MVP2's20items were ranked with dependency/security readiness and real inventory
+first. Six epics now In Progress; frontend/API epicAJ7 Done from its five completed
+children. Expired active Sprint4 closed only after its six remaining issues were
+confirmed Done; no sprint started, new dates invented or issue history deleted.
+Direct mutation receipts:reports/JIRA_MVP2_UPDATES_2026-11-11.json.
+
+Pinned Django6.1.2 check/drift and full529tests passed387.531s,one existing skip,
+zero external network/DNS/SMTP audit attempts. Node24.19 locked install,lint,
+155frontend tests/27files (19.54s) and build (1.35s) passed;38committed build files
+matched. Ruff/OpenAPI passed. Remote planning-PR checks are pending until observed.
+Known high follow-redirects alert31 remains open;AJ81/PR82 retain its targeted fix
+for separate reviewed verification. No dependencies/lockfiles/CI/hosting/schema/
+feature code,production flags,data or backups changed. .gitignore protects the
+private .recovery directory. See docs/MVP2_PROPOSAL.md and the closeout report for
+benchmarks,recommended core/conditional scope,targets,hashes and recovery commands.
+
+Additional isolated Git restore verified archived refs/baseline and caught that
+bundle --all captures only the current refs/stash,not older stash reflog entries.
+All five original stashes remained intact. Added five local-only stash recovery
+tags and a separate owner-private bundle; isolated restore verified all5stash
+commit objects. No stash/private history was pushed. Both bundle SHA256 values
+and commands are recorded in reports/MVP1_CLOSEOUT_2026-11-11.md.
+
+## Dependabot resolution package — 11 November 2026
+
+Current task authorizes handling the four remaining remote dependency branches.
+Original67/82/83/84heads were archived and verified under
+archive/dependabot-20261111/pr-<number>. PR67 was closed with actual resolver and
+installed-distribution evidence: updated Celery5.7 requiresdateutil2.9.0.post0,
+so3.0.0cannot compose with84. No forced/no-deps install;the compatible pin remains.
+The other three PRs are consolidated on codex/dependabot-closeout-20261111 and
+must not be closed as superseded until the replacement passes six CI checks and
+merges. PR83's old failed job explicitly showed stale committed frontend assets;
+the regenerated build is committed last,not bypassed in CI.
+
+The actual new graph installed in a separatePython3.12environment;pip check passed.
+Django6.1.3check/drift and529tests passed323.847s,one existing skip,zero external
+I/O audit attempts. Node24.19locked npm ci,Oxlint/ESLint,155tests/27files (18.63s),
+helper test and Vite8.3.6build (1.43s) passed. Ruff0.17.4/OpenAPI and16repository
+helper tests passed. Mypy2.4.1executed with309nonblocking legacy findings,not clean.
+Fresh online npm audit:0high/critical,3moderate development nodes;production-only
+audit0. Follow-redirects1.16.2security patch retained. AJ87tracks compatible removal
+of the ESLint/config-array/minimatch advisory rather than an unreviewed override
+or downgrade. No application logic,auth/cookie/CORS,ingestion,migrations or CI
+workflow change;no production deployment,flag change,live mail/charging or data
+mutation. Repository pins change toDjango6.1.3;production remains last verified6.1.2.
+See reports/DEPENDABOT_REVIEW_2026-11-11.md for explanations,root causes and rollback.
+
+## MVP2 implementation start — 11 November 2026
+
+Michael explicitly selected `MVP2` as the integration branch, superseding the
+proposal's main-only branch recommendation. Created from fetched reviewed
+`origin/main` at `a8f11fd728aeb0fbe4ff5d62027b7c64712f8a66` and published to
+`origin/MVP2`. Original main checkout and unrelated untracked work preserved.
+Feature branches start from reviewed MVP2; feature PRs target MVP2. Release to
+main remains a separate checked PR. No production deployment is implied.
+
+First slice of AJ83: `codex/mvp2-aj83-matching` adds private job-detail skill
+explanations, matched/missing labels, distinct no-job/no-profile-skills states and
+a link to the existing profile editor. It preserves score calculation, the 70%
+alert-only threshold, source/deadline labels and independent application eligibility.
+No schema migration, new source ingestion, telemetry or sending activation.
+
+Commands/results: explicit portable Node24.19.0; `npm ci --no-audit --no-fund
+--cache C:\dev\ajiri\.npm-cache` passed after incomplete offline caches failed.
+`npm run lint`, `npm run lint:eslint`, `npm run test -- --run` (159 tests/28 files),
+`npm run test:quality` (one helper) and `npm run build` (2.25s) passed. Prettier
+formatted the three touched frontend files. Ruff0.17.4 full backend/scripts passed.
+
+Local backend parity is UNVERIFIED: retained Python3.12 environments point to a
+missing base python.exe. Global Python3.13 lacks DRF. A fresh pinned virtualenv
+installation stalled downloading the cp313 lxml6.1.3 wheel, including a bounded
+retry. A supplementary Python3.13 run preloaded globally installed lxml6.0.2,
+yaml/jsonschema and used retained dependency libraries (Django6.1.3). Four new
+`jobs.test_match_explanation` tests passed in4.740s; reviewed OpenAPI regenerated
+successfully. `manage.py check`, `makemigrations --check --dry-run` and full suite
+were also started with that supplementary environment; full results and exact
+pinned CI remain pending at source commit. Do not call this a pinned local pass.
+The browser journey now checks a 33% explanation and preparation, with axe audit;
+browser/performance acceptance also requires CI. Generated frontend_build is
+committed separately after source as the last frontend-package commit.
+
+AJ83 is In Progress, not Done. Normalized location/remote/experience filters,
+preferences/dismissals and consented usability pilot remain. Genuine inventory,
+recovery-capacity and other MVP2 prerequisites remain separate open work. No
+production quota, backup, runtime or pilot result was established by this slice.
+Rollback: reviewed revert of source plus matching built assets; preserve data and
+freshness settings. PR/check evidence must be recorded before integration.
+
+### AJ83 verification receipt — supersedes pending checks above
+
+Feature source `aa4c82b` and last frontend-package build `b3b2801` were pushed in
+[PR88](https://github.com/michael-mathenge/ajiri/pull/88), base `MVP2`.
+All six exact-head checks passed in
+[CI43090219416](https://github.com/michael-mathenge/ajiri/actions/runs/43090219416):
+backend Python3.12/3.13/3.14, frontend, browser/performance and quality. This includes
+the new real-browser low-score explanation/preparation/axe regression and committed
+build consistency. No claim of manual phone review or consented pilot success.
+
+Fresh isolated Python3.13.17 runtime installation subsequently completed using the
+actual requirements.txt pins (Django6.1.3, lxml6.1.3). `python -m pip check`,
+`python manage.py check`, `python manage.py makemigrations --check --dry-run` and
+`python manage.py test --noinput` passed:533tests in218.504s, one existing skip.
+Full suite ran outside the filesystem sandbox to permit existing hard-link tests.
+This supersedes the earlier supplementary full-suite failure (one failure/six
+errors): three private-media tests hit sandbox WinError5 creating hard links and
+four subprocess checks lacked retained dependencies. That failed run remains
+historical failed evidence; it was not a passing pinned run. Local Python3.12 is
+still unavailable, with the pinned3.12 pass provided by CI.
+
+This receipt is a documentation-only follow-up package after the frontend source
+and final generated-build commits. Its corrected head must pass all six checks
+again before merge; the final merge/check receipt will also be retained on AJ83.
+Integration into MVP2 is distinct from a release to main or production. No source
+or data deployment, migration, provider send, pilot or production verification.
+
+### MVP2 first production activation — 13 November 2026
+
+PR88 merged into `MVP2` as `3e37c47`; release PR89 merged to main as
+`d5f2f6871276434569df10ffb153cb8591a9a7df`. All six exact merged-head checks passed
+in CI43094746515, including a successful rerun after the first browser job's
+artifact-upload service error (the test step had passed). Fresh pinned local full
+release suite: 533 tests/258.239s, one existing skip; earlier frontend gates and exact
+38-file committed-build comparison also passed.
+
+PythonAnywhere now runs that exact release, replacing `e682cac`. The previously
+unfinished private off-server download and isolated restore are complete. The
+11 November consistent snapshot still matched the production database and all
+16 private files under the fresh 13 November writer/web pause. Verified previous
+virtualenv recovery was retained. Exact source staging, offline pinned dependency
+installation, pip/system/drift checks and actual migration plan passed with no
+migrations. Database/media bytes, SQLite integrity/search triggers and feature
+flags were preserved; all 33 runtime pins match, including Django6.1.3.
+
+Web re-enable/reload completed. Post-reload public health200/HSTS604800 and all
+38 exact live frontend files passed. Read-only production authenticated view checks
+passed for jobs (empty), CV draft and existing private approved CV bytes; anonymous
+CV download401. No second active account or currently visible job existed for the
+additional cross-owner/live explanation journey. Ingest/sweep are restored active;
+Michael explicitly authorized one manual ingest after automatic review blocked
+its initial dispatch, and Ingest43425203368 succeeded. No mail/pilot acceptance
+is inferred. AJ83 and the wider MVP2 backlog remain unfinished.
+
+Full recovery hashes, commands, quota, limitations and data-preserving rollback:
+`reports/MVP2_DEPLOYMENT_2026-11-13.md`. This receipt is a documentation follow-up,
+not a new production runtime activation.
+
+## MVP2 security continuation — 13 November 2026
+
+Michael approved implementation/testing/push/checked merge/deployment of the pending
+MVP2 plan. AJ81 is reconciled Done: authenticated GitHub alert31 now reports fixed,
+fixed_at2026-11-11T11:39:39Z, and the previously reviewed dependency package is in
+the verified d5f2f68 production runtime. No manual advisory dismissal occurred.
+
+AJ87 branch `codex/mvp2-aj87-security` starts from reviewed MVP2 `cee43f4`. Exact
+minimatch11.0.5 overrides cover ESLint and config-array's development-only consumers;
+latest upstream ranges still select vulnerable10. Real lint glob regressions and
+existing helper:5tests passed. Node24.19 locked installation, Oxlint/ESLint,
+159components and build passed. Fresh complete npm audit returned0findings. All38
+regenerated frontend files match the unchanged committed build. Backend check/drift
+passed; corrected full suite passed533tests in276.838s (one existing skip).
+Required CI remains pending. An initial wrong-cwd invocation discovered0tests and
+is not full-suite acceptance.
+
+See `reports/AJ87_SECURITY_2026-11-13.md` for source/registry review, validation,
+temporary override removal and rollback. No newer production activation is claimed.
+
+### AJ85 recovery-capacity implementation — 13 November 2026
+
+`codex/mvp2-aj85-recovery` starts from reviewed MVP2 and incorporates reviewed AJ87
+merge00ce84f. Added a read-only account-quota peak planner for simultaneous private
+snapshot and transfer ZIP, compression/metadata allowance and16MiB reserve. It stats
+SQLite/journals/private files without opening SQLite or copying/pruning content.
+Default scope excludes new runtime archives; those need separate measured allowance
+and verification. Backup/restore/scheduler completion is never inferred from a plan.
+
+Eleven focused tests and pinned Ruff0.17.4 passed. System/drift and Node24.19 locked
+npmci/lint/build passed; all38 regenerated files match unchanged committed assets.
+Full backend suite passed544tests in258.304s (one existing skip). Required CI and
+fresh production quota evaluation remain pending.
+Existing16-file off-server recovery from the prior deployment remains completed
+evidence. Archived conflicting migration stacks remain reference-only. See
+`reports/AJ85_RECOVERY_READINESS_2026-11-13.md` for limitations and rollback.
+
+### AJ82 approved original-source direction — 13 November 2026
+
+Michael directed Ajiri to be its own original vacancy source. AJ82's description
+now preserves the historical multi-source proposal beneath superseding acceptance:
+genuine employer-submitted originals, independent review, canonical Ajiri identities,
+safe retry handling and source-readiness diagnostics. The three-external-feed target
+is superseded;50genuine roles/10employers remain pilot targets, not observed counts.
+
+`codex/mvp2-aj82-original-source` incorporates reviewed MVP2 `fbd8834` (AJ87 and AJ85
+both merged after all six checks). Nullable unique jobs.0018 submission IDs provide
+same-owner/exact-intent200replay,201new and409collision/changed intent; they never
+authorize publication. Legacy clients/rows retain compatibility. Original publisher
+metadata derives from employer provenance, with the official application destination
+kept separate. Existing authority/deadline/independent review/withdrawal gates remain.
+
+Focused original-source/migration11 and combined freshness24 passed; focused UI11,
+all161components,5quality helpers, Node24.19 locked install/lint/ESLint/build, pinned
+Ruff, system/drift and strict OpenAPI generation/comparison passed. Full backend
+passed555tests in261.722s (one existing skip). New lost-response browser regression,
+required CI and production activation are pending. See
+`reports/AJ82_ORIGINAL_SOURCE_2026-11-13.md` for actual results and the
+backup -> staging ->0018migration -> activation/data-preserving rollback order.
