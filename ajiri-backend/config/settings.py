@@ -466,3 +466,16 @@ if not re.fullmatch(r'[A-Za-z0-9_-]+/', ADMIN_URL_PATH) or ADMIN_URL_PATH.split(
 
 # see docs/CONCEPTS.md#durable-delivery-queue
 DELIVERY_QUEUE_ENABLED = env_bool('DELIVERY_QUEUE_ENABLED', False)
+
+# Private scanner and quarantine remain independently disabled.
+# see docs/CONCEPTS.md#local-malware-scanning
+MALWARE_SCANNING_ENABLED = env_bool('MALWARE_SCANNING_ENABLED', False)
+PRIVATE_UPLOADS_SUSPENDED = env_bool('PRIVATE_UPLOADS_SUSPENDED', False)
+CLAMD_UNIX_SOCKET = os.environ.get('CLAMD_UNIX_SOCKET', '')
+CLAMD_HOST = os.environ.get('CLAMD_HOST', '127.0.0.1')
+CLAMD_PORT = os.environ.get('CLAMD_PORT', '3310')
+CLAMD_ALLOWED_ENGINE_VERSIONS = env_list('CLAMD_ALLOWED_ENGINE_VERSIONS')
+CLAMD_HOST_UTC_CONFIRMED = env_bool('CLAMD_HOST_UTC_CONFIRMED', False)
+CLAMD_LIMITS_REVIEW = os.environ.get('CLAMD_LIMITS_REVIEW', '')
+# see docs/CONCEPTS.md#private-certificate-evidence
+CERTIFICATE_EVIDENCE_ENABLED = env_bool('CERTIFICATE_EVIDENCE_ENABLED', False)

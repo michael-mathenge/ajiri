@@ -9,6 +9,7 @@ from rest_framework import serializers
 from accounts.serializers import RegisterSerializer
 from accounts.recovery_views import EmailInput, ResetInput, RequestInput, VerificationInput
 from profiles.cv_views import SaveInput, ApproveInput
+from profiles.certificate_views import EvidenceInput, RemoveEvidenceInput
 from profiles.alert_views import ChoiceSerializer
 from jobs.views import ApplicationCVInput
 from jobs.package_views import DraftInput, PackageInput, ApprovalInput
@@ -34,6 +35,8 @@ class ErrorOutput(serializers.Serializer):
 
 
 INPUTS = {
+    ('CertificateDetail', 'PUT'): EvidenceInput,
+    ('CertificateDetail', 'DELETE'): RemoveEvidenceInput,
     ('RecommendationChoiceDetail', 'PATCH'): ChoiceInput,
     ('ApplicationProgressView', 'PATCH'): ProgressInput,
     ('OrganisationReview', 'POST'): ReviewInput,
@@ -109,9 +112,9 @@ class ContractSchema(AutoSchema):
 
     def get_response_serializers(self):
         name = type(self.view).__name__
-        if name == 'SavedJobState' and self.method == 'DELETE':
+        if name in ('SavedJobState', 'CertificateDetail') and self.method == 'DELETE':
             return {204: None, 401: ErrorOutput, 403: ErrorOutput, 503: ErrorOutput}
-        if name in DOWNLOADS:
+        if name in DOWNLOADS or (name == 'CertificateDetail' and self.method == 'GET'):
             success = OpenApiTypes.BINARY
         elif name in ('LoginView', 'RefreshView'):
             success = AccessOutput

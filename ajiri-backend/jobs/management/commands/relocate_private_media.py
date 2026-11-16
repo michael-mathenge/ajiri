@@ -9,7 +9,7 @@ import tempfile
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from jobs.models import Application
-from profiles.models import Profile
+from profiles.models import Profile, CertificateEvidence
 
 
 def digest(path):
@@ -66,6 +66,7 @@ class Command(BaseCommand):
                 raise CommandError('Destination must be outside known public asset roots.')
 
         names = set(Profile.objects.exclude(cv_file='').exclude(cv_file__isnull=True).values_list('cv_file', flat=True))
+        names.update(CertificateEvidence.objects.values_list('document', flat=True))
         for cv, letter in Application.objects.values_list('generated_cv', 'generated_cover_letter'):
             names.update(name for name in (cv, letter) if name)
         for name in names:

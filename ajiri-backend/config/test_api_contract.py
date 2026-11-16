@@ -21,7 +21,7 @@ def routes(patterns, prefix=''):
                    CSRF_COOKIE_SECURE=False, REAL_EMAIL_ENABLED=False, ALERT_EMAIL_ENABLED=False)
 class APIContractTests(TestCase):
     def test_every_versioned_alias_uses_the_exact_legacy_view(self):
-        replacements = {'<int:pk>': '1', '<uuid:version>': '00000000-0000-0000-0000-000000000001',
+        replacements = {'<int:pk>': '1', '<uuid:certification_id>': '00000000-0000-0000-0000-000000000005', '<uuid:version>': '00000000-0000-0000-0000-000000000001',
             '<uuid:pk>': '00000000-0000-0000-0000-000000000004',
             '<uuid:package_id>': '00000000-0000-0000-0000-000000000002',
             '<uuid:authorization_id>': '00000000-0000-0000-0000-000000000003', '<str:kind>': 'cv'}

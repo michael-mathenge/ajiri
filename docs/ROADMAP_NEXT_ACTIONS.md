@@ -1,3 +1,17 @@
+# Current next actions - private scanner and evidence backend
+
+Verified runtime is 276f37a (release PR113); PR119 records its deployment.
+The current package integrates the dormant private certificate/scanner backend
+against that baseline; implementation and activation remain separate.
+See PRIVATE_CERTIFICATE_EVIDENCE.md and HOSTING_MIGRATION_PLAN_2026-11-16.md.
+Michael confirmed on 16 November that genuine pilot participants are not yet
+available. Keep publication, normal sending, saved searches, queue and the new
+certificate/scanner gates off pending their independent operational acceptance.
+The 16 stories remain open where live evidence, services or commercial decisions
+are missing. No backup retention/deletion policy or service purchase is implied.
+
+## Historical delivery reliability phase
+
 # Current next actions — delivery reliability
 
 Verified production baseline is ef1c102 (release PR109), with documentation receipt

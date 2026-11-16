@@ -14,7 +14,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.db import transaction
 from django.db.models.signals import post_delete
-from .models import Profile, CVApproval
+from .models import Profile, CVApproval, CertificateEvidence
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
@@ -26,6 +26,7 @@ def create_profile(sender, instance, created, raw=False, using=None, **kwargs):
 
 
 @receiver(post_delete, sender=CVApproval)
+@receiver(post_delete, sender=CertificateEvidence)
 def remove_approved_cv(sender, instance, **kwargs):
     # A rolled-back deletion must not remove a still-referenced private file.
     # see docs/CONCEPTS.md#cv-builder-flow
