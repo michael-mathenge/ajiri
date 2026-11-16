@@ -1,3 +1,46 @@
+# Private evidence/scanner backend package - 16 November 2026
+
+Branch codex/mvp2-private-evidence starts at reviewed main/runtime 276f37a.
+Focused port of archive 974dc6d adds profiles0008 after 0007, owner-only private
+quarantine/evidence routes, exact hash/revision/quota/scan claims, export/erasure/
+relocation inclusion and aggregate readiness. Both new gates default false; no
+service, worker, real document, normal send or publication activation occurred.
+Migration helper is staged independently before activating new model callers.
+Commit-uncertainty cleanup preserves potentially referenced new bytes.
+
+Actual local gates (Python3.13.17): check, migration drift, Ruff and OpenAPI
+generation/byte consistency passed. Final full suite: 671 tests in 305.896s,
+OK with one existing platform skip. An earlier sandbox run failed three existing
+Windows hardlink tests (WinError5); outside-sandbox run passed 670 tests/306.534s
+before the last correction, followed by the final 671-test pass. Focused tests
+covered owner isolation, quotas/races, stalled/stale scan claims, expiry/integrity,
+verified synthetic export/erasure, uncertain replacement and old table/three-trigger/
+private-byte migration preservation. Helper suite:16 tests/0.977s passed.
+Node24.19.0 locked npm ci (358 packages), lint and build (2.70s) passed; all47
+generated paths/hashes exactly match committed frontend_build; no assets changed.
+Pinned ClamAV1.5.4 real binary rehearsal passed harmless custom-signature matched/
+unmatched and missing-DB cases. No vendor definitions/private files/network were
+used in that run; real ClamD host/signatures/resource acceptance remains missing.
+Docker startup was initially rejected by automatic review; Michael specifically
+approved it and the normal approved startup succeeded. Existing containers stayed
+stopped and all Docker lesson resources were preserved.
+
+Read-only PythonAnywhere audit plus scoped generated-cache cleanup reclaimed
+12480512 allocated bytes (449 files/11173574 content bytes), leaving445431808
+account-used bytes. Source276f37a/status, all backup/private-media size+mtime
+inventories and installed pip remained unchanged. No backups/user work were removed.
+Expiry independently observed30November2026. See HOSTING_MIGRATION_PLAN_2026-11-16.md
+for current official pricing, availability limits and staged migration proposal;
+no provisioning/purchase/terms/data migration was performed. Participants remain
+not yet available, as Michael confirmed today.
+
+CI/merge and deployment are pending for this package and are NOT established by
+these local results. All16 stories retain their actual external acceptance gates.
+See PRIVATE_CERTIFICATE_EVIDENCE.md for operations, activation prerequisites and
+source-only rollback preserving schema/data/files/receipts and erasure safety.
+
+## Earlier deployment and implementation evidence
+
 # Queue reconciliation follow-up — 15 November 2026
 
 Final review found an existing saved-search window's definite failure could be
