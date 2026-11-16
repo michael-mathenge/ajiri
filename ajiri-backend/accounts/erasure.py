@@ -87,6 +87,8 @@ def document_path(name):
 
 
 def inventory(user):
+    from .queue_privacy import require_reconciled_tasks
+    require_reconciled_tasks(user)
     # Employer ownership and moderation can affect other applicants' records.
     # Fail before any writes until a scoped, legally reviewed removal is prepared.
     from jobs.models import EmployerOrganisation, EmployerReview, JobModerationReview

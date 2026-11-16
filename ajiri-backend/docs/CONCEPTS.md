@@ -1745,3 +1745,15 @@ those exact bytes before download. Existing generated immutable approvals are
 not rewritten or silently rescanned. Real engine/resource acceptance is separate
 from synthetic protocol tests. PRIVATE_UPLOADS_SUSPENDED can stop new private
 uploads while preserving existing files and recovery copies.
+
+
+## queue-account-privacy
+
+Account exports include only the owner's durable outbox metadata, excluding
+internal deduplication and lease tokens. Cross-owner or missing-owner task
+references block privacy operations before files or account records change.
+Verified erasure also requires every related task to be explicitly reconciled
+to succeeded or dead; pending, uncertain, running and blocked work cannot vanish
+through account removal. Terminal task records retain pseudonymous settlement
+with existing SET_NULL relations after verified owner erasure. No worker, provider
+retry, task state change or account erasure is triggered by these checks.

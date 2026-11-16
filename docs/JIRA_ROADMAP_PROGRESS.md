@@ -1,3 +1,29 @@
+# Queue account privacy package - 16 November 2026
+
+Private evidence/scanner PR120 passed all six exact-head checks on4e356e1 and
+merged into MVP2 as fee2fe81be17ac63620c60a9695a5a41ef1afd24. Production remains
+276f37a until a separately checked release, consistent recovery and activation.
+
+Branch codex/mvp2-queue-privacy began at reviewed main276f37a and incorporates
+that checked MVP2 package. Reconciliation found a concrete export/erasure gap for
+the new dormant outbox. Owned task metadata is now exported without internal
+lease/dedupe tokens; inconsistent ownership blocks privacy operations, and all
+nonterminal task states require reconciliation before verified account erasure.
+Terminal pseudonymous settlement survives with existing SET_NULL relations.
+No migration, queue activation, worker, task dispatch or real erasure occurred.
+
+Actual gates: six focused tests/0.870s passed; combined full backend677 tests in
+300.991s passed (one existing platform skip), plus check, drift, Ruff and reviewed
+OpenAPI byte consistency. Helper suite16 tests/0.892s passed. Node24.19.0 locked
+cache installation358 packages/audit365 with zero findings, lint and build2.75s
+passed; all47 committed frontend asset paths/hashes match. No frontend change.
+Queue feature CI/merge and production activation remain pending; local tests are
+not deployment evidence. Both new scanner/evidence and existing operational gates
+stay off until their real prerequisites pass. All16 non-Epic stories retain
+external acceptance; see MVP2_BACKEND_ACCEPTANCE_2026-11-16.md.
+
+## Prior private evidence and production checkpoints
+
 # Private evidence/scanner backend package - 16 November 2026
 
 Branch codex/mvp2-private-evidence starts at reviewed main/runtime 276f37a.
