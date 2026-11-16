@@ -42,6 +42,8 @@ class Command(BaseCommand):
             raise CommandError('Export failed; no completion manifest was written. Account unchanged.') from None
 
     def export(self, options):
+        from accounts.queue_privacy import owned_tasks
+        from jobs.models import DeliveryTask
         destination = Path(options['destination'])
         if not destination.is_absolute():
             raise CommandError('Use an absolute private destination.')
@@ -58,6 +60,7 @@ class Command(BaseCommand):
             raise CommandError('Execution requires a verified owner request and paused writers; use --dry-run first.')
 
         user = get_user_model().objects.get(pk=options['user_id'])
+        tasks = owned_tasks(user)
         applications = Application.objects.filter(user=user)
         packages = ApplicationPackage.objects.filter(application__user=user)
         if packages.exclude(cv_approval__profile__user=user).exists():
@@ -72,6 +75,7 @@ class Command(BaseCommand):
             Job.objects.filter(pk__in=RecommendationChoice.objects.filter(owner=user).values('job_id')),
             Job.objects.filter(pk__in=SavedJob.objects.filter(owner=user).values('job_id')))
         scopes = [
+            ('delivery_task', tasks),
             ('saved_job', SavedJob.objects.filter(owner=user)),
             ('recommendation_choice', RecommendationChoice.objects.filter(owner=user)),
             ('saved_search', SavedSearch.objects.filter(owner=user)),
@@ -99,6 +103,7 @@ class Command(BaseCommand):
                 record = {}
                 for field in row._meta.concrete_fields:
                     if ((isinstance(row, DeliveryAttempt) and field.name in ('recipient_digest', 'idempotency_key'))
+                            or (isinstance(row, DeliveryTask) and field.name in ('dedupe_key', 'lease_token'))
                             or (isinstance(row, AlertConsentEvent) and field.name == 'recipient_digest')
                             or (isinstance(row, SavedSearchMatch) and field.name == 'email_attempt')):
                         continue  # Internal accounting fingerprints/keys are not portable account content.

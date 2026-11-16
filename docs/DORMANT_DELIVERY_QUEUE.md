@@ -1,3 +1,17 @@
+# Queue privacy integration - 16 November 2026
+
+Verified account export now includes only the owner's outbox metadata, excluding
+lease tokens and deterministic dedupe keys. Cross-owner or missing-owner target
+references block export/erasure before writes. Verified erasure also requires all
+related tasks to be reconciled to succeeded/dead; blocked, running, pending and
+uncertain work remains protected. Terminal settlement rows retain the existing
+SET_NULL references after verified erasure. These checks never dispatch, retry,
+settle or delete a task. No queue/transport gate, worker or schema is activated.
+If rolling source back before this package, keep account erasure suspended until
+reviewed queue reconciliation and privacy protection are restored.
+
+## Existing outbox and operator procedure
+
 # Dormant delivery queue
 
 This package integrates reviewed archived outbox/recovery code against current main.
