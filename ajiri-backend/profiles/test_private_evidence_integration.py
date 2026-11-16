@@ -7,10 +7,12 @@ from unittest.mock import patch
 import uuid
 import tempfile
 from datetime import timedelta
+from contextlib import contextmanager
 
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import TransactionTestCase, override_settings
+from django.db import OperationalError, transaction
 from django.utils import timezone
 
 from .certificate_scanning import scan_certificate
@@ -135,3 +137,27 @@ class PrivateEvidenceIntegrationTests(TransactionTestCase):
         self.assertNotEqual(current.pk, old.pk)
         self.assertTrue(Path(current.document.path).is_file())
         self.assertTrue(Path(old.document.path).is_file())  # Report-only orphan remains recoverable.
+
+    def test_failed_writer_claim_cleans_only_request_file_without_another_database_read(self):
+        old = self.create()
+        with patch('profiles.certificates.claim', side_effect=OperationalError('synthetic locked writer')):
+            with patch('django.db.models.query.QuerySet.exists', side_effect=AssertionError('unsafe extra read')):
+                with self.assertRaises(OperationalError):
+                    put(self.user.profile, self.ids[1], 1, self.upload())
+        self.assertEqual(CertificateEvidence.objects.count(), 1)
+        self.assertEqual(list(self.folder.rglob('*.pdf')), [Path(old.document.path)])
+
+    def test_unknown_commit_and_failed_verification_preserve_potentially_referenced_bytes(self):
+        atomic = transaction.atomic
+        @contextmanager
+        def uncertain_commit():
+            with atomic():
+                yield
+            raise OperationalError('synthetic lost commit response')
+        with patch('profiles.certificates.transaction.atomic', side_effect=uncertain_commit):
+            with patch('django.db.models.query.QuerySet.exists', side_effect=OperationalError('synthetic unavailable verification')):
+                with self.assertRaises(OperationalError):
+                    self.create()
+        row = CertificateEvidence.objects.get()
+        self.assertTrue(Path(row.document.path).is_file())
+        self.assertEqual(hashlib.sha256(Path(row.document.path).read_bytes()).hexdigest(), row.sha256)
