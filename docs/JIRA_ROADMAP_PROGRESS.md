@@ -1,3 +1,118 @@
+# Certificate cleanup race correction - 16 November 2026
+
+Release PR122 on18b1688 was held, not merged: Python3.14 failed the concurrent
+last-slot assertion (six files, five allowed); matrix fail-fast cancelled3.12.
+Logs from run43856144236/job133260773038 confirmed the exact assertion.
+The cause was a contested cleanup verification read after an upload failed before
+any pointer commit. Branch codex/mvp2-certificate-cleanup starts at reviewed main
+and incorporates checked MVP2. It now cleans proven pre-commit rollback files
+without another database read, while retaining referenced/unknown-commit bytes.
+No quota assertion was weakened, provider retried or CI workflow changed.
+
+Actual validation:25 focused tests in3.604s passed;25 independent last-slot races
+in2.849s passed with five records/five files each. Final full suite679 tests in
+296.591s passed (one existing platform skip), plus check/drift/Ruff/OpenAPI.
+Node24.19.0 locked install358 packages/audit365 with zero findings, lint and
+build2.41s passed; all47 committed build paths/hashes match.
+
+Production remains276f37a. Fresh paused-writer16November snapshot
+backup-20261116T110743983803Z-db23b845 preserved46 tables, three triggers and
+16 files/335905bytes; independent private off-server ZIP/member hashes and isolated
+restore passed, including every restored file hash/integrity/FK checks. Receipt
+verified11:19:24UTC. Web was manually paused/restored after automatic review
+rejected uncertain UI focus; both workflows were restored and HTTPS200/HSTS604800
+independently passed afterward. No migration or activation has occurred yet.
+Current corrected-feature/release checks, fresh capacity and paused consistency
+comparison remain required. No further backup deletion authority is assumed.
+
+## Earlier queue, scanner and runtime evidence
+
+# Queue account privacy package - 16 November 2026
+
+Private evidence/scanner PR120 passed all six exact-head checks on4e356e1 and
+merged into MVP2 as fee2fe81be17ac63620c60a9695a5a41ef1afd24. Production remains
+276f37a until a separately checked release, consistent recovery and activation.
+
+Branch codex/mvp2-queue-privacy began at reviewed main276f37a and incorporates
+that checked MVP2 package. Reconciliation found a concrete export/erasure gap for
+the new dormant outbox. Owned task metadata is now exported without internal
+lease/dedupe tokens; inconsistent ownership blocks privacy operations, and all
+nonterminal task states require reconciliation before verified account erasure.
+Terminal pseudonymous settlement survives with existing SET_NULL relations.
+No migration, queue activation, worker, task dispatch or real erasure occurred.
+
+Actual gates: six focused tests/0.870s passed; combined full backend677 tests in
+300.991s passed (one existing platform skip), plus check, drift, Ruff and reviewed
+OpenAPI byte consistency. Helper suite16 tests/0.892s passed. Node24.19.0 locked
+cache installation358 packages/audit365 with zero findings, lint and build2.75s
+passed; all47 committed frontend asset paths/hashes match. No frontend change.
+Queue feature CI/merge and production activation remain pending; local tests are
+not deployment evidence. Both new scanner/evidence and existing operational gates
+stay off until their real prerequisites pass. All16 non-Epic stories retain
+external acceptance; see MVP2_BACKEND_ACCEPTANCE_2026-11-16.md.
+
+## Prior private evidence and production checkpoints
+
+# Private evidence/scanner backend package - 16 November 2026
+
+Branch codex/mvp2-private-evidence starts at reviewed main/runtime 276f37a.
+Focused port of archive 974dc6d adds profiles0008 after 0007, owner-only private
+quarantine/evidence routes, exact hash/revision/quota/scan claims, export/erasure/
+relocation inclusion and aggregate readiness. Both new gates default false; no
+service, worker, real document, normal send or publication activation occurred.
+Migration helper is staged independently before activating new model callers.
+Commit-uncertainty cleanup preserves potentially referenced new bytes.
+
+Actual local gates (Python3.13.17): check, migration drift, Ruff and OpenAPI
+generation/byte consistency passed. Final full suite: 671 tests in 305.896s,
+OK with one existing platform skip. An earlier sandbox run failed three existing
+Windows hardlink tests (WinError5); outside-sandbox run passed 670 tests/306.534s
+before the last correction, followed by the final 671-test pass. Focused tests
+covered owner isolation, quotas/races, stalled/stale scan claims, expiry/integrity,
+verified synthetic export/erasure, uncertain replacement and old table/three-trigger/
+private-byte migration preservation. Helper suite:16 tests/0.977s passed.
+Node24.19.0 locked npm ci (358 packages), lint and build (2.70s) passed; all47
+generated paths/hashes exactly match committed frontend_build; no assets changed.
+Pinned ClamAV1.5.4 real binary rehearsal passed harmless custom-signature matched/
+unmatched and missing-DB cases. No vendor definitions/private files/network were
+used in that run; real ClamD host/signatures/resource acceptance remains missing.
+Docker startup was initially rejected by automatic review; Michael specifically
+approved it and the normal approved startup succeeded. Existing containers stayed
+stopped and all Docker lesson resources were preserved.
+
+Read-only PythonAnywhere audit plus scoped generated-cache cleanup reclaimed
+12480512 allocated bytes (449 files/11173574 content bytes), leaving445431808
+account-used bytes. Source276f37a/status, all backup/private-media size+mtime
+inventories and installed pip remained unchanged. No backups/user work were removed.
+Expiry independently observed30November2026. See HOSTING_MIGRATION_PLAN_2026-11-16.md
+for current official pricing, availability limits and staged migration proposal;
+no provisioning/purchase/terms/data migration was performed. Participants remain
+not yet available, as Michael confirmed today.
+
+CI/merge and deployment are pending for this package and are NOT established by
+these local results. All16 stories retain their actual external acceptance gates.
+See PRIVATE_CERTIFICATE_EVIDENCE.md for operations, activation prerequisites and
+source-only rollback preserving schema/data/files/receipts and erasure safety.
+
+## Earlier deployment and implementation evidence
+
+# Verified delivery reliability release - 16 November closeout
+
+Current verified runtime is 276f37ae05285c7fbe978994f6bf521add99d5fe (PR113),
+activated and externally verified on 15 November at 20:59:55 UTC. All six feature,
+release-head and merged-main checks passed. Only additive jobs0022 applied before
+activation. All 45 old tables/rows, three search triggers and 16 private files were
+preserved; the queue table is empty, with expected metadata additions only.
+Fresh private off-server recovery and isolated restoration completed. Only the
+five exact approved server copies were removed; all off-server copies remain.
+Final reserve: 3,223,354 bytes beyond the full recovery/transfer/16 MiB plan.
+Owner-private/CV-byte checks, health/HSTS, all 47 assets and three anonymous 401
+checks passed. Web and both writer workflows are restored. Queue, normal sending,
+posting and publication remain disabled; genuine acceptance gates remain open.
+See reports/MVP2_DELIVERY_RELEASE_2026-11-15.md for actual validation, source,
+migration, recovery, cleanup, verification corrections and rollback evidence.
+Documentation-only follow-up merges do not establish a newer activated runtime.
+
 # Queue reconciliation follow-up — 15 November 2026
 
 Final review found an existing saved-search window's definite failure could be

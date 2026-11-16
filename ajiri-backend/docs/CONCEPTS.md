@@ -1715,3 +1715,45 @@ Every worker reuses existing delivery receipts before new external IO. Reserved 
 unknown receipts require reconciliation, never an automatic provider retry. Operator
 commands inspect aggregate counts and explicitly publish/recover/reconcile bounded
 work. No producer, periodic schedule or hosted worker is activated by this code.
+
+
+## private-certificate-evidence
+
+Optional owner-only supporting PDF evidence lives separately from CV drafts and
+immutable approvals. Uploads are disabled by default. A saved certification UUID
+and exact workspace revision are required; replacements/removals also need the
+current evidence UUID and hash. A conditional workspace write serializes quotas
+(five active files, 20 MiB total, 5 MiB per PDF), including quarantine states.
+Fresh UUID paths contain no original names. Unscanned evidence cannot download.
+Explicit confirmed removal precedes removing a certification entry. Database
+rollback retains old bytes; committed replacement/removal cleans only that file.
+Exports, verified erasure inventories and private backups include evidence.
+Orphan audit is report-only. No qualification verification or employer sharing
+is implied. New routes remain inactive pending scanner and capacity acceptance.
+
+## local-malware-scanning
+
+The optional ClamD adapter transfers bounded bytes only over a Unix socket or
+loopback, after checking an explicitly reviewed engine/version and signature age.
+A single ten-second deadline bounds both connections; errors, malformed replies,
+limits, stale signatures and missing configuration fail closed without retries.
+The engine stays disabled until deployment limits, UTC and supported engine
+versions have been independently verified. A clean hash is not a qualification
+claim. Certificate scan claims settle only the same unchanged row and claim.
+Legacy uploaded CVs receive no assumed clean status: enabling scanning checks
+those exact bytes before download. Existing generated immutable approvals are
+not rewritten or silently rescanned. Real engine/resource acceptance is separate
+from synthetic protocol tests. PRIVATE_UPLOADS_SUSPENDED can stop new private
+uploads while preserving existing files and recovery copies.
+
+
+## queue-account-privacy
+
+Account exports include only the owner's durable outbox metadata, excluding
+internal deduplication and lease tokens. Cross-owner or missing-owner task
+references block privacy operations before files or account records change.
+Verified erasure also requires every related task to be explicitly reconciled
+to succeeded or dead; pending, uncertain, running and blocked work cannot vanish
+through account removal. Terminal task records retain pseudonymous settlement
+with existing SET_NULL relations after verified owner erasure. No worker, provider
+retry, task state change or account erasure is triggered by these checks.
