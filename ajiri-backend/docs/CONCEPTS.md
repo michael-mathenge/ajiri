@@ -1757,3 +1757,13 @@ to succeeded or dead; pending, uncertain, running and blocked work cannot vanish
 through account removal. Terminal task records retain pseudonymous settlement
 with existing SET_NULL relations after verified owner erasure. No worker, provider
 retry, task state change or account erasure is triggered by these checks.
+
+## current-outbox-rehearsal
+
+The current outbox lab publishes actual durable task IDs to isolated Redis and
+runs the registered Celery worker in separate processes. Synthetic provider IO is
+captured only after the usual eligibility, document and shared reservation checks.
+Hard crashes test receipt reuse and explicit lease recovery for applications,
+alerts and saved searches. A fresh logical broker database/private SQLite/media
+restore is distinguished from host-loss or hosted-service recovery. The lab is
+never imported by production and enables no producer, worker or periodic schedule.

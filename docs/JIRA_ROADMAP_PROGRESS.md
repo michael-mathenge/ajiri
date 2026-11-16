@@ -1,3 +1,32 @@
+# Current durable outbox worker rehearsal - 16 November 2026
+
+Branch codex/mvp2-current-outbox-rehearsal starts at fetched reviewed main e3e8f74
+and incorporates checked MVP2 receipt d3fbd8a. Production remains e3e8f74.
+The new source-only lab uses the real DeliveryTask publisher/executor and registered
+jobs.run_delivery_task, preserving the historical application-only lab separately.
+
+Actual isolated Docker result: all three target kinds, nine hard crashes before/
+during/after handoff, lost broker confirmation after real Redis publication,
+separate-worker lease contention, three-claim dead letters and ten current
+eligibility/disabled cases passed. No duplicate handoff or shared reservation and
+zero real email calls. SQLite/private media restored into a new private root and
+fresh process/logical broker database; existing receipts prevented repeat IO.
+Application lease expiry is explicit bounded lab/operator work. This is not a
+fresh-host/off-server restore, production periodic recovery or hosted acceptance.
+See CURRENT_OUTBOX_REHEARSAL.md; combined recovery remains a later package.
+
+Actual local gates: Python3.13.17 check/drift passed; 679 backend tests in318.699s
+passed (one existing platform skip), Ruff/OpenAPI and18 script tests in0.960s passed.
+Node24.19.0 locked install358/audit365 found zero vulnerabilities; lint/build1.77s
+passed and all47 generated paths/hashes match committed assets. The actual lab used
+Python3.12 and current pinned dependencies including Celery5.7.0. No runtime code,
+migration, production settings/dependencies, frontend assets or CI workflow changed.
+PR exact-head checks and merge evidence remain separate from local/lab validation.
+AJ48 remains open for combined recovery and approved durable host/service evidence.
+No production activation, normal sending, worker or scheduler is enabled.
+
+## Earlier implementation and deployment evidence
+
 # Verified private evidence release - 16 November 2026
 
 Production is now e3e8f746aa12f1f5c57c1413aa06f210bc33918f (PR122).
