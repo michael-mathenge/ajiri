@@ -1,3 +1,64 @@
+# Verified private evidence release - 16 November 2026
+
+Production is now e3e8f746aa12f1f5c57c1413aa06f210bc33918f (PR122).
+All six checks passed on corrected release head 1c531e8 and on actual main e3e8f74;
+PR123 supplied the certificate cleanup race correction described below. The
+historical "production remains276f37a" checkpoints below predate this activation.
+
+Deployment evidence: both writer workflows were paused and drained, and web was
+disabled. Under that pause, all 46 existing table contents/structures, three search
+triggers and16 private file hashes matched the verified 16 November recovery snapshot.
+The 11:07 UTC snapshot's private off-server archive/member hashes and isolated restore
+had passed at 11:19:24 UTC; the archive SHA256 remains
+1cc93f41569c4e46818523e4d9a8b85addd74f9ace1a2fad794042740c2e8725.
+Only reviewed migration source and its independent path helper were staged before
+profiles.0008_certificate_evidence was applied. All 46 previous tables were preserved;
+the new evidence table was empty. Exactly one migration, one content type and four
+permission catalogue rows were added, with no user/group/staff grants. SQLite
+integrity, foreign keys, three search triggers and all 16 private hashes passed.
+Reviewed source then fast-forwarded to e3e8f74 with a clean production checkout.
+
+At 14:40 UTC, production check, migration drift, empty migration plan and all 33 pinned
+runtime package versions passed. Existing owner jobs/application/CV reads returned
+200; an existing private CV download matched its immutable approval hash and retained
+no-store. Anonymous certificate access returned 401, owner certificate access 404
+while disabled, and owner saved searches 403 while disabled. The evidence table,
+dormant queue and delivery-attempt delta remained zero. All 11 queue, scanning,
+certificate, sending, saved-search, posting and publication gates stayed False;
+freshness stayed True. No document upload, provider handoff or access grant occurred.
+
+The web app was re-enabled and explicitly reloaded; ingest 377395490 and sweep 377395493
+were restored and independently read back active. External verification completed
+14:42:09 UTC: HTTPS health 200, HSTS 604800, four anonymous private routes 401 (including
+the new certificate route), and all 47 live HTML/assets matched reviewed build bytes.
+Native dashboard expiry was observed as 16 December 2026; no renewal was performed.
+These direct owner view checks do not establish a new browser login or inbox pilot.
+
+At 14:40 UTC, conservative account usage 459075584 of 536870912 bytes left 77795328;
+next measured standard recovery/reserve plan required 74694854, leaving 3100474.
+Capacity remains tight. The previously approved three duplicate raw backup files
+were removed once; their recovery ZIP and all off-server copies remain. No further
+pruning policy or deletion authority is assumed. Source-only rollback is 276f37a;
+retain the additive schema, current data/private files, freshness and disabled gates.
+
+All 16 live acceptance stories remain open. Scanner host/signatures, private storage,
+durable worker, normal delivery acceptance, genuine employer/reviewer/candidate
+participants, analytics consent and commercial/payment decisions remain separate
+requirements. This deployment establishes code readiness, not completed MVP2.
+
+Deployment receipt package validation: local Python3.13.17 check/drift passed;
+679 full backend tests passed in315.650s (one existing platform skip), Ruff/OpenAPI
+and16 script tests passed. Node24.19.0 locked install358/audit365 reported zero
+vulnerabilities; lint and build1.69s passed, with all47 paths/hashes matching the
+committed build. Only operational documentation changed in this receipt package;
+no runtime source, schema, assets, CI workflow or feature activation changed.
+Jira deployment comments10261-10264 on AJ52/AJ79/AJ48/AJ47 record the verified
+release separately from unfinished live acceptance. Exact-head receipt PR checks
+must pass before merge; a later documentation merge does not establish a new
+production runtime revision.
+
+## Historical implementation and deployment checkpoints
+
 # Certificate cleanup race correction - 16 November 2026
 
 Release PR122 on18b1688 was held, not merged: Python3.14 failed the concurrent
