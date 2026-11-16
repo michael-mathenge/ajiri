@@ -1,3 +1,20 @@
+# Verified delivery reliability release - 16 November closeout
+
+Current verified runtime is 276f37ae05285c7fbe978994f6bf521add99d5fe (PR113),
+activated and externally verified on 15 November at 20:59:55 UTC. All six feature,
+release-head and merged-main checks passed. Only additive jobs0022 applied before
+activation. All 45 old tables/rows, three search triggers and 16 private files were
+preserved; the queue table is empty, with expected metadata additions only.
+Fresh private off-server recovery and isolated restoration completed. Only the
+five exact approved server copies were removed; all off-server copies remain.
+Final reserve: 3,223,354 bytes beyond the full recovery/transfer/16 MiB plan.
+Owner-private/CV-byte checks, health/HSTS, all 47 assets and three anonymous 401
+checks passed. Web and both writer workflows are restored. Queue, normal sending,
+posting and publication remain disabled; genuine acceptance gates remain open.
+See reports/MVP2_DELIVERY_RELEASE_2026-11-15.md for actual validation, source,
+migration, recovery, cleanup, verification corrections and rollback evidence.
+Documentation-only follow-up merges do not establish a newer activated runtime.
+
 # Queue reconciliation follow-up — 15 November 2026
 
 Final review found an existing saved-search window's definite failure could be
