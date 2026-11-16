@@ -1,3 +1,15 @@
+# Concurrent cleanup correction - 16 November 2026
+
+Release PR122's Python3.14 run exposed a losing upload leaving its staged file
+when a conservative post-error database read met a SQLite writer lock. The quota
+remained five records; the sixth file was an unreferenced staged UUID. Cleanup
+now distinguishes failure before any pointer can commit from an uncertain commit:
+known rollback cleans only this request's file without another contested read;
+after a commit attempt, verification or conservative retention still protects
+potentially committed bytes. The strict concurrent record/file assertions remain.
+
+## Private evidence package and operator procedure
+
 # Private certificate backend and scanner integration
 
 AJ-52/AJ-79 implementation package, 16 November 2026. Baseline: reviewed main

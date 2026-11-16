@@ -1,3 +1,32 @@
+# Certificate cleanup race correction - 16 November 2026
+
+Release PR122 on18b1688 was held, not merged: Python3.14 failed the concurrent
+last-slot assertion (six files, five allowed); matrix fail-fast cancelled3.12.
+Logs from run43856144236/job133260773038 confirmed the exact assertion.
+The cause was a contested cleanup verification read after an upload failed before
+any pointer commit. Branch codex/mvp2-certificate-cleanup starts at reviewed main
+and incorporates checked MVP2. It now cleans proven pre-commit rollback files
+without another database read, while retaining referenced/unknown-commit bytes.
+No quota assertion was weakened, provider retried or CI workflow changed.
+
+Actual validation:25 focused tests in3.604s passed;25 independent last-slot races
+in2.849s passed with five records/five files each. Final full suite679 tests in
+296.591s passed (one existing platform skip), plus check/drift/Ruff/OpenAPI.
+Node24.19.0 locked install358 packages/audit365 with zero findings, lint and
+build2.41s passed; all47 committed build paths/hashes match.
+
+Production remains276f37a. Fresh paused-writer16November snapshot
+backup-20261116T110743983803Z-db23b845 preserved46 tables, three triggers and
+16 files/335905bytes; independent private off-server ZIP/member hashes and isolated
+restore passed, including every restored file hash/integrity/FK checks. Receipt
+verified11:19:24UTC. Web was manually paused/restored after automatic review
+rejected uncertain UI focus; both workflows were restored and HTTPS200/HSTS604800
+independently passed afterward. No migration or activation has occurred yet.
+Current corrected-feature/release checks, fresh capacity and paused consistency
+comparison remain required. No further backup deletion authority is assumed.
+
+## Earlier queue, scanner and runtime evidence
+
 # Queue account privacy package - 16 November 2026
 
 Private evidence/scanner PR120 passed all six exact-head checks on4e356e1 and

@@ -44,6 +44,7 @@ def put(profile, certification_id, expected_revision, upload, *, expected_id=Non
     if not data or len(data) != upload.size or len(data) > MAX_BYTES:
         raise ValidationError({'document': ['Invalid bounded PDF bytes.']})
     name = None
+    commit_started = False
     try:
         # Stage a fresh private UUID; a crash leaves an orphan, never a public file.
         name = default_storage.save(certificate_path(None, ''), ContentFile(data))
@@ -64,6 +65,7 @@ def put(profile, certification_id, expected_revision, upload, *, expected_id=Non
                 existing.delete()  # Signal removes old bytes only after this transaction commits.
             row = CertificateEvidence.objects.create(profile=profile, certification_id=certification_id,
                 document=name, sha256=hashlib.sha256(data).hexdigest(), size_bytes=len(data))
+            commit_started = True  # Only atomic exit can make this new pointer durable.
         return row
     except Exception:
         if name:
@@ -71,7 +73,9 @@ def put(profile, certification_id, expected_revision, upload, *, expected_id=Non
             # If database outcome is unknown, retain an orphan for report-only
             # reconciliation rather than deleting potentially referenced bytes.
             try:
-                if not CertificateEvidence.objects.filter(document=name).exists():
+                # A failed claim/validation rolled back before any commit attempt:
+                # this request's UUID has no pointer and needs no contested read.
+                if not commit_started or not CertificateEvidence.objects.filter(document=name).exists():
                     default_storage.delete(name)
             except (DatabaseError, OSError):
                 pass
