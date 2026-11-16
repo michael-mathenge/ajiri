@@ -1,8 +1,11 @@
 # Current next actions - private scanner and evidence backend
 
-Verified runtime is 276f37a (release PR113); PR119 records its deployment.
-The current package integrates the dormant private certificate/scanner backend
-against that baseline; implementation and activation remain separate.
+Verified runtime is e3e8f74 (release PR122), activated 16 November 2026.
+The private certificate/scanner backend and queue privacy guards are deployed;
+profiles.0008 applied with existing data/files preserved. All 11 feature gates
+remain disabled. HTTPS, exact 47 assets, private access and restored writers passed;
+see JIRA_ROADMAP_PROGRESS.md for the current deployment receipt. Dashboard expiry
+is 16 December 2026; the next recovery/reserve plan leaves 3100474 bytes headroom.
 See PRIVATE_CERTIFICATE_EVIDENCE.md and HOSTING_MIGRATION_PLAN_2026-11-16.md.
 Michael confirmed on 16 November that genuine pilot participants are not yet
 available. Keep publication, normal sending, saved searches, queue and the new
