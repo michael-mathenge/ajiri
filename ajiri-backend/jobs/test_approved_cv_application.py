@@ -94,13 +94,13 @@ class ApprovedCVApplicationTests(TestCase):
         self.assertTrue(Path(self.approval.document.path).exists())
 
     def test_second_file_write_failure_cleans_the_first(self):
-        from django.db.models.fields.files import FieldFile
-        original = FieldFile.save
+        from jobs.application_drafting import save_field
+        original = save_field
         def fail_letter(field, *args, **kwargs):
             if field.field.name == 'generated_cover_letter':
                 raise OSError('private text')
             return original(field, *args, **kwargs)
-        with patch.object(FieldFile, 'save', fail_letter):
+        with patch('jobs.application_drafting.save_field', fail_letter):
             self.assertEqual(self.apply().status_code, 503)
         self.assertFalse(Application.objects.exists())
         self.assertFalse(list((Path(self.temp.name) / 'applications').rglob('*.docx')))

@@ -92,6 +92,20 @@ class JobDetailSerializer(JobListSerializer):
         return None
 
 
+class PrivateApplicationDocumentField(serializers.FileField):
+    def __init__(self, kind, **kwargs):
+        self.kind = kind
+        super().__init__(read_only=True, **kwargs)
+
+    def to_representation(self, value):
+        if not value:
+            return None
+        # see docs/CONCEPTS.md#private-storage-boundary
+        path = f'/api/jobs/applications/{value.instance.pk}/documents/{self.kind}/'
+        request = self.context.get('request')
+        return request.build_absolute_uri(path) if request else path
+
+
 class ApplicationSerializer(serializers.ModelSerializer):
     """
     Represents an Application draft for the frontend's review screen.
@@ -103,6 +117,8 @@ class ApplicationSerializer(serializers.ModelSerializer):
     company_name = serializers.CharField(source='job.company_name', read_only=True)
     employer_url = serializers.URLField(source='job.application_target', read_only=True)
     delivery_evidence = serializers.SerializerMethodField()
+    generated_cv = PrivateApplicationDocumentField('cv')
+    generated_cover_letter = PrivateApplicationDocumentField('cover-letter')
 
     def get_delivery_evidence(self, obj) -> dict:
         attempts = getattr(obj, '_pipeline_attempts', None)

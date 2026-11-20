@@ -1,4 +1,5 @@
 import hmac
+from io import BytesIO
 import feedparser
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
@@ -27,6 +28,7 @@ from rest_framework import serializers
 from django.db import OperationalError, transaction
 from .application_drafting import prepare_application
 from .freshness import eligible_jobs
+from profiles.private_storage import read_field
 
 
 class FreshJobsMixin:
@@ -205,14 +207,16 @@ class ApplicationDocumentView(generics.GenericAPIView):
         document = {'cv': application.generated_cv, 'cover-letter': application.generated_cover_letter}.get(kind)
         if not document:
             return Response({'detail': 'Document not found.'}, status=404)
-        # Stream the saved snapshot belonging to this user, not a freshly generated file.
+        # Return this owner's saved bounded snapshot; never regenerate a document.
         # see docs/CONCEPTS.md#authenticated-document-downloads
         try:
-            response = FileResponse(document.open('rb'), as_attachment=True,
+            response = FileResponse(BytesIO(read_field(document)), as_attachment=True,
                 filename=document_name(request.user.full_name,
                     'CV' if kind == 'cv' else 'Cover_Letter', application.job.company_name))
         except FileNotFoundError:
             return Response({'detail': 'The document file is unavailable.'}, status=404)
+        except OSError:
+            return Response({'detail': 'The document file is unavailable. Please try again later.'}, status=503)
         response['Cache-Control'] = 'private, no-store'
         return response
 

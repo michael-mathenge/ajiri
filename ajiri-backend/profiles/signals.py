@@ -15,6 +15,7 @@ from django.dispatch import receiver
 from django.db import transaction
 from django.db.models.signals import post_delete
 from .models import Profile, CVApproval, CertificateEvidence
+from .private_storage import inspect, delete_exact
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
@@ -31,10 +32,14 @@ def remove_approved_cv(sender, instance, **kwargs):
     # A rolled-back deletion must not remove a still-referenced private file.
     # see docs/CONCEPTS.md#cv-builder-flow
     name, storage = instance.document.name, instance.document.storage
+    try:
+        reference = inspect(storage, name) if name and storage.exists(name) else None
+    except OSError:
+        reference = None  # Preserve uncertain objects for report-only reconciliation.
     def cleanup():
         try:
-            if name:
-                storage.delete(name)
+            if reference:
+                delete_exact(storage, reference)
         except OSError:
             # The row deletion already committed. Report-only orphan review is
             # documented; never expose filenames or exception text to callers.

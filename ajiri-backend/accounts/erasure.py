@@ -10,6 +10,7 @@ from django.core import signing
 from django.core.management.base import CommandError
 from django.db import transaction
 from django.db.models import Q
+from django.core.files.storage import default_storage
 from django.utils import timezone
 from django.utils.crypto import salted_hmac
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken
@@ -19,6 +20,8 @@ from jobs.management.commands.backup_private_data import no_links
 from jobs.models import (Application, ApplicationPackage, ApplicationPackageApproval,
     ApplicationSendAuthorization, ApplicationSendAttemptLink, DeliveryAttempt, DeliveryDailyBudget)
 from profiles.models import Profile, CVApproval, CertificateEvidence
+from profiles.private_storage import (VersionedPrivateStorage, inspect, delete_exact,
+    validate as validate_object, key as object_key)
 
 SALT = 'ajiri.erasure-journal.v1'
 
@@ -47,9 +50,12 @@ def journal_root(value):
 def write_journal(path, data):
     # see docs/CONCEPTS.md#recoverable-account-erasure
     temporary = path.with_name(path.name + '.' + uuid.uuid4().hex + '.pending')
+    payload = signing.dumps(data, salt=SALT)
+    if len(payload.encode('utf-8')) > 1024*1024:
+        raise CommandError('Erasure journal exceeds resumable recovery limits; no rows were erased.')
     with temporary.open('x', encoding='utf-8') as stream:
         os.chmod(temporary, 0o600)
-        stream.write(signing.dumps(data, salt=SALT))
+        stream.write(payload)
         stream.flush()
         os.fsync(stream.fileno())
     os.replace(temporary, path)
@@ -67,10 +73,16 @@ def read_journal(path):
         if path.stat().st_size > 1024 * 1024:
             raise ValueError
         data = signing.loads(path.read_text(encoding='utf-8'), salt=SALT)
-        if data['format'] != 1 or data['state'] not in ('prepared', 'db_erased', 'complete'):
+        if data['format'] not in (1, 2) or data['state'] not in ('prepared', 'db_erased', 'complete'):
             raise ValueError
+        if data['format'] == 2:
+            if (not isinstance(data['objects'], list) or len(data['objects']) > 1000
+                    or sorted(ref['key'] for ref in data['objects']) != sorted(data['files'])):
+                raise ValueError
+            for reference in data['objects']:
+                validate_object(reference)
         return data
-    except (signing.BadSignature, KeyError, ValueError, TypeError):
+    except (signing.BadSignature, KeyError, ValueError, TypeError, OSError):
         raise CommandError('Invalid erasure journal; do not proceed with restoration or erasure.') from None
 
 
@@ -120,7 +132,10 @@ def inventory(user):
             for field in fields:
                 stored = getattr(row, field)
                 if stored:
-                    document_path(stored.name)
+                    if isinstance(stored.storage, VersionedPrivateStorage):
+                        inspect(stored.storage, stored.name)
+                    else:
+                        document_path(stored.name)
                     names.add(stored.name)
     if len(names) > 10000:
         raise CommandError('Erasure inventory exceeds operator review limits.')
@@ -130,6 +145,12 @@ def inventory(user):
                 if model.objects.filter(**{field: name}).exclude(**{owner: user}).exists():
                     raise CommandError('A private file is referenced by another owner; investigate first.')
     return sorted(names)
+
+
+def object_inventory(names):
+    if len(names) > 1000:
+        raise CommandError('Object erasure inventory exceeds journal review limits.')
+    return [inspect(default_storage, name) for name in names]
 
 
 def erase_rows(user):
@@ -175,6 +196,8 @@ def operate(options):
             raise CommandError('Use an existing owner and a new request identifier.')
         data = {'format': 1, 'request_id': request_id, 'user_id': user.pk, 'identity': identity(user),
                 'state': 'prepared', 'files': inventory(user), 'created_at': timezone.now().isoformat()}
+        if isinstance(default_storage, VersionedPrivateStorage):
+            data['format'], data['objects'] = 2, object_inventory(data['files'])
         if not root.exists():
             root.mkdir(mode=0o700)
         write_journal(path, data)
@@ -184,12 +207,16 @@ def operate(options):
         raise CommandError('Journal does not match this verified request.')
     if user is not None and data['identity'] != identity(user):
         raise CommandError('Account identity differs from journal; never erase a replacement account.')
+    if isinstance(default_storage, VersionedPrivateStorage) != (data['format'] == 2):
+        raise CommandError('Storage changed since this journal; a reviewed identity mapping is required.')
     if mode == 'replay':
         if data['state'] != 'complete':
             raise CommandError('Replay requires the latest completed erasure ledger.')
         if user is None:
             return 'Completed erasure remains absent; no database changes.'
         data['files'] = inventory(user)
+        if data['format'] == 2:
+            data['objects'] = object_inventory(data['files'])
         data['state'] = 'prepared'
         write_journal(path, data)
     elif data['state'] == 'complete':
@@ -204,20 +231,34 @@ def operate(options):
                 raise CommandError('Account identity changed before erasure; investigate.')
             if sorted(data['files']) != inventory(user):
                 raise CommandError('Owner documents changed since preparation; prepare/review a new request.')
+            if data['format'] == 2 and data['objects'] != object_inventory(data['files']):
+                raise CommandError('Private object versions changed since preparation; erasure refused.')
             erase_rows(user)
     data['state'] = 'db_erased'
     write_journal(path, data)
     remaining = []
+    remaining_objects = []
+    references = {ref['key']: ref for ref in data.get('objects', [])}
     for name in data['files']:
         try:
-            document_path(name).unlink(missing_ok=True)
+            object_key(name)
+            if data['format'] == 2:
+                delete_exact(default_storage, references[name])
+            else:
+                document_path(name).unlink(missing_ok=True)
         except OSError:
             remaining.append(name)
+            if data['format'] == 2:
+                remaining_objects.append(references[name])
     if remaining:
         data['files'] = remaining
+        if data['format'] == 2:
+            data['objects'] = remaining_objects
         write_journal(path, data)
         raise CommandError('Account rows erased; file cleanup is pending. Resume the same signed request.')
     data['state'], data['files'] = 'complete', []
+    if data['format'] == 2:
+        data['objects'] = []
     data.setdefault('deleted_at', timezone.now().isoformat())
     write_journal(path, data)
     return 'Erasure complete. Preserve/re-copy the completed journal before any future restore.'

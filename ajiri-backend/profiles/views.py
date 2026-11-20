@@ -7,6 +7,7 @@ from io import BytesIO
 from django.conf import settings
 from .models import Profile
 from .serializers import ProfileSerializer
+from .private_storage import read_field
 
 
 class MyProfileView(generics.RetrieveUpdateAPIView):
@@ -32,15 +33,16 @@ class DownloadUploadedCVView(generics.GenericAPIView):
             suffix = suffix if suffix in ('.pdf', '.doc', '.docx') else '.bin'
             if getattr(settings, 'MALWARE_SCANNING_ENABLED', False):
                 from .scanner import MAX_BYTES, ScanUnavailable, require_clean
-                with cv.open('rb') as stream:
-                    data = stream.read(MAX_BYTES+1)
+                data = read_field(cv, limit=MAX_BYTES)
                 if not 0 < len(data) <= MAX_BYTES:
                     raise ScanUnavailable()
                 require_clean(data)  # Legacy bytes receive no inferred clean status.
                 response = FileResponse(BytesIO(data), as_attachment=True, filename='Uploaded_CV' + suffix)
             else:
-                response = FileResponse(cv.open('rb'), as_attachment=True, filename='Uploaded_CV' + suffix)
+                response = FileResponse(BytesIO(read_field(cv)), as_attachment=True, filename='Uploaded_CV' + suffix)
         except FileNotFoundError:
             return Response({'detail': 'The CV file is unavailable. Please upload it again.'}, status=404)
+        except OSError:
+            return Response({'detail': 'The CV file is unavailable. Please try again later.'}, status=503)
         response['Cache-Control'] = 'private, no-store'
         return response

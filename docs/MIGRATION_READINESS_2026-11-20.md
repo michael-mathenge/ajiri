@@ -10,15 +10,15 @@ granted or real document transmitted to a proposed provider.
 | Package | Evidence | Remaining before its exit |
 | --- | --- | --- |
 | A: current outbox | PR125 merged into MVP2 as3b919b5 after all six exact-head checks. Actual Redis/Celery registered-task run passed three target types, nine hard crashes, ten eligibility/disabled cases, deduplication/reservations, lease contention and dead letters. | Fresh-resource combined recovery and actual hosted durability remain separate. |
-| B: private storage | Source covers bounded local/pathless private workflows, exact identity cleanup, versioned journals, export and resumed object copying. Historical16November689-test/full and10-test HTTP emulator passes are retained. |20November changes require their final full-suite/CI results and updated emulator run, including partial historical-version cleanup and legacy document routes. |
-| C: PostgreSQL | Alternate graph/model-state generation, bound native-query contract, literal folding and unchanged SQLite search regressions pass locally. | Actual empty-target bootstrap,27-case membership/ranking measurements, populated data import and forward migration rehearsal. |
+| B: private storage | Source covers bounded local/pathless private workflows, exact identity cleanup, versioned journals, export and resumed object copying. PR126 passed690 local tests, all six exact-head checks and updated11-test HTTP emulator/three-object restoration; merged into MVP2 as73a3a97. | Real provider IAM, version retention and hosted acceptance remain separate. |
+| C: PostgreSQL | Alternate graph/model-state generation, bound native-query contract, literal folding and unchanged SQLite search regressions pass locally. | Actual PostgreSQL17.12 bootstrap/import/additive migration passed40models/628rows/five private files;27search cases had zero membership and seven ranking differences. Combined-source694tests passed; corrected-head CI remains required. |
 | D: combined recovery | Recovery/cutover acceptance sequence is defined below; provider documentation refreshed. | Actual interruption and restoration across database, private objects, erasure ledger and worker/broker state in fresh isolated resources. |
 
-The Docker engine cannot currently start:20November diagnostics reported
-VirtualMachinePlatform disabled and no hypervisor, while firmware virtualization
-was already enabled. Michael enabled the Windows feature successfully; restart
-and Docker readiness remain necessary. This is an environment blocker, not proof
-that the proposed PostgreSQL or object-store implementation has passed.
+Docker became available on20November after VirtualMachinePlatform enablement.
+Engine29.9.3 ran the updated isolated S3 and PostgreSQL integrations successfully.
+These are synthetic integration results, not actual cloud/provider acceptance.
+PythonAnywhere/Ajiri requests currently time out from this workstation while GitHub
+returns200; no production writer was paused and no activation occurred.
 
 Production's last verified runtime remains e3e8f74, SQLite/private media, with
 operational sending/publication/certificate/scanner/queue gates disabled. The
