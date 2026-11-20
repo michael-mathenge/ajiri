@@ -1,3 +1,22 @@
+# Separately verified release candidate -20November2026
+
+PR12754f26d5 passed all six exact-head checks and merged into MVP2 asb995d50.
+Private-storage PR126 and security PR128 also passed all six before their merges.
+The release branch from main contains that exact reviewed tree plus this receipt.
+Release-local backend check/migration drift and694tests in320.723s passed (one
+existing platform skip), as did20script tests, Ruff/OpenAPI, Node24.19 locked
+installation/lint/build1.27s and all47committed assets. Require separate exact-head
+release CI before merging to main; these are not production activation results.
+
+No production migrations or requirements-prod.txt changes are in this release.
+Current-account capacity, fresh consistent backup/off-server hashes/isolated restore,
+API credential/reachability and activation checks remain unfinished. No web/writer
+pause, production data/file replacement, real sending or backup deletion occurred.
+Production remains last verified e3e8f74. See the release-candidate report and dated
+maintenance review for operator setup, source-only rollback and acceptance limits.
+
+## Earlier feature verification (retained)
+
 # Browser failure retained; reviewed security integration -20November2026
 
 PR128 (c3497f9) passed all six exact-head checks and merged as01bc2d3, including
