@@ -131,6 +131,62 @@ class BrowserJourney(LiveServerTestCase):
         self.assertEqual(DeliveryDailyBudget.objects.count(), 0)
         self.assertEqual(mail.outbox, [])
 
+    @override_settings(CERTIFICATE_EVIDENCE_ENABLED=True)
+    def test_owner_manages_private_certificate_pdf_on_phone(self):
+        from uuid import uuid4
+        from accounts.models import User
+        from profiles.cv_validation import validate_content
+        from profiles.models import CertificateEvidence, CVWorkspace
+        from profiles.upload_fixtures import pdf_bytes
+        from rest_framework_simplejwt.tokens import RefreshToken
+
+        user = User.objects.create_user(email='certificate-browser@example.invalid')
+        certification_id = uuid4()
+        CVWorkspace.objects.create(profile=user.profile, content=validate_content({
+            'schema_version': 1,
+            'contact': {'name': 'Synthetic Applicant'},
+            'certifications': [{'id': str(certification_id), 'name': 'Example training',
+                                'issuer': 'Synthetic issuer'}],
+        }))
+        access = str(RefreshToken.for_user(user).access_token)
+        evidence_path = f'/api/profiles/me/certificates/{certification_id}/'
+        label = 'Example training (certification 1)'
+
+        def journey():
+            with sync_playwright() as playwright:
+                browser = playwright.chromium.launch()
+                try:
+                    context = browser.new_context(viewport={'width': 390, 'height': 844})
+                    context.add_init_script('localStorage.setItem("access_token", '+json.dumps(access)+')')
+                    context.route('**/*', lambda route: route.continue_()
+                        if route.request.url.startswith(self.live_server_url+'/') else route.abort())
+                    page = context.new_page()
+                    page.goto(self.live_server_url+'/cv-builder')
+                    expect(page.get_by_role('heading', name='Private certificate evidence')).to_be_visible()
+                    file = {'name': 'fixture.pdf', 'mimeType': 'application/pdf', 'buffer': pdf_bytes()}
+                    page.get_by_label(f'Evidence PDF for {label}', exact=True).set_input_files(file)
+                    with page.expect_response(lambda response: response.url.endswith(evidence_path)) as uploaded:
+                        page.get_by_role('button', name=f'Upload PDF for {label}', exact=True).click()
+                    self.assertEqual(uploaded.value.status, 200)
+                    expect(page.get_by_text('Waiting for a malware scan.', exact=True)).to_be_visible()
+                    expect(page.get_by_role('button', name=f'Download PDF for {label}')).to_have_count(0)
+                    page.get_by_label(f'Replacement PDF for {label}', exact=True).set_input_files(file)
+                    with page.expect_response(lambda response: response.url.endswith(evidence_path)) as replaced:
+                        page.get_by_role('button', name=f'Replace PDF for {label}', exact=True).click()
+                    self.assertEqual(replaced.value.status, 200)
+                    self.assertNotEqual(uploaded.value.json()['id'], replaced.value.json()['id'])
+                    page.once('dialog', lambda dialog: dialog.accept())
+                    page.get_by_role('button', name=f'Remove PDF for {label}', exact=True).click()
+                    expect(page.get_by_text('Private PDF removed.', exact=True)).to_be_visible()
+                    self.assertTrue(page.evaluate('document.documentElement.scrollWidth <= innerWidth'))
+                finally:
+                    browser.close()
+
+        with ThreadPoolExecutor(max_workers=1) as worker:
+            worker.submit(journey).result(timeout=90)
+        self.assertFalse(CertificateEvidence.objects.exists())
+        self.assertFalse(list(Path(self.private.name).rglob('*.pdf')))
+
     def test_navigation_fits_phone_tablet_and_wide_desktop(self):
         from accounts.models import User
         from rest_framework_simplejwt.tokens import RefreshToken

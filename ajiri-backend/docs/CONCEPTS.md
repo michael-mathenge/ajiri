@@ -1730,6 +1730,11 @@ rollback retains old bytes; committed replacement/removal cleans only that file.
 Exports, verified erasure inventories and private backups include evidence.
 Orphan audit is report-only. No qualification verification or employer sharing
 is implied. New routes remain inactive pending scanner and capacity acceptance.
+The CV builder offers evidence controls only for saved certifications and only
+when the owner evidence endpoint is available. The panel binds writes to the
+saved CV revision and the displayed evidence identity. It refreshes the list
+before any retry after an uncertain outcome. The server still checks the current
+scan verdict and file integrity on every private download.
 
 ## local-malware-scanning
 
