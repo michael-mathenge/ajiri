@@ -1,3 +1,40 @@
+# Private storage portability candidate -20November2026
+
+Branch codex/mvp2-private-storage-portability starts at reviewed main e3e8f74,
+incorporating checked MVP2 outbox package3b919b5 (PR125). Production remains last
+verified e3e8f74; none of this candidate's runtime source has been activated.
+
+One private boundary now covers bounded local/pathless reads, verified unique
+writes and captured-identity cleanup. Export and resumable object copying preserve
+hashes; format-1 local erasure journals stay valid and pathless format2 captures
+immutable versions. Replacement objects block cleanup; partial captured-version
+removal can resume. Uncertain CV/application commit acknowledgements retain durable
+pointers/bytes. Legacy application snapshots are included. Existing file-valued
+JSON keys remain string/null but point to authenticated routes, never storage URLs;
+profile filename validation remains100 characters. No migration, production storage
+setting, credentials, provider activation, sending, worker or CI change is included.
+
+Actual final local validation: check/drift passed;690 backend tests in349.762s
+passed (one existing platform skip), plus Ruff/OpenAPI and19 script tests. Node
+24.19.0 locked install358/audit365 found zero vulnerabilities; lint/build1.53s passed
+and all47 generated paths/hashes match the committed build. The prior690-test run
+failed because a test expected a filename in response JSON. It now checks actual
+stored random names and additionally verifies authenticated URLs hide those names;
+no storage/ownership/quota assertion was weakened. Cleanup failure injection follows
+the new boundary, retaining strict old/new-file preservation assertions.
+
+Historical16November evidence remains separate:689 tests/314.917s and the then-
+current10-test loopback S3/Moto run/6.614s passed. The20November partial-version and
+legacy-route additions require an updated11-test emulator run. Docker startup
+reported VirtualMachinePlatform disabled/no hypervisor (firmware virtualization
+was enabled). Michael enabled the Windows feature; restart/Docker readiness is
+still pending. Keep the package UNVERIFIED for this integration gate and its PR
+draft until the updated emulator and all six exact-head CI checks pass. No merge,
+production activation or live object-store acceptance is inferred from local tests.
+See PRIVATE_STORAGE_PORTABILITY.md. Original checkout, stash and all backups remain.
+
+## Earlier source, CI and deployment checkpoints
+
 # Current durable outbox worker rehearsal - 16 November 2026
 
 Branch codex/mvp2-current-outbox-rehearsal starts at fetched reviewed main e3e8f74

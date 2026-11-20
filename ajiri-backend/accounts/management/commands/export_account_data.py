@@ -2,7 +2,7 @@
 import hashlib
 import json
 import os
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 import uuid
 
 from django.conf import settings
@@ -19,6 +19,7 @@ from jobs.models import (Application, ApplicationPackage, ApplicationPackageAppr
                          DeliveryAttempt, DeliveryDailyBudget, Job, Notification)
 from profiles.models import Profile, CVWorkspace, CVApproval, AlertConsentEvent, CertificateEvidence
 from jobs.models import SavedSearch, SavedSearchMatch, RecommendationChoice, SavedJob
+from profiles.private_storage import inspect, read_exact
 
 
 class Command(BaseCommand):
@@ -112,18 +113,14 @@ class Command(BaseCommand):
                         if not value:
                             record[field.name] = None
                             continue
-                        source = Path(value.path)
-                        no_links(source)
-                        source = source.resolve()
-                        if not source.is_relative_to(media) or not source.is_file():
-                            raise CommandError('Private document is missing or unsafe; export incomplete.')
-                        total += source.stat().st_size
+                        reference = inspect(value.storage, value.name)
+                        total += reference['size']
                         if total > 200 * 1024 * 1024 or len(files) >= 1000:
                             raise CommandError('Export exceeds operator review limits.')
-                        suffix = source.suffix.lower()
+                        suffix = PurePosixPath(value.name).suffix.lower()
                         suffix = suffix if suffix in ('.docx', '.doc', '.pdf') else '.bin'
                         name = f'documents/{uuid.uuid4().hex}{suffix}'
-                        files.append((source, name))
+                        files.append((value.storage, reference, name))
                         record[field.name] = name
                     else:
                         record[field.name] = value
@@ -140,19 +137,16 @@ class Command(BaseCommand):
         os.chmod(destination, 0o700)
         (destination / 'documents').mkdir(mode=0o700)
         checks = {}
-        for source, name in files:
+        for storage, reference, name in files:
             target = destination / name
-            with source.open('rb') as stream:
-                before = hashlib.file_digest(stream, 'sha256').hexdigest()
-            with source.open('rb') as src, target.open('xb') as dst:
+            payload = read_exact(storage, reference)
+            with target.open('xb') as dst:
                 os.chmod(target, 0o600)
-                while chunk := src.read(1024 * 1024):
-                    dst.write(chunk)
+                dst.write(payload)
             with target.open('rb') as stream:
                 actual = hashlib.file_digest(stream, 'sha256').hexdigest()
-            with source.open('rb') as stream:
-                after = hashlib.file_digest(stream, 'sha256').hexdigest()
-            if not before == actual == after:
+            after = inspect(storage, reference['key'])
+            if reference != after or actual != reference['sha256']:
                 raise CommandError('Document changed during export; no completion manifest.')
             checks[name] = actual
         payload = destination / 'account.json'
