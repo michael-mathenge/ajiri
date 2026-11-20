@@ -1,3 +1,35 @@
+# 20 November 2026 - combined recovery candidate verified locally
+
+The current PostgreSQL/object/ledger/Redis/registered-worker fresh-stack rehearsal
+passed all three interrupted restore boundaries.40models/fiveobjects/fourretained
+receipts were verified; six captured handoffs matched six global reservations,
+with zero duplicate handoffs or blind republications. Uncertain handoff remains
+reconciliable. Source resources stopped before fresh target creation. See
+COMBINED_RECOVERY_REHEARSAL.md for actual hashes/resources/failures and limitations.
+Full694backendtests passed310.327s(oneplatformskip);25script tests, Ruff/OpenAPI,
+Node24.19 ci/lint/build,177components, fivehelpers and47exactassets passed. Earlier
+local failures are retained; CI/checked merge remains pending for this package.
+Production remains independently verified03cc9ff; this package changes lab/docs
+only and enables no feature. Actual provider/host-loss acceptance remains separate.
+
+# 20 November 2026 - production migration-readiness package verified
+
+Release PR129 passed all six exact-head and merged-main checks; production is
+03cc9ffb86985c9a48d9e147f457a64ab66aa7a6. Fresh consistent raw snapshot/API
+copy/local ZIP and isolated restoration passed for 46 tables and 16 private files.
+Zero migrations applied. All data/file/config/policy fingerprints matched before
+the successful ordinary ingestion verification run44805939385. HTTPS, HSTS604800,
+47 exact assets, five owner private downloads and four anonymous401s passed.
+Web and both writer workflows restored. No browser control was used.
+
+No backups deleted. Only verified regenerable caches and redundant Git copies
+were removed, preserving all4586objects and configuration. Next API-direct backup
+margin10238726bytes includes full reserve/cache allowance; server-ZIP plan remains
+insufficient. Recalculate each run. Hosting expiry16December2026. Normal sending,
+posting/publication, saved searches, certificate/scanning and queue gates stay off;
+account-security mail/freshness preserved. See ../reports/MVP2_DEPLOYMENT_2026-11-20.md.
+Combined recovery remains unfinished; all16stories retain missing acceptance.
+
 # Separately verified release candidate -20November2026
 
 PR12754f26d5 passed all six exact-head checks and merged into MVP2 asb995d50.

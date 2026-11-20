@@ -1801,3 +1801,20 @@ locked graph and test the application with synthetic data before rebuilding publ
 assets. Vite is a local development tool; deploy only its static output. Dependency
 updates never authorize transport activation, authentication rewrites or public
 private-file access. See ../../docs/MAINTENANCE_REVIEW_2026-11-20.md for evidence.
+## combined-recovery-rehearsal
+
+A recovery checkpoint must cover the database, private object bytes, signed
+erasure ledger and broker messages together. The synthetic lab stops source
+writers before copying those resources and stops the whole source stack before
+creating independent target containers. It interrupts recovery after database
+import, during object copying and before worker activation. A restored worker
+must reuse existing delivery receipts, retain uncertain outcomes for explicit
+reconciliation and consume pending messages without duplicate handoffs or shared
+budget reservations. Object versions can change during copying; approved hashes
+must remain exact, and unresolved erasure identities require separate review.
+
+The operator uses labelled disposable Docker resources, no host mounts or exposed
+ports, invalid synthetic recipients and captured transports. This demonstrates
+fresh-container recovery on one engine, not physical host or regional durability.
+See `../../scripts/combined_recovery_rehearsal.py` and
+`../../scripts/run_combined_recovery.py`. Production gates remain independent.

@@ -1,3 +1,10 @@
+# Subsequent activation - 20 November 2026
+
+The checked candidate was subsequently deployed as 03cc9ff through release PR129.
+See MVP2_DEPLOYMENT_2026-11-20.md for the verified recovery, capacity, activation
+and live acceptance receipt. The pending statements below describe the earlier
+checkpoint; they are retained as history, not current setup instructions.
+
 # Migration-readiness release candidate -20November2026
 
 Status: NOT DEPLOYED. Last verified production remains e3e8f74 on SQLite/private

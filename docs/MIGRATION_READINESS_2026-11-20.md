@@ -1,3 +1,16 @@
+# Subsequent verified deployment and combined lab checkpoint
+
+Production is verified03cc9ff after checked release PR129, fresh independent
+off-server restore and all live checks; see ../reports/MVP2_DEPLOYMENT_2026-11-20.md.
+The combined fresh-resource synthetic PostgreSQL/object/erasure-ledger/Redis/worker
+rehearsal now passes all three interrupted boundaries, receipt reuse and exact
+private bytes. See COMBINED_RECOVERY_REHEARSAL.md for actual measurements/hashes.
+Its required CI/merge remains pending. Hosted durability, provider permissions,
+physical host loss and scanner peaks are still unverified. The dated proposal
+below remains a proposal: no host/region/budget/processing terms were approved.
+
+## Earlier service-decision checkpoint (retained)
+
 # Migration readiness and service decision -20November2026
 
 This report distinguishes implemented source, actual rehearsals and missing live

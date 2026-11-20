@@ -1,3 +1,32 @@
+# Current recovery transport - 20 November 2026
+
+The release fallback successfully used authenticated PythonAnywhere API reads of
+the raw manifest/database/media archive, followed by independent off-server hashes
+and a local recovery ZIP. It required no foreground browser control. The privately
+saved Windows credential stays in Credential Manager; never print or copy it into
+a script, environment file or Git. Existing console 48664148 must be running.
+
+No server transfer ZIP was created. Before each API-direct snapshot, independently
+measure conservative account usage and allow the bounded raw snapshot, metadata,
+16 MiB reserve and 8 MiB cache growth. Add all other transient/runtime allowances
+for that operation. The standard private_recovery_plan includes a server ZIP and
+remains authoritative for that older transport; do not claim it passed when using
+a different measured direct-copy protocol. At activation the next direct-copy
+budget was 59,720,954 bytes against 69,959,680 available; the server-ZIP variant
+was insufficient by 15,984,508 bytes. These readings must not be reused as current.
+
+Pause/drain writers for consistency, restore their observed states promptly, then
+copy using bounded exclusive temporary files and verify hashes independently.
+Create the ZIP off-server, validate every member/CRC, perform isolated restoration
+and compare original per-table/schema/sequence and private-file hashes. Keep all
+private receipts outside Git. See ../reports/MVP2_DEPLOYMENT_2026-11-20.md.
+
+This was a release fallback; no scheduled automation run or new platform scheduler
+is claimed. The existing desktop automation was not modified. Retention remains
+report-only and all existing backups remain. Hosting expiry: 16 December 2026.
+
+## Historical automation procedure and checkpoints
+
 # Automatic private backups
 
 1 November evidence reconciliation: the 26 October scheduled run completed its
