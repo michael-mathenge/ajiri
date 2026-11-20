@@ -2,6 +2,7 @@
 import re
 import unicodedata
 from django.db.models.expressions import RawSQL
+from django.db import connections
 from rest_framework.exceptions import ValidationError
 
 
@@ -20,6 +21,9 @@ def search_jobs(queryset, value):
     query = expression(value.strip())
     if not query:
         return queryset.none() if value.strip() else queryset
+    if connections[queryset.db].vendor == 'postgresql':
+        from .postgres_search import search
+        return search(queryset, query)
     # Join the matching FTS rows once. A correlated MATCH subquery per job
     # repeatedly scans broad matches and made production p95 exceed the budget.
     matches = queryset.extra(tables=['jobs_job_search'], where=[

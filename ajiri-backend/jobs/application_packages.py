@@ -8,8 +8,7 @@ from io import BytesIO
 
 from docx import Document
 from docx.shared import Pt
-from django.core.files.base import ContentFile
-from django.db import OperationalError, transaction
+from django.db import OperationalError, DatabaseError, transaction
 from django.db.models import F
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
@@ -18,6 +17,7 @@ from rest_framework.exceptions import APIException
 from profiles.cv_builder import content_hash, document_bytes, CVUnavailable
 from profiles.cv_validation import MAX_DOCUMENT_BYTES
 from profiles.models import CVApproval
+from profiles.private_storage import save_field, cleanup_owned
 from .models import Application, ApplicationPackage, ApplicationSendAuthorization
 from .freshness import job_is_eligible
 
@@ -132,9 +132,10 @@ def save_package(user, application_id, data):
         cv_size=len(cv), letter_size=len(letter), template_version=TEMPLATE_VERSION)
     package.content_sha256 = package_fingerprint(package)
     written = []
+    commit_started = False
     try:
         for field, payload in [(package.cv_document, cv), (package.letter_document, letter)]:
-            field.save('document.docx', ContentFile(payload), save=False)
+            save_field(field, 'document.docx', payload)
             written.append((field.storage, field.name))
         with transaction.atomic():
             # SQLite needs a WRITE before reads; select_for_update alone does not serialize writers.
@@ -150,6 +151,7 @@ def save_package(user, application_id, data):
             if not CVApproval.objects.filter(pk=approval.pk, profile__user=user).exists():
                 raise PackageConflict()
             package.save(force_insert=True)
+            commit_started = True
             ApplicationSendAuthorization.objects.filter(application=current, state='authorized').update(
                 state='superseded', closed_at=timezone.now())
         return package
@@ -157,8 +159,11 @@ def save_package(user, application_id, data):
         # Only files staged by this request can be removed; crash orphans require report-only review.
         for storage, name in written:
             try:
-                storage.delete(name)
-            except OSError:
+                if commit_started and (ApplicationPackage.objects.filter(cv_document=name).exists()
+                        or ApplicationPackage.objects.filter(letter_document=name).exists()):
+                    continue  # A commit acknowledgement failure must not erase durable approved bytes.
+                cleanup_owned(storage, name)
+            except (OSError, DatabaseError):
                 pass
         if isinstance(error, OperationalError) and 'locked' in str(error).lower():
             # Shared-cache SQLite can reject rather than wait. No automatic mutation retry.

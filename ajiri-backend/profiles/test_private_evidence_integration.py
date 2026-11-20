@@ -130,7 +130,7 @@ class PrivateEvidenceIntegrationTests(TransactionTestCase):
 
     def test_cleanup_failure_after_committed_replacement_never_removes_new_bytes(self):
         old = self.create()
-        with patch.object(old.document.storage, 'delete', side_effect=RuntimeError('synthetic cleanup failure')):
+        with patch('profiles.signals.delete_exact', side_effect=RuntimeError('synthetic cleanup failure')):
             with self.assertRaises(RuntimeError):
                 put(self.user.profile, self.ids[0], 1, self.upload(), expected_id=old.pk, expected_hash=old.sha256)
         current = CertificateEvidence.objects.get()

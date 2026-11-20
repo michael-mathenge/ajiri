@@ -1757,3 +1757,47 @@ to succeeded or dead; pending, uncertain, running and blocked work cannot vanish
 through account removal. Terminal task records retain pseudonymous settlement
 with existing SET_NULL relations after verified owner erasure. No worker, provider
 retry, task state change or account erasure is triggered by these checks.
+
+## postgres-bootstrap-candidate
+
+The PostgreSQL candidate keeps original SQLite history intact. An isolated lab
+generates a separate target migration graph from current models, checks state
+equivalence and applies that graph normally on a new database. No fake migration
+markers or raw model-table creation substitute for actual target migration work.
+A native literal-prefix search candidate uses bound terms and a functional GIN
+index; SQLite retains its existing FTS5 implementation. Actual data, relationship,
+private-byte and search-membership comparisons are required before a production
+bootstrap/hosting decision. Local graph generation alone is not target acceptance.
+
+## current-outbox-rehearsal
+
+The current outbox lab publishes actual durable task IDs to isolated Redis and
+runs the registered Celery worker in separate processes. Synthetic provider IO is
+captured only after the usual eligibility, document and shared reservation checks.
+Hard crashes test receipt reuse and explicit lease recovery for applications,
+alerts and saved searches. A fresh logical broker database/private SQLite/media
+restore is distinguished from host-loss or hosted-service recovery. The lab is
+never imported by production and enables no producer, worker or periodic schedule.
+
+## private-storage-boundary
+
+Private document workflows use bounded reads and immutable byte fingerprints,
+without requiring a filesystem path or asking storage for a public URL. Local
+backends keep traversal/link checks; reviewed pathless backends must bind reads
+and cleanup to explicit private namespaces and immutable object versions. Changed
+or uncertain outcomes fail closed or retain bytes for reconciliation. Export,
+signed erasure journals and resumed private copying preserve those identities.
+Local journal format1 remains valid; pathless format2 records captured versions
+and permits only their remaining cleanup after an interruption. Switching storage
+requires reviewed journal mapping and independent private recovery. The S3/Moto
+adapter and its dependencies are isolated synthetic lab code, never a selected
+production provider or evidence of hosted-service acceptance.
+
+## development-tool-security
+
+A clean package audit is only one signal: upstream advisories may describe fixes
+before a registry audit reports them. Pin reviewed patch versions, preserve the
+locked graph and test the application with synthetic data before rebuilding public
+assets. Vite is a local development tool; deploy only its static output. Dependency
+updates never authorize transport activation, authentication rewrites or public
+private-file access. See ../../docs/MAINTENANCE_REVIEW_2026-11-20.md for evidence.

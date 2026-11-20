@@ -7,9 +7,7 @@ import re
 from datetime import timedelta
 from pathlib import PurePosixPath
 
-from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
-from django.core.management.base import CommandError
 from django.db import DatabaseError, transaction
 from django.db.models import F, Sum
 from django.shortcuts import get_object_or_404
@@ -19,7 +17,7 @@ from rest_framework.exceptions import ValidationError
 from .cv_builder import CVConflict, CVUnavailable
 from .models import CertificateEvidence, CVWorkspace, certificate_path
 from .upload_validation import MAX_BYTES, validate_cv_upload
-from jobs.management.commands.backup_private_data import no_links
+from .private_storage import read_field, save_unique, cleanup_owned
 
 
 def metadata(row):
@@ -47,7 +45,7 @@ def put(profile, certification_id, expected_revision, upload, *, expected_id=Non
     commit_started = False
     try:
         # Stage a fresh private UUID; a crash leaves an orphan, never a public file.
-        name = default_storage.save(certificate_path(None, ''), ContentFile(data))
+        name = save_unique(default_storage, certificate_path(None, ''), data)
         with transaction.atomic():
             workspace = claim(profile, expected_revision)
             if str(certification_id) not in {str(row['id']) for row in workspace.content.get('certifications', [])}:
@@ -76,7 +74,7 @@ def put(profile, certification_id, expected_revision, upload, *, expected_id=Non
                 # A failed claim/validation rolled back before any commit attempt:
                 # this request's UUID has no pointer and needs no contested read.
                 if not commit_started or not CertificateEvidence.objects.filter(document=name).exists():
-                    default_storage.delete(name)
+                    cleanup_owned(default_storage, name)
             except (DatabaseError, OSError):
                 pass
         raise
@@ -96,20 +94,8 @@ def private_bytes(row):
             or not re.fullmatch(r'quarantine/certificates/[a-f0-9]{32}\.pdf', row.document.name)):
         raise CVUnavailable()
     try:
-        try:
-            from pathlib import Path
-            path = Path(row.document.path)
-            no_links(path)
-            if not path.is_file() or path.stat().st_nlink != 1:
-                raise CVUnavailable()
-        except NotImplementedError:
-            pass  # Remote private storage must supply its own non-link object semantics.
-        with row.document.open('rb') as stream:
-            data = stream.read(MAX_BYTES+1)
-        if len(data) != row.size_bytes or hashlib.sha256(data).hexdigest() != row.sha256:
-            raise CVUnavailable()
-        return data
-    except (OSError, ValueError, CommandError):
+        return read_field(row.document, limit=MAX_BYTES, size=row.size_bytes, sha256=row.sha256)
+    except (OSError, ValueError):
         raise CVUnavailable() from None
 
 

@@ -162,9 +162,14 @@ class ApplyFilenameTests(TestCase):
             response = client.post(reverse('job-apply', args=[job.pk]), {'cv_version': str(approval.pk)}, format='json')
 
         self.assertEqual(response.status_code, 201)
+        application = Application.objects.get(user=user, job=job)
         for field in ('generated_cv', 'generated_cover_letter'):
-            filename = response.json()[field].rsplit('/', 1)[-1]
+            filename = getattr(application, field).name.rsplit('/', 1)[-1]
             self.assertRegex(filename, r'^[0-9a-f]{32}_', field)
+            kind = 'cv' if field == 'generated_cv' else 'cover-letter'
+            self.assertTrue(response.json()[field].endswith(
+                f'/api/jobs/applications/{application.pk}/documents/{kind}/'))
+            self.assertNotIn(filename, response.json()[field])
 
 
 class AdminPagesTests(TestCase):

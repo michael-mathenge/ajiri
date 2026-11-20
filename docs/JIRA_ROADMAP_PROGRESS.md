@@ -1,3 +1,258 @@
+# Separately verified release candidate -20November2026
+
+PR12754f26d5 passed all six exact-head checks and merged into MVP2 asb995d50.
+Private-storage PR126 and security PR128 also passed all six before their merges.
+The release branch from main contains that exact reviewed tree plus this receipt.
+Release-local backend check/migration drift and694tests in320.723s passed (one
+existing platform skip), as did20script tests, Ruff/OpenAPI, Node24.19 locked
+installation/lint/build1.27s and all47committed assets. Require separate exact-head
+release CI before merging to main; these are not production activation results.
+
+No production migrations or requirements-prod.txt changes are in this release.
+Current-account capacity, fresh consistent backup/off-server hashes/isolated restore,
+API credential/reachability and activation checks remain unfinished. No web/writer
+pause, production data/file replacement, real sending or backup deletion occurred.
+Production remains last verified e3e8f74. See the release-candidate report and dated
+maintenance review for operator setup, source-only rollback and acceptance limits.
+
+## Earlier feature verification (retained)
+
+# Browser failure retained; reviewed security integration -20November2026
+
+PR128 (c3497f9) passed all six exact-head checks and merged as01bc2d3, including
+Vite8.3.8/Axios1.21.1 and its final47-file generated asset commit. PR1279ec204d's
+browser and one failed-job rerun both failed Lighthouse NO_NAVSTART after their
+bounded internal retry; the other five checks passed. No metric/budget/check was
+bypassed. Incorporate the reviewed security graph/build, verify unchanged backend
+Python source and rerun exact-head CI; do not report those failed heads as accepted.
+
+Actual combined outbox rerun passed three target kinds/nine crashes/ten eligibility
+cases with captured transports, accepted receipt reuse and no repeated reservation.
+The current PostgreSQL graph/recorder/dump were retained and restored into a fresh
+container:41tables/32sequences/exact rows, twelve explicitly equivalent literal-array
+cast deparsing differences, raw definitions retained. This is component recovery;
+combined object/worker/erasure and physical hosted disaster acceptance remain open.
+
+All33declared runtime pins had no published findings via public PyPI version JSON;
+this is not a complete environment audit. Production remains unchanged e3e8f74.
+No production pause/deletion occurred; API credential and reachability remain pending.
+
+## Earlier combined-source checkpoint (retained)
+
+# Combined-source verification -20November2026
+
+The reviewed private-storage package is integrated into the PostgreSQL feature
+branch. The combined source passed694 backend tests (one existing platform skip),
+check/migration drift,20 script tests, Ruff and exact OpenAPI validation. Actual
+PostgreSQL17.12 integration passed again with40models/628rows/five private files,
+27queries, zero membership differences and seven ranking differences. The earlier
+standalone683-test result and its receipt remain historical evidence.
+
+Ledger conflict resolution retained both packages' complete evidence prefixes and
+one exact shared historical suffix; no prior checkpoint was discarded. Production
+remains e3e8f74; API access/connectivity and combined fresh-resource recovery are
+separate unfinished release prerequisites. Exact-head CI must pass on this merge.
+
+## Earlier independent verification (retained)
+
+# Actual PostgreSQL and storage integration -20November2026
+
+PostgreSQL candidate corrections passed683 backend tests in302.990s (one existing
+platform skip), system check/migration drift,19 script tests, Ruff/OpenAPI and
+Node24.19 locked install/lint/build1.26s; all47 committed frontend assets match.
+Actual PostgreSQL17.12 bootstrap passed40models/628rows,27search cases with zero
+membership divergence/seven ranking differences, five exact private files,
+interrupted-import rollback/copy resume and forward additive migration. See
+POSTGRES_BOOTSTRAP_CANDIDATE.md for measured timings and limitations. Corrected
+rank weights are regression tested; original SQLite migration history is intact.
+
+Private-storage PR126 at6245ef0 passed all six exact-head checks and the updated
+HTTP S3 emulator:11tests in7.512s, interrupted version cleanup and three exact
+restored objects. Merged into MVP2 as73a3a97. No production activation occurred.
+
+Four newly created labelled/no-host-mount retry PostgreSQL containers were removed;
+10863830bytes of regenerated source contexts were removed only after hash validation,
+with exact manifests/lab scripts and all failure/success receipts retained. Original
+Docker resources, stashes, user work and all private recovery copies are preserved.
+
+PythonAnywhere and Ajiri HTTPS time out from this workstation while GitHub returns
+200. This is route-specific reachability evidence, not a confirmed global incident.
+API credential setup is pending; production was never paused or modified. Combined
+fresh-resource database/object/worker/erasure recovery remains unfinished; real
+provider/participant acceptance and all16stories retain separate prerequisites.
+
+## Earlier candidate checkpoint (retained)
+
+# PostgreSQL bootstrap/search candidate -20November2026
+
+Branch codex/mvp2-postgres-bootstrap-readiness starts at reviewed main e3e8f74 and
+incorporates checked MVP2 outbox package3b919b5 (PR125). Production remains last
+verified e3e8f74. This candidate has not been merged into runtime or activated.
+
+The guarded lab generates alternate target migration modules in a new independent
+disposable package, verifies current model-state equivalence and refuses writes
+outside that package. Original histories and migration recorders remain protected.
+Local tests prove graph generation requires no database IO. The actual PostgreSQL
+lab is prepared to apply the generated graph normally, import canonical current
+synthetic data with exact timestamps/relationships/private hashes, test a forward
+additive migration and compare27 search cases. No fake markers or raw-model table
+creation substitute for that target migration. Actual target execution is pending.
+
+The dormant PostgreSQL search route uses bound literal-prefix terms and a native
+functional GIN candidate; SQLite's existing FTS join and three triggers are retained.
+Latin accents fold without generic unaccent's ligature/stroked-letter expansion.
+Ranking differences will be measured separately from required membership parity.
+No production settings, DB schema, dependency, authentication or CI workflow changes.
+
+Actual local gates: Python3.13.17 check/drift passed;683 backend tests in273.057s
+passed (one existing platform skip), plus Ruff/OpenAPI and19 script tests. The four
+new backend contract tests include alternate graph/state equivalence, parameter
+binding, literal folding and unchanged SQLite execution. Node24.19.0 locked install
+358/audit365 found zero vulnerabilities; lint/build1.20s and47 exact asset hashes
+passed. These checks do not establish real PostgreSQL migration/search acceptance.
+
+Actual Docker execution remains blocked by a required Windows restart after Michael
+enabled VirtualMachinePlatform. Keep this PR draft/UNVERIFIED for actual PostgreSQL
+and combined fresh-resource recovery, even if all six exact-head CI checks pass.
+PRIVATE_STORAGE_PORTABILITY source is separately reviewed in draft PR126; no merge
+or cloud activation is inferred here. See POSTGRES_BOOTSTRAP_CANDIDATE.md and the
+refreshed MIGRATION_READINESS_2026-11-20.md service/recovery decision report.
+
+Official provider pages were refreshed20November. Preferred CX33 remains publicly
+unavailable and its indexed tariff is not a quote. No purchase/terms/data transfer
+or approval of the proposed budget is implied. Current Jira still has16 non-Epic
+stories In Progress; genuine participants and actual host/service acceptance remain
+external prerequisites. Preserve backups; no new deletion authority is assumed.
+
+## Earlier source, CI and production checkpoints
+
+# Private storage portability candidate -20November2026
+
+Branch codex/mvp2-private-storage-portability starts at reviewed main e3e8f74,
+incorporating checked MVP2 outbox package3b919b5 (PR125). Production remains last
+verified e3e8f74; none of this candidate's runtime source has been activated.
+
+One private boundary now covers bounded local/pathless reads, verified unique
+writes and captured-identity cleanup. Export and resumable object copying preserve
+hashes; format-1 local erasure journals stay valid and pathless format2 captures
+immutable versions. Replacement objects block cleanup; partial captured-version
+removal can resume. Uncertain CV/application commit acknowledgements retain durable
+pointers/bytes. Legacy application snapshots are included. Existing file-valued
+JSON keys remain string/null but point to authenticated routes, never storage URLs;
+profile filename validation remains100 characters. No migration, production storage
+setting, credentials, provider activation, sending, worker or CI change is included.
+
+Actual final local validation: check/drift passed;690 backend tests in349.762s
+passed (one existing platform skip), plus Ruff/OpenAPI and19 script tests. Node
+24.19.0 locked install358/audit365 found zero vulnerabilities; lint/build1.53s passed
+and all47 generated paths/hashes match the committed build. The prior690-test run
+failed because a test expected a filename in response JSON. It now checks actual
+stored random names and additionally verifies authenticated URLs hide those names;
+no storage/ownership/quota assertion was weakened. Cleanup failure injection follows
+the new boundary, retaining strict old/new-file preservation assertions.
+
+Historical16November evidence remains separate:689 tests/314.917s and the then-
+current10-test loopback S3/Moto run/6.614s passed. The20November partial-version and
+legacy-route additions require an updated11-test emulator run. Docker startup
+reported VirtualMachinePlatform disabled/no hypervisor (firmware virtualization
+was enabled). Michael enabled the Windows feature; restart/Docker readiness is
+still pending. Keep the package UNVERIFIED for this integration gate and its PR
+draft until the updated emulator and all six exact-head CI checks pass. No merge,
+production activation or live object-store acceptance is inferred from local tests.
+See PRIVATE_STORAGE_PORTABILITY.md. Original checkout, stash and all backups remain.
+
+## Earlier source, CI and deployment checkpoints
+
+# Current durable outbox worker rehearsal - 16 November 2026
+
+Branch codex/mvp2-current-outbox-rehearsal starts at fetched reviewed main e3e8f74
+and incorporates checked MVP2 receipt d3fbd8a. Production remains e3e8f74.
+The new source-only lab uses the real DeliveryTask publisher/executor and registered
+jobs.run_delivery_task, preserving the historical application-only lab separately.
+
+Actual isolated Docker result: all three target kinds, nine hard crashes before/
+during/after handoff, lost broker confirmation after real Redis publication,
+separate-worker lease contention, three-claim dead letters and ten current
+eligibility/disabled cases passed. No duplicate handoff or shared reservation and
+zero real email calls. SQLite/private media restored into a new private root and
+fresh process/logical broker database; existing receipts prevented repeat IO.
+Application lease expiry is explicit bounded lab/operator work. This is not a
+fresh-host/off-server restore, production periodic recovery or hosted acceptance.
+See CURRENT_OUTBOX_REHEARSAL.md; combined recovery remains a later package.
+
+Actual local gates: Python3.13.17 check/drift passed; 679 backend tests in318.699s
+passed (one existing platform skip), Ruff/OpenAPI and18 script tests in0.960s passed.
+Node24.19.0 locked install358/audit365 found zero vulnerabilities; lint/build1.77s
+passed and all47 generated paths/hashes match committed assets. The actual lab used
+Python3.12 and current pinned dependencies including Celery5.7.0. No runtime code,
+migration, production settings/dependencies, frontend assets or CI workflow changed.
+PR exact-head checks and merge evidence remain separate from local/lab validation.
+AJ48 remains open for combined recovery and approved durable host/service evidence.
+No production activation, normal sending, worker or scheduler is enabled.
+
+## Earlier implementation and deployment evidence
+
+# Verified private evidence release - 16 November 2026
+
+Production is now e3e8f746aa12f1f5c57c1413aa06f210bc33918f (PR122).
+All six checks passed on corrected release head 1c531e8 and on actual main e3e8f74;
+PR123 supplied the certificate cleanup race correction described below. The
+historical "production remains276f37a" checkpoints below predate this activation.
+
+Deployment evidence: both writer workflows were paused and drained, and web was
+disabled. Under that pause, all 46 existing table contents/structures, three search
+triggers and16 private file hashes matched the verified 16 November recovery snapshot.
+The 11:07 UTC snapshot's private off-server archive/member hashes and isolated restore
+had passed at 11:19:24 UTC; the archive SHA256 remains
+1cc93f41569c4e46818523e4d9a8b85addd74f9ace1a2fad794042740c2e8725.
+Only reviewed migration source and its independent path helper were staged before
+profiles.0008_certificate_evidence was applied. All 46 previous tables were preserved;
+the new evidence table was empty. Exactly one migration, one content type and four
+permission catalogue rows were added, with no user/group/staff grants. SQLite
+integrity, foreign keys, three search triggers and all 16 private hashes passed.
+Reviewed source then fast-forwarded to e3e8f74 with a clean production checkout.
+
+At 14:40 UTC, production check, migration drift, empty migration plan and all 33 pinned
+runtime package versions passed. Existing owner jobs/application/CV reads returned
+200; an existing private CV download matched its immutable approval hash and retained
+no-store. Anonymous certificate access returned 401, owner certificate access 404
+while disabled, and owner saved searches 403 while disabled. The evidence table,
+dormant queue and delivery-attempt delta remained zero. All 11 queue, scanning,
+certificate, sending, saved-search, posting and publication gates stayed False;
+freshness stayed True. No document upload, provider handoff or access grant occurred.
+
+The web app was re-enabled and explicitly reloaded; ingest 377395490 and sweep 377395493
+were restored and independently read back active. External verification completed
+14:42:09 UTC: HTTPS health 200, HSTS 604800, four anonymous private routes 401 (including
+the new certificate route), and all 47 live HTML/assets matched reviewed build bytes.
+Native dashboard expiry was observed as 16 December 2026; no renewal was performed.
+These direct owner view checks do not establish a new browser login or inbox pilot.
+
+At 14:40 UTC, conservative account usage 459075584 of 536870912 bytes left 77795328;
+next measured standard recovery/reserve plan required 74694854, leaving 3100474.
+Capacity remains tight. The previously approved three duplicate raw backup files
+were removed once; their recovery ZIP and all off-server copies remain. No further
+pruning policy or deletion authority is assumed. Source-only rollback is 276f37a;
+retain the additive schema, current data/private files, freshness and disabled gates.
+
+All 16 live acceptance stories remain open. Scanner host/signatures, private storage,
+durable worker, normal delivery acceptance, genuine employer/reviewer/candidate
+participants, analytics consent and commercial/payment decisions remain separate
+requirements. This deployment establishes code readiness, not completed MVP2.
+
+Deployment receipt package validation: local Python3.13.17 check/drift passed;
+679 full backend tests passed in315.650s (one existing platform skip), Ruff/OpenAPI
+and16 script tests passed. Node24.19.0 locked install358/audit365 reported zero
+vulnerabilities; lint and build1.69s passed, with all47 paths/hashes matching the
+committed build. Only operational documentation changed in this receipt package;
+no runtime source, schema, assets, CI workflow or feature activation changed.
+Jira deployment comments10261-10264 on AJ52/AJ79/AJ48/AJ47 record the verified
+release separately from unfinished live acceptance. Exact-head receipt PR checks
+must pass before merge; a later documentation merge does not establish a new
+production runtime revision.
+
+## Historical implementation and deployment checkpoints
+
 # Certificate cleanup race correction - 16 November 2026
 
 Release PR122 on18b1688 was held, not merged: Python3.14 failed the concurrent
@@ -2684,3 +2939,17 @@ passed555tests in261.722s (one existing skip). New lost-response browser regress
 required CI and production activation are pending. See
 `reports/AJ82_ORIGINAL_SOURCE_2026-11-13.md` for actual results and the
 backup -> staging ->0018migration -> activation/data-preserving rollback order.
+
+
+## Security maintenance candidate -20November2026
+
+An upstream Vite advisory affects locked8.3.6 when its dev server is network-exposed,
+although npm audit returned zero findings. A focused security package pins8.3.8
+and Axios1.21.1 (existing follow-redirects1.16.2 was already patched). Node24.19
+locked install/lint/build1.23s and177components/30files passed;690backend tests
+in335.268s passed with one existing platform skip, plus check/drift/Ruff/OpenAPI,
+ESLint and five quality helpers. All33runtime pins had no published findings in
+PyPI version metadata; this is not a complete environment audit. See the dated
+MAINTENANCE_REVIEW_2026-11-20.md for exact applicability, recommendations and cleanup.
+Generated assets follow as the last frontend-package commit; require six exact-head
+checks and separate release checks. Production remains e3e8f74, unchanged.

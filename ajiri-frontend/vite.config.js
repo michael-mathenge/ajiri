@@ -3,6 +3,7 @@ import { defineConfig } from 'vite'
 import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
+// see ../ajiri-backend/docs/CONCEPTS.md#development-tool-security
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   test: {
