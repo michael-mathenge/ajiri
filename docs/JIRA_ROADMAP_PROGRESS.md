@@ -1,3 +1,31 @@
+# Actual PostgreSQL and storage integration -20November2026
+
+PostgreSQL candidate corrections passed683 backend tests in302.990s (one existing
+platform skip), system check/migration drift,19 script tests, Ruff/OpenAPI and
+Node24.19 locked install/lint/build1.26s; all47 committed frontend assets match.
+Actual PostgreSQL17.12 bootstrap passed40models/628rows,27search cases with zero
+membership divergence/seven ranking differences, five exact private files,
+interrupted-import rollback/copy resume and forward additive migration. See
+POSTGRES_BOOTSTRAP_CANDIDATE.md for measured timings and limitations. Corrected
+rank weights are regression tested; original SQLite migration history is intact.
+
+Private-storage PR126 at6245ef0 passed all six exact-head checks and the updated
+HTTP S3 emulator:11tests in7.512s, interrupted version cleanup and three exact
+restored objects. Merged into MVP2 as73a3a97. No production activation occurred.
+
+Four newly created labelled/no-host-mount retry PostgreSQL containers were removed;
+10863830bytes of regenerated source contexts were removed only after hash validation,
+with exact manifests/lab scripts and all failure/success receipts retained. Original
+Docker resources, stashes, user work and all private recovery copies are preserved.
+
+PythonAnywhere and Ajiri HTTPS time out from this workstation while GitHub returns
+200. This is route-specific reachability evidence, not a confirmed global incident.
+API credential setup is pending; production was never paused or modified. Combined
+fresh-resource database/object/worker/erasure recovery remains unfinished; real
+provider/participant acceptance and all16stories retain separate prerequisites.
+
+## Earlier candidate checkpoint (retained)
+
 # PostgreSQL bootstrap/search candidate -20November2026
 
 Branch codex/mvp2-postgres-bootstrap-readiness starts at reviewed main e3e8f74 and

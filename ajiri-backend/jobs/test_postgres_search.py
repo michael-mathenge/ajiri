@@ -17,6 +17,7 @@ class PostgresSearchContractTests(SimpleTestCase):
             queryset = search_jobs(Job.objects.all(), "python OR sql'; DROP")
             sql, params = queryset.query.sql_with_params()
         self.assertIn('ajiri_job_vector', sql)
+        self.assertIn('ARRAY[0.125,0.125,0.375,1]::real[]', sql)
         self.assertNotIn('DROP', sql)
         self.assertTrue(any("'python':* & 'or':* & 'sql':* & 'drop':*" == p for p in params))
         self.assertEqual(queryset.query.order_by, ('-search_rank', '-posted_at', '-pk'))

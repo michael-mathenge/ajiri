@@ -98,3 +98,27 @@ The existing lab-only psycopg pin remains confined to its Docker image.
 
 References: [alternate Django migration modules](https://docs.djangoproject.com/en/6.1/ref/settings/#migration-modules),
 [PostgreSQL text search](https://www.postgresql.org/docs/17/textsearch-controls.html).
+
+## Actual isolated integration -20November2026
+
+The corrected candidate passed on PostgreSQL17.12 (Debian17.12-1.pgdg12+1),
+image digest837bed18782820fe967067cb5328b02b0d9992c1be9a37ee0c9c492cfc03af3b.
+Forty managed models/628 canonical rows, certificate/outbox/receipt identities,
+full timestamps, constraints/sequences and five private files were retained.
+All27 search cases had equal result membership; seven had ranking differences,
+with stable ordering within each backend. Interrupted import rolled back, copying
+resumed, private downloads matched, foreign owners received404, and the subsequent
+additive migration/reversal passed. Original SQLite history remained unchanged.
+
+On this tiny synthetic corpus the SQLite median was1.519ms (maximum2.559ms),
+while PostgreSQL median was52.595ms (maximum108.174ms). These are cold bounded lab
+measurements, not a production benchmark or a PostgreSQL performance improvement.
+Index-plan/representative-load tuning remains a provider/cutover prerequisite.
+
+Integration exposed and corrected PostgreSQL rank weights outside its0..1 range;
+the1:1:3:8 ratio is now normalized. Regression coverage asserts the normalized SQL.
+The lab also now checks identity of its injected import error (Django adds fixture
+context), respects protected publication rows in a rolled-back delete probe, and
+catches the exact controlled-copy interruption. Failed receipts remain in private
+local verification logs. This proves a bootstrap candidate, not a production
+migration-history mapping, actual provider acceptance or combined host-loss restore.

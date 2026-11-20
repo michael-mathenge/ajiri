@@ -124,7 +124,7 @@ def main():
     from jobs.filters import JobFilter
     from jobs.freshness import eligible_jobs
     from jobs.postgres_search import SCHEMA_SQL
-    from storage_helpers import fixture_json, resume_media_copy, file_hashes
+    from storage_helpers import fixture_json, resume_media_copy, file_hashes, CopyInterrupted
 
     originals = {str(p): hashlib.sha256(p.read_bytes()).hexdigest()
         for label in ('accounts', 'profiles', 'jobs') for p in Path('/app', label, 'migrations').glob('*.py')}
@@ -220,19 +220,21 @@ def main():
 
     original_save = db_models.Model.save_base
     writes = 0
+    interruption = RuntimeError('SYNTHETIC_IMPORT_INTERRUPTED')
     def interrupted_save(instance, *args, **kwargs):
         nonlocal writes
         result = original_save(instance, *args, **kwargs)
         if kwargs.get('using') == 'rehearsal':
             writes += 1
             if writes == 10:
-                raise RuntimeError('SYNTHETIC_IMPORT_INTERRUPTED')
+                raise interruption
         return result
     try:
         with patch.object(db_models.Model, 'save_base', interrupted_save):
             call_command('loaddata', str(fixture), database='rehearsal', verbosity=0, stdout=StringIO())
     except RuntimeError as error:
-        assert str(error) == 'SYNTHETIC_IMPORT_INTERRUPTED'
+        # loaddata adds fixture context to the same exception's message.
+        assert error is interruption
     else:
         raise AssertionError('Import interruption missing.')
     assert writes == 10 and all(not rows for rows in canonical('rehearsal').values())
@@ -267,6 +269,9 @@ def main():
             with transaction.atomic(using=alias):
                 Job.objects.using(alias).filter(pk=search_ids[0]).update(title='Uniqueupdatedtoken')
                 assert list(search_jobs(Job.objects.using(alias).all(), 'Uniqueupdatedtoken').values_list('pk', flat=True)) == [search_ids[0]]
+                # Publication evidence deliberately protects jobs from deletion.
+                # Remove only this synthetic fixture inside the rolled-back probe.
+                JobPublication.objects.using(alias).filter(job_id=search_ids[0]).delete()
                 Job.objects.using(alias).filter(pk=search_ids[0]).delete()
                 assert not search_jobs(Job.objects.using(alias).all(), 'Uniqueupdatedtoken').exists()
                 transaction.set_rollback(True, using=alias)
@@ -274,7 +279,7 @@ def main():
     source_media, copied_media = Path(settings.MEDIA_ROOT), Path('/tmp/bootstrap-target-media')
     try:
         resume_media_copy(source_media, copied_media, fail_after=1)
-    except OSError:
+    except CopyInterrupted:
         pass
     copied = resume_media_copy(source_media, copied_media)
     assert copied['reused'] == 1 and file_hashes(source_media) == file_hashes(copied_media)

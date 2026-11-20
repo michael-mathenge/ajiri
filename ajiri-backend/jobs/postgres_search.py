@@ -54,5 +54,6 @@ def search(queryset, literal_expression):
         return queryset.none()
     return queryset.alias(
         postgres_matches=RawSQL(VECTOR+' @@ '+QUERY, [query], output_field=BooleanField()),
-        search_rank=RawSQL('ts_rank(ARRAY[1,1,3,8]::real[],'+VECTOR+','+QUERY+')', [query]),
+        # PostgreSQL requires each rank weight in [0, 1]; retain the 1:1:3:8 ratio.
+        search_rank=RawSQL('ts_rank(ARRAY[0.125,0.125,0.375,1]::real[],'+VECTOR+','+QUERY+')', [query]),
     ).filter(postgres_matches=True).order_by('-search_rank', '-posted_at', '-pk')
