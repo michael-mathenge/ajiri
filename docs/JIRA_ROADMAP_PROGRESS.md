@@ -1,3 +1,34 @@
+# Employer and candidate pilot readiness - 21 November 2026
+
+Production preflight confirmed `03cc9ff` on PythonAnywhere, with freshness
+enabled and employer posting, public publication, certificate evidence and
+malware scanning disabled. Original-source readiness reported zero eligible
+roles and zero employers with eligible roles. The public sitemap returned 404,
+and anonymous certificate reads returned 401. The direct-download recovery
+plan reported 69,042,176 bytes available against 60,421,370 required. Remeasure
+under the paused-writer window before taking a release snapshot.
+
+This package adds the private certificate PDF controls to the CV builder for
+AJ-79. It uses the existing owner API and flag, requires a saved CV revision
+for changes and handles quarantine and conflicting writes. It adds no migration,
+dependency change or production setting. Locked Node 24.19 install, both
+linters, 181 component tests, five frontend quality tests and all 47 generated
+file comparisons passed. All 12 real Chromium journeys passed, including a
+mobile-width certificate upload, replacement and confirmed removal against
+the test API with synthetic data. The Linux Python 3.12 run passed all 694
+Django tests in 224.987 seconds, system and migration-drift checks. Earlier
+container setup attempts used an overridden throttle, an optional lab storage
+adapter or omitted the repository scripts. The passing run used the standard
+CI environment and included the repository scripts.
+
+AJ-53 and AJ-82 require genuine employer onboarding, evidence of authority
+and independent review. AJ-42 requires a genuinely eligible vacancy to verify
+the live page, canonical URL, sitemap and structured data. AJ-83 and AJ-86
+require consented candidates, manual device and accessibility review, and the
+recorded pilot measures. AJ-52 and AJ-79 require operational scanner, capacity
+and recovery acceptance before certificate activation. Record the exact commits,
+CI and release outcome on the package pull request.
+
 # Separately verified release candidate -20November2026
 
 PR12754f26d5 passed all six exact-head checks and merged into MVP2 asb995d50.

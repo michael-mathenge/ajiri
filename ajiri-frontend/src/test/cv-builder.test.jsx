@@ -6,7 +6,13 @@ import apiClient from '../api/client'
 import { downloadFile } from '../lib/download'
 
 vi.mock('../api/client', () => ({
-  default: { get: vi.fn(), patch: vi.fn(), post: vi.fn() },
+  default: {
+    get: vi.fn(),
+    patch: vi.fn(),
+    post: vi.fn(),
+    put: vi.fn(),
+    delete: vi.fn(),
+  },
 }))
 vi.mock('../lib/download', () => ({ downloadFile: vi.fn() }))
 const content = {
@@ -46,6 +52,163 @@ const draft = {
 const page = (ui = <CVEditor initial={structuredClone(draft)} />) =>
   render(<MemoryRouter>{ui}</MemoryRouter>)
 beforeEach(() => vi.resetAllMocks())
+
+const certificateEndpoint = '/profiles/me/certificates/'
+const certificationId = '75fc2237-1ad8-4ed6-be56-62089f12ec96'
+const evidence = {
+  id: '7ded5e2b-d379-48d1-b0c4-7d527ab81df0',
+  certification_id: certificationId,
+  sha256: 'b'.repeat(64),
+  scan_state: 'clean',
+}
+const certificateName = 'Example certificate (certification 1)'
+const certificatePath = `${certificateEndpoint}${certificationId}/`
+const certificatePdf = () =>
+  new File(['%PDF-1.7'], 'evidence.pdf', {
+    type: 'application/pdf',
+  })
+
+function renderCertificateEditor() {
+  const initial = structuredClone(draft)
+  initial.content.certifications = [
+    {
+      id: certificationId,
+      name: 'Example certificate',
+      issuer: 'Example issuer',
+    },
+  ]
+  return page(<CVEditor initial={initial} />)
+}
+
+it('keeps certificate evidence controls hidden when the API feature is disabled', async () => {
+  apiClient.get.mockRejectedValue({ response: { status: 404 } })
+  renderCertificateEditor()
+  await waitFor(() =>
+    expect(apiClient.get).toHaveBeenCalledWith(
+      certificateEndpoint,
+      expect.objectContaining({ signal: expect.anything() })
+    )
+  )
+  expect(
+    screen.queryByText('Private certificate evidence')
+  ).not.toBeInTheDocument()
+  expect(apiClient.put).not.toHaveBeenCalled()
+})
+
+it('uploads private evidence for a saved certification and shows quarantine status', async () => {
+  apiClient.get.mockResolvedValue({ data: { results: [] } })
+  apiClient.put.mockResolvedValue({
+    data: { ...evidence, scan_state: 'pending' },
+  })
+  renderCertificateEditor()
+  const input = await screen.findByLabelText(
+    `Evidence PDF for ${certificateName}`
+  )
+  const submit = screen.getByRole('button', {
+    name: `Upload PDF for ${certificateName}`,
+  })
+  expect(submit).toBeDisabled()
+  fireEvent.change(input, { target: { files: [certificatePdf()] } })
+  expect(apiClient.put).not.toHaveBeenCalled()
+  fireEvent.click(submit)
+  expect(
+    await screen.findByText('Waiting for a malware scan.')
+  ).toBeInTheDocument()
+  const [path, form] = apiClient.put.mock.calls[0]
+  expect(path).toBe(certificatePath)
+  expect(form.get('expected_revision')).toBe('1')
+  expect(form.get('expected_id')).toBeNull()
+  expect(form.get('document').name).toBe('evidence.pdf')
+  expect(
+    screen.queryByRole('button', { name: /Download PDF for/ })
+  ).not.toBeInTheDocument()
+})
+
+it('uses the current evidence identity for replacement and explicitly confirmed removal', async () => {
+  const replaced = { ...evidence, id: 'replacement', sha256: 'c'.repeat(64) }
+  apiClient.get.mockResolvedValue({ data: { results: [evidence] } })
+  apiClient.put.mockResolvedValue({ data: replaced })
+  apiClient.delete.mockResolvedValue({ status: 204 })
+  const confirm = vi
+    .spyOn(window, 'confirm')
+    .mockReturnValueOnce(false)
+    .mockReturnValueOnce(true)
+  renderCertificateEditor()
+  fireEvent.click(
+    await screen.findByRole('button', {
+      name: `Download PDF for ${certificateName}`,
+    })
+  )
+  expect(downloadFile).toHaveBeenCalledWith(certificatePath, 'certificate.pdf')
+  fireEvent.change(
+    screen.getByLabelText(`Replacement PDF for ${certificateName}`),
+    {
+      target: { files: [certificatePdf()] },
+    }
+  )
+  fireEvent.click(
+    screen.getByRole('button', { name: `Replace PDF for ${certificateName}` })
+  )
+  expect(await screen.findByText('Private PDF saved.')).toBeInTheDocument()
+  const [, form] = apiClient.put.mock.calls[0]
+  expect(form.get('expected_id')).toBe(evidence.id)
+  expect(form.get('expected_hash')).toBe(evidence.sha256)
+  const remove = screen.getByRole('button', {
+    name: `Remove PDF for ${certificateName}`,
+  })
+  fireEvent.click(remove)
+  expect(apiClient.delete).not.toHaveBeenCalled()
+  fireEvent.click(remove)
+  expect(await screen.findByText('Private PDF removed.')).toBeInTheDocument()
+  expect(apiClient.delete).toHaveBeenCalledWith(certificatePath, {
+    data: {
+      expected_revision: 1,
+      expected_id: replaced.id,
+      expected_hash: replaced.sha256,
+      confirm: true,
+    },
+  })
+  confirm.mockRestore()
+})
+
+it('requires a fresh evidence read after a conflict and keeps all server validation errors', async () => {
+  apiClient.get.mockResolvedValue({ data: { results: [evidence] } })
+  apiClient.put
+    .mockRejectedValueOnce({
+      response: {
+        status: 400,
+        data: { document: ['PDF error one.', 'PDF error two.'] },
+      },
+    })
+    .mockRejectedValueOnce({
+      response: {
+        status: 409,
+        data: { detail: 'Evidence changed elsewhere.' },
+      },
+    })
+  renderCertificateEditor()
+  const input = await screen.findByLabelText(
+    `Replacement PDF for ${certificateName}`
+  )
+  const replace = screen.getByRole('button', {
+    name: `Replace PDF for ${certificateName}`,
+  })
+  fireEvent.change(input, { target: { files: [certificatePdf()] } })
+  fireEvent.click(replace)
+  expect(await screen.findByText('PDF error one.')).toBeInTheDocument()
+  expect(screen.getByText('PDF error two.')).toBeInTheDocument()
+  fireEvent.click(replace)
+  expect(
+    await screen.findByText('Evidence changed elsewhere.')
+  ).toBeInTheDocument()
+  expect(replace).toBeDisabled()
+  apiClient.get.mockResolvedValue({
+    data: { results: [{ ...evidence, id: 'changed' }] },
+  })
+  fireEvent.click(screen.getByRole('button', { name: 'Refresh evidence' }))
+  await waitFor(() => expect(input).not.toBeInTheDocument())
+  expect(apiClient.put).toHaveBeenCalledTimes(2)
+})
 
 it('starts explicitly and does not create a draft on GET', async () => {
   apiClient.get.mockResolvedValue({ data: { content: null } })

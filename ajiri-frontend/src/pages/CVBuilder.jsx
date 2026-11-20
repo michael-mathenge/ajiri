@@ -6,6 +6,7 @@ import apiClient from '../api/client'
 import { useApiQuery, useApiInvalidation } from '../hooks/useApiQuery'
 import { apiErrors } from '../lib/errors'
 import FormErrors from '../components/FormErrors'
+import CertificateEvidence from '../components/CertificateEvidence'
 import DownloadButton from '../components/DownloadButton'
 import MonthYearField from '../components/MonthYearField'
 import {
@@ -570,6 +571,13 @@ export function CVEditor({ initial }) {
         >
           Download approved CV (revision {saved.revision})
         </DownloadButton>
+      )}
+      {saved.content.certifications.length > 0 && (
+        <CertificateEvidence
+          certifications={saved.content.certifications}
+          revision={saved.revision}
+          savingCV={busy || conflict}
+        />
       )}
       {saved.versions.filter((version) => version.revision !== saved.revision)
         .length > 0 && (

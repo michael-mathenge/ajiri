@@ -20,11 +20,19 @@ intact; the only new migration is profiles0008 after profiles0007.
 
 ## Behaviour and limits
 
-The backend supports optional owner-only PDF evidence on an already saved CV
+Ajiri supports optional owner-only PDF evidence on an already saved CV
 certification. Default flags remain false: CERTIFICATE_EVIDENCE_ENABLED and
-MALWARE_SCANNING_ENABLED. No UI, auto-upload, automatic scan job, scheduler,
-external scanner or employer sharing is activated. Certificate text and immutable
-approved CV/application bytes remain independent.
+MALWARE_SCANNING_ENABLED. Certificate text and immutable approved CV/application
+bytes remain independent. Users explicitly submit or remove a PDF. Scan jobs
+remain operator-initiated.
+
+When enabled, the CV builder shows a private evidence panel for saved
+certifications. It supports upload, replacement, confirmed removal and download
+after a clean scan. The download endpoint still checks verdict freshness and
+file integrity. After a conflict or uncertain write, refresh evidence before
+trying again. Preserve unsaved edits and reload the CV if another tab changed
+its saved revision. Keep the server flag off until the scanner, capacity and
+recovery checks pass.
 
 Additive owner routes (also under the existing /api/v1 alias):
 
