@@ -106,3 +106,13 @@ deletion authority. Real object-store/provider activation remains a separate dec
 Reference: [Moto server mode](https://docs.getmoto.org/en/latest/docs/server_mode.html),
 [S3 conditional writes](https://docs.aws.amazon.com/boto3/latest/reference/services/s3/client/put_object.html),
 [version-specific deletion](https://docs.aws.amazon.com/boto3/latest/reference/services/s3/client/delete_object.html).
+
+## Updated20November acceptance
+
+Docker29.9.3 became available and the updated11-test HTTP emulator passed in7.512s,
+including interrupted historical-version cleanup, legacy routes and exact restoration
+of three synthetic objects. PR126 passed all six checks and merged as73a3a97.
+The combined PostgreSQL/current-outbox source also passed five-file private download
+restoration and the three-target/nine-crash/ten-eligibility worker matrix with no
+repeated handoff or shared reservation. These supersede the earlier local Docker
+blocker, while real provider and combined host/resource recovery remain separate.

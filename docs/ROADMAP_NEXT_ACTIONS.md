@@ -1,3 +1,21 @@
+# Current next actions - migration candidate and release prerequisites
+
+Production remains last verified e3e8f74 (16November); source merges do not establish
+activation. Storage PR126 and security PR128 merged into MVP2 after six exact-head
+checks. The PostgreSQL candidate has actual alternate-graph/data/search/private-file
+and fresh-container database restore evidence. PR127's earlier9ec204d browser run
+and its one rerun failed Lighthouse NO_NAVSTART; no budget or required check was
+bypassed. Integrate checked security source and require a new exact-head pass.
+
+PythonAnywhere/Ajiri HTTPS requests time out from this workstation; API credential
+setup is pending. No production web/writer was paused. Before activation, remeasure
+capacity and verify a fresh consistent private recovery/off-server/isolated restore;
+no new deletion authority exists. Combined fresh-resource database/object/worker/
+erasure evidence is still unfinished. Keep all operational feature gates disabled.
+See MAINTENANCE_REVIEW_2026-11-20.md for current security findings and API setup.
+
+## Earlier runtime checkpoint (retained)
+
 # Current next actions - private scanner and evidence backend
 
 Verified runtime is e3e8f74 (release PR122), activated 16 November 2026.

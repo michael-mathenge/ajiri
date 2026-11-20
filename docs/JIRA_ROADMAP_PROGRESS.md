@@ -1,3 +1,112 @@
+# Browser failure retained; reviewed security integration -20November2026
+
+PR128 (c3497f9) passed all six exact-head checks and merged as01bc2d3, including
+Vite8.3.8/Axios1.21.1 and its final47-file generated asset commit. PR1279ec204d's
+browser and one failed-job rerun both failed Lighthouse NO_NAVSTART after their
+bounded internal retry; the other five checks passed. No metric/budget/check was
+bypassed. Incorporate the reviewed security graph/build, verify unchanged backend
+Python source and rerun exact-head CI; do not report those failed heads as accepted.
+
+Actual combined outbox rerun passed three target kinds/nine crashes/ten eligibility
+cases with captured transports, accepted receipt reuse and no repeated reservation.
+The current PostgreSQL graph/recorder/dump were retained and restored into a fresh
+container:41tables/32sequences/exact rows, twelve explicitly equivalent literal-array
+cast deparsing differences, raw definitions retained. This is component recovery;
+combined object/worker/erasure and physical hosted disaster acceptance remain open.
+
+All33declared runtime pins had no published findings via public PyPI version JSON;
+this is not a complete environment audit. Production remains unchanged e3e8f74.
+No production pause/deletion occurred; API credential and reachability remain pending.
+
+## Earlier combined-source checkpoint (retained)
+
+# Combined-source verification -20November2026
+
+The reviewed private-storage package is integrated into the PostgreSQL feature
+branch. The combined source passed694 backend tests (one existing platform skip),
+check/migration drift,20 script tests, Ruff and exact OpenAPI validation. Actual
+PostgreSQL17.12 integration passed again with40models/628rows/five private files,
+27queries, zero membership differences and seven ranking differences. The earlier
+standalone683-test result and its receipt remain historical evidence.
+
+Ledger conflict resolution retained both packages' complete evidence prefixes and
+one exact shared historical suffix; no prior checkpoint was discarded. Production
+remains e3e8f74; API access/connectivity and combined fresh-resource recovery are
+separate unfinished release prerequisites. Exact-head CI must pass on this merge.
+
+## Earlier independent verification (retained)
+
+# Actual PostgreSQL and storage integration -20November2026
+
+PostgreSQL candidate corrections passed683 backend tests in302.990s (one existing
+platform skip), system check/migration drift,19 script tests, Ruff/OpenAPI and
+Node24.19 locked install/lint/build1.26s; all47 committed frontend assets match.
+Actual PostgreSQL17.12 bootstrap passed40models/628rows,27search cases with zero
+membership divergence/seven ranking differences, five exact private files,
+interrupted-import rollback/copy resume and forward additive migration. See
+POSTGRES_BOOTSTRAP_CANDIDATE.md for measured timings and limitations. Corrected
+rank weights are regression tested; original SQLite migration history is intact.
+
+Private-storage PR126 at6245ef0 passed all six exact-head checks and the updated
+HTTP S3 emulator:11tests in7.512s, interrupted version cleanup and three exact
+restored objects. Merged into MVP2 as73a3a97. No production activation occurred.
+
+Four newly created labelled/no-host-mount retry PostgreSQL containers were removed;
+10863830bytes of regenerated source contexts were removed only after hash validation,
+with exact manifests/lab scripts and all failure/success receipts retained. Original
+Docker resources, stashes, user work and all private recovery copies are preserved.
+
+PythonAnywhere and Ajiri HTTPS time out from this workstation while GitHub returns
+200. This is route-specific reachability evidence, not a confirmed global incident.
+API credential setup is pending; production was never paused or modified. Combined
+fresh-resource database/object/worker/erasure recovery remains unfinished; real
+provider/participant acceptance and all16stories retain separate prerequisites.
+
+## Earlier candidate checkpoint (retained)
+
+# PostgreSQL bootstrap/search candidate -20November2026
+
+Branch codex/mvp2-postgres-bootstrap-readiness starts at reviewed main e3e8f74 and
+incorporates checked MVP2 outbox package3b919b5 (PR125). Production remains last
+verified e3e8f74. This candidate has not been merged into runtime or activated.
+
+The guarded lab generates alternate target migration modules in a new independent
+disposable package, verifies current model-state equivalence and refuses writes
+outside that package. Original histories and migration recorders remain protected.
+Local tests prove graph generation requires no database IO. The actual PostgreSQL
+lab is prepared to apply the generated graph normally, import canonical current
+synthetic data with exact timestamps/relationships/private hashes, test a forward
+additive migration and compare27 search cases. No fake markers or raw-model table
+creation substitute for that target migration. Actual target execution is pending.
+
+The dormant PostgreSQL search route uses bound literal-prefix terms and a native
+functional GIN candidate; SQLite's existing FTS join and three triggers are retained.
+Latin accents fold without generic unaccent's ligature/stroked-letter expansion.
+Ranking differences will be measured separately from required membership parity.
+No production settings, DB schema, dependency, authentication or CI workflow changes.
+
+Actual local gates: Python3.13.17 check/drift passed;683 backend tests in273.057s
+passed (one existing platform skip), plus Ruff/OpenAPI and19 script tests. The four
+new backend contract tests include alternate graph/state equivalence, parameter
+binding, literal folding and unchanged SQLite execution. Node24.19.0 locked install
+358/audit365 found zero vulnerabilities; lint/build1.20s and47 exact asset hashes
+passed. These checks do not establish real PostgreSQL migration/search acceptance.
+
+Actual Docker execution remains blocked by a required Windows restart after Michael
+enabled VirtualMachinePlatform. Keep this PR draft/UNVERIFIED for actual PostgreSQL
+and combined fresh-resource recovery, even if all six exact-head CI checks pass.
+PRIVATE_STORAGE_PORTABILITY source is separately reviewed in draft PR126; no merge
+or cloud activation is inferred here. See POSTGRES_BOOTSTRAP_CANDIDATE.md and the
+refreshed MIGRATION_READINESS_2026-11-20.md service/recovery decision report.
+
+Official provider pages were refreshed20November. Preferred CX33 remains publicly
+unavailable and its indexed tariff is not a quote. No purchase/terms/data transfer
+or approval of the proposed budget is implied. Current Jira still has16 non-Epic
+stories In Progress; genuine participants and actual host/service acceptance remain
+external prerequisites. Preserve backups; no new deletion authority is assumed.
+
+## Earlier source, CI and production checkpoints
+
 # Private storage portability candidate -20November2026
 
 Branch codex/mvp2-private-storage-portability starts at reviewed main e3e8f74,
