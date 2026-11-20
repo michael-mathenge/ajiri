@@ -1,3 +1,33 @@
+# Current next actions - combined recovery passed locally
+
+Production remains verified03cc9ff. The combined fresh-stack rehearsal now passes
+(database/object/erasure-ledger/broker/worker, three interrupted restore boundaries,
+no duplicate handoff/reservation). Track its six exact-head checks/merge in PR131, then
+resolve the concrete hosting/processing decision and representative load/scanner
+measurements before provider cutover. Participants/commercial decisions remain
+unavailable; normal sending/publication/scanning/worker gates stay disabled.
+See COMBINED_RECOVERY_REHEARSAL.md and MIGRATION_READINESS_2026-11-20.md.
+
+## Deployment checkpoint and previous next actions (retained)
+
+# Current next actions - verified 20 November deployment
+
+Production is verified at 03cc9ff (release PR129). All six release and merged-main
+checks passed. Fresh private off-server recovery and isolated restoration passed;
+all 46 table fingerprints and 16 private files were preserved at activation. HTTPS,
+47 exact assets, five private downloads and restored writers passed. The normal
+ingestion verification run succeeded. See ../reports/MVP2_DEPLOYMENT_2026-11-20.md.
+
+Continue combined fresh-resource database/object/broker/worker recovery. Separate
+component rehearsals do not establish combined acceptance or a provider cutover.
+The API avoids browser control. Retain all operational gates: normal sending,
+queue, scanning, certificates, publication/posting and saved searches stay off;
+existing account-security mail and freshness remain on. All 16 stories retain
+their missing acceptance gates. Recheck API-direct backup capacity each run; no
+backup pruning is authorised. Hosting expiry was verified as 16 December 2026.
+
+## Historical migration-candidate checkpoint (retained)
+
 # Current next actions - migration candidate and release prerequisites
 
 Production remains last verified e3e8f74 (16November); source merges do not establish
