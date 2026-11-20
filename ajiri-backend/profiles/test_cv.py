@@ -55,7 +55,8 @@ class ProfileCVTests(TestCase):
         self.client.patch('/api/profiles/me/', {'cv_file': SimpleUploadedFile('good.pdf', pdf_bytes())}, format='multipart')
         self.user.profile.refresh_from_db()
         original = self.user.profile.cv_file.name
-        for name, content in [('bad.txt', b'bad'), ('large.pdf', b'x' * (5 * 1024 * 1024 + 1)), ('empty.pdf', b'')]:
+        for name, content in [('bad.txt', b'bad'), ('large.pdf', b'x' * (5 * 1024 * 1024 + 1)),
+                              ('empty.pdf', b''), ('x'*101+'.pdf', pdf_bytes())]:
             response = self.client.patch('/api/profiles/me/', {'cv_file': SimpleUploadedFile(name, content)}, format='multipart')
             self.assertEqual(response.status_code, 400)
             self.assertIn('cv_file', response.data)

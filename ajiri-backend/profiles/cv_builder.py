@@ -9,14 +9,14 @@ from io import BytesIO
 import json
 from docx import Document
 from docx.shared import Pt, RGBColor
-from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
-from django.db import transaction
+from django.db import transaction, DatabaseError
 from django.db.models import F
 from django.utils import timezone
 from rest_framework.exceptions import APIException
 from .cv_validation import validate_content, MAX_DOCUMENT_BYTES
 from .models import CVWorkspace, CVApproval, CertificateEvidence, approved_cv_path
+from .private_storage import read_field, save_unique, cleanup_owned
 
 TEMPLATE_VERSION = 'cv-v2'
 
@@ -161,8 +161,9 @@ def approve_workspace(workspace, expected_revision, expected_hash):
         return existing
     data = render_docx(content)
     path = None
+    commit_started = False
     try:
-        path = default_storage.save(approved_cv_path(None, ''), ContentFile(data))
+        path = save_unique(default_storage, approved_cv_path(None, ''), data)
         with transaction.atomic():
             # Conditional write acquires SQLite's writer lock. A prior SELECT /
             # select_for_update is not enough. Concurrent edits lose this CAS.
@@ -179,23 +180,24 @@ def approve_workspace(workspace, expected_revision, expected_hash):
                 approval = CVApproval.objects.create(profile=workspace.profile, revision=expected_revision,
                     content=content, content_sha256=expected_hash, template_version=TEMPLATE_VERSION,
                     document=path, document_sha256=hashlib.sha256(data).hexdigest())
+                commit_started = True
         if existing:
-            default_storage.delete(path)
+            cleanup_owned(default_storage, path)
         return approval
     except Exception:
         if path:
-            # Only this request's uncommitted, uniquely generated file is removed.
-            # A hard process crash can leave an orphan for report-only review.
-            default_storage.delete(path)
+            # A failed acknowledgement can follow a committed pointer. Keep its
+            # immutable bytes; uncertain database reads also retain an orphan.
+            try:
+                if not commit_started or not CVApproval.objects.filter(document=path).exists():
+                    cleanup_owned(default_storage, path)
+            except (DatabaseError, OSError):
+                pass
         raise
 
 
 def document_bytes(approval):
     try:
-        with approval.document.open('rb') as stream:
-            data = stream.read(MAX_DOCUMENT_BYTES + 1)
-        if len(data) > MAX_DOCUMENT_BYTES or hashlib.sha256(data).hexdigest() != approval.document_sha256:
-            raise CVUnavailable()
-        return data
+        return read_field(approval.document, limit=MAX_DOCUMENT_BYTES, sha256=approval.document_sha256)
     except (OSError, ValueError):
         raise CVUnavailable() from None

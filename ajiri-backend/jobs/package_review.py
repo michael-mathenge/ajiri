@@ -2,7 +2,6 @@
 
 see docs/CONCEPTS.md#application-package-approval
 """
-import hashlib
 from io import BytesIO
 
 from docx import Document
@@ -13,6 +12,7 @@ from django.shortcuts import get_object_or_404
 from profiles.cv_builder import content_hash, CVUnavailable
 from profiles.cv_validation import MAX_DOCUMENT_BYTES
 from profiles.upload_validation import _docx
+from profiles.private_storage import read_field
 from .application_packages import package_data, package_fingerprint, require_editable, is_editable, PackageConflict
 from .models import Application, ApplicationPackage, ApplicationPackageApproval
 
@@ -47,10 +47,7 @@ def verified_documents(package):
         try:
             if not 0 < expected_size <= MAX_DOCUMENT_BYTES:
                 raise ValueError('Invalid size')
-            with field.open('rb') as stream:
-                data = stream.read(MAX_DOCUMENT_BYTES + 1)
-            if len(data) != expected_size or hashlib.sha256(data).hexdigest() != digest:
-                raise ValueError('Invalid bytes')
+            data = read_field(field, limit=MAX_DOCUMENT_BYTES, size=expected_size, sha256=digest)
             # Reuse existing bounded package checks before any DOCX parser expansion.
             _docx(data)
         except Exception:

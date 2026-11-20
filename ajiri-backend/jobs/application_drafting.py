@@ -3,8 +3,7 @@
 see docs/CONCEPTS.md#approved-cv-applications
 """
 import uuid
-from django.core.files.base import ContentFile
-from django.db import IntegrityError, transaction
+from django.db import IntegrityError, DatabaseError, transaction
 from profiles.cv_builder import document_bytes, CVUnavailable
 from profiles.cv_validation import MAX_DOCUMENT_BYTES
 from .cover_letter_generator import generate_cover_letter_docx
@@ -12,6 +11,7 @@ from .models import Application, Job
 from .freshness import job_is_eligible
 from django.conf import settings
 from rest_framework.exceptions import ValidationError
+from profiles.private_storage import save_field, cleanup_owned
 
 
 def prepare_application(user, job, approval):
@@ -32,31 +32,36 @@ def prepare_application(user, job, approval):
             f'Dear Hiring Manager,\n\nPlease find attached my CV and cover letter for the '
             f'{job.title} position at {job.company_name}.\n\nKind regards,\n{applicant_name}')
     written = []
+    commit_started = False
     try:
         token = uuid.uuid4().hex
         for field, filename, data in [
             (application.generated_cv, f'{token}_CV.docx', cv),
             (application.generated_cover_letter, f'{token}_Cover_Letter.docx', letter),
         ]:
-            field.save(filename, ContentFile(data), save=False)
+            save_field(field, filename, data)
             written.append((field.storage, field.name))
         try:
             with transaction.atomic():
                 require_current()
                 application.save(force_insert=True)
+                commit_started = True
         except IntegrityError:
             # Another request may have won the user/job uniqueness constraint.
             existing = Application.objects.filter(user=user, job=job).first()
             if not existing:
                 raise
             for storage, name in written:
-                storage.delete(name)
+                cleanup_owned(storage, name)
             return existing, False
         return application, True
     except Exception:
         for storage, name in written:
             try:
-                storage.delete(name)
-            except OSError:
+                if commit_started and (Application.objects.filter(generated_cv=name).exists()
+                        or Application.objects.filter(generated_cover_letter=name).exists()):
+                    continue
+                cleanup_owned(storage, name)
+            except (OSError, DatabaseError):
                 pass  # Private report-only orphan review; never leak paths.
         raise

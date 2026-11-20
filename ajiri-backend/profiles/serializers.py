@@ -13,7 +13,20 @@ class SkillSerializer(serializers.ModelSerializer):
         fields = ('id', 'name')
 
 
+class PrivateCVField(serializers.FileField):
+    def to_representation(self, value):
+        if not value:
+            return None
+        # Keep the existing string/null API shape without asking private storage
+        # for a URL or exposing its key. Downloads always enforce owner access.
+        # see docs/CONCEPTS.md#private-storage-boundary
+        request = self.context.get('request')
+        path = '/api/profiles/me/cv/'
+        return request.build_absolute_uri(path) if request else path
+
+
 class ProfileSerializer(serializers.ModelSerializer):
+    cv_file = PrivateCVField(required=False, allow_null=True, max_length=100)
     skills = SkillSerializer(many=True, read_only=True)
     skill_names = serializers.ListField(
         child=serializers.CharField(max_length=100),
