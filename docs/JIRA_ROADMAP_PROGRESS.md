@@ -2811,3 +2811,17 @@ passed555tests in261.722s (one existing skip). New lost-response browser regress
 required CI and production activation are pending. See
 `reports/AJ82_ORIGINAL_SOURCE_2026-11-13.md` for actual results and the
 backup -> staging ->0018migration -> activation/data-preserving rollback order.
+
+
+## Security maintenance candidate -20November2026
+
+An upstream Vite advisory affects locked8.3.6 when its dev server is network-exposed,
+although npm audit returned zero findings. A focused security package pins8.3.8
+and Axios1.21.1 (existing follow-redirects1.16.2 was already patched). Node24.19
+locked install/lint/build1.23s and177components/30files passed;690backend tests
+in335.268s passed with one existing platform skip, plus check/drift/Ruff/OpenAPI,
+ESLint and five quality helpers. All33runtime pins had no published findings in
+PyPI version metadata; this is not a complete environment audit. See the dated
+MAINTENANCE_REVIEW_2026-11-20.md for exact applicability, recommendations and cleanup.
+Generated assets follow as the last frontend-package commit; require six exact-head
+checks and separate release checks. Production remains e3e8f74, unchanged.
