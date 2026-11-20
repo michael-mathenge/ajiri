@@ -1792,3 +1792,12 @@ and permits only their remaining cleanup after an interruption. Switching storag
 requires reviewed journal mapping and independent private recovery. The S3/Moto
 adapter and its dependencies are isolated synthetic lab code, never a selected
 production provider or evidence of hosted-service acceptance.
+
+## development-tool-security
+
+A clean package audit is only one signal: upstream advisories may describe fixes
+before a registry audit reports them. Pin reviewed patch versions, preserve the
+locked graph and test the application with synthetic data before rebuilding public
+assets. Vite is a local development tool; deploy only its static output. Dependency
+updates never authorize transport activation, authentication rewrites or public
+private-file access. See ../../docs/MAINTENANCE_REVIEW_2026-11-20.md for evidence.

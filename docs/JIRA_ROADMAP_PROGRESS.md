@@ -1,3 +1,25 @@
+# Browser failure retained; reviewed security integration -20November2026
+
+PR128 (c3497f9) passed all six exact-head checks and merged as01bc2d3, including
+Vite8.3.8/Axios1.21.1 and its final47-file generated asset commit. PR1279ec204d's
+browser and one failed-job rerun both failed Lighthouse NO_NAVSTART after their
+bounded internal retry; the other five checks passed. No metric/budget/check was
+bypassed. Incorporate the reviewed security graph/build, verify unchanged backend
+Python source and rerun exact-head CI; do not report those failed heads as accepted.
+
+Actual combined outbox rerun passed three target kinds/nine crashes/ten eligibility
+cases with captured transports, accepted receipt reuse and no repeated reservation.
+The current PostgreSQL graph/recorder/dump were retained and restored into a fresh
+container:41tables/32sequences/exact rows, twelve explicitly equivalent literal-array
+cast deparsing differences, raw definitions retained. This is component recovery;
+combined object/worker/erasure and physical hosted disaster acceptance remain open.
+
+All33declared runtime pins had no published findings via public PyPI version JSON;
+this is not a complete environment audit. Production remains unchanged e3e8f74.
+No production pause/deletion occurred; API credential and reachability remain pending.
+
+## Earlier combined-source checkpoint (retained)
+
 # Combined-source verification -20November2026
 
 The reviewed private-storage package is integrated into the PostgreSQL feature
@@ -2898,3 +2920,17 @@ passed555tests in261.722s (one existing skip). New lost-response browser regress
 required CI and production activation are pending. See
 `reports/AJ82_ORIGINAL_SOURCE_2026-11-13.md` for actual results and the
 backup -> staging ->0018migration -> activation/data-preserving rollback order.
+
+
+## Security maintenance candidate -20November2026
+
+An upstream Vite advisory affects locked8.3.6 when its dev server is network-exposed,
+although npm audit returned zero findings. A focused security package pins8.3.8
+and Axios1.21.1 (existing follow-redirects1.16.2 was already patched). Node24.19
+locked install/lint/build1.23s and177components/30files passed;690backend tests
+in335.268s passed with one existing platform skip, plus check/drift/Ruff/OpenAPI,
+ESLint and five quality helpers. All33runtime pins had no published findings in
+PyPI version metadata; this is not a complete environment audit. See the dated
+MAINTENANCE_REVIEW_2026-11-20.md for exact applicability, recommendations and cleanup.
+Generated assets follow as the last frontend-package commit; require six exact-head
+checks and separate release checks. Production remains e3e8f74, unchanged.

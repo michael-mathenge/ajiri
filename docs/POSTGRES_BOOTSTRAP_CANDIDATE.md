@@ -81,10 +81,10 @@ with no published port, host mount or real credentials. It is not a production
 authentication configuration. Preserve existing Docker images/containers and
 verify created IDs/labels before removing only this lab's disposable resources.
 
-Current local evidence: the alternate graph/model-state test, bound-query contract,
-literal folding and SQLite regressions pass. Actual PostgreSQL execution, search
-membership/timings and combined fresh-resource recovery are still UNVERIFIED while
-the workstation's VirtualMachinePlatform restart is pending. Do not report the
+Historical pre-restart checkpoint: graph/model-state generation, bound-query and
+SQLite regressions had passed, while actual PostgreSQL execution was UNVERIFIED.
+The successful20November integration evidence below supersedes that limitation;
+combined fresh-resource object/worker/erasure recovery remains unfinished. Do not report the
 older raw-model PostgreSQL rehearsal as proof of this alternate graph.
 
 The successful lab must emit AJIRI_POSTGRES_BOOTSTRAP_RESULT with measured counts,
@@ -122,3 +122,21 @@ context), respects protected publication rows in a rolled-back delete probe, and
 catches the exact controlled-copy interruption. Failed receipts remain in private
 local verification logs. This proves a bootstrap candidate, not a production
 migration-history mapping, actual provider acceptance or combined host-loss restore.
+
+## Retained graph and fresh-container database restore
+
+A further successful run retained the actual nine-file alternate migration graph,
+its target recorder and a consistent synthetic custom-format pg_dump. The dump
+SHA256 is4ced2e4954552fa93069cbf597f2ad629f8a2f304c0f06fe7b87e5eb4185fa47;
+graph archive SHA256 isb295c59f28ab95a13af8559e18f4c25c2fc16bb5d0608fa9005c4ca08622a85a.
+The private local verification area retains those artifacts and the aggregate
+isolated-postgres-restore-receipt.json; they contain synthetic data only.
+
+Restoration into another fresh PostgreSQL17.12 container preserved all41tables
+(including the migration recorder),32sequence states and exact row fingerprints.
+Twelve index/constraint SQL texts changed because pg_dump reparsing distributes
+varchar-to-text casts over literal arrays. The comparison normalized only that
+explicit equivalent literal grammar and checked names/validity/remaining definitions;
+it does not claim byte-identical schema text. Both raw definitions were retained.
+This is component database restoration, not the unfinished combined object/worker/
+erasure recovery, physical host loss, off-server production backup or real cutover.
