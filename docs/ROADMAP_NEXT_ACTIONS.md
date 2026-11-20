@@ -2,7 +2,7 @@
 
 Production remains verified03cc9ff. The combined fresh-stack rehearsal now passes
 (database/object/erasure-ledger/broker/worker, three interrupted restore boundaries,
-no duplicate handoff/reservation). Complete its six exact-head checks/merge, then
+no duplicate handoff/reservation). Track its six exact-head checks/merge in PR131, then
 resolve the concrete hosting/processing decision and representative load/scanner
 measurements before provider cutover. Participants/commercial decisions remain
 unavailable; normal sending/publication/scanning/worker gates stay disabled.

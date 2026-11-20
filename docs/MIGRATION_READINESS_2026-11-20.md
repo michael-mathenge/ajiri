@@ -5,7 +5,7 @@ off-server restore and all live checks; see ../reports/MVP2_DEPLOYMENT_2026-11-2
 The combined fresh-resource synthetic PostgreSQL/object/erasure-ledger/Redis/worker
 rehearsal now passes all three interrupted boundaries, receipt reuse and exact
 private bytes. See COMBINED_RECOVERY_REHEARSAL.md for actual measurements/hashes.
-Its required CI/merge remains pending. Hosted durability, provider permissions,
+Its exact-head CI and merge are recorded in PR131. Hosted durability, provider permissions,
 physical host loss and scanner peaks are still unverified. The dated proposal
 below remains a proposal: no host/region/budget/processing terms were approved.
 

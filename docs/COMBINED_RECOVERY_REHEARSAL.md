@@ -116,6 +116,10 @@ negative import cache, synthetic mail configuration, restored inode identities,
 an incorrect legacy fixture route, and HttpResponse/streaming response handling
 were corrected in lab tooling. No production behaviour was changed to pass them.
 
+Exact source, six required CI checks and merge evidence are tracked in
+[PR131](https://github.com/michael-mathenge/ajiri/pull/131). Production activation
+is the separate PR129 receipt; this package adds lab/operator tooling and docs.
+
 ## Operational next steps
 
 Inspect the generated receipt, source/target resource samples, archive hashes and

@@ -8,7 +8,7 @@ reconciliable. Source resources stopped before fresh target creation. See
 COMBINED_RECOVERY_REHEARSAL.md for actual hashes/resources/failures and limitations.
 Full694backendtests passed310.327s(oneplatformskip);25script tests, Ruff/OpenAPI,
 Node24.19 ci/lint/build,177components, fivehelpers and47exactassets passed. Earlier
-local failures are retained; CI/checked merge remains pending for this package.
+local failures are retained; exact-head CI/merge evidence is linked from PR131.
 Production remains independently verified03cc9ff; this package changes lab/docs
 only and enables no feature. Actual provider/host-loss acceptance remains separate.
 
