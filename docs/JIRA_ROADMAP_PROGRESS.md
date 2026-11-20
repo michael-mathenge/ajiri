@@ -1,3 +1,46 @@
+# PostgreSQL bootstrap/search candidate -20November2026
+
+Branch codex/mvp2-postgres-bootstrap-readiness starts at reviewed main e3e8f74 and
+incorporates checked MVP2 outbox package3b919b5 (PR125). Production remains last
+verified e3e8f74. This candidate has not been merged into runtime or activated.
+
+The guarded lab generates alternate target migration modules in a new independent
+disposable package, verifies current model-state equivalence and refuses writes
+outside that package. Original histories and migration recorders remain protected.
+Local tests prove graph generation requires no database IO. The actual PostgreSQL
+lab is prepared to apply the generated graph normally, import canonical current
+synthetic data with exact timestamps/relationships/private hashes, test a forward
+additive migration and compare27 search cases. No fake markers or raw-model table
+creation substitute for that target migration. Actual target execution is pending.
+
+The dormant PostgreSQL search route uses bound literal-prefix terms and a native
+functional GIN candidate; SQLite's existing FTS join and three triggers are retained.
+Latin accents fold without generic unaccent's ligature/stroked-letter expansion.
+Ranking differences will be measured separately from required membership parity.
+No production settings, DB schema, dependency, authentication or CI workflow changes.
+
+Actual local gates: Python3.13.17 check/drift passed;683 backend tests in273.057s
+passed (one existing platform skip), plus Ruff/OpenAPI and19 script tests. The four
+new backend contract tests include alternate graph/state equivalence, parameter
+binding, literal folding and unchanged SQLite execution. Node24.19.0 locked install
+358/audit365 found zero vulnerabilities; lint/build1.20s and47 exact asset hashes
+passed. These checks do not establish real PostgreSQL migration/search acceptance.
+
+Actual Docker execution remains blocked by a required Windows restart after Michael
+enabled VirtualMachinePlatform. Keep this PR draft/UNVERIFIED for actual PostgreSQL
+and combined fresh-resource recovery, even if all six exact-head CI checks pass.
+PRIVATE_STORAGE_PORTABILITY source is separately reviewed in draft PR126; no merge
+or cloud activation is inferred here. See POSTGRES_BOOTSTRAP_CANDIDATE.md and the
+refreshed MIGRATION_READINESS_2026-11-20.md service/recovery decision report.
+
+Official provider pages were refreshed20November. Preferred CX33 remains publicly
+unavailable and its indexed tariff is not a quote. No purchase/terms/data transfer
+or approval of the proposed budget is implied. Current Jira still has16 non-Epic
+stories In Progress; genuine participants and actual host/service acceptance remain
+external prerequisites. Preserve backups; no new deletion authority is assumed.
+
+## Earlier source, CI and production checkpoints
+
 # Current durable outbox worker rehearsal - 16 November 2026
 
 Branch codex/mvp2-current-outbox-rehearsal starts at fetched reviewed main e3e8f74

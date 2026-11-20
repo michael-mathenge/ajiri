@@ -1758,6 +1758,17 @@ through account removal. Terminal task records retain pseudonymous settlement
 with existing SET_NULL relations after verified owner erasure. No worker, provider
 retry, task state change or account erasure is triggered by these checks.
 
+## postgres-bootstrap-candidate
+
+The PostgreSQL candidate keeps original SQLite history intact. An isolated lab
+generates a separate target migration graph from current models, checks state
+equivalence and applies that graph normally on a new database. No fake migration
+markers or raw model-table creation substitute for actual target migration work.
+A native literal-prefix search candidate uses bound terms and a functional GIN
+index; SQLite retains its existing FTS5 implementation. Actual data, relationship,
+private-byte and search-membership comparisons are required before a production
+bootstrap/hosting decision. Local graph generation alone is not target acceptance.
+
 ## current-outbox-rehearsal
 
 The current outbox lab publishes actual durable task IDs to isolated Redis and
